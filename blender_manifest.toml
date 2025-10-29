@@ -78,6 +78,8 @@ wheels = [
    "./wheels/tblib-3.1.0-py3-none-any.whl",
    "./wheels/markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
    "./wheels/trimesh-4.8.3-py3-none-any.whl",
+   "./wheels/resampy-0.4.3-py3-none-any.whl",
+   "./wheels/Pympler-1.1-py3-none-any.whl",
 ]
 
 # # Optional: add-ons can list which resources they will require:

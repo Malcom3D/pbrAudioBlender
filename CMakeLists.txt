@@ -8,6 +8,30 @@ endif ()
 
 include(ExternalProject)
 ExternalProject_Add(
+    pympler
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/79/4f/a6a2e2b202d7fd97eadfe90979845b8706676b41cbd3b42ba75adf329d1f/Pympler-1.1-py3-none-any.whl
+    URL_HASH SHA256=5b223d6027d0619584116a0cbc28e8d2e378f7a79c1e5e024f9ff3b673c58506
+    BUILD_ALWAYS OFF
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    resampy
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/4d/b9/3b00ac340a1aab3389ebcc52c779914a44aadf7b0cb7a3bf053195735607/resampy-0.4.3-py3-none-any.whl
+    URL_HASH SHA256=ad2ed64516b140a122d96704e32bc0f92b23f45419e8b8f478e5a05f83edcebd
+    BUILD_ALWAYS OFF
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
     trimesh
     PREFIX "blender"
     URL    https://files.pythonhosted.org/packages/8e/bc/f36afd1ad03d09cd0d311be5951f2dd705a824f34dd871779d42c277d741/trimesh-4.8.3-py3-none-any.whl
@@ -432,6 +456,9 @@ ExternalProject_Get_property(zarr DOWNLOAD_DIR)
 # Make a .zip-file which can be installed into Blender
 if (NOT WIN32)
   add_custom_target (blender 
+    DEPENDS pympler
+    DEPENDS resampy
+    DEPENDS trimesh
     DEPENDS MarkupSafe
     DEPENDS tblib
     DEPENDS sortedcontainers
@@ -518,6 +545,9 @@ if (NOT WIN32)
     COMMAND ${CMAKE_COMMAND} -E tar "cfv" "${CMAKE_PROJECT_NAME}.zip" --format=zip pbrAudio
     COMMAND ${CMAKE_COMMAND} -E remove_directory pbrAudio
   )
+  add_dependencies(blender pympler)
+  add_dependencies(blender resampy)
+  add_dependencies(blender trimesh)
   add_dependencies(blender MarkupSafe)
   add_dependencies(blender tblib)
   add_dependencies(blender sortedcontainers)

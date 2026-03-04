@@ -25,7 +25,6 @@ from ..nodetrees import materialsNT
 classes = []
 
 class PBRAudioConnectedObjectList(PropertyGroup):
-
     """Connected Object properties"""
     connected_object: StringProperty(
         name="Connected Object Name",

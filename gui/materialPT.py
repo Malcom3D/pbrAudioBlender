@@ -29,7 +29,7 @@ class PBRAUDIO_CONNECTED_UL_object_list(UIList):
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             # Create a row with object name and float slider
             row = layout.row(align=True)
-            row.label(text=item.object_name)
+            row.label(text=item.connected_object)
             row.prop(item, "connected_value", text="", slider=True)
             
         elif self.layout_type in {'GRID'}:
@@ -59,8 +59,8 @@ class PBRAUDIO_PT_material_panel(Panel):
 
         if not object == AcousticDomain:
                 layout.template_ID(snode, "nodetree", new="material.pbraudio_add")
-                layout.prop(snode, "ground", toggle=True)
-                layout.enable = snode.ground_toggle
+                if not object.pbraudio.ground_disable:
+                    layout.prop(snode, "ground", toggle=True)
         else:
             layout.label(text='Acoustic World Domain.')
             layout.label(text='Settings are in the world panel.')
@@ -69,7 +69,7 @@ classes.append(PBRAUDIO_PT_material_panel)
 
 class PBRAUDIO_CONNECTED_object_list(Panel):
     """Panel in Material Properties tab"""
-    bl_label = "Object Float List"
+    bl_label = "Connected Object List"
     bl_idname = "MATERIAL_PT_connected_object_list"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -101,28 +101,10 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
         
         # Control buttons
         col = row.column(align=True)
-        col.operator("obj.pbraudio_connected.add_to_list", icon='ADD', text="")
-        col.operator("obj.pbraudio_connected.remove_from_list", icon='REMOVE', text="")
+        col.operator("object.pbraudio_add_to_list", icon='ADD', text="")
+        col.operator("object.pbraudio_remove_from_list", icon='REMOVE', text="")
         col.separator()
-        col.operator("obj.pbraudio_connected.refresh_list", icon='FILE_REFRESH', text="")
-        col.operator("obj.pbraudio_connected.clear_list", icon='TRASH', text="")
+        col.operator("object.pbraudio_refresh_list", icon='FILE_REFRESH', text="")
+        col.operator("object.pbraudio_clear_list", icon='TRASH', text="")
         
-        # Additional controls
-        if obj.pbraudio_connected:
-            layout.separator()
-            box = layout.box()
-            
-            # Statistics
-            row = box.row()
-            row.label(text=f"Items in list: {len(obj.pbraudio_connected)}")
-            
-            # Batch operations
-            row = box.row(align=True)
-            row.label(text="Set All Values:")
-            op = row.operator("obj.pbraudio_connected.batch_set_values", text="0.0")
-            op.value = 0.0
-            op = row.operator("obj.pbraudio_connected.batch_set_values", text="0.5")
-            op.value = 0.5
-            op = row.operator("obj.pbraudio_connected.batch_set_values", text="1.0")
-            op.value = 1.0
 classes.append(PBRAUDIO_CONNECTED_object_list)

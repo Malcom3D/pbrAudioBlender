@@ -42,12 +42,13 @@ class PBRAudioConnectedObjectList(PropertyGroup):
 classes.append(PBRAudioConnectedObjectList)
 
 class PBRAudioObjectProperties(PropertyGroup):
-    def toggle_ground(self, context):
+    def disable_ground(self, context):
         object = context.object
         collection = object.users_collection[0]
         for obj in collection.objects.values():
-            if hasattr(obj.pbraudio, 'ground_toggle'):
-                obj.pbraudio.ground_toggle = True
+            if not obj == object:
+                if hasattr(obj.pbraudio, 'ground_disable'):
+                    obj.pbraudio.ground_disable = object.pbraudio.ground
 
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
@@ -126,10 +127,10 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="Define as Ground",
         description="Enable GroundSound Synth",
         default=False,
-        update=toggle_ground
+        update=disable_ground
     )
 
-    ground_toggle: BoolProperty(
+    ground_disable: BoolProperty(
         default=False
     )
 

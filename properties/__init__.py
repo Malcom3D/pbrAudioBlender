@@ -17,8 +17,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.props import PointerProperty
-#from bpy.props import PointerProperty, CollectionProperty
+from bpy.props import PointerProperty, CollectionProperty, IntProperty
 from bpy.utils import register_class, unregister_class
 
 classes = []
@@ -35,6 +34,8 @@ def register():
     # Register property groups
     bpy.types.Scene.pbraudio = PointerProperty(type=scenePG.PBRAudioSceneProperties)
     bpy.types.Object.pbraudio = PointerProperty(type=objectPG.PBRAudioObjectProperties)
+    bpy.types.Object.pbraudio_connected = CollectionProperty(type=objectPG.PBRAudioConnectedObjectList)
+    bpy.types.Object.pbraudio_connected_index = IntProperty(name="Index", default=-1, description="Active index in the connected object list")
     bpy.types.World.pbraudio = PointerProperty(type=worldPG.PBRAudioWorldProperties)
     # pbrAudio World Enviroment Properties
 #    bpy.types.World.pbraudioEnv = CollectionProperty(type=worldPG.PBRAudioWorldEnvironmentProperties)
@@ -45,6 +46,8 @@ def unregister():
 #    del bpy.types.World.pbraudioEnv
     del bpy.types.World.pbraudio
     del bpy.types.Object.pbraudio
+    del bpy.types.Object.pbraudio_connected
+    del bpy.types.Object.pbraudio_connected_index
     del bpy.types.Scene.pbraudio
 
     for cls in reversed(classes):

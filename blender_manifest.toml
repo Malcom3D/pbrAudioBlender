@@ -8,14 +8,14 @@ maintainer = "Malcom3D <malcom3d.gpl@gmail.com>"
 type = "add-on"
 
 # # Optional: link to documentation, support, source files, etc
-# website = "https://extensions.blender.org/add-ons/my-example-package/"
+website = "https://pbraudio.org/"
 
 # # Optional: tag list defined by Blender and server, see:
 # # https://docs.blender.org/manual/en/dev/advanced/extensions/tags.html
 # tags = ["Animation", "Sequencer"]
 tags = ["Node", "Physics", "Render"]
 
-blender_version_min = "4.5.0"
+blender_version_min = "4.5.2"
 # # Optional: Blender version that the extension does not support, earlier versions are supported.
 # # This can be omitted and defined later on the extensions platform if an issue is found.
 # blender_version_max = "5.1.0"
@@ -43,43 +43,51 @@ platforms = ["linux-x64"]
 #   "./wheels/jsmin-3.0.1-py3-none-any.whl",
 # ]
 wheels = [
-   "./wheels/PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-   "./wheels/typing_extensions-4.15.0-py3-none-any.whl",
-   "./wheels/donfig-0.8.1.post1-py3-none-any.whl",
-   "./wheels/packaging-25.0-py3-none-any.whl",
-   "./wheels/numcodecs-0.16.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-   "./wheels/crc32c-2.7.1-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-   "./wheels/zarr-3.1.2-py3-none-any.whl",
-   "./wheels/zarrs-0.2.0-cp311-abi3-manylinux_2_28_x86_64.whl",
-   "./wheels/rich-14.1.0-py3-none-any.whl",
-   "./wheels/cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
-   "./wheels/soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl",
-   "./wheels/llvmlite-0.45.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
-   "./wheels/numba-0.62.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
-   "./wheels/dask-2025.9.1-py3-none-any.whl",
-   "./wheels/click-8.3.0-py3-none-any.whl",
-   "./wheels/cloudpickle-3.1.1-py3-none-any.whl",
-   "./wheels/fsspec-2025.9.0-py3-none-any.whl",
-   "./wheels/toolz-1.0.0-py3-none-any.whl",
-   "./wheels/importlib_metadata-8.7.0-py3-none-any.whl",
-   "./wheels/zipp-3.23.0-py3-none-any.whl",
-   "./wheels/partd-1.4.2-py3-none-any.whl",
-   "./wheels/locket-1.0.0-py2.py3-none-any.whl",
-   "./wheels/pywavelets-1.9.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
-   "./wheels/scipy-1.16.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
-   "./wheels/distributed-2025.9.1-py3-none-any.whl",
-   "./wheels/jinja2-3.1.6-py3-none-any.whl",
-   "./wheels/msgpack-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-   "./wheels/psutil-7.1.0-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-   "./wheels/tornado-6.5.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-   "./wheels/urllib3-2.5.0-py3-none-any.whl",
-   "./wheels/zict-3.0.0-py2.py3-none-any.whl",
-   "./wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl",
-   "./wheels/tblib-3.1.0-py3-none-any.whl",
-   "./wheels/markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
-   "./wheels/trimesh-4.8.3-py3-none-any.whl",
-   "./wheels/resampy-0.4.3-py3-none-any.whl",
-   "./wheels/Pympler-1.1-py3-none-any.whl",
+   "./downloads/PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+   "./downloads/typing_extensions-4.15.0-py3-none-any.whl",
+   "./downloads/donfig-0.8.1.post1-py3-none-any.whl",
+   "./downloads/packaging-25.0-py3-none-any.whl",
+   "./downloads/numcodecs-0.16.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+   "./downloads/crc32c-2.7.1-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+   "./downloads/zarr-3.1.2-py3-none-any.whl",
+   "./downloads/zarrs-0.2.0-cp311-abi3-manylinux_2_28_x86_64.whl",
+   "./downloads/rich-14.1.0-py3-none-any.whl",
+   "./downloads/cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+   "./downloads/soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl",
+   "./downloads/llvmlite-0.45.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+   "./downloads/numba-0.62.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+   "./downloads/dask-2025.9.1-py3-none-any.whl",
+   "./downloads/click-8.3.0-py3-none-any.whl",
+   "./downloads/cloudpickle-3.1.1-py3-none-any.whl",
+   "./downloads/fsspec-2025.9.0-py3-none-any.whl",
+   "./downloads/toolz-1.0.0-py3-none-any.whl",
+   "./downloads/importlib_metadata-8.7.0-py3-none-any.whl",
+   "./downloads/zipp-3.23.0-py3-none-any.whl",
+   "./downloads/partd-1.4.2-py3-none-any.whl",
+   "./downloads/locket-1.0.0-py2.py3-none-any.whl",
+   "./downloads/pywavelets-1.9.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/scipy-1.16.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+   "./downloads/distributed-2025.9.1-py3-none-any.whl",
+   "./downloads/jinja2-3.1.6-py3-none-any.whl",
+   "./downloads/msgpack-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+   "./downloads/psutil-7.1.0-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+   "./downloads/tornado-6.5.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+   "./downloads/urllib3-2.5.0-py3-none-any.whl",
+   "./downloads/zict-3.0.0-py2.py3-none-any.whl",
+   "./downloads/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+   "./downloads/tblib-3.1.0-py3-none-any.whl",
+   "./downloads/markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/trimesh-4.8.3-py3-none-any.whl",
+   "./downloads/fast_simplification-0.1.13-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/resampy-0.4.3-py3-none-any.whl",
+   "./downloads/Pympler-1.1-py3-none-any.whl",
+   "./downloads/networkx-3.6-py3-none-any.whl",
+   "./downloads/python_fcl-0.7.0.10-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/rtree-1.4.1-py3-none-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/pillow-12.0.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/meshlib-3.0.9.196-py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl",
+   "./wheels/pytinybvh-1.2.1-cp311-cp311-linux_x86_64.whl",
+   "./wheels/pbraudiorender-0.1.dev24+g2111a3bc6.d20260304-py3-none-any.whl"
 ]
 
 # # Optional: add-ons can list which resources they will require:
@@ -113,3 +121,11 @@ files = "Import/export files for cache from/to disk"
 #   "/.git/",
 #   "/*.zip",
 # ]
+[build]
+paths_exclude_pattern = [
+   "__pycache__/",
+   "/.git/",
+   "/scripts/",
+   "/build/",
+   "/build.sh"
+]

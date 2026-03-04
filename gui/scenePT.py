@@ -21,10 +21,10 @@ from bpy.types import Panel
 
 classes = []
 
-class PBRAUDIO_PT_prebake_panel(Panel):
-    """Panel for pbrAudio prebake settings"""
-    bl_label = "PbrAudio PreBake"
-    bl_idname = "PBRAUDIO_PT_prebake_preview_panel"
+class PBRAUDIO_PT_Collision_panel(Panel):
+    """Panel for pbrAudio Collision synthesis settings"""
+    bl_label = "PbrAudio Collision"
+    bl_idname = "PBRAUDIO_PT_Collision_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
@@ -41,35 +41,17 @@ class PBRAUDIO_PT_prebake_panel(Panel):
 
         scene = context.scene
 
+        layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
+        layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin")
+
         # operator button
-        layout.operator('scene.pbraudio_prebake')
+        layout.operator('scene.pbraudio_clear_cache', emboss=not scene.pbraudio.cache_status)
+        layout.operator('scene.pbraudio_prebake', emboss=not scene.pbraudio.prebake)
+        layout.operator('scene.pbraudio_bake', emboss=scene.pbraudio.prebake)
+        layout.operator('scene.pbraudio_prerender', emboss=scene.pbraudio.bake)
+        layout.operator('scene.pbraudio_render', emboss=scene.pbraudio.prerender)
 
-classes.append(PBRAUDIO_PT_prebake_panel)
-
-class PBRAUDIO_PT_bake_panel(Panel):
-    """Panel for pbrAudio bake settings"""
-    bl_label = "PbrAudio Bake"
-    bl_idname = "PBRAUDIO_PT_bake_panel"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "scene"
-    bl_options = {'DEFAULT_CLOSED'}
-    
-    @classmethod
-    def poll(cls, context):
-        return context.scene.render.engine == 'PBRAUDIO'
-        
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-        
-        scene = context.scene
-        
-        # operator button
-        layout.operator('scene.pbraudio_bake')
-
-classes.append(PBRAUDIO_PT_bake_panel)
+classes.append(PBRAUDIO_PT_Collision_panel)
 
 class PBRAUDIO_PT_cache_panel(Panel):
     """Panel for pbrAudio cache path and settings"""
@@ -92,6 +74,6 @@ class PBRAUDIO_PT_cache_panel(Panel):
         scene = context.scene
 
         layout.enabled = not scene.pbraudio.cache_status
-        layout.prop(scene.pbraudio, "cache_path")
+        layout.prop(scene.pbraudio, "cache_path", toggle=scene.pbraudio.cache_status)
 
 classes.append(PBRAUDIO_PT_cache_panel)

@@ -59,7 +59,8 @@ class PBRAUDIO_PT_material_panel(Panel):
 
         if not object == AcousticDomain:
                 layout.template_ID(snode, "nodetree", new="material.pbraudio_add")
-                layout.prop(snode, "ground", toggle=snode.ground_toggle)
+                layout.prop(snode, "ground", toggle=True)
+                layout.enable = snode.ground_toggle
         else:
             layout.label(text='Acoustic World Domain.')
             layout.label(text='Settings are in the world panel.')

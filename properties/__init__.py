@@ -34,7 +34,7 @@ def register():
     # Register property groups
     bpy.types.Scene.pbraudio = PointerProperty(type=scenePG.PBRAudioSceneProperties)
     bpy.types.Object.pbraudio = PointerProperty(type=objectPG.PBRAudioObjectProperties)
-    bpy.types.Object.pbraudio_connected = PointerProperty(type=objectPG.PBRAudioConnectedObjectList)
+    bpy.types.Object.pbraudio_connected = CollectionProperty(type=objectPG.PBRAudioConnectedObjectList)
     bpy.types.Object.pbraudio_connected_index = IntProperty(name="Index", default=-1, description="Active index in the connected object list")
     bpy.types.World.pbraudio = PointerProperty(type=worldPG.PBRAudioWorldProperties)
     # pbrAudio World Enviroment Properties

@@ -1,5 +1,7 @@
 !wheels
 wheels/*
 downloads
+downloads/*
 build
+build/*
 build.sh

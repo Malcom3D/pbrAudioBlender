@@ -1,5 +1,6 @@
 !/wheels
 /wheels/*
-/downloads
+!/downloads
+/downloads/*
 /build
 build.sh

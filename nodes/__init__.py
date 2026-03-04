@@ -51,7 +51,10 @@ class MaterialNodeCategory(NodeCategory):
 material_node_categories = [
     MaterialNodeCategory("MATERIAL_NODES", "Material", items=[
         NodeItem("AudioInputNode"),
+        NodeItem("AcousticShaderNode"),
+        NodeItem("AcousticPropertiesNode"),
         NodeItem("AudioMaterialOutputNode"),
+        NodeItem("AudioMaterialPreviewNode"),
     ]),
 ]
 

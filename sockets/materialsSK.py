@@ -33,3 +33,15 @@ class AudioMaterialNodeSocket(NodeSocket):
         layout.label(text=text)
 
 classes.append(AudioMaterialNodeSocket)
+
+class AcousticPropertiesNodeSocket(NodeSocket):
+    """Custom socket type for acoustic properties nodes"""
+    bl_idname = 'AcousticPropertiesNodeSocket'
+    bl_label = "Acoustic Properties Socket"
+
+    default_value: FloatProperty(default=0.0)
+
+    def draw(self, context, layout, node, text):
+        layout.label(text=text)
+
+classes.append(AcousticPropertiesNodeSocket)

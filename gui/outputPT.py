@@ -95,8 +95,8 @@ class PBRAUDIO_PT_frame_range_panel(Panel):
         col.enabled = False
         col.prop(scene, "frame_start", text="Frame Start")
         col.prop(scene, "frame_end", text="End")
-        col.prop(scene, "fps", text="FPS")
-        col.prop(scene, "fps_base", text="FPS BASE")
+        col.prop(scene.render, "fps", text="FPS")
+        col.prop(scene.render, "fps_base", text="FPS BASE")
 
 classes.append(PBRAUDIO_PT_frame_range_panel)
 

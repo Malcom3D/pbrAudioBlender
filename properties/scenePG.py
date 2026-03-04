@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import PropertyGroup
-from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty
+from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty, PointerProperty, FloatProperty
 
 classes = []
 
@@ -131,15 +131,38 @@ class PBRAudioSceneProperties(PropertyGroup):
         update=set_preview_sample_rate
     )
 
+    collision_collection: PointerProperty(
+        name="Collision Collection",
+        description="Collection for collision",
+        type=bpy.types.Collection
+    )
+
+    collision_margin: FloatProperty(
+        name="Collision Margin",
+        default=1E-1
+    ) 
+
     bake: BoolProperty(
         name="bake",
-        description="Baked prebaked sound",
+        description="Baked prebaked synthesized sound",
         default=False
     )
 
     prebake: BoolProperty(
-        name="bake",
-        description="Prebaked sound",
+        name="prebake",
+        description="Prebaked synthesized sound",
+        default=False
+    )
+
+    prerender: BoolProperty( 
+        name="prerender", 
+        description="Prerender prebaked synthesized sound",
+        default=False
+    )
+
+    render: BoolProperty( 
+        name="render", 
+        description="Render prerendered synthesized sound",
         default=False
     )
 
@@ -147,6 +170,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Cache",
         description="Path to save cache files",
         subtype='FILE_PATH',
+        default='//pbrAudioCache'
     )
 
     cache_status: BoolProperty(

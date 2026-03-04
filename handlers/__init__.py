@@ -22,7 +22,7 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import playback
+from . import playback 
 
 for mod in (playback, ):
     classes += mod.classes
@@ -58,7 +58,6 @@ def register():
         bpy.types.Screen._stop_handler = stop_handler
         bpy.app.handlers.animation_playback_post.append(stop_handler)
         bpy.app.handlers.animation_playback_pre.append(play_handler)
-
 
     @persistent
     def item_activate_handler(context):

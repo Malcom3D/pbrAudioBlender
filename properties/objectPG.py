@@ -18,18 +18,120 @@
 
 import bpy
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty, PointerProperty, EnumProperty
+from bpy.props import BoolProperty, PointerProperty, EnumProperty, FloatProperty, StringProperty
 
 from ..nodetrees import materialsNT
 
 classes = []
 
-class PBRAudioObjectProperties(PropertyGroup):
+class PBRAudioConnectedObjectList(PropertyGroup):
 
-    """Material properties for pbrAudio"""
+    """Connected Object properties"""
+    connected_object: StringProperty(
+        name="Connected Object Name",
+        description="Name of the connected object"
+    )
+
+    connected_value: FloatProperty(
+        name="Connected value",
+        description="Float value between 0 and 1",
+        default=0.5,
+        min=0.0,
+        max=1.0,
+        subtype='FACTOR'
+    )
+classes.append(PBRAudioConnectedObjectList)
+
+class PBRAudioObjectProperties(PropertyGroup):
+    def toggle_ground(self, context):
+        object = context.object
+        collection = object.users_collection[0]
+        for obj in collection.objects.values():
+            if hasattr(obj.pbraudio, 'ground_toggle'):
+                obj.pbraudio.ground_toggle = True
+
+    """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
         type=materialsNT.AudioMaterialNodeTree
+    )
+
+    """Acoustic Shader properties"""
+    sound_speed: FloatProperty(
+        name="Sound Speed",
+        default=0.0
+    )
+
+    young_modulus: FloatProperty(
+        name="Young modulus",
+        default=0.0
+    )
+
+    poisson_ratio: FloatProperty(
+        name="Poisson Ratio",
+        default=0.0
+    )
+
+    density: FloatProperty(
+        name="Density",
+        default=0.0
+    )
+
+    damping: FloatProperty(
+        name="Damping",
+        default=0.0
+    )
+
+    friction: FloatProperty(
+        name="Friction",
+        default=0.0
+    )
+
+    roughness: FloatProperty(
+        name="Roughness",
+        default=0.0
+    )
+
+    low_frequency: FloatProperty(
+        name="Low Frequency",
+        default=1.0
+    )
+
+    high_frequency: FloatProperty(
+        name="High Frequency",
+        default=24000.0
+    )
+
+    """Acoustic Properties properties"""
+    absorption: FloatProperty(
+        name="Absorption",
+        default=0.0
+    )
+
+    refraction: FloatProperty(
+        name="Refraction",
+        default=0.0
+    )
+
+    reflection: FloatProperty(
+        name="Reflection",
+        default=0.0
+    )
+
+    scattering: FloatProperty(
+        name="Scattering",
+        default=0.0
+    )
+
+    ground: BoolProperty(
+        name="Define as Ground",
+        description="Enable GroundSound Synth",
+        default=False,
+        update=toggle_ground
+    )
+
+    ground_toggle: BoolProperty(
+        default=False
     )
 
     """Source properties for pbrAudio"""

@@ -39,7 +39,7 @@ classes.append(PBRAUDIO_CONNECTED_UL_object_list)
 
 class PBRAUDIO_PT_material_panel(Panel):
     """Panel for pbrAudio material settings"""
-    bl_label = 'Audio Material'
+    bl_label = 'Acoustic Material'
     bl_idname = 'PBRAUDIO_PT_material_panel'
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

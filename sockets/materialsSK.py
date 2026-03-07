@@ -22,17 +22,17 @@ from bpy.props import FloatProperty
 
 classes = []
 
-class AudioMaterialNodeSocket(NodeSocket):
-    """Custom socket type for audio material nodes"""
-    bl_idname = 'AudioMaterialNodeSocket'
-    bl_label = "Audio Material Socket"
+class AcousticMaterialNodeSocket(NodeSocket):
+    """Custom socket type for acoustic material nodes"""
+    bl_idname = 'AcousticMaterialNodeSocket'
+    bl_label = "Acoustic Material Socket"
 
     default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         layout.label(text=text)
 
-classes.append(AudioMaterialNodeSocket)
+classes.append(AcousticMaterialNodeSocket)
 
 class AcousticPropertiesNodeSocket(NodeSocket):
     """Custom socket type for acoustic properties nodes"""

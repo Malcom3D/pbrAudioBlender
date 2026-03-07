@@ -68,7 +68,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
-        type=materialsNT.AudioMaterialNodeTree
+        type=materialsNT.AcousticMaterialNodeTree
     )
 
     """Acoustic Shader properties"""

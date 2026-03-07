@@ -25,18 +25,18 @@ classes = []
 class PBRAUDIO_OT_material_add(Operator):
     bl_idname = "material.pbraudio_add"
     bl_label = "New pbrAudio material"
-    bl_description = "Create a add audio material node tree"
+    bl_description = "Create a add acoustic material node tree"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty(
         name="Name",
         description="Name of the pbrAudio node tree",
-        default="AudioMaterial"
+        default="AcousticMaterial"
     )
 
     def execute(self, context):
         # Create new pbrAudio node tree
-        nodetree = bpy.data.node_groups.new(self.name, 'AudioMaterialNodeTree')
+        nodetree = bpy.data.node_groups.new(self.name, 'AcousticMaterialNodeTree')
         
         # Link to active object if available
         if context.active_object and context.active_object.pbraudio:

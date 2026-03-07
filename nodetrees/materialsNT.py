@@ -16,23 +16,19 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# -------------------------------------------------------------------
-# Audio Material Node Tree
-# -------------------------------------------------------------------
-
 import bpy
 from bpy.types import NodeTree
 
 classes = []
 
-class AudioMaterialNodeTree(NodeTree):
-    """Node tree for audio-based material properties"""
-    bl_idname = 'AudioMaterialNodeTree'
-    bl_label = "Audio Material"
+class AcousticMaterialNodeTree(NodeTree):
+    """Node tree for acoustic-based materials"""
+    bl_idname = 'AcousticMaterialNodeTree'
+    bl_label = "Acoustic Material"
     bl_icon = 'SOUND'
 
     @classmethod
     def poll(cls, context):
         return context.scene.render.engine == "PBRAUDIO"
 
-classes.append(AudioMaterialNodeTree)
+classes.append(AcousticMaterialNodeTree)

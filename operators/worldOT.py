@@ -25,7 +25,7 @@ classes = []
 class PBRAUDIO_OT_world_material_add(Operator):
     bl_idname = "world.pbraudio_add"
     bl_label = "New pbrAudio world material"
-    bl_description = "Create a new world audio material node tree"
+    bl_description = "Create a new world acoustic material node tree"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty(
@@ -38,7 +38,7 @@ class PBRAUDIO_OT_world_material_add(Operator):
         world = context.world
         if world and world.pbraudio:
             # Create new pbrAudio World node tree
-            nodetree = bpy.data.node_groups.new(self.name, 'AudioWorldNodeTree')
+            nodetree = bpy.data.node_groups.new(self.name, 'AcousticWorldNodeTree')
             # Link to active acoustic domain world if available
             world.pbraudio.nodetree = nodetree
         
@@ -54,7 +54,7 @@ class PBRAUDIO_OT_environment_item_add(Operator):
     
     @classmethod
     def poll(cls, context):
-        return context.space_data.node_tree == 'AudioWorldNodeTree'
+        return context.space_data.node_tree == 'AcousticWorldNodeTree'
     
     def execute(self, context):
         node = context.active_node
@@ -75,7 +75,7 @@ class PBRAUDIO_OT_environment_item_remove(Operator):
     
     @classmethod
     def poll(cls, context):
-        return context.space_data.node_tree == 'AudioWorldNodeTree'
+        return context.space_data.node_tree == 'AcousticWorldNodeTree'
     
     def execute(self, context):
         node = context.active_node

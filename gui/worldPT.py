@@ -23,7 +23,7 @@ classes = []
 
 class PBRAUDIO_PT_world_domain_panel(Panel):
     """Panel for pbrAudio world domain settings"""
-    bl_label = "World Audio Domain"
+    bl_label = "World Acoustic Domain"
     bl_idname = "PBRAUDIO_PT_world_domain_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

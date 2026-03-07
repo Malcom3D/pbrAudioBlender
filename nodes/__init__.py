@@ -30,7 +30,7 @@ for mod in (materialsND, worldND):
 class WorldNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'AudioWorldNodeTree'
+        return context.space_data.tree_type == 'AcousticWorldNodeTree'
 
 world_node_categories = [
     WorldNodeCategory("WORLD_NODES", "World", items=[
@@ -46,15 +46,15 @@ world_node_categories = [
 class MaterialNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'AudioMaterialNodeTree'
+        return context.space_data.tree_type == 'AcousticMaterialNodeTree'
 
 material_node_categories = [
     MaterialNodeCategory("MATERIAL_NODES", "Material", items=[
         NodeItem("AudioInputNode"),
         NodeItem("AcousticShaderNode"),
         NodeItem("AcousticPropertiesNode"),
-        NodeItem("AudioMaterialOutputNode"),
-        NodeItem("AudioMaterialPreviewNode"),
+        NodeItem("AcousticMaterialOutputNode"),
+        NodeItem("AcousticMaterialPreviewNode"),
     ]),
 ]
 

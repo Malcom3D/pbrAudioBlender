@@ -16,18 +16,14 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# -------------------------------------------------------------------
-# Audio World Node Tree
-# -------------------------------------------------------------------
-
 import bpy
 from bpy.types import NodeTree
 
 classes = []
 
-class AudioWorldNodeTree(NodeTree):
-    """Node tree for audio-based world properties"""
-    bl_idname = 'AudioWorldNodeTree'
+class AcousticWorldNodeTree(NodeTree):
+    """Node tree for acoustic-based world"""
+    bl_idname = 'AcousticWorldNodeTree'
     bl_label = "Acoustic World"
     bl_icon = 'WORLD'
 
@@ -35,4 +31,4 @@ class AudioWorldNodeTree(NodeTree):
     def poll(cls, context):
         return context.scene.render.engine == "PBRAUDIO"
 
-classes.append(AudioWorldNodeTree)
+classes.append(AcousticWorldNodeTree)

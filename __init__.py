@@ -38,13 +38,13 @@ if not platform.system() in {"Linux"}:
     raise Exception("\n\nUnsupported OS version. pbrAudio currently only supports Linux.")
 
 bl_info = {
-    "name": "pbrAudio Render Engine",
+    "name": "pbrAudio Suite",
     "author": "Malcom3D",
     "version": (0, 2, 1),
     "blender": (4, 5, 0),
     "category": "Render",
     "location": "Render Engine > pbrAudio",
-    "description": "Physically Based Audio Rendering Engine for Blender",
+    "description": "Physically Based Audio Rendering and Synthesis from Animation Engines for Blender",
     "warning": "alpha",
     "doc_url": "https://pbraudio.org",
 }

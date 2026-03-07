@@ -73,11 +73,11 @@ def register():
                 AcousticDomain = world.pbraudio.acoustic_domain
 
         if object == AcousticDomain:
-            treeType = 'AudioWorldNodeTree'
+            treeType = 'AcousticWorldNodeTree'
             if hasattr(world.pbraudio.nodetree, 'name'):
                 nodeTreeName = world.pbraudio.nodetree.name
         else:
-            treeType = 'AudioMaterialNodeTree'
+            treeType = 'AcousticMaterialNodeTree'
             if hasattr(object.pbraudio.nodetree, 'name'):
                 nodeTreeName = object.pbraudio.nodetree.name
 
@@ -86,7 +86,7 @@ def register():
                 if area.type == "NODE_EDITOR":
                     for space in area.spaces:
                         if space.type == "NODE_EDITOR" and not space.pin:
-                            if 'Audio' in space.tree_type:
+                            if 'Acoustic' in space.tree_type:
                                 space.tree_type = treeType
                                 if nodeTreeName is not None:
                                     space.node_tree = bpy.data.node_groups[nodeTreeName]

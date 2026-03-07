@@ -22,56 +22,56 @@ from bpy.props import StringProperty
 
 classes = []
 
-class AudioMaterialNode(Node):
-    """Base class for all audio material nodes"""
-    bl_idname = 'AudioMaterialNode'
-    bl_label = "Audio Material Node"
+class AcousticMaterialNode(Node):
+    """Base class for all acoustic material nodes"""
+    bl_idname = 'AcousticMaterialNode'
+    bl_label = "Acoustic Material Node"
     bl_icon = 'SOUND'
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'AudioMaterialNodeTree'
+        return ntree.bl_idname == 'AcousticMaterialNodeTree'
 
-classes.append(AudioMaterialNode)
+classes.append(AcousticMaterialNode)
 
-class AudioInputNode(AudioMaterialNode):
-    """Audio input node"""
-    bl_idname = 'AudioInputNode'
-    bl_label = "Audio Input"
+#class AudioInputNode(AcousticMaterialNode):
+#    """Audio input node"""
+#    bl_idname = 'AudioInputNode'
+#    bl_label = "Audio Input"
+#
+#    audio_file: StringProperty(
+#        name="Audio File",
+#        description="Path to audio file",
+#        subtype='FILE_PATH'
+#    )
+#
+#    def init(self, context):
+#        self.outputs.new('AudioNodeSocket', "Audio Signal")
+#
+#classes.append(AudioInputNode)
 
-    audio_file: StringProperty(
-        name="Audio File",
-        description="Path to audio file",
-        subtype='FILE_PATH'
-    )
-
-    def init(self, context):
-        self.outputs.new('AudioMaterialNodeSocket', "Audio Signal")
-
-classes.append(AudioInputNode)
-
-class AcousticPropertiesNode(AudioMaterialNode):
+class AcousticPropertiesNode(AcousticMaterialNode):
     """Acoustic properties node"""
     bl_idname = 'AcousticPropertiesNode'
     bl_label = "Acoustic Properties"
 
     def init(self, context):
         self.outputs.new('AcousticPropertiesNodeSocket', "AcousticProperties")
-        self.inputs.new('AudioMaterialNodeSocket', "absorption")
-        self.inputs.new('AudioMaterialNodeSocket', "refraction")
-        self.inputs.new('AudioMaterialNodeSocket', "reflection")
-        self.inputs.new('AudioMaterialNodeSocket', "scattering")
+        self.inputs.new('AcousticMaterialNodeSocket', "absorption")
+        self.inputs.new('AcousticMaterialNodeSocket', "refraction")
+        self.inputs.new('AcousticMaterialNodeSocket', "reflection")
+        self.inputs.new('AcousticMaterialNodeSocket', "scattering")
 
 classes.append(AcousticPropertiesNode)
 
-class AcousticShaderNode(AudioMaterialNode):
+class AcousticShaderNode(AcousticMaterialNode):
     """Acoustic shader node"""
     bl_idname = 'AcousticShaderNode'
     bl_label = "Acoustic Shader"
 
     def init(self, context):
-        self.outputs.new('AudioMaterialNodeSocket', "AudioMaterial")
-        self.inputs.new('AudioMaterialNodeSocket', "AcousticProperties")
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
 
     def draw_buttons(self, context, layout):
         object = context.object.pbraudio
@@ -87,22 +87,22 @@ class AcousticShaderNode(AudioMaterialNode):
 
 classes.append(AcousticShaderNode)
 
-class AudioMaterialPreviewNode(AudioMaterialNode):
-    """Audio material preview node for pbr synthesis"""
-    bl_idname = 'AudioMaterialPreviewNode'
-    bl_label = "Audio Material Preview"
+class AcousticMaterialPreviewNode(AcousticMaterialNode):
+    """Acoustic material preview node for pbr synthesis"""
+    bl_idname = 'AcousticMaterialPreviewNode'
+    bl_label = "Acoustic Material Preview"
 
     def init(self, context):
-        self.inputs.new('AudioMaterialNodeSocket', "AudioMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
 
-classes.append(AudioMaterialPreviewNode)
+classes.append(AcousticMaterialPreviewNode)
 
-class AudioMaterialOutputNode(AudioMaterialNode):
-    """Audio material output node"""
-    bl_idname = 'AudioMaterialOutputNode'
+class AcousticMaterialOutputNode(AcousticMaterialNode):
+    """Acoustic material output node"""
+    bl_idname = 'AcousticMaterialOutputNode'
     bl_label = "Material Output"
 
     def init(self, context):
-        self.inputs.new('AudioMaterialNodeSocket', "AudioMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
 
-classes.append(AudioMaterialOutputNode)
+classes.append(AcousticMaterialOutputNode)

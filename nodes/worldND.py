@@ -24,7 +24,7 @@ from bpy.props import FloatProperty
 classes = []
 
 class pbrAudioWorldOutputNode(Node):
-    """Audio world output node"""
+    """Acoustic world output node"""
     bl_idname = 'pbrAudioWorldOutputNode'
     bl_label = "Acoustic World Output"
 

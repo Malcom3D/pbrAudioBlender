@@ -21,22 +21,6 @@ from bpy.types import Panel, UIList
 
 classes = []
 
-class PBRAUDIO_CONNECTED_UL_object_list(UIList):
-    """UIList for displaying objects with float values"""
-    
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        # Customize the draw for each item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            # Create a row with object name and float slider
-            row = layout.row(align=True)
-            row.label(text=item.connected_object)
-            row.prop(item, "connected_value", text="", slider=True)
-            
-        elif self.layout_type in {'GRID'}:
-            layout.alignment = 'CENTER'
-            layout.label(text=item.connected_object)
-classes.append(PBRAUDIO_CONNECTED_UL_object_list)
-
 class PBRAUDIO_PT_material_panel(Panel):
     """Panel for pbrAudio material settings"""
     bl_label = 'Acoustic Material'
@@ -66,6 +50,22 @@ class PBRAUDIO_PT_material_panel(Panel):
             layout.label(text='Settings are in the world panel.')
 
 classes.append(PBRAUDIO_PT_material_panel)
+
+class PBRAUDIO_CONNECTED_UL_object_list(UIList):
+    """UIList for displaying objects with float values"""
+    
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        # Customize the draw for each item
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            # Create a row with object name and float slider
+            row = layout.row(align=True)
+            row.label(text=item.connected_object)
+            row.prop(item, "connected_value", text="", slider=True)
+            
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label(text=item.connected_object)
+classes.append(PBRAUDIO_CONNECTED_UL_object_list)
 
 class PBRAUDIO_CONNECTED_object_list(Panel):
     """Panel in Material Properties tab"""
@@ -107,8 +107,6 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
         col.operator("object.pbraudio_refresh_list", icon='FILE_REFRESH', text="")
         col.operator("object.pbraudio_clear_list", icon='TRASH', text="")
 
-#        layout.prop(obj.pbraudio, "selected_connected_object", text="Select Object")
         layout.prop_search(obj.pbraudio, "selected_connected_object", collection, "objects", icon='OBJECT_DATA')
-#        layout.template_ID(obj.pbraudio, "selected_connected_object")
         
 classes.append(PBRAUDIO_CONNECTED_object_list)

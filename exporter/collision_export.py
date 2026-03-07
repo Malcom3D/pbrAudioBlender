@@ -44,6 +44,33 @@ class MeshToNumpyExporter:
         self.objects = []
         self.obj_idx = 0
 
+    def get_from_previous(self, node):
+        acoustic_dict = {}
+        # get inputs
+        links = node.inputs.keys()
+        for link in links:
+            if node.inputs[link].is_linked:
+                previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
+                for key in previous_acoustic_dict.keys():
+                    acoustic_dict[key] = previous_acoustic_dict[key]
+
+        for property in node.bl_rna.properties.keys():
+            if property.startswith('pbraudio_'):
+                node_property = "node." + property
+                acoustic_dict[property.replace('pbraudio_', '')] = eval(node_property)
+
+        return acoustic_dict
+
+    def get_acoustic_properties_from_material(self, obj):
+        """Get acoustic properties from the acoustic material node chain"""
+
+        nodetree = obj.pbraudio.nodetree
+        output_node = nodetree.nodes['Material Output']
+
+        acoustic_shader = self.get_from_previous(output_node)
+                    
+        return acoustic_shader
+
     def triangulate_mesh(self, mesh):
         """Triangulate the mesh using bmesh"""
         import bmesh
@@ -229,16 +256,8 @@ class MeshToNumpyExporter:
             connected = False
         object["connected"] = connected
 
-        acoustic_shader = {}
-        acoustic_shader["sound_speed"] = obj.pbraudio.sound_speed
-        acoustic_shader["young_modulus"] = obj.pbraudio.young_modulus * 1E9
-        acoustic_shader["poisson_ratio"] = obj.pbraudio.poisson_ratio
-        acoustic_shader["density"] = obj.pbraudio.density
-        acoustic_shader["damping"] = obj.pbraudio.damping / 100
-        acoustic_shader["friction"] = obj.pbraudio.friction
-        acoustic_shader["roughness"] = obj.pbraudio.roughness
-        acoustic_shader["low_frequency"] = obj.pbraudio.low_frequency
-        acoustic_shader["high_frequency"] =  obj.pbraudio.high_frequency
+        # Get acoustic properties from material
+        acoustic_shader = self.get_acoustic_properties_from_material(obj)
 
         object["acoustic_shader"] = acoustic_shader
 

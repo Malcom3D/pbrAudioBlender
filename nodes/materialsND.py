@@ -18,7 +18,9 @@
 
 import bpy
 from bpy.types import Node
-from bpy.props import StringProperty
+from bpy.props import StringProperty, PointerProperty, FloatProperty
+
+from ..properties import materialPG
 
 classes = []
 
@@ -56,34 +58,100 @@ class AcousticPropertiesNode(AcousticMaterialNode):
     bl_label = "Acoustic Properties"
 
     def init(self, context):
-        self.outputs.new('AcousticPropertiesNodeSocket', "AcousticProperties")
-        self.inputs.new('AcousticMaterialNodeSocket', "absorption")
-        self.inputs.new('AcousticMaterialNodeSocket', "refraction")
-        self.inputs.new('AcousticMaterialNodeSocket', "reflection")
-        self.inputs.new('AcousticMaterialNodeSocket', "scattering")
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+        self.inputs.new('AcousticPropertiesNodeSocket', "absorption")
+        self.inputs.new('AcousticPropertiesNodeSocket', "refraction")
+        self.inputs.new('AcousticPropertiesNodeSocket', "reflection")
+        self.inputs.new('AcousticPropertiesNodeSocket', "scattering")
 
 classes.append(AcousticPropertiesNode)
 
 class AcousticShaderNode(AcousticMaterialNode):
     """Acoustic shader node"""
     bl_idname = 'AcousticShaderNode'
-    bl_label = "Acoustic Shader"
+    bl_label = "AcousticShader"
+
+    """Acoustic Shader properties"""
+    pbraudio_sound_speed: FloatProperty(
+        name="Sound Speed in m/s",
+        default=1000.0,
+        soft_min=0.0,
+        soft_max=20000.0
+    )
+
+    pbraudio_young_modulus: FloatProperty(
+        name="Young modulus in GPa",
+        default=1.0,
+        min=0.0,
+        soft_max=1500.0
+    )
+
+    pbraudio_poisson_ratio: FloatProperty(
+        name="Poisson Ratio",
+        default=0.46,
+        min=-1.0,
+        max=0.5
+    )
+
+    pbraudio_density: FloatProperty(
+        name="Density in kg/m³",
+        default=800.0,
+        min=0.0,
+        soft_max=25000.0
+    )
+
+    pbraudio_damping: FloatProperty(
+        name="Rayleigh Damping in %",
+        default=5,
+        min=0.0,
+        max=100
+    )
+
+    pbraudio_friction: FloatProperty(
+        name="Friction",
+        default=0.0,
+        min=0.0,
+        soft_max=1.0
+    )
+
+    pbraudio_roughness: FloatProperty(
+        name="Normalized Roughness",
+        default=0.0,
+        min=0.0,
+        max=1.0
+    )
+
+    pbraudio_low_frequency: FloatProperty(
+        name="Low Frequency",
+        default=5.0,
+        min=0.0,
+        soft_max=1000.0
+    )
+
+    pbraudio_high_frequency: FloatProperty(
+        name="High Frequency",
+        default=24000.0,
+        soft_min=10000.0,
+        max=96000.0
+    )
 
     def init(self, context):
         self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
         self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
 
     def draw_buttons(self, context, layout):
-        object = context.object.pbraudio
-        layout.prop(object, "sound_speed", slider=True)
-        layout.prop(object, "young_modulus", slider=True)
-        layout.prop(object, "poisson_ratio", slider=True)
-        layout.prop(object, "density", slider=True)
-        layout.prop(object, "damping", slider=True)
-        layout.prop(object, "friction", slider=True)
-        layout.prop(object, "roughness", slider=True)
-        layout.prop(object, "low_frequency", slider=True)
-        layout.prop(object, "high_frequency", slider=True)
+        # Get the active material from context or node property
+        props = self
+
+        layout.prop(props, "pbraudio_sound_speed", slider=True)
+        layout.prop(props, "pbraudio_young_modulus", slider=True)
+        layout.prop(props, "pbraudio_poisson_ratio", slider=True)
+        layout.prop(props, "pbraudio_density", slider=True)
+        layout.prop(props, "pbraudio_damping", slider=True)
+        layout.prop(props, "pbraudio_friction", slider=True)
+        layout.prop(props, "pbraudio_roughness", slider=True)
+        layout.prop(props, "pbraudio_low_frequency", slider=True)
+        layout.prop(props, "pbraudio_high_frequency", slider=True)
 
 classes.append(AcousticShaderNode)
 

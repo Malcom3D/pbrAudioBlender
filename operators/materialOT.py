@@ -17,7 +17,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.props import StringProperty, FloatProperty
+from bpy.props import StringProperty, FloatProperty, PointerProperty
 from bpy.types import Operator
 
 classes = []
@@ -25,7 +25,7 @@ classes = []
 class PBRAUDIO_OT_material_add(Operator):
     bl_idname = "material.pbraudio_add"
     bl_label = "New pbrAudio material"
-    bl_description = "Create a add acoustic material node tree"
+    bl_description = "Create a new acoustic material node tree"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty(
@@ -37,6 +37,16 @@ class PBRAUDIO_OT_material_add(Operator):
     def execute(self, context):
         # Create new pbrAudio node tree
         nodetree = bpy.data.node_groups.new(self.name, 'AcousticMaterialNodeTree')
+
+        # Set up default nodes
+        output_node = nodetree.nodes.new('AcousticMaterialOutputNode')
+        output_node.location = (300, 0)
+
+        shader_node = nodetree.nodes.new('AcousticShaderNode')
+        shader_node.location = (0, 0)
+    
+        # Connect nodes
+        nodetree.links.new(shader_node.outputs[0], output_node.inputs[0])
         
         # Link to active object if available
         if context.active_object and context.active_object.pbraudio:

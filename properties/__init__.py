@@ -22,9 +22,9 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import objectPG, scenePG, worldPG
+from . import objectPG, scenePG, worldPG, materialPG
 
-for mod in (objectPG, scenePG, worldPG):
+for mod in (objectPG, scenePG, worldPG, materialPG):
     classes += mod.classes
 
 def register():
@@ -33,7 +33,10 @@ def register():
 
     # Register property groups
     bpy.types.Scene.pbraudio = PointerProperty(type=scenePG.PBRAudioSceneProperties)
+#    bpy.types.Scene.pbraudio_materials = CollectionProperty(type=materialPG.AcousticMaterialProperties)
+#    bpy.types.Scene.pbraudio_materials_index = IntProperty(name="Index", default=-1, description="Active index in the acoustic material list")
     bpy.types.Object.pbraudio = PointerProperty(type=objectPG.PBRAudioObjectProperties)
+#    bpy.types.Object.pbraudio_materials = PointerProperty(type=materialPG.AcousticMaterialProperties)
     bpy.types.Object.pbraudio_connected = CollectionProperty(type=objectPG.PBRAudioConnectedObjectList)
     bpy.types.Object.pbraudio_connected_index = IntProperty(name="Index", default=-1, description="Active index in the connected object list")
     bpy.types.World.pbraudio = PointerProperty(type=worldPG.PBRAudioWorldProperties)
@@ -45,9 +48,12 @@ def unregister():
     # Remove property groups
 #    del bpy.types.World.pbraudioEnv
     del bpy.types.World.pbraudio
-    del bpy.types.Object.pbraudio
-    del bpy.types.Object.pbraudio_connected
     del bpy.types.Object.pbraudio_connected_index
+    del bpy.types.Object.pbraudio_connected
+#    del bpy.types.Object.pbraudio_materials
+    del bpy.types.Object.pbraudio
+#    del bpy.types.Scene.pbraudio_materials_index
+#    del bpy.types.Scene.pbraudio_materials
     del bpy.types.Scene.pbraudio
 
     for cls in reversed(classes):

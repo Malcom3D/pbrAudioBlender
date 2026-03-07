@@ -71,98 +71,12 @@ class PBRAudioObjectProperties(PropertyGroup):
         type=materialsNT.AcousticMaterialNodeTree
     )
 
-    """Acoustic Shader properties"""
-    sound_speed: FloatProperty(
-        name="Sound Speed in m/s",
-        default=1000.0,
-        soft_min=0.0,
-        soft_max=20000.0
-    )
-
-    young_modulus: FloatProperty(
-        name="Young modulus in GPa",
-        default=1.0,
-        min=0.0,
-        soft_max=1500.0
-    )
-
-    poisson_ratio: FloatProperty(
-        name="Poisson Ratio",
-        default=0.46,
-        min=-1.0,
-        max=0.5
-    )
-
-    density: FloatProperty(
-        name="Density in kg/m³",
-        default=800.0,
-        min=0.0,
-        soft_max=25000.0
-    )
-
-    damping: FloatProperty(
-        name="Rayleigh Damping in %",
-        default=5,
-        min=0.0,
-        max=100
-    )
-
-    friction: FloatProperty(
-        name="Friction",
-        default=0.0,
-        min=0.0,
-        soft_max=1.0
-    )
-
-    roughness: FloatProperty(
-        name="Normalized Roughness",
-        default=0.0,
-        min=0.0,
-        max=1.0
-    )
-
-    low_frequency: FloatProperty(
-        name="Low Frequency",
-        default=5.0,
-        min=0.0,
-        soft_max=1000.0
-    )
-
-    high_frequency: FloatProperty(
-        name="High Frequency",
-        default=24000.0,
-        soft_min=10000.0,
-        max=96000.0
-    )
-
-    """Acoustic Properties properties"""
-    absorption: FloatProperty(
-        name="Absorption",
-        default=0.0,
-        min=0.0,
-        max=1.0
-    )
-
-    refraction: FloatProperty(
-        name="Refraction",
-        default=0.0,
-        min=0.0,
-        max=1.0
-    )
-
-    reflection: FloatProperty(
-        name="Reflection",
-        default=0.0,
-        min=0.0,
-        max=1.0
-    )
-
-    scattering: FloatProperty(
-        name="Scattering",
-        default=0.0,
-        min=0.0,
-        max=1.0
-    )
+#    # Reference to acoustic material from node tree output
+#    acoustic_material: PointerProperty(
+#        name="Acoustic Material",
+#        type=bpy.types.PropertyGroup,  # Will be AcousticMaterialProperties
+#        description="Acoustic material assigned via node tree"
+#    )
 
     ground: BoolProperty(
         name="Define as Ground",

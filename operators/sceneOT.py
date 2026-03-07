@@ -175,17 +175,20 @@ class PBRAUDIO_OT_prebake(Operator):
                 bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
                 bpy.ops.object.select_all(action='DESELECT')
 
+                # Create exporter
+                exporter = MeshToNumpyExporter(scene=scene, decimals=decimals)
                 for obj in scene.pbraudio.collision_collection.objects.values():
-                    output_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/data"
-                    # Create exporter
-                    exporter = MeshToNumpyExporter(scene=scene, decimals=decimals)
                     # Export animation
-                    exporter.export_animation(obj, output_path, start_frame, end_frame)
+                    exporter.export_animation(obj, start_frame, end_frame)
                     obj.select_set(False)
+
+                # Save config
+                exporter.save_config()
 
                 # Start async processing
                 config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
                 process = pbrAudio_prebake(config_file)
+
                 # Monitor completion
                 bpy.app.timers.register(lambda: self.check_process(scene, process), first_interval=1.0)
                 self.report({'INFO'}, "Started async prebake processing")

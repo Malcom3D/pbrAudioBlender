@@ -17,7 +17,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.props import StringProperty, FloatProperty
+from bpy.props import StringProperty
 from bpy.types import Operator
 
 classes = []
@@ -30,25 +30,24 @@ class OBJECT_OT_pbraudio_add_to_list(Operator):
     
     def execute(self, context):
         obj = context.object
+        selected_obj = obj.pbraudio.selected_connected_object
+        if not selected_obj == None:
+            items = obj.pbraudio_connected.values()
+            if len(items) > 0:
+                for item in items:
+                    if selected_obj.name in item.connected_object:
+                        return {'FINISHED'}
+                    else:
+                        break
+
+            # Add object from the selection menu to the list
+            new_item = obj.pbraudio_connected.add()
+            new_item.connected_object = selected_obj.name
         
-        # Get the collection the object belongs to
-        collection = obj.users_collection[0]
-        
-        # Add objects from the collection to the list
-        for collection_obj in collection.objects.values():
-            # Check if object is already in the list
-            exists = False
-            for item in obj.pbraudio_connected.values():
-                if item.connected_object == collection_obj.name:
-                    exists = True
-                    break
-            
-            # Add if not already in list
-            if not exists:
-                new_item = obj.pbraudio_connected.add()
-                new_item.connected_object = collection_obj.name
-                new_item.connected_value = 0.5
-        
+            # Add object to the connected object
+            new_connect = selected_obj.pbraudio_connected.add()
+            new_connect.connected_object = obj.name
+            obj.pbraudio.selected_connected_object = None
         return {'FINISHED'}
 classes.append(OBJECT_OT_pbraudio_add_to_list)
 
@@ -61,10 +60,15 @@ class OBJECT_OT_pbraudio_remove_from_list(Operator):
     def execute(self, context):
         obj = context.object
         
-        # Remove the active item
         if obj.pbraudio_connected_index >= 0 and obj.pbraudio_connected_index < len(obj.pbraudio_connected):
+            # Remove first the object from the connected object
+            connected_obj = bpy.data.objects[obj.pbraudio_connected[obj.pbraudio_connected_index].connected_object]
+            for idx in range(len(connected_obj.pbraudio_connected.values())):
+                if connected_obj.pbraudio_connected[idx].connected_object == obj.name:
+                    connected_obj.pbraudio_connected.remove(idx)
+            # Remove the active item
             obj.pbraudio_connected.remove(obj.pbraudio_connected_index)
-            
+        
             # Adjust index if needed
             if obj.pbraudio_connected_index >= len(obj.pbraudio_connected):
                 obj.pbraudio_connected_index = len(obj.pbraudio_connected) - 1
@@ -105,10 +109,16 @@ class OBJECT_OT_pbraudio_refresh_list(Operator):
         
         # Add all objects from collection
         for collection_obj in collection.objects.values():
-            new_item = obj.pbraudio_connected.add()
-            new_item.connected_object = collection_obj.name
-            new_item.connected_value = 0.5
+            if collection_obj.type == 'MESH' and not obj == collection_obj:
+                new_item = obj.pbraudio_connected.add()
+                new_item.connected_object = collection_obj.name
+                new_item.connected_value = 0.5
         
+                # Add object to the connected object
+                obj_connected = bpy.data.objects[collection_obj.name]
+                new_connect = obj_connected.pbraudio_connected.add()
+                new_connect.connected_object = obj.name
+
         obj.pbraudio_connected_index = 0 if collection.objects else -1
         
         return {'FINISHED'}

@@ -1,6 +1,6 @@
 import bpy
 import numpy as np
-import os
+import os, json
 from mathutils import Matrix
 from bpy_extras.io_utils import axis_conversion
 
@@ -9,14 +9,17 @@ class MeshToNumpyExporter:
         np.set_printoptions(precision=decimals, floatmode='fixed', threshold=np.inf)
         self.decimals = decimals
         self.scale_factor = 1.0  # Blender units to meters
+        collision_collection = scene.pbraudio.collision_collection.name_full
+        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+        os.makedirs(self.export_path, exist_ok=True)
         system = {}
         system["sample_rate"] = scene.pbraudio.sample_rate
-        system["bit_depth"] = scene.pbraudio.sample_rate
-        system["fps"] = scene.pbraudio.sample_rate
-        system["fps_base"] = scene.pbraudio.sample_rate
+        system["bit_depth"] = scene.pbraudio.bit_depth.replace('BIT', '')
+        system["fps"] = scene.render.fps
+        system["fps_base"] = scene.render.fps_base
         system["subframes"] = 1
         system["collision_margin"] = scene.pbraudio.collision_margin
-        system["cache_path"] = scene.pbraudio.cache_path
+        system["cache_path"] = self.export_path
         self.config = {}
         self.config["system"] = system
 
@@ -126,32 +129,14 @@ class MeshToNumpyExporter:
             'faces': faces,
         }
     
-    def export_animation(self, obj, output_path, start_frame=None, end_frame=None):
+    def export_animation(self, obj, start_frame=None, end_frame=None):
         """Export animation sequence"""
 
         obj.select_set(True)
         name = obj.name_full.replace('.', '_')
         
-        acoustic_shader = {}
-        acoustic_shader["sound_speed"] = obj.pbraudio.sound_speed
-        acoustic_shader["young_modulus"] = obj.pbraudio.young_modulus
-        acoustic_shader["poisson_ratio"] = obj.pbraudio.poisson_ratio
-        acoustic_shader["density"] = obj.pbraudio.density
-        acoustic_shader["damping"] = obj.pbraudio.damping
-        acoustic_shader["friction"] = obj.pbraudio.friction
-        acoustic_shader["roughness"] = obj.pbraudio.roughness
-        acoustic_shader["low_frequency"] = obj.pbraudio.low_frequency
-        acoustic_shader["high_frequency"] =  obj.pbraudio.high_frequency
-
-        object = {}
-        object["idx"] = self.obj_idx
-        object["name"] = name
-        object["acoustic_shader"] = acoustic_shader
-        object["ground"] = obj.pbraudio.ground
-
-        os.makedirs(output_path, exist_ok=True)
-        os.makedirs(f"{output_path}/pose", exist_ok=True)
-        os.makedirs(f"{output_path}/{name}", exist_ok=True)
+        os.makedirs(f"{self.export_path}/data/pose", exist_ok=True)
+        os.makedirs(f"{self.export_path}/data/{name}", exist_ok=True)
         scene = bpy.context.scene
 
         if start_frame is None:
@@ -171,7 +156,13 @@ class MeshToNumpyExporter:
 
         location = np.round(np.array(location), self.decimals)
         rotation = np.round(np.array(rotation), self.decimals)
-        output_pose = os.path.join(output_path, f"pose/{name}.npz")
+        output_pose = os.path.join(self.export_path, f"data/pose/{name}.npz")
+
+        object = {}
+        object["idx"] = self.obj_idx
+        object["name"] = name
+        object["obj_path"] = f"{self.export_path}/data/{name}"
+        object["pose_path"] = f"{self.export_path}/data/pose"
 
         # verify is not static
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
@@ -183,7 +174,7 @@ class MeshToNumpyExporter:
             for frame in range(start_frame, end_frame + 1):
                 scene.frame_float = frame
                 bpy.context.view_layer.update()
-                print(f"Exporting {obj.name} frame {frame} in {output_path}/{name}...")
+                print(f"Exporting {obj.name} frame {frame} in {self.export_path}/data/{name}...")
                 frame_result = self.export_frame(obj, frame)
             
                 # Store each component separately for easy access
@@ -192,14 +183,14 @@ class MeshToNumpyExporter:
                 frame_data[f'faces'] = frame_result['faces']
 
                 # Save to npz
-                output_file = os.path.join(output_path, f"{name}/{name}_{frame:05d}.npz")
+                output_file = os.path.join(self.export_path, f"data/{name}/{name}_{frame:05d}.npz")
                 np.savez_compressed(output_file, **frame_data)
         else:
             object["static"] = True
             print(f"{obj.name} is static...")
             print(f"Exporting pose for {obj.name} to {output_pose}...")
             np.savez_compressed(output_pose, location=location[0], rotation=rotation[0])            
-            print(f"Exporting {obj.name} in {output_path}/{name}...")
+            print(f"Exporting {obj.name} in {self.export_path}/data/{name}...")
             frame_result = self.export_frame(obj, start_frame)
 
             # Store each component separately for easy access
@@ -208,8 +199,53 @@ class MeshToNumpyExporter:
             frame_data[f'faces'] = frame_result['faces']
 
             # Save to npz
-            output_file = os.path.join(output_path, f"{name}/{name}.npz")
+            output_file = os.path.join(self.export_path, f"data/{name}/{name}.npz")
             np.savez_compressed(output_file, **frame_data)
-        obj.select_set(False)            
+
+        object["ground"] = obj.pbraudio.ground
+
+        connected = []
+        for item in obj.pbraudio_connected.values():
+            connected.append([item.connected_object.replace('.', '_'), item.connected_value/10])
+        if len(connected) == 0:
+            connected = False
+        object["connected"] = connected
+
+        acoustic_shader = {}
+        acoustic_shader["sound_speed"] = obj.pbraudio.sound_speed
+        acoustic_shader["young_modulus"] = obj.pbraudio.young_modulus * 1E9
+        acoustic_shader["poisson_ratio"] = obj.pbraudio.poisson_ratio
+        acoustic_shader["density"] = obj.pbraudio.density
+        acoustic_shader["damping"] = obj.pbraudio.damping / 100
+        acoustic_shader["friction"] = obj.pbraudio.friction
+        acoustic_shader["roughness"] = obj.pbraudio.roughness
+        acoustic_shader["low_frequency"] = obj.pbraudio.low_frequency
+        acoustic_shader["high_frequency"] =  obj.pbraudio.high_frequency
+
+        object["acoustic_shader"] = acoustic_shader
+
         self.objects.append(object)
         self.obj_idx += 1
+
+        obj.select_set(False)            
+
+
+    def save_config(self):
+        # replace object name with idx in connected
+        for obj_idx in range(len(self.objects)):
+            connected = self.objects[obj_idx]["connected"]
+            if not isinstance(connected, bool):
+                for conn_idx in range(len(connected)):
+                    name = connected[conn_idx][0]
+                    for item in self.objects:
+                        if item["name"] == name:
+                            connected[conn_idx][0] = item["idx"]
+
+        # add objects to config
+        self.config["objects"] = self.objects
+
+        # create config file
+        config_file = f"{self.export_path}/config.json"
+        js = json.dumps(self.config, indent=2, separators=(',', ': '))
+        with open(config_file, 'w+') as json_file:
+            json_file.write(js)

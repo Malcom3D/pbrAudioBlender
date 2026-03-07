@@ -86,6 +86,7 @@ wheels = [
    "./downloads/rtree-1.4.1-py3-none-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/pillow-12.0.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/meshlib-3.0.9.196-py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl",
+   "./downloads/embreex-2.17.7.post7-cp311-cp311-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl",
    "./wheels/pytinybvh-1.2.1-cp311-cp311-linux_x86_64.whl",
    "./wheels/pbraudiorender-0.1.dev25+g18aa121b5-py3-none-any.whl"
 ]

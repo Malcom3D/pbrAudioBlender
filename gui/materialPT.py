@@ -106,5 +106,9 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
         col.separator()
         col.operator("object.pbraudio_refresh_list", icon='FILE_REFRESH', text="")
         col.operator("object.pbraudio_clear_list", icon='TRASH', text="")
+
+#        layout.prop(obj.pbraudio, "selected_connected_object", text="Select Object")
+        layout.prop_search(obj.pbraudio, "selected_connected_object", collection, "objects", icon='OBJECT_DATA')
+#        layout.template_ID(obj.pbraudio, "selected_connected_object")
         
 classes.append(PBRAUDIO_CONNECTED_object_list)

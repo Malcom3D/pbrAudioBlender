@@ -24,6 +24,19 @@ ExternalProject_Add(
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
 ExternalProject_Add(
+    embreex
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/60/10/c66c023923ca038d3081bf62e6a92ddefbd780e5ce0b7d5383abf10dc30f/embreex-2.17.7.post7-cp311-cp311-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=c4775a4d01f357c7a29ed7843ec811d59c778149f5fd4fdca2f3f42dc6ff45b6
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
     fast-simplification
     PREFIX "blender"
     URL    https://files.pythonhosted.org/packages/8c/44/ae0b556d62ed6a8c6f290435f4764fae9944f6857171b60613ab35f0f1a7/fast_simplification-0.1.13-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
@@ -575,6 +588,7 @@ ExternalProject_Get_property(zarr DOWNLOAD_DIR)
 if (NOT WIN32)
   add_custom_target (blender 
     DEPENDS meshlib
+    DEPENDS embreex
     DEPENDS fast-simplification
     DEPENDS pillow
     DEPENDS rtree
@@ -674,6 +688,7 @@ if (NOT WIN32)
   )
 
   add_dependencies(blender meshlib)
+  add_dependencies(blender embreex)
   add_dependencies(blender fast-simplification)
   add_dependencies(blender pillow)
   add_dependencies(blender rtree)

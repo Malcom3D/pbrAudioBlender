@@ -23,15 +23,19 @@ from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty, P
 classes = []
 
 class PBRAudioSceneProperties(PropertyGroup):
-    def set_sample_rate(self, context):
+    def set_quality(self, context):
         if 'LOW' in self.audio_quality:
             self.sample_rate = 24000
+            self.bit_depth = '16BIT'
         if 'MEDIUM' in self.audio_quality:
             self.sample_rate = 48000
+            self.bit_depth = '24BIT'
         if 'HIGH' in self.audio_quality:
             self.sample_rate = 96000
+            self.bit_depth = '24BIT'
         if 'ULTRA' in self.audio_quality:
             self.sample_rate = 192000
+            self.bit_depth = '32BIT'
 
     def set_preview_sample_rate(self, context):
         if 'LOW' in self.preview_audio_quality:
@@ -62,7 +66,7 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('ULTRA', "Ultra", "Ultra quality, very slow rendering"),
         ],
         default='MEDIUM',
-        update=set_sample_rate
+        update=set_quality
     )
 
     sample_rate: IntProperty(
@@ -83,6 +87,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     file_format: EnumProperty(
         name="File Format",
         items=[
+            ('RAW', "RAW: un-containerized and uncompressed RAW Waveform Audio File Format", "RAW Waveform Audio File Format"),
             ('PCM', "WAV: PCM Waveform Audio File Format", "PCM Waveform Audio File Format"),
             ('BWF', "WAV: Broadcast Wave Format", "Broadcast Wave Format"),
         ],

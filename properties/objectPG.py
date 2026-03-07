@@ -25,6 +25,17 @@ from ..nodetrees import materialsNT
 classes = []
 
 class PBRAudioConnectedObjectList(PropertyGroup):
+    def update_connected_value(self, context):
+        object = context.object
+        items = object.pbraudio_connected.values()
+        if len(items) > 0:
+            for item in items:
+                connected = bpy.data.objects[item.connected_object]
+                for connected_item in connected.pbraudio_connected.values():
+                    if object.name == connected_item.connected_object:
+                        if not connected_item.connected_value == item.connected_value:
+                            connected_item.connected_value = item.connected_value
+
     """Connected Object properties"""
     connected_object: StringProperty(
         name="Connected Object Name",
@@ -37,7 +48,8 @@ class PBRAudioConnectedObjectList(PropertyGroup):
         default=0.5,
         min=0.0,
         max=1.0,
-        subtype='FACTOR'
+        subtype='FACTOR',
+        update=update_connected_value
     )
 classes.append(PBRAudioConnectedObjectList)
 
@@ -50,6 +62,9 @@ class PBRAudioObjectProperties(PropertyGroup):
                 if hasattr(obj.pbraudio, 'ground_disable'):
                     obj.pbraudio.ground_disable = object.pbraudio.ground
 
+    def poll_selected_connected_object(self, object):
+        return object.type == 'MESH' and not self.name == object.name
+
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
@@ -58,69 +73,95 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     """Acoustic Shader properties"""
     sound_speed: FloatProperty(
-        name="Sound Speed",
-        default=0.0
+        name="Sound Speed in m/s",
+        default=1000.0,
+        soft_min=0.0,
+        soft_max=20000.0
     )
 
     young_modulus: FloatProperty(
-        name="Young modulus",
-        default=0.0
+        name="Young modulus in GPa",
+        default=1.0,
+        min=0.0,
+        soft_max=1500.0
     )
 
     poisson_ratio: FloatProperty(
         name="Poisson Ratio",
-        default=0.0
+        default=0.46,
+        min=-1.0,
+        max=0.5
     )
 
     density: FloatProperty(
-        name="Density",
-        default=0.0
+        name="Density in kg/m³",
+        default=800.0,
+        min=0.0,
+        soft_max=25000.0
     )
 
     damping: FloatProperty(
-        name="Damping",
-        default=0.0
+        name="Rayleigh Damping in %",
+        default=5,
+        min=0.0,
+        max=100
     )
 
     friction: FloatProperty(
         name="Friction",
-        default=0.0
+        default=0.0,
+        min=0.0,
+        soft_max=1.0
     )
 
     roughness: FloatProperty(
-        name="Roughness",
-        default=0.0
+        name="Normalized Roughness",
+        default=0.0,
+        min=0.0,
+        max=1.0
     )
 
     low_frequency: FloatProperty(
         name="Low Frequency",
-        default=1.0
+        default=5.0,
+        min=0.0,
+        soft_max=1000.0
     )
 
     high_frequency: FloatProperty(
         name="High Frequency",
-        default=24000.0
+        default=24000.0,
+        soft_min=10000.0,
+        max=96000.0
     )
 
     """Acoustic Properties properties"""
     absorption: FloatProperty(
         name="Absorption",
-        default=0.0
+        default=0.0,
+        min=0.0,
+        max=1.0
     )
 
     refraction: FloatProperty(
         name="Refraction",
-        default=0.0
+        default=0.0,
+        min=0.0,
+        max=1.0
     )
 
     reflection: FloatProperty(
         name="Reflection",
-        default=0.0
+        default=0.0,
+        min=0.0,
+        max=1.0
     )
 
     scattering: FloatProperty(
         name="Scattering",
-        default=0.0
+        default=0.0,
+        min=0.0,
+        max=1.0
     )
 
     ground: BoolProperty(
@@ -132,6 +173,13 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     ground_disable: BoolProperty(
         default=False
+    )
+
+    """Connected Object selection properties for pbrAudio"""
+    selected_connected_object: PointerProperty(
+        name="selected_connected_object",
+        type=bpy.types.Object,
+        poll=poll_selected_connected_object
     )
 
     """Source properties for pbrAudio"""

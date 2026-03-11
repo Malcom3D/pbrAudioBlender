@@ -78,6 +78,12 @@ class PBRAudioObjectProperties(PropertyGroup):
 #        description="Acoustic material assigned via node tree"
 #    )
 
+    stochastic_variation: BoolProperty(
+        name="stochastic_variation",
+        description="Add stochastic variation based on material properties",
+        default=False,
+    )
+
     ground: BoolProperty(
         name="Define as Ground",
         description="Enable GroundSound Synth",

@@ -76,63 +76,72 @@ class AcousticShaderNode(AcousticMaterialNode):
         name="Sound Speed in m/s",
         default=1000.0,
         soft_min=0.0,
-        soft_max=20000.0
+        soft_max=20000.0,
+        precision=5
     )
 
     pbraudio_young_modulus: FloatProperty(
         name="Young modulus in GPa",
-        default=1.0,
+        default=0.005,
         min=0.0,
-        soft_max=1500.0
+        soft_max=1500.0,
+        precision=5
     )
 
     pbraudio_poisson_ratio: FloatProperty(
         name="Poisson Ratio",
         default=0.46,
         min=-1.0,
-        max=0.5
+        max=0.5,
+        precision=5
     )
 
     pbraudio_density: FloatProperty(
         name="Density in kg/m³",
         default=800.0,
         min=0.0,
-        soft_max=25000.0
+        soft_max=25000.0,
+        precision=5
     )
 
     pbraudio_damping: FloatProperty(
         name="Rayleigh Damping in %",
         default=5,
         min=0.0,
-        max=100
+        max=100,
+        precision=5
     )
 
     pbraudio_friction: FloatProperty(
         name="Friction",
-        default=0.0,
+        default=0.5,
         min=0.0,
-        soft_max=1.0
+        soft_max=1.0,
+        precision=5
     )
 
     pbraudio_roughness: FloatProperty(
         name="Normalized Roughness",
-        default=0.0,
+        default=0.4,
         min=0.0,
-        max=1.0
+        max=1.0,
+        precision=5
     )
 
     pbraudio_low_frequency: FloatProperty(
         name="Low Frequency",
         default=5.0,
         min=0.0,
-        soft_max=1000.0
+        soft_max=1000.0,
+        precision=5
     )
 
     pbraudio_high_frequency: FloatProperty(
         name="High Frequency",
         default=24000.0,
         soft_min=10000.0,
-        max=96000.0
+        max=96000.0,
+        precision=5
     )
 
     def init(self, context):

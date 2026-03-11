@@ -24,7 +24,7 @@ classes = []
 class AcousticMaterialNodeTree(NodeTree):
     """Node tree for acoustic-based materials"""
     bl_idname = 'AcousticMaterialNodeTree'
-    bl_label = "Acoustic Material"
+    bl_label = "AcousticMaterial"
     bl_icon = 'SOUND'
 
     @classmethod

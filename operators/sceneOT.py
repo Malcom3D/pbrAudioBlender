@@ -86,12 +86,12 @@ class PBRAUDIO_OT_Render(Operator):
                 process = pbrAudio_render(config_file)
                 # Monitor completion
                 bpy.app.timers.register(lambda: self.check_process(scene, process), first_interval=1.0)
-                self.report({'INFO'}, "Started async render processing")
+                self.report({'INFO'}, "Started async synth render processing")
         return {'FINISHED'}
     
     def check_process(self, scene, process):
         if not process.is_alive():
-            print("Async processing completed")
+            print("Async synth render processing completed")
             # Update UI here
             scene.pbraudio.cache_status = True
             return None
@@ -114,12 +114,12 @@ class PBRAUDIO_OT_preRender(Operator):
                 process = pbrAudio_prerender(config_file)
                 # Monitor completion
                 bpy.app.timers.register(lambda: self.check_process(scene, process), first_interval=1.0)
-                self.report({'INFO'}, "Started async prerender processing")
+                self.report({'INFO'}, "Started async synth prerender processing")
         return {'FINISHED'}
 
     def check_process(self, scene, process):
         if not process.is_alive():
-            print("Async processing completed")
+            print("Async synth prerender processing completed")
             # Update UI here
             scene.pbraudio.prerender = True
             return None
@@ -142,12 +142,12 @@ class PBRAUDIO_OT_bake(Operator):
                 process = pbrAudio_bake(config_file)
                 # Monitor completion
                 bpy.app.timers.register(lambda: self.check_process(scene, process), first_interval=1.0)
-                self.report({'INFO'}, "Started async bake processing")
+                self.report({'INFO'}, "Started async synth bake processing")
         return {'FINISHED'}
 
     def check_process(self, scene, process):
         if not process.is_alive():
-            print("Async processing completed")
+            print("Async synth bake processing completed")
             # Update UI here
             scene.pbraudio.bake = True
             return None
@@ -191,12 +191,12 @@ class PBRAUDIO_OT_prebake(Operator):
 
                 # Monitor completion
                 bpy.app.timers.register(lambda: self.check_process(scene, process), first_interval=1.0)
-                self.report({'INFO'}, "Started async prebake processing")
+                self.report({'INFO'}, "Started async synth prebake processing")
         return {'FINISHED'}
 
     def check_process(self, scene, process):
         if not process.is_alive():
-            print("Async processing completed")
+            print("Async synth prebake processing completed")
             # Update UI here
             scene.pbraudio.prebake = True
             scene.pbraudio.cache_status = True

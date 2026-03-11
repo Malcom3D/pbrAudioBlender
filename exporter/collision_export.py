@@ -57,7 +57,13 @@ class MeshToNumpyExporter:
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):
                 node_property = "node." + property
-                acoustic_dict[property.replace('pbraudio_', '')] = eval(node_property)
+                acoustic_value = eval(node_property)
+                if 'young_modulus' in property:
+                    acoustic_value *= 1E9
+                elif 'poisson_ratio' in property:
+                    acoustic_value *= 0.01
+ 
+                acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
 
         return acoustic_dict
 
@@ -247,6 +253,7 @@ class MeshToNumpyExporter:
             output_file = os.path.join(self.export_path, f"data/{name}/{name}.npz")
             np.savez_compressed(output_file, **frame_data)
 
+        object["stochastic_variation"] = obj.pbraudio.stochastic_variation
         object["ground"] = obj.pbraudio.ground
 
         connected = []

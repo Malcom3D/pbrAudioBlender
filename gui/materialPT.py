@@ -43,6 +43,7 @@ class PBRAUDIO_PT_material_panel(Panel):
 
         if not object == AcousticDomain:
                 layout.template_ID(snode, "nodetree", new="material.pbraudio_add")
+                layout.prop(snode, "stochastic_variation", toggle=True)
                 if not object.pbraudio.ground_disable:
                     layout.prop(snode, "ground", toggle=True)
         else:

@@ -52,6 +52,14 @@ class PBRAUDIO_OT_material_add(Operator):
         if context.active_object and context.active_object.pbraudio:
             context.active_object.pbraudio.nodetree = nodetree
         
+        # Set the node tree as active in the node editor
+        for area in context.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                for space in area.spaces:
+                    if space.type == 'NODE_EDITOR':
+                        space.node_tree = nodetree
+                        break
+
         self.report({'INFO'}, f"Created pbrAudio node tree: {nodetree.name}")
         return {'FINISHED'}
 

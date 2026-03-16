@@ -147,27 +147,27 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=1E-1
     ) 
 
+    fracture: BoolProperty(
+        name="fracture",
+        description="Bake fracture data for sound synthesis",
+        default=False
+    )
+
     bake: BoolProperty(
         name="bake",
-        description="Baked prebaked synthesized sound",
+        description="Bake prebaked data for sound synthesis",
         default=False
     )
 
     prebake: BoolProperty(
         name="prebake",
-        description="Prebaked synthesized sound",
+        description="Prebake baked physics dynamics for sound synthesis",
         default=False
     )
 
-    prerender: BoolProperty( 
-        name="prerender", 
-        description="Prerender prebaked synthesized sound",
-        default=False
-    )
-
-    render: BoolProperty( 
-        name="render", 
-        description="Render prerendered synthesized sound",
+    physics: BoolProperty( 
+        name="physics", 
+        description="Bake physics dynamics",
         default=False
     )
 

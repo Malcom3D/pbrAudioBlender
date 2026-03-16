@@ -22,9 +22,9 @@ from bpy.types import Operator
 
 classes = []
 
-class OBJECT_OT_pbraudio_add_to_list(Operator):
+class OBJECT_OT_pbraudio_add_to_connected_list(Operator):
     """Add selected objects to the list"""
-    bl_idname = "object.pbraudio_add_to_list"
+    bl_idname = "object.pbraudio_add_to_connected_list"
     bl_label = "Add Selected Objects"
     bl_description = "Add selected objects from the collection to the list"
     
@@ -49,11 +49,11 @@ class OBJECT_OT_pbraudio_add_to_list(Operator):
             new_connect.connected_object = obj.name
             obj.pbraudio.selected_connected_object = None
         return {'FINISHED'}
-classes.append(OBJECT_OT_pbraudio_add_to_list)
+classes.append(OBJECT_OT_pbraudio_add_to_connected_list)
 
-class OBJECT_OT_pbraudio_remove_from_list(Operator):
+class OBJECT_OT_pbraudio_remove_from_connected_list(Operator):
     """Remove selected item from the list"""
-    bl_idname = "object.pbraudio_remove_from_list"
+    bl_idname = "object.pbraudio_remove_from_connected_list"
     bl_label = "Remove Selected"
     bl_description = "Remove selected item from the list"
     
@@ -74,11 +74,11 @@ class OBJECT_OT_pbraudio_remove_from_list(Operator):
                 obj.pbraudio_connected_index = len(obj.pbraudio_connected) - 1
         
         return {'FINISHED'}
-classes.append(OBJECT_OT_pbraudio_remove_from_list)
+classes.append(OBJECT_OT_pbraudio_remove_from_connected_list)
 
-class OBJECT_OT_pbraudio_clear_list(Operator):
+class OBJECT_OT_pbraudio_clear_connected_list(Operator):
     """Clear all items from the list"""
-    bl_idname = "object.pbraudio_clear_list"
+    bl_idname = "object.pbraudio_clear_connected_list"
     bl_label = "Clear List"
     bl_description = "Clear all items from the list"
     
@@ -90,11 +90,11 @@ class OBJECT_OT_pbraudio_clear_list(Operator):
         obj.pbraudio_connected_index = -1
         
         return {'FINISHED'}
-classes.append(OBJECT_OT_pbraudio_clear_list)
+classes.append(OBJECT_OT_pbraudio_clear_connected_list)
 
-class OBJECT_OT_pbraudio_refresh_list(Operator):
+class OBJECT_OT_pbraudio_refresh_connected_list(Operator):
     """Refresh list with objects from collection"""
-    bl_idname = "object.pbraudio_refresh_list"
+    bl_idname = "object.pbraudio_refresh_connected_list"
     bl_label = "Refresh List"
     bl_description = "Refresh list with objects from the collection"
     
@@ -122,4 +122,105 @@ class OBJECT_OT_pbraudio_refresh_list(Operator):
         obj.pbraudio_connected_index = 0 if collection.objects else -1
         
         return {'FINISHED'}
-classes.append(OBJECT_OT_pbraudio_refresh_list)
+classes.append(OBJECT_OT_pbraudio_refresh_connected_list)
+
+class OBJECT_OT_pbraudio_add_to_shard_list(Operator):
+    """Add selected objects to the list"""
+    bl_idname = "object.pbraudio_add_to_shard_list"
+    bl_label = "Add Selected Objects"
+    bl_description = "Add selected objects from the collection to the list"
+    
+    def execute(self, context):
+        obj = context.object
+        selected_obj = obj.pbraudio.selected_shard_object
+        if not selected_obj == None:
+            items = obj.pbraudio_shard.values()
+            if len(items) > 0:
+                for item in items:
+                    if selected_obj.name in item.shard_object:
+                        return {'FINISHED'}
+                    else:
+                        break
+
+            # Add object from the selection menu to the list
+            new_item = obj.pbraudio_shard.add()
+            new_item.shard_object = selected_obj.name
+        
+            # Add object to the shard object
+            new_shard = selected_obj.pbraudio_shard.add()
+            new_shard.shard_object = obj.name
+            obj.pbraudio.selected_shard_object = None
+        return {'FINISHED'}
+classes.append(OBJECT_OT_pbraudio_add_to_shard_list)
+
+class OBJECT_OT_pbraudio_remove_from_shard_list(Operator):
+    """Remove selected item from the list"""
+    bl_idname = "object.pbraudio_remove_from_shard_list"
+    bl_label = "Remove Selected"
+    bl_description = "Remove selected item from the list"
+    
+    def execute(self, context):
+        obj = context.object
+        
+        if obj.pbraudio_shard_index >= 0 and obj.pbraudio_shard_index < len(obj.pbraudio_shard):
+            # Remove first the object from the shard object
+            shard_obj = bpy.data.objects[obj.pbraudio_shard[obj.pbraudio_shard_index].shard_object]
+            for idx in range(len(shard_obj.pbraudio_shard.values())):
+                if shard_obj.pbraudio_shard[idx].shard_object == obj.name:
+                    shard_obj.pbraudio_shard.remove(idx)
+            # Remove the active item
+            obj.pbraudio_shard.remove(obj.pbraudio_shard_index)
+        
+            # Adjust index if needed
+            if obj.pbraudio_shard_index >= len(obj.pbraudio_shard):
+                obj.pbraudio_shard_index = len(obj.pbraudio_shard) - 1
+        
+        return {'FINISHED'}
+classes.append(OBJECT_OT_pbraudio_remove_from_shard_list)
+
+class OBJECT_OT_pbraudio_clear_shard_list(Operator):
+    """Clear all items from the list"""
+    bl_idname = "object.pbraudio_clear_shard_list"
+    bl_label = "Clear List"
+    bl_description = "Clear all items from the list"
+    
+    def execute(self, context):
+        obj = context.object
+        
+        # Clear the list
+        obj.pbraudio_shard.clear()
+        obj.pbraudio_shard_index = -1
+        
+        return {'FINISHED'}
+classes.append(OBJECT_OT_pbraudio_clear_shard_list)
+
+class OBJECT_OT_pbraudio_refresh_shard_list(Operator):
+    """Refresh list with objects from collection"""
+    bl_idname = "object.pbraudio_refresh_shard_list"
+    bl_label = "Refresh List"
+    bl_description = "Refresh list with objects from the collection"
+    
+    def execute(self, context):
+        obj = context.object
+        
+        # Get the collection the object belongs to
+        collection = obj.users_collection[0]
+        
+        # Clear existing list
+        obj.pbraudio_shard.clear()
+        
+        # Add all objects from collection
+        for collection_obj in collection.objects.values():
+            if collection_obj.type == 'MESH' and not obj == collection_obj:
+                new_item = obj.pbraudio_shard.add()
+                new_item.shard_object = collection_obj.name
+        
+                # Add object to the shard object
+                obj_shard = bpy.data.objects[collection_obj.name]
+                new_shard = obj_shard.pbraudio_shard.add()
+                new_shard.shard_object = obj.name
+
+        obj.pbraudio_shard_index = 0 if collection.objects else -1
+        
+        return {'FINISHED'}
+classes.append(OBJECT_OT_pbraudio_refresh_shard_list)

@@ -53,6 +53,14 @@ class PBRAudioConnectedObjectList(PropertyGroup):
     )
 classes.append(PBRAudioConnectedObjectList)
 
+class PBRAudioShardObjectList(PropertyGroup):
+    """Connected Object properties"""
+    shard_object: StringProperty(
+        name="Shard Object Name",
+        description="Name of the shard object"
+    )
+classes.append(PBRAudioShardObjectList)
+
 class PBRAudioObjectProperties(PropertyGroup):
     def disable_ground(self, context):
         object = context.object
@@ -65,21 +73,23 @@ class PBRAudioObjectProperties(PropertyGroup):
     def poll_selected_connected_object(self, object):
         return object.type == 'MESH' and not self.name == object.name
 
+    def poll_selected_shard_object(self, object):
+        if object.type == 'MESH' and not self.name == object.name:
+            for shard_obj in object.pbraudio_shard.values():
+                if object.name == shard_obj.shard_object:
+                    return False
+            return True
+        else:
+            return False
+
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
         type=materialsNT.AcousticMaterialNodeTree
     )
 
-#    # Reference to acoustic material from node tree output
-#    acoustic_material: PointerProperty(
-#        name="Acoustic Material",
-#        type=bpy.types.PropertyGroup,  # Will be AcousticMaterialProperties
-#        description="Acoustic material assigned via node tree"
-#    )
-
     stochastic_variation: BoolProperty(
-        name="stochastic_variation",
+        name="Stochastic Variation",
         description="Add stochastic variation based on material properties",
         default=False,
     )
@@ -100,6 +110,20 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="selected_connected_object",
         type=bpy.types.Object,
         poll=poll_selected_connected_object
+    )
+
+    """Fractured Object properties for pbrAudio"""
+    fractured: BoolProperty(
+        name="Object is fractured",
+        description="Enable fractureSound Synth",
+        default=False
+    )
+
+    """Shards of Object selection properties for pbrAudio"""
+    selected_shard_object: PointerProperty(
+        name="selected_shard_object",
+        type=bpy.types.Object,
+        poll=poll_selected_shard_object
     )
 
     """Source properties for pbrAudio"""

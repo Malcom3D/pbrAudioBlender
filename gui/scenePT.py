@@ -35,6 +35,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         return context.scene.render.engine == 'PBRAUDIO'
 
     def draw(self, context):
+        scene = context.scene
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
@@ -45,11 +46,15 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin")
 
         # operator button
-        layout.operator('scene.pbraudio_clear_cache', emboss=not scene.pbraudio.cache_status)
-        layout.operator('scene.pbraudio_prebake', emboss=not scene.pbraudio.prebake)
-        layout.operator('scene.pbraudio_bake', emboss=scene.pbraudio.prebake)
-        layout.operator('scene.pbraudio_prerender', emboss=scene.pbraudio.bake)
-        layout.operator('scene.pbraudio_render', emboss=scene.pbraudio.prerender)
+        layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
+        layout.operator('scene.pbraudio_physics', emboss=True if not scene.pbraudio.physics else False)
+        layout.operator('scene.pbraudio_prebake', emboss=True if not scene.pbraudio.prebake else False)
+        layout.operator('scene.pbraudio_bake', emboss=True if not scene.pbraudio.bake else False)
+        for obj in scene.pbraudio.collision_collection.objects.values():
+            if obj.pbraudio.fractured and not len(obj.pbraudio_shard.values()) == 0:
+                break
+        if obj.pbraudio.fractured:
+            layout.operator('scene.pbraudio_fracture', emboss=True if not scene.pbraudio.fracture else False)
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 

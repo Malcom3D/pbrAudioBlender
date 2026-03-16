@@ -60,7 +60,7 @@ class MeshToNumpyExporter:
                 acoustic_value = eval(node_property)
                 if 'young_modulus' in property:
                     acoustic_value *= 1E9
-                elif 'poisson_ratio' in property:
+                elif 'damping' in property:
                     acoustic_value *= 0.01
  
                 acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
@@ -101,6 +101,7 @@ class MeshToNumpyExporter:
         depsgraph = bpy.context.evaluated_depsgraph_get()
         eval_obj = obj.evaluated_get(depsgraph)
         mesh = eval_obj.to_mesh()
+#        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
         
         # Triangulate if needed
         if len(mesh.polygons) > 0 and any(len(p.vertices) > 3 for p in mesh.polygons):
@@ -108,15 +109,18 @@ class MeshToNumpyExporter:
         
         # Get world matrix
         world_matrix = self.get_world_matrix(eval_obj)
+#        world_matrix = self.get_world_matrix(obj)
                 
         # Get center position and rotation
         location = list([world_matrix.translation.x * self.scale_factor, world_matrix.translation.y * self.scale_factor, world_matrix.translation.z * self.scale_factor])
 
         # Extract rotation matrix (3x3)
         rotation = list([eval_obj.rotation_euler.x, eval_obj.rotation_euler.y, eval_obj.rotation_euler.z])
+#        rotation = list([obj.rotation_euler.x, obj.rotation_euler.y, obj.rotation_euler.z])
         
         # Clean up
         eval_obj.to_mesh_clear()
+#        obj.to_mesh_clear()
         
         return {
             'location': location,
@@ -132,6 +136,7 @@ class MeshToNumpyExporter:
         depsgraph = bpy.context.evaluated_depsgraph_get()
         eval_obj = obj.evaluated_get(depsgraph)
         mesh = eval_obj.to_mesh()
+#        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
         
         # Triangulate if needed
         if len(mesh.polygons) > 0 and any(len(p.vertices) > 3 for p in mesh.polygons):
@@ -139,6 +144,7 @@ class MeshToNumpyExporter:
         
         # Get world matrix
         world_matrix = self.get_world_matrix(eval_obj)
+#        world_matrix = self.get_world_matrix(obj)
         
         # Get vertices in world coordinates (meters)
         vertices = np.zeros((len(mesh.vertices), 3), dtype=np.float32)
@@ -168,6 +174,7 @@ class MeshToNumpyExporter:
 
         # Clean up
         eval_obj.to_mesh_clear()
+#        obj.to_mesh_clear()
         
         # Round to specified decimals
         if self.decimals is not None:
@@ -262,6 +269,15 @@ class MeshToNumpyExporter:
         if len(connected) == 0:
             connected = False
         object["connected"] = connected
+
+        object["fractured"] = obj.pbraudio.fractured
+        shard = []
+        if obj.pbraudio.fractured:
+            for item in obj.pbraudio_shard.values():
+                shard.append([item.shard_object.replace('.', '_')])
+        if len(shard) == 0:
+            shard = False
+        object["shard"] = shard
 
         # Get acoustic properties from material
         acoustic_shader = self.get_acoustic_properties_from_material(obj)

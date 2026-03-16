@@ -102,12 +102,73 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
         
         # Control buttons
         col = row.column(align=True)
-        col.operator("object.pbraudio_add_to_list", icon='ADD', text="")
-        col.operator("object.pbraudio_remove_from_list", icon='REMOVE', text="")
+        col.operator("object.pbraudio_add_to_connected_list", icon='ADD', text="")
+        col.operator("object.pbraudio_remove_from_connected_list", icon='REMOVE', text="")
         col.separator()
-        col.operator("object.pbraudio_refresh_list", icon='FILE_REFRESH', text="")
-        col.operator("object.pbraudio_clear_list", icon='TRASH', text="")
+        col.operator("object.pbraudio_refresh_connected_list", icon='FILE_REFRESH', text="")
+        col.operator("object.pbraudio_clear_connected_list", icon='TRASH', text="")
 
         layout.prop_search(obj.pbraudio, "selected_connected_object", collection, "objects", icon='OBJECT_DATA')
         
 classes.append(PBRAUDIO_CONNECTED_object_list)
+
+class PBRAUDIO_SHARD_UL_object_list(UIList):
+    """UIList for displaying objects"""
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        # Customize the draw for each item
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            # Create a row with object name
+            row = layout.row(align=True)
+            row.label(text=item.shard_object)
+
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label(text=item.shard_object)
+classes.append(PBRAUDIO_SHARD_UL_object_list)
+
+class PBRAUDIO_SHARD_object_list(Panel):
+    """Panel in Material Properties tab"""
+    bl_label = "Shard Object List"
+    bl_idname = "MATERIAL_PT_shard_object_list"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "material"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO' and context.object is not None
+
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+
+        layout.prop(obj.pbraudio, "fractured", toggle=True)
+        if obj.pbraudio.fractured:
+            # Collection info
+            collection = obj.users_collection[0]
+
+            if collection:
+                layout.label(text=f"Collection: {collection.name}", icon='OUTLINER_COLLECTION')
+            else:
+                layout.label(text="Object not in any collection", icon='ERROR')
+
+            layout.separator()
+
+            # List of objects
+            row = layout.row()
+            row.template_list(
+                "PBRAUDIO_SHARD_UL_object_list", "", obj, "pbraudio_shard", obj, "pbraudio_shard_index", rows=5)
+
+            # Control buttons
+            col = row.column(align=True)
+            col.operator("object.pbraudio_add_to_shard_list", icon='ADD', text="")
+            col.operator("object.pbraudio_remove_from_shard_list", icon='REMOVE', text="")
+            col.separator()
+            col.operator("object.pbraudio_refresh_shard_list", icon='FILE_REFRESH', text="")
+            col.operator("object.pbraudio_clear_shard_list", icon='TRASH', text="")
+
+            layout.prop_search(obj.pbraudio, "selected_shard_object", collection, "objects", icon='OBJECT_DATA')
+
+classes.append(PBRAUDIO_SHARD_object_list)

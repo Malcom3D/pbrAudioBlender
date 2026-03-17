@@ -22,9 +22,9 @@ from nodeitems_utils import NodeCategory, NodeItem, register_node_categories, un
 
 classes = []
 
-from . import materialsND, worldND
+from . import worldND, materialsND, presetMaterialsND
 
-for mod in (materialsND, worldND):
+for mod in (worldND, materialsND, presetMaterialsND):
     classes += mod.classes
 
 class WorldNodeCategory(NodeCategory):
@@ -58,14 +58,30 @@ material_node_categories = [
     ]),
 ]
 
+preset_node_categories = [
+    MaterialNodeCategory("PRESET_NODES", "Preset", items=[
+        NodeItem("AcrylicShaderNode"),
+        NodeItem("AluminumShaderNode"),
+        NodeItem("AsphaltShaderNode"),
+        NodeItem("ConcreteShaderNode"),
+        NodeItem("GlassShaderNode"),
+        NodeItem("GypsumShaderNode"),
+        NodeItem("IronShaderNode"),
+        NodeItem("MarbleShaderNode"),
+        NodeItem("TimberShaderNode"),
+    ]),
+]
+
 def register():
     for cls in classes:
         register_class(cls)
     register_node_categories("WORLD", world_node_categories)
     register_node_categories("MATERIAL", material_node_categories)
+    register_node_categories("PRESET", preset_node_categories)
 
 def unregister():
-    unregister_node_categories("WORLD")
+    unregister_node_categories("PRESET")
     unregister_node_categories("MATERIAL")
+    unregister_node_categories("WORLD")
     for cls in reversed(classes):
         unregister_class(cls)

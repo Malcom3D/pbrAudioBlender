@@ -70,6 +70,7 @@ class MeshToNumpyExporter:
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""
 
+        # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         nodetree = obj.pbraudio.nodetree
         output_node = nodetree.nodes['Material Output']
 

@@ -52,24 +52,10 @@ classes.append(AcousticMaterialNode)
 #
 #classes.append(AudioInputNode)
 
-class AcousticPropertiesNode(AcousticMaterialNode):
-    """Acoustic properties node"""
-    bl_idname = 'AcousticPropertiesNode'
-    bl_label = "Acoustic Properties"
-
-    def init(self, context):
-        self.outputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
-        self.inputs.new('AcousticPropertiesNodeSocket', "absorption")
-        self.inputs.new('AcousticPropertiesNodeSocket', "refraction")
-        self.inputs.new('AcousticPropertiesNodeSocket', "reflection")
-        self.inputs.new('AcousticPropertiesNodeSocket', "scattering")
-
-classes.append(AcousticPropertiesNode)
-
-class AcousticShaderNode(AcousticMaterialNode):
-    """Acoustic shader node"""
-    bl_idname = 'AcousticShaderNode'
-    bl_label = "AcousticShader"
+class DefaultAcousticShaderNode(AcousticMaterialNode):
+    """Default acoustic shader node"""
+    bl_idname = 'DefaultAcousticShaderNode'
+    bl_label = "DefaultAcousticShader"
 
     """Acoustic Shader properties"""
     pbraudio_sound_speed: FloatProperty(
@@ -162,7 +148,28 @@ class AcousticShaderNode(AcousticMaterialNode):
         layout.prop(props, "pbraudio_low_frequency", slider=True)
         layout.prop(props, "pbraudio_high_frequency", slider=True)
 
+classes.append(DefaultAcousticShaderNode)
+
+class AcousticShaderNode(DefaultAcousticShaderNode):
+    """Acoustic shader node"""
+    bl_idname = 'AcousticShaderNode'
+    bl_label = "AcousticShader"
+
 classes.append(AcousticShaderNode)
+
+class AcousticPropertiesNode(AcousticMaterialNode):
+    """Acoustic properties node"""
+    bl_idname = 'AcousticPropertiesNode'
+    bl_label = "Acoustic Properties"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+        self.inputs.new('AcousticPropertiesNodeSocket', "absorption")
+        self.inputs.new('AcousticPropertiesNodeSocket', "refraction")
+        self.inputs.new('AcousticPropertiesNodeSocket', "reflection")
+        self.inputs.new('AcousticPropertiesNodeSocket', "scattering")
+
+classes.append(AcousticPropertiesNode)
 
 class AcousticMaterialPreviewNode(AcousticMaterialNode):
     """Acoustic material preview node for pbr synthesis"""

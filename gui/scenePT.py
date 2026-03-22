@@ -41,7 +41,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.use_property_decorate = False  # No animation.
 
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
-        layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin")
+        layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
 
         # operator button
         layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
@@ -50,7 +50,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.operator('scene.pbraudio_bake', emboss=True if not scene.pbraudio.bake else False)
         if hasattr(scene.pbraudio.collision_collection, 'objects'):
             for object in scene.pbraudio.collision_collection.objects.values():
-                if object.pbraudio.fractured and not len(obj.pbraudio_shard.values()) == 0:
+                if object.pbraudio.fractured and not len(object.pbraudio_shard.values()) == 0:
                     break
             if object.pbraudio.fractured:
                 layout.operator('scene.pbraudio_fracture', emboss=True if not scene.pbraudio.fracture else False)

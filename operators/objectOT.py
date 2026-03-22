@@ -145,11 +145,8 @@ class OBJECT_OT_pbraudio_add_to_shard_list(Operator):
             # Add object from the selection menu to the list
             new_item = obj.pbraudio_shard.add()
             new_item.shard_object = selected_obj.name
-        
-            # Add object to the shard object
-            new_shard = selected_obj.pbraudio_shard.add()
-            new_shard.shard_object = obj.name
             obj.pbraudio.selected_shard_object = None
+        
         return {'FINISHED'}
 classes.append(OBJECT_OT_pbraudio_add_to_shard_list)
 
@@ -163,11 +160,6 @@ class OBJECT_OT_pbraudio_remove_from_shard_list(Operator):
         obj = context.object
         
         if obj.pbraudio_shard_index >= 0 and obj.pbraudio_shard_index < len(obj.pbraudio_shard):
-            # Remove first the object from the shard object
-            shard_obj = bpy.data.objects[obj.pbraudio_shard[obj.pbraudio_shard_index].shard_object]
-            for idx in range(len(shard_obj.pbraudio_shard.values())):
-                if shard_obj.pbraudio_shard[idx].shard_object == obj.name:
-                    shard_obj.pbraudio_shard.remove(idx)
             # Remove the active item
             obj.pbraudio_shard.remove(obj.pbraudio_shard_index)
         
@@ -215,11 +207,6 @@ class OBJECT_OT_pbraudio_refresh_shard_list(Operator):
                 new_item = obj.pbraudio_shard.add()
                 new_item.shard_object = collection_obj.name
         
-                # Add object to the shard object
-                obj_shard = bpy.data.objects[collection_obj.name]
-                new_shard = obj_shard.pbraudio_shard.add()
-                new_shard.shard_object = obj.name
-
         obj.pbraudio_shard_index = 0 if collection.objects else -1
         
         return {'FINISHED'}

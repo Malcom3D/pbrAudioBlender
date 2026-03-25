@@ -10,58 +10,58 @@ endif ()
 set(EXTERNAL_DOWNLOAD_DIR "${CMAKE_SOURCE_DIR}/downloads" CACHE PATH "Directory for downloaded external files")
 
 include(ExternalProject)
-ExternalProject_Add(
-    meshlib
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/bf/3f/493a62fabbc257c48e96d64f8179455bb072cf503d8df4aa2485b305bbb0/meshlib-3.0.9.196-py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=801dea8770fa646a232a7861c4ba29471f41dc08fcb6ba333372ff4c09ee500b
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    embreex
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/60/10/c66c023923ca038d3081bf62e6a92ddefbd780e5ce0b7d5383abf10dc30f/embreex-2.17.7.post7-cp311-cp311-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=c4775a4d01f357c7a29ed7843ec811d59c778149f5fd4fdca2f3f42dc6ff45b6
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    fast-simplification
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/8c/44/ae0b556d62ed6a8c6f290435f4764fae9944f6857171b60613ab35f0f1a7/fast_simplification-0.1.13-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=c694f0f0bbafbaf29acf7043de603b4c85259f2eae7b802d4946d47976e9959d
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    pillow
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/41/1e/db9470f2d030b4995083044cd8738cdd1bf773106819f6d8ba12597d5352/pillow-12.0.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=bee2a6db3a7242ea309aa7ee8e2780726fed67ff4e5b40169f2c940e7eb09227
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
+#ExternalProject_Add(
+#    meshlib
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/bf/3f/493a62fabbc257c48e96d64f8179455bb072cf503d8df4aa2485b305bbb0/meshlib-3.0.9.196-py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl
+#    URL_HASH SHA256=801dea8770fa646a232a7861c4ba29471f41dc08fcb6ba333372ff4c09ee500b
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    embreex
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/60/10/c66c023923ca038d3081bf62e6a92ddefbd780e5ce0b7d5383abf10dc30f/embreex-2.17.7.post7-cp311-cp311-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl
+#    URL_HASH SHA256=c4775a4d01f357c7a29ed7843ec811d59c778149f5fd4fdca2f3f42dc6ff45b6
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    fast-simplification
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/8c/44/ae0b556d62ed6a8c6f290435f4764fae9944f6857171b60613ab35f0f1a7/fast_simplification-0.1.13-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
+#    URL_HASH SHA256=c694f0f0bbafbaf29acf7043de603b4c85259f2eae7b802d4946d47976e9959d
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    pillow
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/41/1e/db9470f2d030b4995083044cd8738cdd1bf773106819f6d8ba12597d5352/pillow-12.0.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+#    URL_HASH SHA256=bee2a6db3a7242ea309aa7ee8e2780726fed67ff4e5b40169f2c940e7eb09227
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
 ExternalProject_Add(
     rtree
     PREFIX "blender"
@@ -88,45 +88,45 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-ExternalProject_Add(
-    networkx
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
-    URL_HASH SHA256=cdb395b105806062473d3be36458d8f1459a4e4b98e236a66c3a48996e07684f
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    pympler
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/79/4f/a6a2e2b202d7fd97eadfe90979845b8706676b41cbd3b42ba75adf329d1f/Pympler-1.1-py3-none-any.whl
-    URL_HASH SHA256=5b223d6027d0619584116a0cbc28e8d2e378f7a79c1e5e024f9ff3b673c58506
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    resampy
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/4d/b9/3b00ac340a1aab3389ebcc52c779914a44aadf7b0cb7a3bf053195735607/resampy-0.4.3-py3-none-any.whl
-    URL_HASH SHA256=ad2ed64516b140a122d96704e32bc0f92b23f45419e8b8f478e5a05f83edcebd
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
+#ExternalProject_Add(
+#    networkx
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
+#    URL_HASH SHA256=cdb395b105806062473d3be36458d8f1459a4e4b98e236a66c3a48996e07684f
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    pympler
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/79/4f/a6a2e2b202d7fd97eadfe90979845b8706676b41cbd3b42ba75adf329d1f/Pympler-1.1-py3-none-any.whl
+#    URL_HASH SHA256=5b223d6027d0619584116a0cbc28e8d2e378f7a79c1e5e024f9ff3b673c58506
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    resampy
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/4d/b9/3b00ac340a1aab3389ebcc52c779914a44aadf7b0cb7a3bf053195735607/resampy-0.4.3-py3-none-any.whl
+#    URL_HASH SHA256=ad2ed64516b140a122d96704e32bc0f92b23f45419e8b8f478e5a05f83edcebd
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
 ExternalProject_Add(
     trimesh
     PREFIX "blender"
@@ -205,19 +205,19 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-ExternalProject_Add(
-    tornado
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/f9/41/fb15f06e33d7430ca89420283a8762a4e6b8025b800ea51796ab5e6d9559/tornado-6.5.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-    URL_HASH SHA256=e792706668c87709709c18b353da1f7662317b563ff69f00bab83595940c7108
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
+#ExternalProject_Add(
+#    tornado
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/f9/41/fb15f06e33d7430ca89420283a8762a4e6b8025b800ea51796ab5e6d9559/tornado-6.5.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+#    URL_HASH SHA256=e792706668c87709709c18b353da1f7662317b563ff69f00bab83595940c7108
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
 ExternalProject_Add(
     psutil
     PREFIX "blender"
@@ -283,19 +283,19 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-ExternalProject_Add(
-    pywavelets
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/d8/8c/f316a153f7f89d2753df8a7371d15d0faab87e709fe02715dbc297c79385/pywavelets-1.9.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=d76b7fa8fc500b09201d689b4f15bf5887e30ffbe2e1f338eb8470590eb4521a
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
+#ExternalProject_Add(
+#    pywavelets
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/d8/8c/f316a153f7f89d2753df8a7371d15d0faab87e709fe02715dbc297c79385/pywavelets-1.9.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+#    URL_HASH SHA256=d76b7fa8fc500b09201d689b4f15bf5887e30ffbe2e1f338eb8470590eb4521a
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
 ExternalProject_Add(
     locket
     PREFIX "blender"
@@ -465,71 +465,71 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-ExternalProject_Add(
-    rich
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/e3/30/3c4d035596d3cf444529e0b2953ad0466f6049528a879d27534700580395/rich-14.1.0-py3-none-any.whl
-    URL_HASH SHA256=536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    zarrs
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/f4/45/95f2b85b80d586c9a1227def9fbc0b0c3181a45445d5599288554c562a72/zarrs-0.2.0-cp311-abi3-manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=2551112c2159e349d19c3e27f6a213f74ab0d016b4862c9474bdbe690f1f46ae
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    zarr
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/e0/a3/d3d4fd394a10b1256f9dccb2fe0ddd125fc575d7c437b1c70df050f14176/zarr-3.1.2-py3-none-any.whl
-    URL_HASH SHA256=c3e180f53ee0ef91b86f7feff6f9dd381ddd1b512d1a46580530966a493387b6
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    typing-extensions
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
-    URL_HASH SHA256=f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
-    donfig
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/0c/d5/c5db1ea3394c6e1732fb3286b3bd878b59507a8f77d32a2cebda7d7b7cd4/donfig-0.8.1.post1-py3-none-any.whl
-    URL_HASH SHA256=2a3175ce74a06109ff9307d90a230f81215cbac9a751f4d1c6194644b8204f9d
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
+#ExternalProject_Add(
+#    rich
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/e3/30/3c4d035596d3cf444529e0b2953ad0466f6049528a879d27534700580395/rich-14.1.0-py3-none-any.whl
+#    URL_HASH SHA256=536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    zarrs
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/f4/45/95f2b85b80d586c9a1227def9fbc0b0c3181a45445d5599288554c562a72/zarrs-0.2.0-cp311-abi3-manylinux_2_28_x86_64.whl
+#    URL_HASH SHA256=2551112c2159e349d19c3e27f6a213f74ab0d016b4862c9474bdbe690f1f46ae
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    zarr
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/e0/a3/d3d4fd394a10b1256f9dccb2fe0ddd125fc575d7c437b1c70df050f14176/zarr-3.1.2-py3-none-any.whl
+#    URL_HASH SHA256=c3e180f53ee0ef91b86f7feff6f9dd381ddd1b512d1a46580530966a493387b6
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    typing-extensions
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
+#    URL_HASH SHA256=f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Add(
+#    donfig
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/0c/d5/c5db1ea3394c6e1732fb3286b3bd878b59507a8f77d32a2cebda7d7b7cd4/donfig-0.8.1.post1-py3-none-any.whl
+#    URL_HASH SHA256=2a3175ce74a06109ff9307d90a230f81215cbac9a751f4d1c6194644b8204f9d
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
 ExternalProject_Add(
     yaml
     PREFIX "blender"
@@ -543,19 +543,19 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-ExternalProject_Add(
-    numcodecs
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/01/24/7889b678c0b7e3f605e1ec2fe1ddee0f48920098fecb0cadd5bd66483044/numcodecs-0.16.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-    URL_HASH SHA256=b1b7d8174e14c66191e0e1a4a44dd264bd776fb96b1ce3adc0216154f34b755c
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
+#ExternalProject_Add(
+#    numcodecs
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/01/24/7889b678c0b7e3f605e1ec2fe1ddee0f48920098fecb0cadd5bd66483044/numcodecs-0.16.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+#    URL_HASH SHA256=b1b7d8174e14c66191e0e1a4a44dd264bd776fb96b1ce3adc0216154f34b755c
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
 ExternalProject_Add(
     packaging
     PREFIX "blender"
@@ -569,46 +569,46 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-ExternalProject_Add(
-    crc32c
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/6a/2b/9e29e9ac4c4213d60491db09487125db358cd9263490fbadbd55e48fbe03/crc32c-2.7.1-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-    URL_HASH SHA256=d698eec444b18e296a104d0b9bb6c596c38bdcb79d24eba49604636e9d747305
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Get_property(zarr DOWNLOAD_DIR)
+#ExternalProject_Add(
+#    crc32c
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/6a/2b/9e29e9ac4c4213d60491db09487125db358cd9263490fbadbd55e48fbe03/crc32c-2.7.1-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+#    URL_HASH SHA256=d698eec444b18e296a104d0b9bb6c596c38bdcb79d24eba49604636e9d747305
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
+#ExternalProject_Get_property(zarr DOWNLOAD_DIR)
 
 # Make a .zip-file which can be installed into Blender
 if (NOT WIN32)
   add_custom_target (blender 
-    DEPENDS meshlib
-    DEPENDS embreex
-    DEPENDS fast-simplification
-    DEPENDS pillow
+#    DEPENDS meshlib
+#    DEPENDS embreex
+#    DEPENDS fast-simplification
+#    DEPENDS pillow
     DEPENDS rtree
     DEPENDS python_fcl
-    DEPENDS networkx
-    DEPENDS pympler
-    DEPENDS resampy
+#    DEPENDS networkx
+#    DEPENDS pympler
+#    DEPENDS resampy
     DEPENDS trimesh
     DEPENDS MarkupSafe
     DEPENDS tblib
     DEPENDS sortedcontainers
     DEPENDS zict
-    DEPENDS urllib3
-    DEPENDS tornado
+#    DEPENDS urllib3
+#    DEPENDS tornado
     DEPENDS psutil
     DEPENDS msgpack
     DEPENDS jinja2
     DEPENDS distributed
     DEPENDS scipy
-    DEPENDS pywavelets
+#    DEPENDS pywavelets
     DEPENDS locket
     DEPENDS partd
     DEPENDS zipp
@@ -622,15 +622,15 @@ if (NOT WIN32)
     DEPENDS llvmlite
     DEPENDS soundfile
     DEPENDS cffi
-    DEPENDS rich
-    DEPENDS zarrs
-    DEPENDS zarr
-    DEPENDS typing-extensions
-    DEPENDS donfig
+#    DEPENDS rich
+#    DEPENDS zarrs
+#    DEPENDS zarr
+#    DEPENDS typing-extensions
+#    DEPENDS donfig
     DEPENDS yaml
-    DEPENDS crc32c
+#    DEPENDS crc32c
     DEPENDS packaging
-    DEPENDS numcodecs
+#    DEPENDS numcodecs
 #    COMMAND ${CMAKE_COMMAND} -E make_directory pbrAudio
 #    COMMAND ${CMAKE_COMMAND} -E copy
 #      "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py"
@@ -687,15 +687,15 @@ if (NOT WIN32)
 #    COMMAND ${CMAKE_COMMAND} -E remove_directory pbrAudio
   )
 
-  add_dependencies(blender meshlib)
-  add_dependencies(blender embreex)
-  add_dependencies(blender fast-simplification)
-  add_dependencies(blender pillow)
+#  add_dependencies(blender meshlib)
+#  add_dependencies(blender embreex)
+#  add_dependencies(blender fast-simplification)
+#  add_dependencies(blender pillow)
   add_dependencies(blender rtree)
   add_dependencies(blender python_fcl)
-  add_dependencies(blender networkx)
-  add_dependencies(blender pympler)
-  add_dependencies(blender resampy)
+#  add_dependencies(blender networkx)
+#  add_dependencies(blender pympler)
+#  add_dependencies(blender resampy)
   add_dependencies(blender trimesh)
   add_dependencies(blender MarkupSafe)
   add_dependencies(blender tblib)
@@ -708,7 +708,7 @@ if (NOT WIN32)
   add_dependencies(blender jinja2)
   add_dependencies(blender distributed)
   add_dependencies(blender scipy)
-  add_dependencies(blender pywavelets)
+#  add_dependencies(blender pywavelets)
   add_dependencies(blender locket)
   add_dependencies(blender partd)
   add_dependencies(blender zipp)
@@ -722,13 +722,13 @@ if (NOT WIN32)
   add_dependencies(blender llvmlite)
   add_dependencies(blender soundfile)
   add_dependencies(blender cffi)
-  add_dependencies(blender rich)
-  add_dependencies(blender zarrs)
-  add_dependencies(blender zarr)
+#  add_dependencies(blender rich)
+#  add_dependencies(blender zarrs)
+#  add_dependencies(blender zarr)
   add_dependencies(blender yaml)
-  add_dependencies(blender crc32c)
+#  add_dependencies(blender crc32c)
   add_dependencies(blender packaging)
-  add_dependencies(blender numcodecs)
-  add_dependencies(blender donfig)
-  add_dependencies(blender typing-extensions)
+#  add_dependencies(blender numcodecs)
+#  add_dependencies(blender donfig)
+#  add_dependencies(blender typing-extensions)
 endif ()

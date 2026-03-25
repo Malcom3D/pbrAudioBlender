@@ -44,39 +44,59 @@ def run_async(func):
     return wrapper
 
 @run_async
-def pbrAudio_physics(config_file: str):
+def pbrAudio_physics(config_file: str, status_file: str):
     from physicsSolver import EntityManager
     from physicsSolver import physicsEngine
     em = EntityManager(config_file)
     phys = physicsEngine(em)
     phys.bake()
+
+    # Write completion status
+    with open(status_file, 'w') as f:
+        f.write("100")
+
     return {"processed": True}
 
 @run_async
-def pbrAudio_prebake(config_file: str):
+def pbrAudio_prebake(config_file: str, status_file: str):
     from physicsSolver import EntityManager
     from rigidBody import rigidBodyEngine
     em = EntityManager(config_file)
     rbs = rigidBodyEngine(em)
     rbs.prebake()
+
+    # Write completion status
+    with open(status_file, 'w') as f:
+        f.write("100")
+
     return {"processed": True}
 
 @run_async
-def pbrAudio_bake(config_file: str):
+def pbrAudio_bake(config_file: str, status_file: str):
     from physicsSolver import EntityManager
     from rigidBody import rigidBodyEngine
     em = EntityManager(config_file)
     rbs = rigidBodyEngine(em)
     rbs.bake()
+
+    # Write completion status
+    with open(status_file, 'w') as f:
+        f.write("100")
+
     return {"processed": True}
 
 @run_async
-def pbrAudio_fracture(config_file: str):
+def pbrAudio_fracture(config_file: str, status_file: str):
     from physicsSolver import EntityManager
     from fractureSound import fractureEngine
     em = EntityManager(config_file)
     fract = fractureEngine(em)
     fract.bake()
+
+    # Write completion status
+    with open(status_file, 'w') as f:
+        f.write("100")
+
     return {"processed": True}
 
 classes = []
@@ -87,31 +107,48 @@ class PBRAUDIO_OT_fracture(Operator):
     bl_description = "Bake of fracture data for sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
 
+    def update_progress(self, scene, status_file):
+        """Update progress from status file"""
+        if os.path.exists(status_file):
+            try:
+                with open(status_file, 'r') as f:
+                    progress = f.read().strip()
+                    if progress:
+                        scene.pbraudio.status_progress = float(progress)
+                return True
+            except:
+                pass
+        return False
+
+    def check_completion(self, scene, process, status_file):
+        """Check if the process has completed"""
+        if not process.is_alive():
+            # Process finished
+            scene.pbraudio.shader_processing = False
+            scene.pbraudio.fracture = True
+            scene.pbraudio.status_progress = 100.0
+            self.report({'INFO'}, "Baking of fracture data for sound synthesis completed")
+            return None
+        else:
+            # Update progress
+            self.update_progress(scene, status_file)
+            # Continue timer
+            return 1.0
+
     def execute(self, context):
         scene = context.scene
         if hasattr(scene.pbraudio, 'fracture') and not scene.pbraudio.fracture:
             if not scene.pbraudio.bake:
                 bpy.ops.scene.pbraudio_bake()
             # Start async processing
-            config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
-            process = pbrAudio_fracture(config_file)
+            config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
+            process = pbrAudio_fracture(config_file, status_file)
+
             # Monitor completion
-            bpy.app.timers.register(lambda: self.check_process(scene, process, status_file), first_interval=1.0)
+            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
             self.report({'INFO'}, "Bake of fracture data for sound synthesis started")
         return {'FINISHED'}
-
-    def check_process(self, scene, process, status_file):
-        if process.is_alive():
-            if os.path.exists(status_file):
-                with open(status_file, 'r') as f:
-                    self.report({'INFO'}, "Process progress: {f.read()}%")
-        else:
-            print("Baking of fracture data for sound synthesis completed")
-            # Update UI here
-            scene.pbraudio.fracture = True
-            return None
-        return 1.0
 
 classes.append(PBRAUDIO_OT_fracture)
 
@@ -121,6 +158,34 @@ class PBRAUDIO_OT_bake(Operator):
     bl_description = "Bake of prebaked data for sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
                 
+    def update_progress(self, scene, status_file):
+        """Update progress from status file"""
+        if os.path.exists(status_file):
+            try:
+                with open(status_file, 'r') as f:
+                    progress = f.read().strip()
+                    if progress:
+                        scene.pbraudio.status_progress = float(progress)
+                return True
+            except:
+                pass
+        return False
+
+    def check_completion(self, scene, process, status_file):
+        """Check if the process has completed"""
+        if not process.is_alive():
+            # Process finished
+            scene.pbraudio.shader_processing = False
+            scene.pbraudio.bake = True
+            scene.pbraudio.status_progress = 100.0
+            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
+            return None
+        else:
+            # Update progress
+            self.update_progress(scene, status_file)
+            # Continue timer
+            return 1.0
+
     def execute(self, context):
         scene = context.scene
         if hasattr(scene.pbraudio, 'bake') and not scene.pbraudio.bake:
@@ -129,23 +194,11 @@ class PBRAUDIO_OT_bake(Operator):
             # Start async processing
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/bake"
-            process = pbrAudio_bake(config_file)
+            process = pbrAudio_bake(config_file, status_file)
             # Monitor completion
-            bpy.app.timers.register(lambda: self.check_process(scene, process, status_file), first_interval=1.0)
+            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
             self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
         return {'FINISHED'}
-
-    def check_process(self, scene, process, status_file):
-        if process.is_alive():
-            if os.path.exists(status_file):
-                with open(status_file, 'r') as f:
-                    self.report({'INFO'}, "Process progress: {f.read()}%")
-        else:
-            print("Baking of prebaked data for sound synthesis completed")
-            # Update UI here
-            scene.pbraudio.bake = True
-            return None
-        return 1.0
 
 classes.append(PBRAUDIO_OT_bake)
 
@@ -155,6 +208,34 @@ class PBRAUDIO_OT_prebake(Operator):
     bl_description = "PreBake baked physics dynamics for sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
 
+    def update_progress(self, scene, status_file):
+        """Update progress from status file"""
+        if os.path.exists(status_file):
+            try:
+                with open(status_file, 'r') as f:
+                    progress = f.read().strip()
+                    if progress:
+                        scene.pbraudio.status_progress = float(progress)
+                return True
+            except:
+                pass
+        return False
+
+    def check_completion(self, scene, process, status_file):
+        """Check if the process has completed"""
+        if not process.is_alive():
+            # Process finished
+            scene.pbraudio.shader_processing = False
+            scene.pbraudio.prebake = True
+            scene.pbraudio.status_progress = 100.0
+            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
+            return None
+        else:
+            # Update progress
+            self.update_progress(scene, status_file)
+            # Continue timer
+            return 1.0
+
     def execute(self, context):
         scene = context.scene
         if hasattr(scene.pbraudio, 'prebake') and not scene.pbraudio.prebake:
@@ -163,23 +244,11 @@ class PBRAUDIO_OT_prebake(Operator):
             # Start async processing
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
-            process = pbrAudio_prebake(config_file)
+            process = pbrAudio_prebake(config_file, status_file)
             # Monitor completion
-            bpy.app.timers.register(lambda: self.check_process(scene, process, status_file), first_interval=1.0)
+            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
             self.report({'INFO'}, "Prebaking of baked physics dynamics for sound synthesis started")
         return {'FINISHED'}
-
-    def check_process(self, scene, process, status_file):
-        if process.is_alive():
-            if os.path.exists(status_file):
-                with open(status_file, 'r') as f:
-                    self.report({'INFO'}, "Process progress: {f.read()}%")
-        else:
-            print("Prebaking of baked physics dynamics for sound synthesis completed")
-            # Update UI here
-            scene.pbraudio.prebake = True
-            return None
-        return 1.0
 
 classes.append(PBRAUDIO_OT_prebake)
 
@@ -188,6 +257,35 @@ class PBRAUDIO_OT_physics(Operator):
     bl_label = "BakePhysics"
     bl_description = "Bake physics"
     bl_options = {'REGISTER', 'UNDO'}
+
+    def update_progress(self, scene, status_file):
+        """Update progress from status file"""
+        if os.path.exists(status_file):
+            try:
+                with open(status_file, 'r') as f:
+                    progress = f.read().strip()
+                    if progress:
+                        scene.pbraudio.status_progress = float(progress)
+                return True
+            except:
+                pass
+        return False
+
+    def check_completion(self, scene, process, status_file):
+        """Check if the process has completed"""
+        if not process.is_alive():
+            # Process finished
+            scene.pbraudio.shader_processing = False
+            scene.pbraudio.physics = True
+            scene.pbraudio.cache_status = True
+            scene.pbraudio.status_progress = 100.0
+            self.report({'INFO'}, "Physics dynamics bake processing completed")
+            return None
+        else:
+            # Update progress
+            self.update_progress(scene, status_file)
+            # Continue timer
+            return 1.0
 
     def execute(self, context):
         scene = context.scene
@@ -217,25 +315,11 @@ class PBRAUDIO_OT_physics(Operator):
                 # Start async processing
                 config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
                 status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
-                process = pbrAudio_physics(config_file)
+                process = pbrAudio_physics(config_file, status_file)
 
                 # Monitor completion
-                bpy.app.timers.register(lambda: self.check_process(scene, process, status_file), first_interval=1.0)
+                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
         return {'FINISHED'}
-
-    def check_process(self, scene, process, status_file):
-        if process.is_alive():
-            if os.path.exists(status_file):
-                with open(status_file, 'r') as f:
-                    progress_status = f.read()
-                    print(f"Process progress: {progress_status}%")
-        else:
-            self.report({'INFO'}, "Physics dynamics bake processing completed")
-            # Update UI here
-            scene.pbraudio.physics = True
-            scene.pbraudio.cache_status = True
-            return None
-        return 1.0
 
 classes.append(PBRAUDIO_OT_physics)
 

@@ -34,6 +34,7 @@ class MeshToNumpyExporter:
         system = {}
         system["sample_rate"] = scene.pbraudio.sample_rate
         system["bit_depth"] = scene.pbraudio.bit_depth.replace('BIT', '')
+        system["file_format"] = scene.pbraudio.file_format
         system["fps"] = scene.render.fps
         system["fps_base"] = scene.render.fps_base
         system["subframes"] = 1

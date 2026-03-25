@@ -43,17 +43,24 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
 
+        # scene fracture value
+        fracture_emboss = False
+        if hasattr(scene.pbraudio.collision_collection, 'objects'):
+            for object in scene.pbraudio.collision_collection.objects.values():
+                if object.pbraudio.fractured and not len(object.pbraudio_shard.values()) == 0 and not scene.pbraudio.fracture:
+                    fracture_emboss = True
+
+        # Draw progress bar if baking are processed
+        if scene.pbraudio.shader_processing:
+            row = layout.row(align=True)
+            row.prop(scene.pbraudio, "status_progress", text="Shader Progress", slider=True)
+
         # operator button
         layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
         layout.operator('scene.pbraudio_physics', emboss=True if not scene.pbraudio.physics else False)
         layout.operator('scene.pbraudio_prebake', emboss=True if not scene.pbraudio.prebake else False)
         layout.operator('scene.pbraudio_bake', emboss=True if not scene.pbraudio.bake else False)
-        if hasattr(scene.pbraudio.collision_collection, 'objects'):
-            for object in scene.pbraudio.collision_collection.objects.values():
-                if object.pbraudio.fractured and not len(object.pbraudio_shard.values()) == 0:
-                    break
-            if object.pbraudio.fractured:
-                layout.operator('scene.pbraudio_fracture', emboss=True if not scene.pbraudio.fracture else False)
+        layout.operator('scene.pbraudio_fracture', emboss=fracture_emboss)
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 

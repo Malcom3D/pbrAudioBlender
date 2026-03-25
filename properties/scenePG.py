@@ -90,6 +90,7 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('RAW', "RAW: un-containerized and uncompressed RAW Waveform Audio File Format", "RAW Waveform Audio File Format"),
             ('PCM', "WAV: PCM Waveform Audio File Format", "PCM Waveform Audio File Format"),
             ('BWF', "WAV: Broadcast Wave Format", "Broadcast Wave Format"),
+            ('FLAC', "FLAC: Free Lossless Audio Codec", "Free Lossless Audio Codec")
         ],
         default='PCM',
     )
@@ -100,6 +101,8 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('16BIT', "16 bit", "16-bit Depth per Channel"),
             ('24BIT', "24 bit", "24-bit Depth per Channel"),
             ('32BIT', "32 bit", "32-bit Depth per Channel"),
+            ('FLOAT', "32 bit float", "32-bit float Depth per Channel"),
+            ('DOUBLE', "64 bit float", "32-bit float Depth per Channel"),
         ],
         default='24BIT',
     )
@@ -169,6 +172,21 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="physics", 
         description="Bake physics dynamics",
         default=False
+    )
+
+    shader_processing: BoolProperty(
+        name="Shader Processing",
+        description="Indicates if shaders is currently being processed",
+        default=False
+    )
+    
+    status_progress: FloatProperty(
+        name="Status Progress",
+        description="Progress of processing",
+        default=0.0,
+        min=0.0,
+        max=100.0,
+        subtype='PERCENTAGE'
     )
 
     cache_path: StringProperty(

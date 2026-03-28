@@ -21,11 +21,7 @@ import json
 import pathlib
 import bpy
 import aud
-import zarr
-import zarrs
 import numpy as np
-
-zarr.config.set({"codec_pipeline.path": "zarrs.ZarrsCodecPipeline"})
 
 class pbrAudioConfigInit:
     def __init__(self):
@@ -244,8 +240,8 @@ class pbrAudioConfigInit:
     def initZarr(self):
         # init zarr store
         zarrPath = os.path.join(self.cache_path, 'zarr', self.domain_name)
-        compressors = zarr.codecs.BloscCodec(cname='blosclz', clevel=3, shuffle=zarr.codecs.BloscShuffle.bitshuffle)
-        zarr_acoustic = zarr.create_group(store=zarrPath)
+        compressors = "zarr.codecs.BloscCodec(cname='blosclz', clevel=3, shuffle=zarr.codecs.BloscShuffle.bitshuffle)"
+        zarr_acoustic = "zarr.create_group(store=zarrPath)"
 
         # init zarr domain (global)
         for index in range(len(self.config)):
@@ -254,9 +250,9 @@ class pbrAudioConfigInit:
                 j = int(self.config[index]['data']['shape'][1])
                 k = int(self.config[index]['data']['shape'][2])
 
-        zarr_acoustic_global = zarr_acoustic.create_group('global')
-        impedence = zarr_acoustic_global.create_array(name='impedence', shape=(i, j, k), shards=(128, 128, 128), chunks=(32, 32, 32), dtype='uint16', fill_value=self.impedence, compressors=compressors)
-        sound_speed = zarr_acoustic_global.create_array(name='sound_speed', shape=(i, j, k), shards=(128, 128, 128), chunks=(32, 32, 32), dtype='uint16', fill_value=self.sound_speed, compressors=compressors)
+        zarr_acoustic_global = "zarr_acoustic.create_group('global')"
+        impedence = "zarr_acoustic_global.create_array(name='impedence', shape=(i, j, k), shards=(128, 128, 128), chunks=(32, 32, 32), dtype='uint16', fill_value=self.impedence, compressors=compressors)"
+        sound_speed = "zarr_acoustic_global.create_array(name='sound_speed', shape=(i, j, k), shards=(128, 128, 128), chunks=(32, 32, 32), dtype='uint16', fill_value=self.sound_speed, compressors=compressors)"
 
         # init zarr sources (local)
         zarr_acoustic_local = zarr_acoustic.create_group('local')

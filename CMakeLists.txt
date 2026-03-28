@@ -36,19 +36,19 @@ include(ExternalProject)
 #    INSTALL_COMMAND cmake -E echo "Skipping install step."
 #    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 #)
-#ExternalProject_Add(
-#    fast-simplification
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/8c/44/ae0b556d62ed6a8c6f290435f4764fae9944f6857171b60613ab35f0f1a7/fast_simplification-0.1.13-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
-#    URL_HASH SHA256=c694f0f0bbafbaf29acf7043de603b4c85259f2eae7b802d4946d47976e9959d
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    fast-simplification
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/8c/44/ae0b556d62ed6a8c6f290435f4764fae9944f6857171b60613ab35f0f1a7/fast_simplification-0.1.13-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=c694f0f0bbafbaf29acf7043de603b4c85259f2eae7b802d4946d47976e9959d
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 #ExternalProject_Add(
 #    pillow
 #    PREFIX "blender"
@@ -205,19 +205,19 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-#ExternalProject_Add(
-#    tornado
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/f9/41/fb15f06e33d7430ca89420283a8762a4e6b8025b800ea51796ab5e6d9559/tornado-6.5.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-#    URL_HASH SHA256=e792706668c87709709c18b353da1f7662317b563ff69f00bab83595940c7108
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    tornado
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/f9/41/fb15f06e33d7430ca89420283a8762a4e6b8025b800ea51796ab5e6d9559/tornado-6.5.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+    URL_HASH SHA256=e792706668c87709709c18b353da1f7662317b563ff69f00bab83595940c7108
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 ExternalProject_Add(
     psutil
     PREFIX "blender"
@@ -589,7 +589,7 @@ if (NOT WIN32)
   add_custom_target (blender 
 #    DEPENDS meshlib
 #    DEPENDS embreex
-#    DEPENDS fast-simplification
+    DEPENDS fast-simplification
 #    DEPENDS pillow
     DEPENDS rtree
     DEPENDS python_fcl
@@ -601,8 +601,8 @@ if (NOT WIN32)
     DEPENDS tblib
     DEPENDS sortedcontainers
     DEPENDS zict
-#    DEPENDS urllib3
-#    DEPENDS tornado
+    DEPENDS urllib3
+    DEPENDS tornado
     DEPENDS psutil
     DEPENDS msgpack
     DEPENDS jinja2
@@ -689,7 +689,7 @@ if (NOT WIN32)
 
 #  add_dependencies(blender meshlib)
 #  add_dependencies(blender embreex)
-#  add_dependencies(blender fast-simplification)
+  add_dependencies(blender fast-simplification)
 #  add_dependencies(blender pillow)
   add_dependencies(blender rtree)
   add_dependencies(blender python_fcl)

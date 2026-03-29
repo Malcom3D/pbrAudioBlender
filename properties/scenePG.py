@@ -147,7 +147,7 @@ class PBRAudioSceneProperties(PropertyGroup):
 
     collision_margin: FloatProperty(
         name="Collision Margin",
-        default=1E-2
+        default=1E-2,
         min=0,
         max=1
     ) 

@@ -310,9 +310,9 @@ class MeshToNumpyExporter:
         if obj.pbraudio.connected:
             for item in obj.pbraudio_connected.values():
                 connected.append([item.connected_object.replace('.', '_'), item.connected_value/10])
-            if len(connected) == 0:
-                connected = False
-            object["connected"] = connected
+        if len(connected) == 0:
+            connected = False
+        object["connected"] = connected
 
         object['is_shard'] = False
         object['fractured'] = fractured

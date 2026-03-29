@@ -271,7 +271,7 @@ class PBRAUDIO_OT_physics(Operator):
                 with open(status_file, 'r') as f:
                     progress = f.read().strip()
                     if progress:
-                        scene.pbraudio.status_progress = 0.5 + float(progress) / 100
+                        scene.pbraudio.status_progress = 0.5 + (float(progress) / 100)
                 return True
             except:
                 pass

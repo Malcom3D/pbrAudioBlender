@@ -735,7 +735,7 @@ class NormalizeFrequencyCurve(bpy.types.Operator):
         # Normalize all points to -1 to 1 range
         for point in node.points:
             normalized_y = -1.0 + 2.0 * ((point.location[1] - y_min) / (y_max - y_min))
-            point.location = (point.location[0],], normalized_y)
+            point.location = (point.location[0], normalized_y)
             node.update_handles(point)
         
         return {'FINISHED'}

@@ -47,7 +47,7 @@ class AcousticMaterialFrequencyResponseNode(AcousticMaterialNode):
     bl_icon = 'GRAPH'
 
     # Collection of user‑defined points
-    points: CollectionProperty(type=PBRAudioFreqPointProperties)
+    points: CollectionProperty(type=materialPG.PBRAudioFreqPointProperties)
     # Index of the currently selected point in the UI list
     point_index: IntProperty(default=0)
 

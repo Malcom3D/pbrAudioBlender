@@ -23,7 +23,6 @@ from bpy.props import StringProperty, PointerProperty, IntProperty, FloatPropert
 from .baseND import AcousticMaterialNode
 
 from ..properties import materialPG
-from ..properties.materialPG import PBRAudioFreqPointProperties
 
 classes = []
 

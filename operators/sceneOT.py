@@ -121,6 +121,9 @@ class PBRAUDIO_OT_fracture(Operator):
         return False
 
     def check_completion(self, scene, process, status_file):
+        """Update UI"""
+        for area in bpy.context.screen.areas:
+            area.tag_redraw()
         """Check if the process has completed"""
         if not process.is_alive():
             # Process finished
@@ -174,6 +177,9 @@ class PBRAUDIO_OT_bake(Operator):
         return False
 
     def check_completion(self, scene, process, status_file):
+        """Update UI"""
+        for area in bpy.context.screen.areas:
+            area.tag_redraw()
         """Check if the process has completed"""
         if not process.is_alive():
             # Process finished
@@ -226,6 +232,9 @@ class PBRAUDIO_OT_prebake(Operator):
         return False
 
     def check_completion(self, scene, process, status_file):
+        """Update UI"""
+        for area in bpy.context.screen.areas:
+            area.tag_redraw()
         """Check if the process has completed"""
         if not process.is_alive():
             # Process finished
@@ -278,6 +287,9 @@ class PBRAUDIO_OT_physics(Operator):
         return False
 
     def check_completion(self, scene, process, status_file):
+        """Update UI"""
+        for area in bpy.context.screen.areas:
+            area.tag_redraw()
         """Check if the process has completed"""
         if not process.is_alive():
             # Process finished

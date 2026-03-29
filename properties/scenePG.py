@@ -148,6 +148,8 @@ class PBRAudioSceneProperties(PropertyGroup):
     collision_margin: FloatProperty(
         name="Collision Margin",
         default=1E-2
+        min=0,
+        max=1
     ) 
 
     modal_modes: IntProperty(

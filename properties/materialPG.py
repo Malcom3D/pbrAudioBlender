@@ -279,20 +279,20 @@ class AcousticMaterialProperties(PropertyGroup):
 
 classes.append(AcousticMaterialProperties)
 
-class AcousticFreqPoint(PropertyGroup):
+class PBRAudioFreqPointProperties(PropertyGroup):
     """Property Group for a single Frequency–Magnitude point"""
-    frequency: bpy.props.FloatProperty(
+    frequency: FloatProperty(
         name="Freq (Hz)",
         description="Frequency in Hertz",
         default=1000.0,
         min=1.0,
         soft_max=20000.0
     )
-    magnitude: bpy.props.FloatProperty(
+    magnitude: FloatProperty(
         name="Mag (dB)",
         description="Magnitude (e.g. dB, absorption coefficient, etc.)",
         default=0.0,
         soft_min=-60.0,
         soft_max=10.0
     )
-classes.append(AcousticFreqPoint)
+classes.append(PBRAudioFreqPointProperties)

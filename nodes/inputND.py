@@ -17,8 +17,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.types import Node, CurveMapping
-from bpy.props import StringProperty, PointerProperty, FloatProperty
+from bpy.types import Node
+from bpy.props import StringProperty, PointerProperty, FloatProperty, CollectionProperty
 
 from .baseND import AcousticMaterialNode
 
@@ -47,19 +47,19 @@ class AcousticMaterialFrequencyResponseNode(AcousticMaterialNode):
     bl_icon = 'GRAPH'
 
     # Collection of user‑defined points
-    points: bpy.props.CollectionProperty(type=AcousticFreqPoint)
+    points: CollectionProperty(type=PBRAudioFreqPointProperties)
     # Index of the currently selected point in the UI list
-    point_index: bpy.props.IntProperty(default=0)
+    point_index: IntProperty(default=0)
 
     # Scaling factors for the generated curve
-    x_scale: bpy.props.FloatProperty(
+    x_scale: FloatProperty(
         name="X Scale",
         description="Scales the log10(frequency) coordinate",
         default=2.0,
         min=0.1,
         max=10.0
     )
-    y_scale: bpy.props.FloatProperty(
+    y_scale: FloatProperty(
         name="Y Scale",
         description="Scales the magnitude coordinate",
         default=0.05,
@@ -68,7 +68,7 @@ class AcousticMaterialFrequencyResponseNode(AcousticMaterialNode):
     )
 
     # Optional X offset (moves the curve along X)
-    x_offset: bpy.props.FloatProperty(
+    x_offset: FloatProperty(
         name="X Offset",
         default=-5.0,
         description="Shift the curve left/right"

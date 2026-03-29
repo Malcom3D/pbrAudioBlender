@@ -117,7 +117,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     resonance: BoolProperty(
         name="Enable object resonance",
         description="Enable Object Resonance Synth",
-        default=False
+        default=False,
         update=enable_resonance
     )
 

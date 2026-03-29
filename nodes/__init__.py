@@ -48,18 +48,22 @@ class MaterialNodeCategory(NodeCategory):
     def poll(cls, context):
         return context.space_data.tree_type == 'AcousticMaterialNodeTree'
 
-material_node_categories = [
-    MaterialNodeCategory("MATERIAL_NODES", "Material", items=[
-        NodeItem("AudioInputNode"),
-        NodeItem("AcousticShaderNode"),
+input_node_categories = [
+    MaterialNodeCategory("INPUT_NODES", "Input", items=[
         NodeItem("AcousticPropertiesNode"),
+    ]),
+]
+
+output_node_categories = [
+    MaterialNodeCategory("OUTPUT_NODES", "Output", items=[
         NodeItem("AcousticMaterialOutputNode"),
         NodeItem("AcousticMaterialPreviewNode"),
     ]),
 ]
 
-preset_node_categories = [
-    MaterialNodeCategory("PRESET_NODES", "Preset", items=[
+material_node_categories = [
+    MaterialNodeCategory("MATERIAL_NODES", "Material", items=[
+        NodeItem("AcousticShaderNode"),
         NodeItem("AcrylicShaderNode"),
         NodeItem("AluminumShaderNode"),
         NodeItem("AsphaltShaderNode"),
@@ -76,12 +80,14 @@ def register():
     for cls in classes:
         register_class(cls)
     register_node_categories("WORLD", world_node_categories)
+    register_node_categories("INPUT", input_node_categories)
+    register_node_categories("OUTPUT", output_node_categories)
     register_node_categories("MATERIAL", material_node_categories)
-    register_node_categories("PRESET", preset_node_categories)
 
 def unregister():
-    unregister_node_categories("PRESET")
     unregister_node_categories("MATERIAL")
+    unregister_node_categories("OUTPUT")
+    unregister_node_categories("INPUT")
     unregister_node_categories("WORLD")
     for cls in reversed(classes):
         unregister_class(cls)

@@ -1,4 +1,3 @@
-# Copyright (C) 2025 Malcom3D <malcom3d.gpl@gmail.com>
 #
 # This file is part of pbrAudio.
 #
@@ -21,134 +20,9 @@ from bpy.types import Node
 from bpy.props import StringProperty, PointerProperty, FloatProperty
 
 from ..properties import materialPG
+from .baseND import DefaultAcousticShaderNode
 
 classes = []
-
-class AcousticMaterialNode(Node):
-    """Base class for all acoustic material nodes"""
-    bl_idname = 'AcousticMaterialNode'
-    bl_label = "Acoustic Material Node"
-    bl_icon = 'SOUND'
-
-    @classmethod
-    def poll(cls, ntree):
-        return ntree.bl_idname == 'AcousticMaterialNodeTree'
-
-classes.append(AcousticMaterialNode)
-
-#class AudioInputNode(AcousticMaterialNode):
-#    """Audio input node"""
-#    bl_idname = 'AudioInputNode'
-#    bl_label = "Audio Input"
-#
-#    audio_file: StringProperty(
-#        name="Audio File",
-#        description="Path to audio file",
-#        subtype='FILE_PATH'
-#    )
-#
-#    def init(self, context):
-#        self.outputs.new('AudioNodeSocket', "Audio Signal")
-#
-#classes.append(AudioInputNode)
-
-class DefaultAcousticShaderNode(AcousticMaterialNode):
-    """Default acoustic shader node"""
-    bl_idname = 'DefaultAcousticShaderNode'
-    bl_label = "DefaultAcousticShader"
-
-    """Acoustic Shader properties"""
-    pbraudio_sound_speed: FloatProperty(
-        name="Sound Speed in m/s",
-        default=1000.0,
-        soft_min=0.0,
-        soft_max=20000.0,
-        precision=5
-    )
-
-    pbraudio_young_modulus: FloatProperty(
-        name="Young modulus in GPa",
-        default=0.005,
-        min=0.0,
-        soft_max=1500.0,
-        precision=5
-    )
-
-    pbraudio_poisson_ratio: FloatProperty(
-        name="Poisson Ratio",
-        default=0.46,
-        min=-1.0,
-        max=0.5,
-        precision=5
-    )
-
-    pbraudio_density: FloatProperty(
-        name="Density in kg/m³",
-        default=800.0,
-        min=0.0,
-        soft_max=25000.0,
-        precision=5
-    )
-
-    pbraudio_damping: FloatProperty(
-        name="Rayleigh Damping in %",
-        default=5,
-        min=0.0,
-        max=100,
-        precision=5
-    )
-
-    pbraudio_friction: FloatProperty(
-        name="Friction",
-        default=0.5,
-        min=0.0,
-        soft_max=1.0,
-        precision=5
-    )
-
-    pbraudio_roughness: FloatProperty(
-        name="Normalized Roughness",
-        default=0.4,
-        min=0.0,
-        max=1.0,
-        precision=5
-    )
-
-    pbraudio_low_frequency: FloatProperty(
-        name="Low Frequency",
-        default=5.0,
-        min=0.0,
-        soft_max=1000.0,
-        precision=5
-    )
-
-    pbraudio_high_frequency: FloatProperty(
-        name="High Frequency",
-        default=24000.0,
-        soft_min=10000.0,
-        max=96000.0,
-        precision=5
-    )
-
-    def init(self, context):
-        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
-        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
-
-    def draw_buttons(self, context, layout):
-        # Get the active material from context or node property
-        props = self
-
-        layout.prop(props, "pbraudio_sound_speed", slider=True)
-        layout.prop(props, "pbraudio_young_modulus", slider=True)
-        layout.prop(props, "pbraudio_poisson_ratio", slider=True)
-        layout.prop(props, "pbraudio_density", slider=True)
-        layout.prop(props, "pbraudio_damping", slider=True)
-        layout.prop(props, "pbraudio_friction", slider=True)
-        layout.prop(props, "pbraudio_roughness", slider=True)
-        layout.prop(props, "pbraudio_low_frequency", slider=True)
-        layout.prop(props, "pbraudio_high_frequency", slider=True)
-
-classes.append(DefaultAcousticShaderNode)
 
 class AcousticShaderNode(DefaultAcousticShaderNode):
     """Acoustic shader node"""
@@ -157,36 +31,208 @@ class AcousticShaderNode(DefaultAcousticShaderNode):
 
 classes.append(AcousticShaderNode)
 
-class AcousticPropertiesNode(AcousticMaterialNode):
-    """Acoustic properties node"""
-    bl_idname = 'AcousticPropertiesNode'
-    bl_label = "Acoustic Properties"
+class GlassShaderNode(DefaultAcousticShaderNode):
+    """Glass acoustic shader node"""
+    bl_idname = 'GlassShaderNode'
+    bl_label = "Glass"
 
     def init(self, context):
-        self.outputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
-        self.inputs.new('AcousticPropertiesNodeSocket', "absorption")
-        self.inputs.new('AcousticPropertiesNodeSocket', "refraction")
-        self.inputs.new('AcousticPropertiesNodeSocket', "reflection")
-        self.inputs.new('AcousticPropertiesNodeSocket', "scattering")
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
 
-classes.append(AcousticPropertiesNode)
+        self.pbraudio_sound_speed = 5000
+        self.pbraudio_young_modulus = 70
+        self.pbraudio_poisson_ratio = 0.22
+        self.pbraudio_density = 2500
+        self.pbraudio_damping = 0.3
+        self.pbraudio_friction = 0.2
+        self.pbraudio_roughness = 0.001
+classes.append(GlassShaderNode)
 
-class AcousticMaterialPreviewNode(AcousticMaterialNode):
-    """Acoustic material preview node for pbr synthesis"""
-    bl_idname = 'AcousticMaterialPreviewNode'
-    bl_label = "Acoustic Material Preview"
-
-    def init(self, context):
-        self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
-
-classes.append(AcousticMaterialPreviewNode)
-
-class AcousticMaterialOutputNode(AcousticMaterialNode):
-    """Acoustic material output node"""
-    bl_idname = 'AcousticMaterialOutputNode'
-    bl_label = "Material Output"
+class AluminumShaderNode(DefaultAcousticShaderNode):
+    """Aluminum acoustic shader node"""
+    bl_idname = 'AluminumShaderNode'
+    bl_label = "Aluminum"
 
     def init(self, context):
-        self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
 
-classes.append(AcousticMaterialOutputNode)
+        self.pbraudio_sound_speed = 6300
+        self.pbraudio_young_modulus = 69
+        self.pbraudio_poisson_ratio = 0.33
+        self.pbraudio_density = 2700
+        self.pbraudio_damping = 0.005
+        self.pbraudio_friction = 0.47
+        self.pbraudio_roughness = 0.04
+        self.pbraudio_low_frequency = 300
+        self.pbraudio_high_frequency = 10000
+classes.append(AluminumShaderNode)
+
+class AcrylicShaderNode(DefaultAcousticShaderNode):
+    """Acrylic acoustic shader node"""
+    bl_idname = 'AcrylicShaderNode'
+    bl_label = "Acrylic"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
+        self.pbraudio_sound_speed = 2680
+        self.pbraudio_young_modulus = 3.15
+        self.pbraudio_poisson_ratio = 0.36
+        self.pbraudio_density = 1283
+        self.pbraudio_damping = 2
+        self.pbraudio_friction = 0.5
+        self.pbraudio_roughness = 0.1
+classes.append(AcrylicShaderNode)
+
+class AsphaltShaderNode(DefaultAcousticShaderNode):
+    """Asphalt acoustic shader node"""
+    bl_idname = 'AsphaltShaderNode'
+    bl_label = "Asphalt"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
+        self.pbraudio_sound_speed = 2000
+        self.pbraudio_young_modulus = 2.5
+        self.pbraudio_poisson_ratio = 0.3
+        self.pbraudio_density = 2400
+        self.pbraudio_damping = 2
+        self.pbraudio_friction = 0.7
+        self.pbraudio_roughness = 0.5
+        self.pbraudio_low_frequency = 5
+        self.pbraudio_high_frequency = 100
+classes.append(AsphaltShaderNode)
+
+class ConcreteShaderNode(DefaultAcousticShaderNode):
+    """Concrete acoustic shader node"""
+    bl_idname = 'ConcreteShaderNode'
+    bl_label = "Concrete"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
+        self.pbraudio_sound_speed = 3600
+        self.pbraudio_young_modulus = 31
+        self.pbraudio_poisson_ratio = 0.16
+        self.pbraudio_density = 2320
+        self.pbraudio_damping = 5
+        self.pbraudio_friction = 0.5
+        self.pbraudio_roughness = 0.75
+        self.pbraudio_low_frequency = 5
+        self.pbraudio_high_frequency = 500
+classes.append(ConcreteShaderNode)
+
+class MarbleShaderNode(DefaultAcousticShaderNode):
+    """Marble acoustic shader node"""
+    bl_idname = 'MarbleShaderNode'
+    bl_label = "Marble"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
+        self.pbraudio_sound_speed = 5000
+        self.pbraudio_young_modulus = 40
+        self.pbraudio_poisson_ratio = 0.23
+        self.pbraudio_density = 2563
+        self.pbraudio_damping = 1.0
+        self.pbraudio_friction = 0.3
+        self.pbraudio_roughness = 0.01
+classes.append(MarbleShaderNode)
+
+class IronShaderNode(DefaultAcousticShaderNode):
+    """Iron acoustic shader node"""
+    bl_idname = 'IronShaderNode'
+    bl_label = "Iron"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
+        self.pbraudio_sound_speed = 4723
+        self.pbraudio_young_modulus = 130
+        self.pbraudio_poisson_ratio = 0.24
+        self.pbraudio_density = 7150
+        self.pbraudio_damping = 2
+        self.pbraudio_friction = 0.15
+        self.pbraudio_roughness = 0.12
+        self.pbraudio_low_frequency = 25
+classes.append(IronShaderNode)
+
+class TimberShaderNode(DefaultAcousticShaderNode):
+    """Timber acoustic shader node"""
+    bl_idname = 'TimberShaderNode'
+    bl_label = "Timber"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
+        self.pbraudio_sound_speed = 3500
+        self.pbraudio_young_modulus = 12
+        self.pbraudio_poisson_ratio = 0.4
+        self.pbraudio_density = 610
+        self.pbraudio_damping = 0.8
+        self.pbraudio_friction = 0.3
+        self.pbraudio_roughness = 0.2
+        self.pbraudio_low_frequency = 100
+        self.pbraudio_high_frequency = 2000
+classes.append(TimberShaderNode)
+
+class GypsumShaderNode(DefaultAcousticShaderNode):
+    """Gypsum acoustic shader node"""
+    bl_idname = 'GypsumShaderNode'
+    bl_label = "Gypsum"
+
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
+        self.pbraudio_sound_speed_min = 1400
+        self.pbraudio_sound_speed_max = 1600
+        self.pbraudio_young_modulus_min = 2
+        self.pbraudio_young_modulus_max = 4
+        self.pbraudio_poisson_ratio_min = 0.24
+        self.pbraudio_poisson_ratio_max = 0.35
+        self.pbraudio_density_min = 600
+        self.pbraudio_density_max = 1200
+        self.pbraudio_damping_min = 1
+        self.pbraudio_damping_max = 5
+        self.pbraudio_low_frequency_min = 10
+        self.pbraudio_low_frequency_max = 20
+        self.pbraudio_high_frequency_min = 2000
+        self.pbraudio_high_frequency_max = 4000
+
+        self.pbraudio_sound_speed = 1500
+        self.pbraudio_young_modulus = 2.3
+        self.pbraudio_poisson_ratio = 0.3
+        self.pbraudio_density = 825
+        self.pbraudio_damping = 2
+        self.pbraudio_low_frequency = 5
+        self.pbraudio_high_frequency = 3700
+classes.append(GypsumShaderNode)
+
+#class ShaderNode(DefaultAcousticShaderNode):
+#    """Template acoustic shader node"""
+#    bl_idname = 'ShaderNode'
+#    bl_label = "Shader"
+#
+#    def init(self, context):
+#        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+#        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+#
+#        self.pbraudio_sound_speed =
+#        self.pbraudio_young_modulus =
+#        self.pbraudio_poisson_ratio =
+#        self.pbraudio_density =
+#        self.pbraudio_damping =
+#        self.pbraudio_friction =
+#        self.pbraudio_roughness =
+#        self.pbraudio_low_frequency =
+#        self.pbraudio_high_frequency =
+#classes.append(ShaderNode)

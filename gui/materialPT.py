@@ -42,15 +42,38 @@ class PBRAUDIO_PT_material_panel(Panel):
                 AcousticDomain = world.pbraudio.acoustic_domain
 
         if not object == AcousticDomain:
-                layout.template_ID(snode, "nodetree", new="material.pbraudio_add")
-                layout.prop(snode, "stochastic_variation", toggle=True)
-                if not object.pbraudio.ground_disable:
-                    layout.prop(snode, "ground", toggle=True)
+            layout.template_ID(snode, "nodetree", new="material.pbraudio_add")
+            layout.prop(snode, "stochastic_variation", toggle=True)
+            if not object.pbraudio.ground_disable:
+                layout.prop(snode, "ground", toggle=True)
         else:
             layout.label(text='Acoustic World Domain.')
             layout.label(text='Settings are in the world panel.')
 
 classes.append(PBRAUDIO_PT_material_panel)
+
+class PBRAUDIO_PT_resonance_panel(Panel):
+    """Panel for pbrAudio resonance settings"""
+    bl_label = 'Object Resonance'
+    bl_idname = 'PBRAUDIO_PT_resonance_panel' 
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = 'material'
+    
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO' and context.object is not None
+    
+    def draw(self, context):
+        layout = self.layout
+        object = context.object
+
+        if not object.pbraudio.connected:
+            layout.prop(object.pbraudio, "resonance")
+            if object.pbraudio.resonance:
+                layout.prop(object.pbraudio, "resonance_modes")
+
+classes.append(PBRAUDIO_PT_resonance_panel)
 
 class PBRAUDIO_CONNECTED_UL_object_list(UIList):
     """UIList for displaying objects with float values"""
@@ -84,31 +107,32 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
     def draw(self, context):
         layout = self.layout
         obj = context.object
-        
-        # Collection info
-        collection = obj.users_collection[0]
 
-        if collection:
-            layout.label(text=f"Collection: {collection.name}", icon='OUTLINER_COLLECTION')
-        else:
-            layout.label(text="Object not in any collection", icon='ERROR')
+        if not obj.pbraudio.resonance:
         
-        layout.separator()
-        
-        # List of objects with float values
-        row = layout.row()
-        row.template_list(
-            "PBRAUDIO_CONNECTED_UL_object_list", "", obj, "pbraudio_connected", obj, "pbraudio_connected_index", rows=5)
-        
-        # Control buttons
-        col = row.column(align=True)
-        col.operator("object.pbraudio_add_to_connected_list", icon='ADD', text="")
-        col.operator("object.pbraudio_remove_from_connected_list", icon='REMOVE', text="")
-        col.separator()
-        col.operator("object.pbraudio_refresh_connected_list", icon='FILE_REFRESH', text="")
-        col.operator("object.pbraudio_clear_connected_list", icon='TRASH', text="")
+            # Collection info
+            collection = obj.users_collection[0]
 
-        layout.prop_search(obj.pbraudio, "selected_connected_object", collection, "objects", icon='OBJECT_DATA')
+            if collection:
+                layout.label(text=f"Collection: {collection.name}", icon='OUTLINER_COLLECTION')
+            else:
+                layout.label(text="Object not in any collection", icon='ERROR')
+        
+            layout.separator()
+        
+            # List of objects with float values
+            row = layout.row()
+            row.template_list("PBRAUDIO_CONNECTED_UL_object_list", "", obj, "pbraudio_connected", obj, "pbraudio_connected_index", rows=5)
+        
+            # Control buttons
+            col = row.column(align=True)
+            col.operator("object.pbraudio_add_to_connected_list", icon='ADD', text="")
+            col.operator("object.pbraudio_remove_from_connected_list", icon='REMOVE', text="")
+            col.separator()
+            col.operator("object.pbraudio_refresh_connected_list", icon='FILE_REFRESH', text="")
+            col.operator("object.pbraudio_clear_connected_list", icon='TRASH', text="")
+
+            layout.prop_search(obj.pbraudio, "selected_connected_object", collection, "objects", icon='OBJECT_DATA')
         
 classes.append(PBRAUDIO_CONNECTED_object_list)
 

@@ -42,6 +42,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
+        layout.prop(scene.pbraudio, "modal_modes", text="Modal Modes")
 
         # scene fracture value
         fracture_emboss = False

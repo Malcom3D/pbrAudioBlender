@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import PropertyGroup
-from bpy.props import BoolProperty, PointerProperty, EnumProperty, FloatProperty, StringProperty
+from bpy.props import BoolProperty, PointerProperty, EnumProperty, FloatProperty, StringProperty, IntProperty
 
 from ..nodetrees import materialsNT
 
@@ -54,7 +54,7 @@ class PBRAudioConnectedObjectList(PropertyGroup):
 classes.append(PBRAudioConnectedObjectList)
 
 class PBRAudioShardObjectList(PropertyGroup):
-    """Connected Object properties"""
+    """Shard Object properties"""
     shard_object: StringProperty(
         name="Shard Object Name",
         description="Name of the shard object"
@@ -69,6 +69,14 @@ class PBRAudioObjectProperties(PropertyGroup):
             if not obj == object:
                 if hasattr(obj.pbraudio, 'ground_disable'):
                     obj.pbraudio.ground_disable = object.pbraudio.ground
+
+    def enable_resonance(self, context):
+        object = context.object
+        object.connected = False
+
+    def enable_connected(self, context):
+        object = context.object
+        object.resonance = False
 
     def poll_selected_connected_object(self, object):
         return object.type == 'MESH' and not self.name == object.name
@@ -103,6 +111,29 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     ground_disable: BoolProperty(
         default=False
+    )
+
+    """Object Resonance"""
+    resonance: BoolProperty(
+        name="Enable object resonance",
+        description="Enable Object Resonance Synth",
+        default=False
+        update=enable_resonance
+    )
+
+    resonance_modes: IntProperty(
+        name="Resonance Modal Modes",
+        description="Int value between 0 and 100",
+        default=5,
+        min=1,
+        max=100
+    )
+
+    connected: BoolProperty(
+        name="Object is connected to other",
+        description="Synth Object as Connected",
+        default=False
+        update=enable_connected
     )
 
     """Connected Object selection properties for pbrAudio"""

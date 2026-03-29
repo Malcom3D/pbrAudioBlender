@@ -139,7 +139,7 @@ class PBRAUDIO_OT_fracture(Operator):
         scene = context.scene
         if hasattr(scene.pbraudio, 'fracture') and not scene.pbraudio.fracture:
             if not scene.pbraudio.bake:
-                bpy.ops.scene.pbraudio_bake()
+                bpy.ops.scene.pbraudio_bake.execute('EXEC_DEFAULT')
             # Start async processing
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
@@ -190,7 +190,7 @@ class PBRAUDIO_OT_bake(Operator):
         scene = context.scene
         if hasattr(scene.pbraudio, 'bake') and not scene.pbraudio.bake:
             if not scene.pbraudio.prebake:
-                bpy.ops.scene.pbraudio_prebake()
+                bpy.ops.scene.pbraudio_prebake('EXEC_DEFAULT')
             # Start async processing
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/bake"
@@ -240,7 +240,7 @@ class PBRAUDIO_OT_prebake(Operator):
         scene = context.scene
         if hasattr(scene.pbraudio, 'prebake') and not scene.pbraudio.prebake:
             if not scene.pbraudio.physics:
-                bpy.ops.scene.pbraudio_physics()
+                bpy.ops.scene.pbraudio_physics.execute('EXEC_DEFAULT')
             # Start async processing
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
@@ -297,8 +297,6 @@ class PBRAUDIO_OT_physics(Operator):
                 start_frame = scene.frame_start
                 end_frame = scene.frame_end
 
-                bpy.ops.object.select_all(action='SELECT')
-#                bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
                 bpy.ops.object.select_all(action='DESELECT')
 
                 self.report({'INFO'}, "Physics dynamics bake processing started")

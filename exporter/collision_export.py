@@ -38,6 +38,7 @@ class MeshToNumpyExporter:
         system["fps"] = scene.render.fps
         system["fps_base"] = scene.render.fps_base
         system["subframes"] = 1
+        system["modal_modes"] = scene.pbraudio.modal_modes
         system["collision_margin"] = scene.pbraudio.collision_margin
         system["cache_path"] = self.export_path
         self.config = {}
@@ -302,12 +303,16 @@ class MeshToNumpyExporter:
         object["stochastic_variation"] = obj.pbraudio.stochastic_variation
         object["ground"] = obj.pbraudio.ground
 
+        object["resonance"] = obj.pbraudio.resonance
+        object["resonance_modes"] = obj.pbraudio.resonance_modes
+
         connected = []
-        for item in obj.pbraudio_connected.values():
-            connected.append([item.connected_object.replace('.', '_'), item.connected_value/10])
-        if len(connected) == 0:
-            connected = False
-        object["connected"] = connected
+        if obj.pbraudio.connected:
+            for item in obj.pbraudio_connected.values():
+                connected.append([item.connected_object.replace('.', '_'), item.connected_value/10])
+            if len(connected) == 0:
+                connected = False
+            object["connected"] = connected
 
         object['is_shard'] = False
         object['fractured'] = fractured

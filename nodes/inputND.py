@@ -44,148 +44,82 @@ class AcousticMaterialFrequencyResponseNode(AcousticMaterialNode):
     """Custom node for defining audio frequency response curves"""
     bl_idname = "AcousticMaterialFrequencyResponseNode"
     bl_label = "Frequency Response Curve"
-    bl_icon = 'IPO_EASE_IN_OUT'
+    bl_icon = 'GRAPH'
 
-    # Curve mapping property - this creates the widget
-    frequency_curve: PointerProperty(
-        name="Frequency Response",
-        description="Frequency response curve",
-        type=CurveMapping,
+    # Collection of user‑defined points
+    points: bpy.props.CollectionProperty(type=AcousticFreqPoint)
+    # Index of the currently selected point in the UI list
+    point_index: bpy.props.IntProperty(default=0)
+
+    # Scaling factors for the generated curve
+    x_scale: bpy.props.FloatProperty(
+        name="X Scale",
+        description="Scales the log10(frequency) coordinate",
+        default=2.0,
+        min=0.1,
+        max=10.0
+    )
+    y_scale: bpy.props.FloatProperty(
+        name="Y Scale",
+        description="Scales the magnitude coordinate",
+        default=0.05,
+        min=0.01,
+        max=1.0
     )
 
-    # Optional: preview frequency input for evaluation
-    preview_frequency: FloatProperty(
-        name="Preview Frequency",
-        description="Frequency to preview response value (Hz)",
-        default=1000.0,
-        min=5.0,
-        max=24000.0,
-        step=10,
-        precision=0,
-        subtype='FREQUENCY'
+    # Optional X offset (moves the curve along X)
+    x_offset: bpy.props.FloatProperty(
+        name="X Offset",
+        default=-5.0,
+        description="Shift the curve left/right"
     )
-
     def init(self, context):
-        """Initialize the node and set up the curve mapping defaults"""
-        # Set up the curve mapping
-        curve = self.frequency_curve
-        curve.tot_rect = (0.0, 0.0, 1.0, 1.0)  # Reset to normalized space
-
-        # Create a new curve map with standard settings for audio frequency response
-        curve.initialize()
-        
-        # Set curve to use logarithmic x-axis for frequency perception
-        curve.clip_min_x = 0.0
-        curve.clip_max_x = 1.0
-        curve.clip_min_y = -30.0  # -30 dB
-        curve.clip_max_y = 30.0   # +30 dB
-        curve.use_clip = True
-        
-        # Add curve points for a flat response (0 dB)
-        curve.curves[0].points.new(0.0, 0.0)    # 5 Hz at normalized 0
-        curve.curves[0].points.new(1.0, 0.0)    # 24 kHz at normalized 1
-        
-        # Set interpolation to Bezier for smooth curves
-        for point in curve.curves[0].points:
-            point.handle_type = 'AUTO'
-        
-        # Update the curve mapping
-        curve.update()
-
-        # Create output sockets
-        self.outputs.new('NodeSocketFloat', "Gain")
-        self.outputs.new('NodeSocketFloat', "Preview Response")
+        """Add two example points when the node is first created"""
+        pt1 = self.points.add()
+        pt1.frequency = 100.0
+        pt1.magnitude = -20.0
+        pt2 = self.points.add()
+        pt2.frequency = 1000.0
+        pt2.magnitude = 0.0
+        pt3 = self.points.add()
+        pt3.frequency = 10000.0
+        pt3.magnitude = -10.0
 
     def draw_buttons(self, context, layout):
-        """Draw the curve widget in the node interface"""
-        col = layout.column(align=True)
-        
-        # Display the frequency response curve widget
-        col.template_curve_mapping(
-            self, "frequency_curve",
-            type='NONE',  # No predefined type, we use custom ranges
-            levels=False,
-            brush=False,
-            use_alpha=False
+        """UI inside the node"""
+        # --- List of points ---
+        row = layout.row()
+        col = row.column()
+        col.template_list(
+            "UI_UL_list", "freq_points", self, "points",
+            self, "point_index", rows=3
         )
-        
-        # Add frequency range labels
-        row = col.row(align=True)
-        row.label(text="5 Hz")
-        row.label(text="1 kHz")
-        row.label(text="24 kHz")
-        
-        # Add gain range label
-        col.label(text=f"Range: -30 dB to +30 dB")
-        
-        # Preview section
-        col.separator()
-        col.prop(self, "preview_frequency")
-        
-        # Calculate and show preview value
-        preview_gain = self.evaluate_at_frequency(self.preview_frequency)
-        col.label(text=f"Response: {preview_gain:.2f} dB")
-        
-        # Display the preview response in the second output socket
-        if "Preview Response" in self.outputs:
-            self.outputs["Preview Response"].default_value = self._normalize_gain(preview_gain)
+
+        # Add / remove buttons
+        col = row.column(align=True)
+        col.operator("acoustic.point_add", icon='ADD', text="")
+        col.operator("acoustic.point_remove", icon='REMOVE', text="")
+
+        # --- Point properties (when a point is selected) ---
+        if self.point_index < len(self.points):
+            pt = self.points[self.point_index]
+            box = layout.box()
+            box.label(text="Selected Point", icon='DOT')
+            box.prop(pt, "frequency")
+            box.prop(pt, "magnitude")
+
+        # --- Scaling and generation ---
+        layout.separator()
+        layout.prop(self, "x_scale")
+        layout.prop(self, "y_scale")
+        layout.prop(self, "x_offset")
+        layout.separator()
+        layout.operator("acoustic.generate_curve", text="Generate Curve", icon='OUTLINER_OB_CURVE')
 
     def draw_buttons_ext(self, context, layout):
-        """Extended UI in sidebar"""
+        """Extra UI in the sidebar (N‑panel) – same as main UI"""
         self.draw_buttons(context, layout)
-        layout.separator()
-        layout.label(text="Usage:")
-        layout.label(text="• Link 'Gain' output to material")
-        layout.label(text="• Gain = dB multiplier for frequency")
-        layout.label(text="• 0 dB = no change, positive = boost")
 
-    def evaluate_at_frequency(self, frequency_hz):
-        """Evaluate curve response at given frequency in Hz"""
-        if not self.frequency_curve:
-            return 0.0
-        
-        # Convert frequency to normalized x-coordinate (log scale)
-        # Map 5 Hz -> 0.0, 24,000 Hz -> 1.0
-        import math
-        f_min = 5.0
-        f_max = 24000.0
-        
-        # Logarithmic mapping for perceived frequency
-        log_f = math.log10(max(frequency_hz, f_min))
-        log_min = math.log10(f_min)
-        log_max = math.log10(f_max)
-        
-        # Normalized position
-        x = (log_f - log_min) / (log_max - log_min)
-        x = max(0.0, min(1.0, x))  # Clamp to [0, 1]
-        
-        # Evaluate curve at x
-        try:
-            # Get the first curve (RGB curve)
-            curve_map = self.frequency_curve.curves[0]
-            # Evaluate returns (y, y) but we need the y value
-            value = curve_map.evaluate(curve_map, x)
-            # The evaluate method returns a float value
-            return value
-        except Exception as e:
-            print(f"Error evaluating curve: {e}")
-            return 0.0
-
-    def _normalize_gain(self, gain_db):
-        """Convert dB gain to linear multiplier (0-2 range for UI)"""
-        # Normalize -30..30 dB to 0..1 range
-        # 0 dB = 0.5 normalized (no change)
-        return (gain_db + 30.0) / 60.0
-
-    def update(self):
-        """Called when node properties change"""
-        if self.frequency_curve:
-            self.frequency_curve.update()
-        
-        # Update output socket values
-        if "Preview Response" in self.outputs:
-            preview_gain = self.evaluate_at_frequency(self.preview_frequency)
-            self.outputs["Preview Response"].default_value = self._normalize_gain(preview_gain)
 classes.append(AcousticMaterialFrequencyResponseNode)
 
 class DispertionPatternGraph(AcousticMaterialNode):

@@ -132,7 +132,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     connected: BoolProperty(
         name="Object is connected to other",
         description="Synth Object as Connected",
-        default=False
+        default=False,
         update=enable_connected
     )
 

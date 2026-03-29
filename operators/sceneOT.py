@@ -127,7 +127,7 @@ class PBRAUDIO_OT_fracture(Operator):
             scene.pbraudio.shader_processing = False
             scene.pbraudio.fracture = True
             scene.pbraudio.status_progress = 100.0
-            self.report({'INFO'}, "Baking of fracture data for sound synthesis completed")
+#            self.report({'INFO'}, "Baking of fracture data for sound synthesis completed")
             return None
         else:
             # Update progress
@@ -141,13 +141,15 @@ class PBRAUDIO_OT_fracture(Operator):
             if not scene.pbraudio.bake:
                 bpy.ops.scene.pbraudio_bake('EXEC_DEFAULT')
             # Start async processing
+            scene.pbraudio.shader_processing = True
+            scene.pbraudio.status_progress = 0.0
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             process = pbrAudio_fracture(config_file, status_file)
 
             # Monitor completion
             bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
-            self.report({'INFO'}, "Bake of fracture data for sound synthesis started")
+#            self.report({'INFO'}, "Bake of fracture data for sound synthesis started")
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_fracture)
@@ -178,7 +180,7 @@ class PBRAUDIO_OT_bake(Operator):
             scene.pbraudio.shader_processing = False
             scene.pbraudio.bake = True
             scene.pbraudio.status_progress = 100.0
-            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
+#            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
             return None
         else:
             # Update progress
@@ -192,12 +194,14 @@ class PBRAUDIO_OT_bake(Operator):
             if not scene.pbraudio.prebake:
                 bpy.ops.scene.pbraudio_prebake('EXEC_DEFAULT')
             # Start async processing
+            scene.pbraudio.shader_processing = True
+            scene.pbraudio.status_progress = 0.0
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/bake"
             process = pbrAudio_bake(config_file, status_file)
             # Monitor completion
             bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
-            self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
+#            self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_bake)
@@ -228,7 +232,7 @@ class PBRAUDIO_OT_prebake(Operator):
             scene.pbraudio.shader_processing = False
             scene.pbraudio.prebake = True
             scene.pbraudio.status_progress = 100.0
-            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
+#            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
             return None
         else:
             # Update progress
@@ -242,12 +246,14 @@ class PBRAUDIO_OT_prebake(Operator):
             if not scene.pbraudio.physics:
                 bpy.ops.scene.pbraudio_physics('EXEC_DEFAULT')
             # Start async processing
+            scene.pbraudio.shader_processing = True
+            scene.pbraudio.status_progress = 0.0
             config_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
             process = pbrAudio_prebake(config_file, status_file)
             # Monitor completion
             bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
-            self.report({'INFO'}, "Prebaking of baked physics dynamics for sound synthesis started")
+#            self.report({'INFO'}, "Prebaking of baked physics dynamics for sound synthesis started")
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_prebake)
@@ -265,7 +271,7 @@ class PBRAUDIO_OT_physics(Operator):
                 with open(status_file, 'r') as f:
                     progress = f.read().strip()
                     if progress:
-                        scene.pbraudio.status_progress = float(progress)
+                        scene.pbraudio.status_progress = 50 + float(progress) / 2
                 return True
             except:
                 pass
@@ -279,7 +285,7 @@ class PBRAUDIO_OT_physics(Operator):
             scene.pbraudio.physics = True
             scene.pbraudio.cache_status = True
             scene.pbraudio.status_progress = 100.0
-            self.report({'INFO'}, "Physics dynamics bake processing completed")
+#            self.report({'INFO'}, "Physics dynamics bake processing completed")
             return None
         else:
             # Update progress
@@ -299,11 +305,15 @@ class PBRAUDIO_OT_physics(Operator):
 
                 bpy.ops.object.select_all(action='DESELECT')
 
-                self.report({'INFO'}, "Physics dynamics bake processing started")
+#                self.report({'INFO'}, "Physics dynamics bake processing started")
                 # Create exporter
+                scene.pbraudio.shader_processing = True
+                scene.pbraudio.status_progress = 0.0
                 exporter = MeshToNumpyExporter(scene=scene, decimals=decimals)
+                progress_step = 50 / len(scene.pbraudio.collision_collection.objects.values())
                 for obj in scene.pbraudio.collision_collection.objects.values():
                     # Export animation
+                    scene.pbraudio.status_progress += progress_step
                     exporter.export_animation(obj, start_frame, end_frame)
                     obj.select_set(False)
 
@@ -335,7 +345,7 @@ class PBRAUDIO_OT_clear_cache(Operator):
                 scene.pbraudio.prebake = False
                 scene.pbraudio.physics = False
                 scene.pbraudio.cache_status = False
-                self.report({'INFO'}, f"Collision cache for {scene.pbraudio.collision_collection.name_full} cleared")
+#                self.report({'INFO'}, f"Collision cache for {scene.pbraudio.collision_collection.name_full} cleared")
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_clear_cache)

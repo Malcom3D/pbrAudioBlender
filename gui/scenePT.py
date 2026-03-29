@@ -40,6 +40,10 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
+        # Draw progress bar if baking are processed
+        if scene.pbraudio.shader_processing:
+            layout.prop(scene.pbraudio, "status_progress", text="Shader Progress", slider=True)
+
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
         layout.prop(scene.pbraudio, "modal_modes", text="Modal Modes")
@@ -50,11 +54,6 @@ class PBRAUDIO_PT_Collision_panel(Panel):
             for object in scene.pbraudio.collision_collection.objects.values():
                 if object.pbraudio.fractured and not len(object.pbraudio_shard.values()) == 0 and not scene.pbraudio.fracture:
                     fracture_emboss = True
-
-        # Draw progress bar if baking are processed
-        if scene.pbraudio.shader_processing:
-            row = layout.row(align=True)
-            row.prop(scene.pbraudio, "status_progress", text="Shader Progress", slider=True)
 
         # operator button
         layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)

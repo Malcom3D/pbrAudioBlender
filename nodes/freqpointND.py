@@ -22,6 +22,8 @@ from bpy.props import PointerProperty
 
 from .baseND import AcousticMaterialNode
 
+classes = []
+
 # -------------------------------------------------------------------
 #  Custom Node Type
 # -------------------------------------------------------------------
@@ -114,16 +116,4 @@ class AcousticMaterialFrequencyCurve(AcousticMaterialNode):
         if self.freq_curve:
             return self.freq_curve.evaluate(x)
         return 0.0
-
-
-# -------------------------------------------------------------------
-#  Registration
-# -------------------------------------------------------------------
-def register():
-    bpy.utils.register_class(AcousticMaterialFrequencyCurve)
-
-def unregister():
-    bpy.utils.unregister_class(AcousticMaterialFrequencyCurve)
-
-if __name__ == "__main__":
-    register()
+classes.append(AcousticMaterialFrequencyCurve)

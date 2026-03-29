@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import Node
-from bpy.props import StringProperty, PointerProperty, FloatProperty, CollectionProperty
+from bpy.props import StringProperty, PointerProperty, IntProperty, FloatProperty, CollectionProperty
 
 from .baseND import AcousticMaterialNode
 

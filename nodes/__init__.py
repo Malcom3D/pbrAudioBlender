@@ -22,9 +22,9 @@ from nodeitems_utils import NodeCategory, NodeItem, register_node_categories, un
 
 classes = []
 
-from . import worldND, materialsND, presetMaterialsND
+from . import worldND, baseND, materialsND, inputND, outputND
 
-for mod in (worldND, materialsND, presetMaterialsND):
+for mod in (worldND, baseND, materialsND, inputND, outputND):
     classes += mod.classes
 
 class WorldNodeCategory(NodeCategory):

@@ -23,6 +23,7 @@ from bpy.props import StringProperty, PointerProperty, IntProperty, FloatPropert
 from .baseND import AcousticMaterialNode
 
 from ..properties import materialPG
+from ..properties.materialPG import PBRAudioFreqPointProperties
 
 classes = []
 
@@ -47,7 +48,7 @@ class AcousticMaterialFrequencyResponseNode(AcousticMaterialNode):
     bl_icon = 'GRAPH'
 
     # Collection of user‑defined points
-    points: CollectionProperty(type=materialPG.PBRAudioFreqPointProperties)
+    points: CollectionProperty(type=PBRAudioFreqPointProperties)
     # Index of the currently selected point in the UI list
     point_index: IntProperty(default=0)
 

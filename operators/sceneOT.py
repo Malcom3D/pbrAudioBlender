@@ -114,7 +114,7 @@ class PBRAUDIO_OT_fracture(Operator):
                 with open(status_file, 'r') as f:
                     progress = f.read().strip()
                     if progress:
-                        scene.pbraudio.status_progress = float(progress)
+                        scene.pbraudio.status_progress = float(progress) / 100
                 return True
             except:
                 pass
@@ -126,7 +126,7 @@ class PBRAUDIO_OT_fracture(Operator):
             # Process finished
             scene.pbraudio.shader_processing = False
             scene.pbraudio.fracture = True
-            scene.pbraudio.status_progress = 100.0
+            scene.pbraudio.status_progress = 1.0
 #            self.report({'INFO'}, "Baking of fracture data for sound synthesis completed")
             return None
         else:
@@ -167,7 +167,7 @@ class PBRAUDIO_OT_bake(Operator):
                 with open(status_file, 'r') as f:
                     progress = f.read().strip()
                     if progress:
-                        scene.pbraudio.status_progress = float(progress)
+                        scene.pbraudio.status_progress = float(progress) / 100
                 return True
             except:
                 pass
@@ -179,7 +179,7 @@ class PBRAUDIO_OT_bake(Operator):
             # Process finished
             scene.pbraudio.shader_processing = False
             scene.pbraudio.bake = True
-            scene.pbraudio.status_progress = 100.0
+            scene.pbraudio.status_progress = 1.0
 #            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
             return None
         else:
@@ -219,7 +219,7 @@ class PBRAUDIO_OT_prebake(Operator):
                 with open(status_file, 'r') as f:
                     progress = f.read().strip()
                     if progress:
-                        scene.pbraudio.status_progress = float(progress)
+                        scene.pbraudio.status_progress = float(progress) / 100
                 return True
             except:
                 pass
@@ -231,7 +231,7 @@ class PBRAUDIO_OT_prebake(Operator):
             # Process finished
             scene.pbraudio.shader_processing = False
             scene.pbraudio.prebake = True
-            scene.pbraudio.status_progress = 100.0
+            scene.pbraudio.status_progress = 1.0
 #            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
             return None
         else:
@@ -271,7 +271,7 @@ class PBRAUDIO_OT_physics(Operator):
                 with open(status_file, 'r') as f:
                     progress = f.read().strip()
                     if progress:
-                        scene.pbraudio.status_progress = 50 + float(progress) / 2
+                        scene.pbraudio.status_progress = 0.5 + float(progress) / 100
                 return True
             except:
                 pass
@@ -284,7 +284,7 @@ class PBRAUDIO_OT_physics(Operator):
             scene.pbraudio.shader_processing = False
             scene.pbraudio.physics = True
             scene.pbraudio.cache_status = True
-            scene.pbraudio.status_progress = 100.0
+            scene.pbraudio.status_progress = 1.0
 #            self.report({'INFO'}, "Physics dynamics bake processing completed")
             return None
         else:
@@ -310,7 +310,7 @@ class PBRAUDIO_OT_physics(Operator):
                 scene.pbraudio.shader_processing = True
                 scene.pbraudio.status_progress = 0.0
                 exporter = MeshToNumpyExporter(scene=scene, decimals=decimals)
-                progress_step = 50 / len(scene.pbraudio.collision_collection.objects.values())
+                progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
                 for obj in scene.pbraudio.collision_collection.objects.values():
                     # Export animation
                     scene.pbraudio.status_progress += progress_step

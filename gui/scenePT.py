@@ -42,7 +42,8 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
         # Draw progress bar if baking are processed
         if scene.pbraudio.shader_processing:
-            layout.prop(scene.pbraudio, "status_progress", text="Shader Progress", slider=True)
+            layout.progress(factor=scene.pbraudio.status_progress, type='BAR')
+#            layout.prop(scene.pbraudio, "status_progress", text="Shader Progress", slider=True)
 
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)

@@ -195,7 +195,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         description="Progress of processing",
         default=0.0,
         min=0.0,
-        max=100.0,
+        max=1.0,
         subtype='PERCENTAGE'
     )
 

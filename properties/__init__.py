@@ -38,7 +38,6 @@ def register():
     bpy.types.Object.pbraudio_connected_index = IntProperty(name="Index", default=-1, description="Active index in the connected object list")
     bpy.types.Object.pbraudio_shard = CollectionProperty(type=objectPG.PBRAudioShardObjectList)
     bpy.types.Object.pbraudio_shard_index = IntProperty(name="Index", default=-1, description="Active index in the shard object list")
-    bpy.types.NodeTree.pbraudio_freqpoint = CollectionProperty(type=materialPG.PBRAudioFreqPointProperties)
     bpy.types.World.pbraudio = PointerProperty(type=worldPG.PBRAudioWorldProperties)
     # pbrAudio World Enviroment Properties
 #    bpy.types.World.pbraudioEnv = CollectionProperty(type=worldPG.PBRAudioWorldEnvironmentProperties)
@@ -48,7 +47,6 @@ def unregister():
     # Remove property groups
 #    del bpy.types.World.pbraudioEnv
     del bpy.types.World.pbraudio
-    del bpy.types.NodeTree.pbraudio_freqpoint
     del bpy.types.Object.pbraudio_shard_index
     del bpy.types.Object.pbraudio_shard
     del bpy.types.Object.pbraudio_connected_index

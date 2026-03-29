@@ -51,7 +51,6 @@ class MaterialNodeCategory(NodeCategory):
 input_node_categories = [
     MaterialNodeCategory("INPUT_NODES", "Input", items=[
         NodeItem("AcousticPropertiesNode"),
-        NodeItem("AcousticMaterialFrequencyResponseNode"),
     ]),
 ]
 

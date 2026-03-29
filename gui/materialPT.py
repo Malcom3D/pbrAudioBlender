@@ -69,9 +69,9 @@ class PBRAUDIO_PT_resonance_panel(Panel):
         object = context.object
 
         if not object.pbraudio.connected:
-            layout.prop(object.pbraudio, "resonance")
+            layout.prop(object.pbraudio, "resonance", text="Enable Object Resonance")
             if object.pbraudio.resonance:
-                layout.prop(object.pbraudio, "resonance_modes")
+                layout.prop(object.pbraudio, "resonance_modes", text="Resonance Modal Modes")
 
 classes.append(PBRAUDIO_PT_resonance_panel)
 

@@ -635,7 +635,7 @@ class AcousticFrequencyResponseNode(AcousticMaterialNode):
         # Add new point
         new_point = self.points.add()
         new_point.location = curve_pos
-        new_point.handle_type = = 'AUTO'
+        new_point.handle_type = 'AUTO'
         self.update_handles(new_point)
         
         # Move to correct position

@@ -57,8 +57,8 @@ input_node_categories = [
 custom_node_categories = [ 
     MaterialNodeCategory("CUSTOM_NODES", "Custom", items=[
     [(FloatCurveNode.bl_idname, FloatCurveNode.bl_label, "", FloatCurveNode.bl_icon)]
-))
-
+    ]),
+]
 
 output_node_categories = [
     MaterialNodeCategory("OUTPUT_NODES", "Output", items=[

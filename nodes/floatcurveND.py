@@ -438,7 +438,8 @@ class FloatCurveNode(AcousticMaterialNode):
         row = layout.row()
         op = row.operator("node.float_curve_reset", text="Reset")
         op.node_name = self.name
-        op.tree_name = context.space_data.node_tree.name
+#        op.tree_name = context.space_data.node_tree.name
+        op.tree_name = self.id_data.name
     
     def free(self):
         """Clean up when node is removed"""

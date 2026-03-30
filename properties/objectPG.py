@@ -72,11 +72,13 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     def enable_resonance(self, context):
         object = context.object
-        object.connected = False
+        if hasattr(object, 'connected'):
+            object.connected = False
 
     def enable_connected(self, context):
         object = context.object
-        object.resonance = False
+        if hasattr(object, 'resonance'):
+            object.resonance = False
 
     def poll_selected_connected_object(self, object):
         return object.type == 'MESH' and not self.name == object.name

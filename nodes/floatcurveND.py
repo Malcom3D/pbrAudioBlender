@@ -473,11 +473,12 @@ class NODE_OT_float_curve_editor(bpy.types.Operator):
     
     def invoke(self, context, event):
         # Find the node
-        node_tree = bpy.data.node_groups.get(self.tree_name)
+        node_tree = context.space_data.node_tree.name
+#        node_tree = bpy.data.node_groups.get(self.tree_name)
         if not node_tree:
             self.report({'ERROR'}, "Node tree not found")
             return {'CANCELLED'}
-        
+    
         node = node_tree.nodes.get(self.node_name)
         if not node or not isinstance(node, FloatCurveNode):
             self.report({'ERROR'}, "FloatCurve node not found")

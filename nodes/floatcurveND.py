@@ -427,7 +427,7 @@ class FloatCurveNode(AcousticMaterialNode):
         if self.inputs[0].is_linked:
             input_value = self.inputs[0].default_value
             output_value = self.curve.evaluate(input_value)
-            row row = layout.row()
+            row = layout.row()
             row.label(text=f"Input: {input_value:.3f} → Output: {output_value:.3f}")
     
     def draw_buttons_ext(self, context, layout):

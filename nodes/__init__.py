@@ -51,12 +51,7 @@ class MaterialNodeCategory(NodeCategory):
 input_node_categories = [
     MaterialNodeCategory("INPUT_NODES", "Input", items=[
         NodeItem("AcousticPropertiesNode"),
-    ]),
-]
-
-custom_node_categories = [ 
-    MaterialNodeCategory("CUSTOM_NODES", "Custom", items=[
-    [(FloatCurveNode.bl_idname, FloatCurveNode.bl_label, "", FloatCurveNode.bl_icon)]
+        NodeItem("CustomFloatCurveNode"),
     ]),
 ]
 
@@ -89,13 +84,11 @@ def register():
     register_node_categories("INPUT", input_node_categories)
     register_node_categories("OUTPUT", output_node_categories)
     register_node_categories("MATERIAL", material_node_categories)
-    register_node_categories("CUSTOM", material_node_categories)
 
 def unregister():
     unregister_node_categories("MATERIAL")
     unregister_node_categories("OUTPUT")
     unregister_node_categories("INPUT")
-    unregister_node_categories("CUSTOM")
     unregister_node_categories("WORLD")
     for cls in reversed(classes):
         unregister_class(cls)

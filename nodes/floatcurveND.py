@@ -408,8 +408,6 @@ class FloatCurveNode(AcousticMaterialNode):
     bl_icon = 'GRAPH'
     
     # Properties
-    curve = PointerProperty(type=FloatCurve)
-
     curve_data: StringProperty(
         name="Curve Data",
         default=""
@@ -475,6 +473,8 @@ class NODE_OT_float_curve_editor(Operator):
     bl_label = "Float Curve Editor"
     bl_options = {'REGISTER', 'UNDO'}
     
+    # Properties
+    curve: PointerProperty(type=FloatCurve)
     node_name: StringProperty()
     tree_name: StringProperty()
     

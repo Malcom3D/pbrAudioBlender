@@ -25,6 +25,9 @@ from mathutils import Vector
 from math import floor, ceil
 import numpy as np
 
+from bpy.props import StringProperty, PointerProperty
+from bpy.types import Operator
+
 from .baseND import AcousticMaterialNode
 
 # ------------------------------------------------------------
@@ -407,7 +410,7 @@ class FloatCurveNode(AcousticMaterialNode):
     # Properties
     curve = PointerProperty(type=FloatCurve)
 
-    curve_data: bpy.props.StringProperty(
+    curve_data: StringProperty(
         name="Curve Data",
         default=""
     )
@@ -466,14 +469,14 @@ class FloatCurveNode(AcousticMaterialNode):
 # ------------------------------------------------------------
 # Operators
 # ------------------------------------------------------------
-class NODE_OT_float_curve_editor(bpy.types.Operator):
+class NODE_OT_float_curve_editor(Operator):
     """Open Float Curve Editor"""
     bl_idname = "node.float_curve_editor"
     bl_label = "Float Curve Editor"
     bl_options = {'REGISTER', 'UNDO'}
     
-    node_name: bpy.props.StringProperty()
-    tree_name: bpy.props.StringProperty()
+    node_name: StringProperty()
+    tree_name: StringProperty()
     
     def invoke(self, context, event):
         # Find the node
@@ -518,13 +521,13 @@ class NODE_OT_float_curve_editor(bpy.types.Operator):
     def execute(self, context):
         return {'FINISHED'}
 
-class NODE_OT_float_curve_reset(bpy.types.Operator):
+class NODE_OT_float_curve_reset(Operator):
     """Reset Curve to Default"""
     bl_idname = "node.float_curve_reset"
     bl_label = "Reset Curve"
     
-    node_name: bpy.props.StringProperty()
-    tree_name: bpy.props.StringProperty()
+    node_name: StringProperty()
+    tree_name: StringProperty()
     
     def execute(self, context):
         node_tree = bpy.data.node_groups.get(self.tree_name)

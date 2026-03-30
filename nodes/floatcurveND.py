@@ -405,6 +405,8 @@ class FloatCurveNode(AcousticMaterialNode):
     bl_icon = 'GRAPH'
     
     # Properties
+    curve = PointerProperty(type=FloatCurve)
+
     curve_data: bpy.props.StringProperty(
         name="Curve Data",
         default=""
@@ -422,6 +424,7 @@ class FloatCurveNode(AcousticMaterialNode):
         """Draw node buttons"""
         row = layout.row()
         op = row.operator("node.float_curve_editor", text="Edit Curve")
+        op.curve = self.curve
         op.node_name = self.name
         op.tree_name = self.id_data.name
         

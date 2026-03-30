@@ -421,7 +421,9 @@ class FloatCurveNode(AcousticMaterialNode):
     def draw_buttons(self, context, layout):
         """Draw node buttons"""
         row = layout.row()
-        row.operator("node.float_curve_editor", text="Edit Curve")
+        op = row.operator("node.float_curve_editor", text="Edit Curve")
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
         
         # Display current value if connected
         if self.inputs[0].is_linked:
@@ -438,7 +440,6 @@ class FloatCurveNode(AcousticMaterialNode):
         row = layout.row()
         op = row.operator("node.float_curve_reset", text="Reset")
         op.node_name = self.name
-#        op.tree_name = context.space_data.node_tree.name
         op.tree_name = self.id_data.name
     
     def free(self):
@@ -473,8 +474,7 @@ class NODE_OT_float_curve_editor(bpy.types.Operator):
     
     def invoke(self, context, event):
         # Find the node
-        node_tree = context.space_data.node_tree
-#        node_tree = bpy.data.node_groups.get(self.tree_name)
+        node_tree = bpy.data.node_groups.get(self.tree_name)
         if not node_tree:
             self.report({'ERROR'}, "Node tree not found")
             return {'CANCELLED'}

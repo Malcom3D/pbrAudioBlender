@@ -200,6 +200,8 @@ class MeshToNumpyExporter:
         name = obj.name_full.replace('.', '_')
         quest_mesh = trimesh.Trimesh(vertices=vertices, vertex_normals=normals, faces=faces)
         if not quest_mesh.is_watertight or not quest_mesh.is_volume and self.to_add(name):
+            print('watertight: ', quest_mesh.is_watertight)
+            print('volume: ', quest_mesh.is_volume)
             self.not_valid.append(name)
 #            print(f"Warming: {obj.name} is not manifold/watertight.")
 #            print(f"Warming: trying to fix {obj.name} manifold/watertight.")

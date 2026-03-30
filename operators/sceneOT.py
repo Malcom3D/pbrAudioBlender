@@ -315,6 +315,7 @@ class PBRAUDIO_OT_physics(Operator):
                 start_frame = scene.frame_start
                 end_frame = scene.frame_end
 
+                bpy.ops.object.select_all(action='SELECT')
                 bpy.ops.object.select_all(action='DESELECT')
 
 #                self.report({'INFO'}, "Physics dynamics bake processing started")

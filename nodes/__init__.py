@@ -19,7 +19,6 @@
 import bpy
 from bpy.utils import register_class, unregister_class
 from nodeitems_utils import NodeCategory, NodeItem, register_node_categories, unregister_node_categories
-from nodeitems_builtins import node_categories
 
 classes = []
 
@@ -55,16 +54,10 @@ input_node_categories = [
     ]),
 ]
 
-node_categories.append(MaterialNodeCategory(
-    "CUSTOM_NODES",
-    "Custom Nodes",
-    items=[(FloatCurveNode.bl_idname, FloatCurveNode.bl_label, "", FloatCurveNode.bl_icon)]
+custom_node_categories = [ 
+    MaterialNodeCategory("CUSTOM_NODES", "Custom", items=[
+    [(FloatCurveNode.bl_idname, FloatCurveNode.bl_label, "", FloatCurveNode.bl_icon)]
 ))
-
-#custom_node_categories = [ 
-#    MaterialNodeCategory("CUSTOM_NODES", "Custom", items=[
-#    [(FloatCurveNode.bl_idname, FloatCurveNode.bl_label, "", FloatCurveNode.bl_icon)]
-#))
 
 
 output_node_categories = [

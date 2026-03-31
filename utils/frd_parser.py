@@ -17,17 +17,17 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
-Simple FDR file parser for frequency response data
-FDR format is typically a text file with frequency and magnitude pairs
+Simple FRD file parser for frequency response data
+FRD format is typically a text file with frequency and magnitude pairs
 """
 import numpy as np
 
-def parse_fdr_file(filepath):
+def parse_frd_file(filepath):
     """
-    Parse FDR file and return frequency and magnitude arrays
+    Parse FRD file and return frequency and magnitude arrays
     
     Args:
-        filepath: Path to FDR file
+        filepath: Path to FRD file
         
     Returns:
         tuple: (frequencies, magnitudes) as numpy arrays
@@ -56,12 +56,12 @@ def parse_fdr_file(filepath):
         return np.array(frequencies), np.array(magnatures)
     
     except Exception as e:
-        print(f"Error parsing FDR file {filepath}: {e}")
+        print(f"Error parsing FRD file {filepath}: {e}")
         return np.array([]), np.array([])
 
-def validate_fdr_data(frequencies, magnitudes):
+def validate_frd_data(frequencies, magnitudes):
     """
-    Validate FDR data
+    Validate FRD data
     
     Args:
         frequencies: Array of frequencies
@@ -82,9 +82,9 @@ def validate_fdr_data(frequencies, magnitudes):
     
     return True
 
-def resample_fdr_data(frequencies, magnitudes, num_points=100):
+def resample_frd_data(frequencies, magnitudes, num_points=100):
     """
-    Resample FDR data to specified number of points
+    Resample FRD data to specified number of points
     
     Args:
         frequencies: Original frequency array

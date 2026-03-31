@@ -26,42 +26,42 @@ from .baseND import AcousticMaterialNode
 
 classes = []
 
-class NODE_OT_load_fdr_file(bpy.types.Operator, ImportHelper):
-    """Load FDR frequency response file"""
-    bl_idname = "node.load_fdr_file"
-    bl_label = "Load FDR File"
+class NODE_OT_load_frd_file(bpy.types.Operator, ImportHelper):
+    """Load FRD frequency response file"""
+    bl_idname = "node.load_frd_file"
+    bl_label = "Load FRD File"
     
     filter_glob: StringProperty(
-        default="*.fdr;*.txt;*.csv",
+        default="*.frd;*.txt;*.csv",
         options={'HIDDEN'}
     )
     
     def execute(self, context):
         node = context.node
         if node:
-            node.fdr_filepath = self.filepath
+            node.frd_filepath = self.filepath
             # Extract filename without extension
             filename = os.path.basename(self.filepath)
-            node.fdr_filename = os.path.splitext(filename)[0]
+            node.frd_filename = os.path.splitext(filename)[0]
         return {'FINISHED'}
 
 class FrequencyResponseNode(AcousticMaterialNode):
-    """Node for loading and managing frequency response data from FDR files"""
+    """Node for loading and managing frequency response data from FRD files"""
     bl_idname = 'FrequencyResponseNode'
     bl_label = "Frequency Response"
     bl_icon = 'GRAPH'
     
     # File properties
-    fdr_filepath: StringProperty(
-        name="FDR File",
-        description="Path to FDR frequency response file",
+    frd_filepath: StringProperty(
+        name="FRD File",
+        description="Path to FRD frequency response file",
         subtype='FILE_PATH',
         default=""
     )
     
-    fdr_filename: StringProperty(
+    frd_filename: StringProperty(
         name="Filename",
-        description="Name of the FDR file",
+        description="Name of the FRD file",
         default=""
     )
     
@@ -129,22 +129,22 @@ class FrequencyResponseNode(AcousticMaterialNode):
         """Draw node buttons"""
         # File selection
         row = layout.row()
-        row.prop(self, "fdr_filename", text="")
-        row.operator("node.load_fdr_file", text="", icon='FILE_FOLDER')
+        row.prop(self, "frd_filename", text="")
+        row.operator("node.load_frd_file", text="", icon='FILE_FOLDER')
         
-        if self.fdr_filepath:
+        if self.frd_filepath:
             # Show file info
             box = layout.box()
             box.label(text="File Info:", icon='INFO')
             
             # Try to parse and display file info
             try:
-                if os.path.exists(self.fdr_filepath):
-                    file_size = os.path.getsize(self.fdr_filepath)
+                if os.path.exists(self.frd_filepath):
+                    file_size = os.path.getsize(self.frd_filepath)
                     box.label(text=f"Size: {file_size / 1024:.1f} KB")
                     
                     # Try to read first few lines for preview
-                    with open(self.fdr_filepath, 'r') as f:
+                    with open(self.frd_filepath, 'r') as f:
                         lines = f.readlines()[:5]
                         if lines:
                             box.label(text="Preview:")
@@ -180,12 +180,12 @@ class FrequencyResponseNode(AcousticMaterialNode):
         layout.prop(self, "curve_resolution")
         
         # Preview button
-        if self.fdr_filepath and os.path.exists(self.fdr_filepath):
+        if self.frd_filepath and os.path.exists(self.fdr_filepath):
             layout.operator("node.preview_frequency_response", text="Preview Response", icon='SHADING_RENDERED')
     
     def draw_buttons_ext(self, context, layout):
         """Draw additional buttons in sidebar"""
-        layout.prop(self, "fdr_filepath")
+        layout.prop(self, "frd_filepath")
         
         # Advanced settings
         box = layout.box()
@@ -199,16 +199,16 @@ class FrequencyResponseNode(AcousticMaterialNode):
     
     def update(self):
         """Update node output when properties change"""
-        # Here you would parse the FDR file and update the output
-        if self.fdr_filepath and os.path.exists(self.fdr_filepath):
-            # Parse FDR file and set output values
-            # This is where you'd integrate with your FDR parsing logic
+        # Here you would parse the FRD file and update the output
+        if self.frd_filepath and os.path.exists(self.fdr_filepath):
+            # Parse FRD file and set output values
+            # This is where you'd integrate with your FRD parsing logic
             pass
     
     def copy(self, node):
         """Copy node data"""
-        self.fdr_filepath = node.fdr_filepath
-        self.fdr_filename = node.fdr_filename
+        self.frd_filepath = node.fdr_filepath
+        self.frd_filename = node.fdr_filename
     
     def free(self):
         """Clean up when node is removed"""
@@ -221,14 +221,14 @@ class NODE_OT_preview_frequency_response(bpy.types.Operator):
     
     def execute(self, context):
         node = context.node
-        if node and node.fdr_filepath and os.path.exists(node.fdr_filepath):
+        if node and node.frd_filepath and os.path.exists(node.fdr_filepath):
             # Here you would implement the preview logic
             # This could open a new window or draw in the node editor
-            self.report({'INFO'}, f"Previewing {node.fdr_filename}")
+            self.report({'INFO'}, f"Previewing {node.frd_filename}")
         return {'FINISHED'}
 
 classes.extend([
-    NODE_OT_load_fdr_file,
+    NODE_OT_load_frd_file,
     FrequencyResponseNode,
     NODE_OT_preview_frequency_response
 ])

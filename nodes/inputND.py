@@ -33,7 +33,7 @@ class AcousticPropertiesNode(AcousticMaterialNode):
 
     def init(self, context):
         self.outputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
-        self.inputs.new('AcousticPropertiesNodeSocket', "absorption", slider=True)
+        self.inputs.new('AcousticValueNodeSocket', "absorption")
         self.inputs.new('AcousticValueNodeSocket', "refraction")
         self.inputs.new('AcousticValueNodeSocket', "reflection")
         self.inputs.new('AcousticValueNodeSocket', "scattering")

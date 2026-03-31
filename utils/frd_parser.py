@@ -53,7 +53,7 @@ def parse_frd_file(filepath):
                     except ValueError:
                         continue
         
-        return np.array(frequencies), np.array(magnatures)
+        return np.array(frequencies), np.array(magnitudes)
     
     except Exception as e:
         print(f"Error parsing FRD file {filepath}: {e}")

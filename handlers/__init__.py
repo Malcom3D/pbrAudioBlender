@@ -31,33 +31,40 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    # Add handler for playback events
-    if not hasattr(bpy.types.Screen, '_play_handler'):
-        @persistent
-        def play_handler(scene):
-            # Update all playback status nodes when playback state change to play
-            for node_tree in bpy.data.node_groups:
-                if 'pbrAudio' in node_tree.name:
-                    if node_tree.nodes.values():
-                        for node in node_tree.nodes:
-                            if hasattr(node, 'playback_update'):
-                                node.playback_update(True)
+#    # Add handler to set shader in 3D View to MATERIAL
+#    for area in bpy.context.screen.areas: 
+#        if area.type == 'VIEW_3D':
+#            space = area.spaces.active
+#            if space.type == 'VIEW_3D':
+#                space.shading.type = 'MATERIAL'
 
-    if not hasattr(bpy.types.Screen, '_stop_handler'):
-        @persistent
-        def stop_handler(scene):
-            # Update all playback status nodes when playback state change to stop
-            for node_tree in bpy.data.node_groups:
-                if 'pbrAudio' in node_tree.name:
-                    if node_tree.nodes.values():
-                        for node in node_tree.nodes:
-                            if hasattr(node, 'playback_update'):
-                                node.playback_update(False)
-
-        bpy.types.Screen._play_handler = play_handler
-        bpy.types.Screen._stop_handler = stop_handler
-        bpy.app.handlers.animation_playback_post.append(stop_handler)
-        bpy.app.handlers.animation_playback_pre.append(play_handler)
+#    # Add handler for playback events
+#    if not hasattr(bpy.types.Screen, '_play_handler'):
+#        @persistent
+#        def play_handler(scene):
+#            # Update all playback status nodes when playback state change to play
+#            for node_tree in bpy.data.node_groups:
+#                if 'pbrAudio' in node_tree.name:
+#                    if node_tree.nodes.values():
+#                        for node in node_tree.nodes:
+#                            if hasattr(node, 'playback_update'):
+#                                node.playback_update(True)
+#
+#    if not hasattr(bpy.types.Screen, '_stop_handler'):
+#        @persistent
+#        def stop_handler(scene):
+#            # Update all playback status nodes when playback state change to stop
+#            for node_tree in bpy.data.node_groups:
+#                if 'pbrAudio' in node_tree.name:
+#                    if node_tree.nodes.values():
+#                        for node in node_tree.nodes:
+#                            if hasattr(node, 'playback_update'):
+#                                node.playback_update(False)
+#
+#        bpy.types.Screen._play_handler = play_handler
+#        bpy.types.Screen._stop_handler = stop_handler
+#        bpy.app.handlers.animation_playback_post.append(stop_handler)
+#        bpy.app.handlers.animation_playback_pre.append(play_handler)
 
     @persistent
     def item_activate_handler(context):

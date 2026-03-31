@@ -114,42 +114,42 @@ class FrequencyResponseNode(AcousticMaterialNode):
     )
     
     # FRD data storage (not saved with blend file)
-    _frequencies: bpy.props.FloatVectorProperty(
+    parsed_frequencies: bpy.props.FloatVectorProperty(
         name="Frequencies",
         description="Parsed frequency data",
         size=1024,
         default=[0.0] * 1024
     )
     
-    _magnitudes: bpy.props.FloatVectorProperty(
+    parsed_magnitudes: bpy.props.FloatVectorProperty(
         name="Magnitudes",
         description="Parsed magnitude data",
         size=1024,
         default=[0.0] * 1024
     )
     
-    _num_points: bpy.props.IntProperty(
+    parsed_num_points: bpy.props.IntProperty(
         name="Number of Points",
         description="Number of valid data points",
         default=0
     )
     
     # Filtered data (based on frequency range)
-    _filtered_frequencies: bpy.props.FloatVectorProperty(
+    parsed_filtered_frequencies: bpy.props.FloatVectorProperty(
         name="Filtered Frequencies",
         description="Filtered frequency data",
         size=1024,
         default=[0.0] * 1024
     )
     
-    _filtered_magnitudes: bpy.props.FloatVectorProperty(
+    parsed_filtered_magnitudes: bpy.props.FloatVectorProperty(
         name="Filtered Magnitudes",
         description="Filtered magnitude data",
         size=1024,
         default=[0.0] * 1024
     )
     
-    _filtered_num_points: bpy.props.IntProperty(
+    parsed_filtered_num_points: bpy.props.IntProperty(
         name="Filtered Number of Points",
         description="Number of filtered data points",
         default=0
@@ -200,7 +200,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         """Parse FRD file and store the data"""
         if not self.frd_filepath or not os.path.exists(self.frd_filepath):
             self.data_valid = False
-            self._num_points = 0
+            self.parsed_num_points = 0
             return
         
         try:
@@ -211,22 +211,22 @@ class FrequencyResponseNode(AcousticMaterialNode):
             if not validate_frd_data(frequencies, magnitudes):
                 print(f"Invalid FRD data in {self.frd_filepath}")
                 self.data_valid = False
-                self._num_points = 0
+                self.parsed_num_points = 0
                 return
             
             # Store the raw data
             num_points = min(len(frequencies), 1024)  # Limit to array size
-            self._num_points = num_points
+            self.parsed_num_points = num_points
             
             # Copy data to FloatVectorProperties
             for i in range(num_points):
-                self._frequencies[i] = float(frequencies[i])
-                self._magnitudes[i] = float(magnitudes[i])
+                self.parsed_frequencies[i] = float(frequencies[i])
+                self.parsed_magnitudes[i] = float(magnitudes[i])
             
             # Clear remaining slots
             for i in range(num_points, 1024):
-                self._frequencies[i] = 0.0
-                self._magnitudes[i] = 0.0
+                self.parsed_frequencies[i] = 0.0
+                self.parsed_magnitudes[i] = 0.0
             
             # Update frequency range based on actual data
             if num_points > 0:
@@ -251,16 +251,16 @@ class FrequencyResponseNode(AcousticMaterialNode):
         except Exception as e:
             print(f"Error parsing FRD file {self.frd_filepath}: {e}")
             self.data_valid = False
-            self._num_points = 0
+            self.parsed_num_points = 0
     
     def update_frequency_range(self):
         """Filter data based on frequency range"""
-        if not self.data_valid or self._num_points == 0:
+        if not self.data_valid or self.parsed_num_points == 0:
             return
         
         # Get numpy arrays from stored data
-        frequencies = np.array([self._frequencies[i] for i in range(self._num_points)])
-        magnitudes = np.array([self._magnitudes[i] for i in range(self._num_points)])
+        frequencies = np.array([self.parsed_frequencies[i] for i in range(self.parsed_num_points)])
+        magnitudes = np.array([self.parsed_magnitudes[i] for i in range(self.parsed_num_points)])
         
         # Apply frequency filter
         mask = (frequencies >= self.frequency_min) & (frequencies <= self.frequency_max)
@@ -269,16 +269,16 @@ class FrequencyResponseNode(AcousticMaterialNode):
         
         # Store filtered data
         num_filtered = min(len(filtered_freq), 1024)
-        self._filtered_num_points = num_filtered
+        self.parsed_filtered_num_points = num_filtered
         
         for i in range(num_filtered):
-            self._filtered_frequencies[i] = float(filtered_freq[i])
-            self._filtered_magnitudes[i] = float(filtered_mag[i])
+            self.parsed_filtered_frequencies[i] = float(filtered_freq[i])
+            self.parsed_filtered_magnitudes[i] = float(filtered_mag[i])
         
         # Clear remaining slots
         for i in range(num_filtered, 1024):
-            self._filtered_frequencies[i] = 0.0
-            self._filtered_magnitudes[i] = 0.0
+            self.parsed_filtered_frequencies[i] = 0.0
+            self.parsed_filtered_magnitudes[i] = 0.0
         
         # Resample if needed
         self.resample_data()
@@ -291,12 +291,12 @@ class FrequencyResponseNode(AcousticMaterialNode):
     
     def resample_data(self):
         """Resample data to curve_resolution points"""
-        if not self.data_valid or self._filtered_num_points < 2:
+        if not self.data_valid or self.parsed_filtered_num_points < 2:
             return
         
         # Get filtered data
-        frequencies = np.array([self._filtered_frequencies[i] for i in range(self._filtered_num_points)])
-        magnitudes = np.array([self._filtered_magnitudes[i] for i in range(self._filtered_num_points)])
+        frequencies = np.array([self.parsed_filtered_frequencies[i] for i in range(self.parsed_filtered_num_points)])
+        magnitudes = np.array([self.parsed_filtered_magnitudes[i] for i in range(self.parsed_filtered_num_points)])
         
         # Sort by frequency (just in case)
         sort_idx = np.argsort(frequencies)
@@ -311,24 +311,24 @@ class FrequencyResponseNode(AcousticMaterialNode):
         num_resampled = min(len(resampled_freq), 1024)
         
         for i in range(num_resampled):
-            self._filtered_frequencies[i] = float(resampled_freq[i])
-            self._filtered_magnitudes[i] = float(resampled_mag[i])
+            self.parsed_filtered_frequencies[i] = float(resampled_freq[i])
+            self.parsed_filtered_magnitudes[i] = float(resampled_mag[i])
         
         # Update count
-        self._filtered_num_points = num_resampled
+        self.parsed_filtered_num_points = num_resampled
         
         # Clear remaining slots
         for i in range(num_resampled, 1024):
-            self._filtered_frequencies[i] = 0.0
-            self._filtered_magnitudes[i] = 0.0
+            self.parsed_filtered_frequencies[i] = 0.0
+            self.parsed_filtered_magnitudes[i] = 0.0
     
     def get_frequency_response_data(self):
         """Get the current frequency response data as numpy arrays"""
-        if not self.data_valid or self._filtered_num_points == 0:
+        if not self.data_valid or self.parsed_filtered_num_points == 0:
             return np.array([]), np.array([])
         
-        frequencies = np.array([self._filtered_frequencies[i] for i in range(self._filtered_num_points)])
-        magnitudes = np.array([self._filtered_magnitudes[i] for i in range(self._filtered_num_points)])
+        frequencies = np.array([self.parsed_filtered_frequencies[i] for i in range(self.parsed_filtered_num_points)])
+        magnitudes = np.array([self.parsed_filtered_magnitudes[i] for i in range(self.parsed_filtered_num_points)])
         
         return frequencies, magnitudes
     
@@ -357,16 +357,16 @@ class FrequencyResponseNode(AcousticMaterialNode):
                 box = layout.box()
                 
                 if self.data_valid:
-                    box.label(text=f"Total points: {self._num_points}")
-                    if self._num_points > 0:
+                    box.label(text=f"Total points: {self.parsed_num_points}")
+                    if self.parsed_num_points > 0:
                         # Show first and last frequency
-                        first_freq = self._frequencies[0]
-                        last_freq = self._frequencies[self._num_points - 1]
+                        first_freq = self.parsed_frequencies[0]
+                        last_freq = self.parsed_frequencies[self.parsed_num_points - 1]
                         box.label(text=f"Frequency range: {first_freq:.1f} - {last_freq:.1f} Hz")
                         
                         # Show first and last magnitude
-                        first_mag = self._magnitudes[0]
-                        last_mag = self._magnitudes[self._num_points - 1]
+                        first_mag = self.parsed_magnitudes[0]
+                        last_mag = self.parsed_magnitudes[self.parsed_num_points - 1]
                         box.label(text=f"Magnitude range: {first_mag:.1f} - {last_mag:.1f} dB")
                 else:
                     box.label(text="No valid data", icon='ERROR')
@@ -383,7 +383,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
             
             # Show filtered points count
             if self.data_valid:
-                col.label(text=f"Filtered points: {self._filtered_num_points}")
+                col.label(text=f"Filtered points: {self.parsed_filtered_num_points}")
         
         # Magnitude range
         row = layout.row(align=True)
@@ -414,10 +414,10 @@ class FrequencyResponseNode(AcousticMaterialNode):
         # Data statistics
         if self.data_valid:
             box.label(text="Data Statistics:", icon='INFO')
-            box.label(text=f"Raw points: {self._num_points}")
-            box.label(text=f"Filtered points: {self._filtered_num_points}")
+            box.label(text=f"Raw points: {self.parsed_num_points}")
+            box.label(text=f"Filtered points: {self.parsed_filtered_num_points}")
             
-            if self._filtered_num_points > 0:
+            if self.parsed_filtered_num_points > 0:
                 # Calculate some statistics
                 freqs, mags = self.get_frequency_response_data()
                 box.label(text=f"Min magnitude: {np.min(mags):.2f} dB")
@@ -436,7 +436,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         
         # If we have valid data, we could set some output value here
         # For example, we could calculate an average magnitude or other metric
-        if self.data_valid and self._filtered_num_points > 0:
+        if self.data_valid and self.parsed_filtered_num_points > 0:
             # Get the current data
             frequencies, magnitudes = self.get_frequency_response_data()
             
@@ -464,8 +464,8 @@ class FrequencyResponseNode(AcousticMaterialNode):
     def free(self):
         """Clean up when node is removed"""
         # Clear any cached data
-        self._num_points = 0
-        self._filtered_num_points = 0
+        self.parsed_num_points = 0
+        self.parsed_filtered_num_points = 0
         self.data_valid = False
 
 class NODE_OT_preview_frequency_response(bpy.types.Operator):

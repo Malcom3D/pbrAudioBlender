@@ -23,6 +23,7 @@ from bpy.props import IntProperty, FloatProperty, CollectionProperty, PointerPro
 from bpy.types import PropertyGroup
 
 from .baseND import ThreeDfrequencyNode
+from .frequencyND import FrequencyResponseNode
 
 classes = []
 
@@ -49,7 +50,7 @@ class DispersionPoint(PropertyGroup):
     # Reference to frequency response node
     frequency_response: PointerProperty(
         name="Frequency Response",
-        type=bpy.types.Node,
+        type=frequencyND.FrequencyResponseNode,
         description="Frequency response for this azimuth/elevation"
     )
 

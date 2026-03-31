@@ -117,15 +117,15 @@ class FrequencyResponseNode(AcousticMaterialNode):
     parsed_frequencies: bpy.props.FloatVectorProperty(
         name="Frequencies",
         description="Parsed frequency data",
-        size=1024,
-        default=[0.0] * 1024
+        size=32,
+        default=[0.0] * 32
     )
     
     parsed_magnitudes: bpy.props.FloatVectorProperty(
         name="Magnitudes",
         description="Parsed magnitude data",
-        size=1024,
-        default=[0.0] * 1024
+        size=32,
+        default=[0.0] * 32
     )
     
     parsed_num_points: bpy.props.IntProperty(
@@ -138,15 +138,15 @@ class FrequencyResponseNode(AcousticMaterialNode):
     parsed_filtered_frequencies: bpy.props.FloatVectorProperty(
         name="Filtered Frequencies",
         description="Filtered frequency data",
-        size=1024,
-        default=[0.0] * 1024
+        size=32,
+        default=[0.0] * 32
     )
     
     parsed_filtered_magnitudes: bpy.props.FloatVectorProperty(
         name="Filtered Magnitudes",
         description="Filtered magnitude data",
-        size=1024,
-        default=[0.0] * 1024
+        size=32,
+        default=[0.0] * 32
     )
     
     parsed_filtered_num_points: bpy.props.IntProperty(
@@ -215,7 +215,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
                 return
             
             # Store the raw data
-            num_points = min(len(frequencies), 1024)  # Limit to array size
+            num_points = min(len(frequencies), 32)  # Limit to array size
             self.parsed_num_points = num_points
             
             # Copy data to FloatVectorProperties
@@ -224,7 +224,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
                 self.parsed_magnitudes[i] = float(magnitudes[i])
             
             # Clear remaining slots
-            for i in range(num_points, 1024):
+            for i in range(num_points, 32):
                 self.parsed_frequencies[i] = 0.0
                 self.parsed_magnitudes[i] = 0.0
             
@@ -268,7 +268,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         filtered_mag = magnitudes[mask]
         
         # Store filtered data
-        num_filtered = min(len(filtered_freq), 1024)
+        num_filtered = min(len(filtered_freq), 32)
         self.parsed_filtered_num_points = num_filtered
         
         for i in range(num_filtered):
@@ -276,7 +276,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
             self.parsed_filtered_magnitudes[i] = float(filtered_mag[i])
         
         # Clear remaining slots
-        for i in range(num_filtered, 1024):
+        for i in range(num_filtered, 32):
             self.parsed_filtered_frequencies[i] = 0.0
             self.parsed_filtered_magnitudes[i] = 0.0
         
@@ -308,7 +308,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         
         # Store resampled data (could be stored in another property if needed)
         # For now, we'll just update the filtered data with resampled version
-        num_resampled = min(len(resampled_freq), 1024)
+        num_resampled = min(len(resampled_freq), 32)
         
         for i in range(num_resampled):
             self.parsed_filtered_frequencies[i] = float(resampled_freq[i])
@@ -318,7 +318,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         self.parsed_filtered_num_points = num_resampled
         
         # Clear remaining slots
-        for i in range(num_resampled, 1024):
+        for i in range(num_resampled, 32):
             self.parsed_filtered_frequencies[i] = 0.0
             self.parsed_filtered_magnitudes[i] = 0.0
     

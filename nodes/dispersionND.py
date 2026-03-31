@@ -50,7 +50,7 @@ class DispersionPoint(PropertyGroup):
     # Reference to frequency response node
     frequency_response: PointerProperty(
         name="Frequency Response",
-        type=frequencyND.FrequencyResponseNode,
+        type=FrequencyResponseNode,
         description="Frequency response for this azimuth/elevation"
     )
 

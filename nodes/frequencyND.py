@@ -180,7 +180,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         layout.prop(self, "curve_resolution")
         
         # Preview button
-        if self.frd_filepath and os.path.exists(self.fdr_filepath):
+        if self.frd_filepath and os.path.exists(self.frd_filepath):
             layout.operator("node.preview_frequency_response", text="Preview Response", icon='SHADING_RENDERED')
     
     def draw_buttons_ext(self, context, layout):
@@ -200,15 +200,15 @@ class FrequencyResponseNode(AcousticMaterialNode):
     def update(self):
         """Update node output when properties change"""
         # Here you would parse the FRD file and update the output
-        if self.frd_filepath and os.path.exists(self.fdr_filepath):
+        if self.frd_filepath and os.path.exists(self.frd_filepath):
             # Parse FRD file and set output values
             # This is where you'd integrate with your FRD parsing logic
             pass
     
     def copy(self, node):
         """Copy node data"""
-        self.frd_filepath = node.fdr_filepath
-        self.frd_filename = node.fdr_filename
+        self.frd_filepath = node.frd_filepath
+        self.frd_filename = node.frd_filename
     
     def free(self):
         """Clean up when node is removed"""
@@ -221,7 +221,7 @@ class NODE_OT_preview_frequency_response(bpy.types.Operator):
     
     def execute(self, context):
         node = context.node
-        if node and node.frd_filepath and os.path.exists(node.fdr_filepath):
+        if node and node.frd_filepath and os.path.exists(node.frd_filepath):
             # Here you would implement the preview logic
             # This could open a new window or draw in the node editor
             self.report({'INFO'}, f"Previewing {node.frd_filename}")

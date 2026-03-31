@@ -52,7 +52,7 @@ input_node_categories = [
     MaterialNodeCategory("INPUT_NODES", "Input", items=[
         NodeItem("AcousticPropertiesNode"),
         NodeItem("FrequencyResponseNode"),
-        NodeItem("DispersionPatternNode"),
+#        NodeItem("DispersionPatternNode"),
     ]),
 ]
 

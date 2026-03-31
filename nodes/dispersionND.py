@@ -371,14 +371,14 @@ class NODE_OT_clear_dispersion_points(bpy.types.Operator):
         return {'FINISHED'}
 
 # Register all classes
-classes.extend([
-    DispersionPoint,
-    DispersionPatternNode,
-    NODE_OT_update_dispersion_grid,
-    NODE_OT_add_dispersion_point,
-    NODE_OT_remove_dispersion_point,
-    NODE_OT_connect_frequency_response,
-    NODE_OT_apply_symmetry,
-    NODE_OT_visualize_dispersion,
-    NODE_OT_clear_dispersion_points
-])
+#classes.extend([
+#    DispersionPoint,
+#    DispersionPatternNode,
+#    NODE_OT_update_dispersion_grid,
+#    NODE_OT_add_dispersion_point,
+#    NODE_OT_remove_dispersion_point,
+#    NODE_OT_connect_frequency_response,
+#    NODE_OT_apply_symmetry,
+#    NODE_OT_visualize_dispersion,
+#    NODE_OT_clear_dispersion_points
+#])

@@ -35,11 +35,15 @@ class NODE_OT_load_frd_file(bpy.types.Operator, ImportHelper):
         default="*.frd;*.txt;*.csv",
         options={'HIDDEN'}
     )
+
+    node: PointerProperty(
+        type=FrequencyResponseNode
+    )
     
     def execute(self, context):
-        node = context.node
-        if node:
-            node.frd_filepath = self.filepath
+#        node = context.node
+        if self.node:
+            self.node.frd_filepath = self.filepath
             # Extract filename without extension
             filename = os.path.basename(self.filepath)
             node.frd_filename = os.path.splitext(filename)[0]
@@ -130,7 +134,8 @@ class FrequencyResponseNode(AcousticMaterialNode):
         # File selection
         row = layout.row()
         row.prop(self, "frd_filename", text="")
-        row.operator("node.load_frd_file", text="", icon='FILE_FOLDER')
+        op = row.operator("node.load_frd_file", text="", icon='FILE_FOLDER')
+        op.node = self
         
         if self.frd_filepath:
             # Show file info

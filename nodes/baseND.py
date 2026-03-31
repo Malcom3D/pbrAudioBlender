@@ -24,9 +24,9 @@ from ..properties import materialPG
 
 classes = []
 
-class ThreefrequencyNode(Node):
+class ThreeDfrequencyNode(Node):
     """Base class only for sources and outputs nodes"""
-    bl_idname = 'ThreefrequencyNode'
+    bl_idname = 'ThreeDfrequencyNode'
     bl_label = "3D Frequency Response Node"
     bl_icon = 'IPO_EASE_IN_OUT'
 
@@ -34,7 +34,7 @@ class ThreefrequencyNode(Node):
     def poll(cls, ntree):
         return ntree.bl_idname == 'AcousticMaterialNodeTree' and (bpy.context.active_object.type == 'EMPTY' or bpy.context.active_object.type == 'CAMERA') and (hasattr(bpy.context.active_object.pbraudio, 'output_type') or hasattr(bpy.context.active_object.pbraudio, 'source_type'))
 
-classes.append(3DfrequencyNode)
+classes.append(ThreeDfrequencyNode)
 
 class AcousticMaterialNode(Node):
     """Base class for all acoustic material nodes"""

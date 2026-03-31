@@ -19,7 +19,7 @@
 import bpy
 import os
 from bpy.types import Node
-from bpy.props import StringProperty, EnumProperty, FloatProperty, IntProperty
+from bpy.props import StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
 from bpy_extras.io_utils import ImportHelper
 
 from .baseND import AcousticMaterialNode

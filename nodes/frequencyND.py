@@ -38,19 +38,19 @@ class NODE_OT_load_frd_file(bpy.types.Operator, ImportHelper):
         options={'HIDDEN'}
     )
 
-    node: PointerProperty(
-        type=Node
+    node_name: StringProperty(
+        default="",
     )
     
     def execute(self, context):
-        if self.node:
-            self.node.frd_filepath = self.filepath
+        if self.node_name:
+            self.node_name.frd_filepath = self.filepath
             # Extract filename without extension
             filename = os.path.basename(self.filepath)
-            self.node.frd_filename = os.path.splitext(filename)[0]
+            self.node_name.frd_filename = os.path.splitext(filename)[0]
             
             # Parse the FRD file immediately after loading
-            self.node.parse_frd_data()
+            self.node_name.parse_frd_data()
             
         return {'FINISHED'}
 
@@ -338,7 +338,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         row = layout.row()
         row.prop(self, "frd_filename", text="")
         op = row.operator("node.load_frd_file", text="", icon='FILE_FOLDER')
-        op.node = self
+        op.node_name = self.name
         
         # Data validation indicator
         if self.frd_filepath:

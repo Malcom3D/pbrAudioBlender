@@ -52,10 +52,10 @@ class NODE_OT_load_frd_file(bpy.types.Operator, ImportHelper):
             node.frd_filepath = self.filepath
             # Extract filename without extension
             filename = os.path.basename(self.filepath)
-            self.node.frd_filename = os.path.splitext(filename)[0]
+            node.frd_filename = os.path.splitext(filename)[0]
             
             # Parse the FRD file immediately after loading
-            self.node.parse_frd_data()
+            node.parse_frd_data()
             
         return {'FINISHED'}
 

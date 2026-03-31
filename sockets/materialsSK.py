@@ -45,3 +45,18 @@ class AcousticPropertiesNodeSocket(NodeSocket):
         layout.label(text=text)
 
 classes.append(AcousticPropertiesNodeSocket)
+
+class AcousticValueNodeSocket(NodeSocket):
+    """Custom socket type for acoustic value nodes"""
+    bl_idname = 'AcousticValueNodeSocket'
+    bl_label = "Acoustic Value Socket"
+
+    default_value: FloatProperty(default=0.0)
+
+    def draw(self, context, layout, node, text):
+        if not self.is_linked:
+            layout.prop(self, "default_value", text=text, slider=True)
+        else:
+            layout.label(text=text)
+
+classes.append(AcousticValueNodeSocket)

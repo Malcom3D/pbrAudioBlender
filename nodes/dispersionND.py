@@ -22,7 +22,7 @@ from bpy.types import Node
 from bpy.props import IntProperty, FloatProperty, CollectionProperty, PointerProperty
 from bpy.types import PropertyGroup
 
-from .baseND import AcousticMaterialNode
+from .baseND import 3DfrequencyNode
 
 classes = []
 
@@ -53,7 +53,7 @@ class DispersionPoint(PropertyGroup):
         description="Frequency response for this azimuth/elevation"
     )
 
-class DispersionPatternNode(AcousticMaterialNode):
+class DispersionPatternNode(3DfrequencyNode):
     """3D Dispersion Pattern node with dynamic inputs for azimuth/elevation pairs"""
     bl_idname = 'DispersionPatternNode'
     bl_label = "3D Dispersion Pattern"

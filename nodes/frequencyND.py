@@ -155,7 +155,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
                 box.label(text="Could not read file", icon='ERROR')
         
         # Frequency range
-        row = layout layout.row(align=True)
+        row = layout.row(align=True)
         row.prop(self, "show_frequency_range", 
                 icon='TRIA_DOWN' if self.show_frequency_range else 'TRIA_RIGHT',
                 icon_only=True, emboss=False)
@@ -168,14 +168,12 @@ class FrequencyResponseNode(AcousticMaterialNode):
         
         # Magnitude range
         row = layout.row(align=True)
-        row.prop(self, "show_magnitude_range",
-                icon='TRIA_DOWN' if self.show_magnitude_range else 'TRIA_RIGHT',
-                icon_only=True, emboss=False)
+        row.prop(self, "show_magnitude_range", icon='TRIA_DOWN' if self.show_magnitude_range else 'TRIA_RIGHT', icon_only=True, emboss=False)
         row.label(text="Magnitude Range")
         
         if self.show_magnitude_range:
             col = layout.column(align=True)
-                       col.prop(self, "magnitude_min", slider=True)
+            col.prop(self, "magnitude_min", slider=True)
             col.prop(self, "magnitude_max", slider=True)
         
         # Curve settings
@@ -183,8 +181,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         
         # Preview button
         if self.fdr_filepath and os.path.exists(self.fdr_filepath):
-            layout.operator("node.preview_frequency_response", 
-                          text="Preview Response", icon='SHADING_RENDERED')
+            layout.operator("node.preview_frequency_response", text="Preview Response", icon='SHADING_RENDERED')
     
     def draw_buttons_ext(self, context, layout):
         """Draw additional buttons in sidebar"""

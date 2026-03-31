@@ -24,9 +24,9 @@ from ..properties import materialPG
 
 classes = []
 
-class 3DfrequencyNode(Node):
+class ThreefrequencyNode(Node):
     """Base class only for sources and outputs nodes"""
-    bl_idname = '3DfrequencyNode'
+    bl_idname = 'ThreefrequencyNode'
     bl_label = "3D Frequency Response Node"
     bl_icon = 'IPO_EASE_IN_OUT'
 

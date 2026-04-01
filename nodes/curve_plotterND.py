@@ -101,7 +101,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         name="Grid Color",
         description="Color for grid lines",
         subtype='COLOR',
-        default=(=(0.3, 0.3, 0.3, 0.3),
+        default=(0.3, 0.3, 0.3, 0.3),
         size=4,
         min=0.0,
         max=1.0

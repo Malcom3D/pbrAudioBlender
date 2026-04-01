@@ -114,7 +114,7 @@ class PBRAudioSceneProperties(PropertyGroup):
 #    )
 
     enable_acoustic_preview: BoolProperty(
-        name="Enable Acoustic Preview",
+        name="Acoustic Preview",
         description="Enable acoustic preview",
         default=False
     )

@@ -75,7 +75,8 @@ classes.append(PBRAUDIO_PT_device_panel)
 
 class PBRAUDIO_PT_acoustic_preview_panel(Panel):
     """Panel to enable pbrAudio acoustic preview and settings"""
-    bl_label = "Acoustic preview"
+#    bl_label = "Acoustic preview"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_acoustic_preview_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -141,7 +142,8 @@ classes.append(PBRAUDIO_PT_sampling_panel)
 
 class PBRAUDIO_PT_interface_panel(Panel):
     """Panel to configure pbrAudio interface settings"""
-    bl_label = "Interfaces Settings"
+#    bl_label = "Interfaces Settings"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_interface_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -185,7 +187,8 @@ classes.append(PBRAUDIO_PT_interface_panel)
 
 class PBRAUDIO_PT_resonances_panel(Panel):
     """Panel to configure pbrAudio resonance settings"""
-    bl_label = "Resonance Settings"
+#    bl_label = "Resonance Settings"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_resonances_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -229,7 +232,8 @@ classes.append(PBRAUDIO_PT_resonances_panel)
 
 class PBRAUDIO_PT_termination_panel(Panel):
     """Panel to configure pbrAudio termination settings"""
-    bl_label = "Termination Settings"
+#    bl_label = "Termination Settings"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_termination_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

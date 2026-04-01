@@ -651,7 +651,7 @@ class NODE_OT_preview_frequency_response(bpy.types.Operator):
                 self.report({'INFO'}, preview_text)
                 print(preview_text)
             else:
-                self.report({'({'WARNING'}, "No valid data to preview")
+                self.report({'WARNING'}, "No valid data to preview")
         else:
             self.report({'WARNING'}, "No FRD file loaded or data invalid")
         

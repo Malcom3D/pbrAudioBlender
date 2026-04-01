@@ -164,7 +164,7 @@ class PBRAudioEngineProperties(PropertyGroup):
         name="Maximum number of resonance structures",
         default=5,
         min=1,
-        max=inf,
+        max=8192,
     )
 
     decay_time_constant: FloatProperty(

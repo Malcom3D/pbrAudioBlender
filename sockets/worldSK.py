@@ -29,9 +29,11 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     bl_label = "pbrAudio World Property Node Socket"
 
     type: stringProperty(default=self.bl_idname)
+
     default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
+        layout = self.layout
         if not self.is_linked and not self.is_output:
             layout.prop(self, "default_value", text=text, slider=True)
         else:
@@ -47,10 +49,11 @@ class pbrAudioWorldParameterNodeSocket(NodeSocket):
     bl_label = "pbrAudio World Parameter Node Socket"
 
     type: stringProperty(default=self.bl_idname)
+
     default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
-        layout.prop(self, "default_value", text=text, , slider=True)
+        layout.prop(self, "default_value", text=text, slider=True)
 
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float

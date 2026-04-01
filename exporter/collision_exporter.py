@@ -63,6 +63,7 @@ class CollisionExporter:
                     previous_acoustic_dict = previous_acoustic_dict['AcousticProperties']
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
                 elif link == 'FrequencyResponse':
+                     pass
 #                    frd_file_dict = previous_acoustic_dict['FrequencyResponse']
 #                    frd_filepath = frd_file_dict['frd_filepath']
 #                    # Parse the FRD file

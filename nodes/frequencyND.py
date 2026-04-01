@@ -118,6 +118,25 @@ class FrequencyResponseNode(AcousticMaterialNode):
         update=lambda self, context: self.update_magnitude_range()
     )
     
+    # Phase properties
+    phase_min: FloatProperty(
+        name="Min Phase",
+        description="Minimum phase in degrees",
+        default=-180.0,
+        soft_min=-360.0,
+        soft_max=0.0,
+        update=lambda self, context: self.update_phase_range()
+    )
+    
+    phase_max: FloatProperty(
+        name="Max Phase",
+        description="Maximum phase in degrees",
+        default=180.0,
+        soft_min=0.0,
+        soft_max=360.0,
+        update=lambda self, context: self.update_phase_range()
+    )
+    
     # FRD data storage (not saved with blend file)
     parsed_frequencies: bpy.props.FloatVectorProperty(
         name="Frequencies",
@@ -129,6 +148,13 @@ class FrequencyResponseNode(AcousticMaterialNode):
     parsed_magnitudes: bpy.props.FloatVectorProperty(
         name="Magnitudes",
         description="Parsed magnitude data",
+        size=32,
+        default=[0.0] * 32
+    )
+    
+    parsed_phases: bpy.props.FloatVectorProperty(
+        name="Phases",
+        description="Parsed phase data",
         size=32,
         default=[0.0] * 32
     )
@@ -154,6 +180,13 @@ class FrequencyResponseNode(AcousticMaterialNode):
         default=[0.0] * 32
     )
     
+    parsed_filtered_phases: bpy.props.FloatVectorProperty(
+        name="Filtered Phases",
+        description="Filtered phase data",
+        size=32,
+        default=[0.0] * 32
+    )
+    
     parsed_filtered_num_points: bpy.props.IntProperty(
         name="Filtered Number of Points",
         description="Number of filtered data points",
@@ -173,10 +206,29 @@ class FrequencyResponseNode(AcousticMaterialNode):
         default=False
     )
     
+    show_phase_range: bpy.props.BoolProperty(
+        name="Show Phase Range",
+        description="Display phase range controls",
+        default=False
+    )
+    
     show_raw_data: bpy.props.BoolProperty(
         name="Show Raw Data",
         description="Display raw FRD data information",
         default=False
+    )
+    
+    # Data format properties
+    data_format: EnumProperty(
+        name="Data Format",
+        description="Format of the FRD data",
+        items=[
+            ('MAG_ONLY', "Magnitude Only", "File contains only magnitude data"),
+            ('MAG_PHASE', "Magnitude + Phase", "File contains magnitude and phase data"),
+            ('REAL_IMAG', "Real + Imaginary", "File contains real and imaginary parts"),
+        ],
+        default='MAG_ONLY',
+        update=lambda self, context: self.parse_frd_data()
     )
     
     # Curve visualization properties
@@ -194,7 +246,14 @@ class FrequencyResponseNode(AcousticMaterialNode):
         name="Data Valid",
         description="Indicates if FRD data is valid",
         default=False
-
+    )
+    
+    # Phase unwrapping
+    unwrap_phase: bpy.props.BoolProperty(
+        name="Unwrap Phase",
+        description="Unwrap phase to avoid 360-degree jumps",
+        default=True,
+        update=lambda self, context: self.process_phase_data()
     )
     
     def init(self, context):
@@ -209,11 +268,20 @@ class FrequencyResponseNode(AcousticMaterialNode):
             return
         
         try:
-            # Parse the FRD file
-            frequencies, magnitudes = parse_frd_file(self.pbraudio_frd_filepath)
+            # Parse the FRD file based on selected format
+            if self.data_format == 'MAG_ONLY':
+                frequencies, magnitudes = parse_frd_file(self.pbraudio_frd_filepath, has_phase=False)
+                phases = np.zeros_like(magnitudes)
+            elif self.data_format == 'MAG_PHASE':
+                frequencies, magnitudes, phases = parse_frd_file(self.pbraudio_frd_filepath, has_phase=True)
+            elif self.data_format == 'REAL_IMAG':
+                frequencies, real_parts, imag_parts = parse_frd_file(self.pbraudio_frd_filepathpath, has_phase=False, has_imaginary=True)
+                # Convert real/imaginary to magnitude/phase
+                magnitudes = 20 * np.log10(np.sqrt(real_parts**2 + imag_parts**2))
+                phases = np.degrees(np.arctan2(imag_parts, real_parts))
             
             # Validate the data
-            if not validate_frd_data(frequencies, magnitudes):
+            if not validate_frd_data(frequencies, magnitudes, phases if 'phases' in locals() else None):
                 print(f"Invalid FRD data in {self.pbraudio_frd_filepath}")
                 self.data_valid = False
                 self.parsed_num_points = 0
@@ -227,11 +295,13 @@ class FrequencyResponseNode(AcousticMaterialNode):
             for i in range(num_points):
                 self.parsed_frequencies[i] = float(frequencies[i])
                 self.parsed_magnitudes[i] = float(magnitudes[i])
+                self.parsed_phases[i] = float(phases[i])
             
             # Clear remaining slots
             for i in range(num_points, 32):
                 self.parsed_frequencies[i] = 0.0
                 self.parsed_magnitudes[i] = 0.0
+                self.parsed_phases[i] = 0.0
             
             # Update frequency range based on actual data
             if num_points > 0:
@@ -246,9 +316,21 @@ class FrequencyResponseNode(AcousticMaterialNode):
                 mag_range = mag_max - mag_min
                 self.magnitude_min = mag_min - 0.1 * mag_range
                 self.magnitude_max = mag_max + 0.1 * mag_range
+                
+                # Update phase range
+                phase_min = float(np.min(phases[:num_points]))
+                phase_max = float(np.max(phases[:num_points]))
+                
+                # Add some padding to phase range
+                phase_range = phase_max - phase_min
+                self.phase_min = phase_min - 0.1 * phase_range
+                self.phase_max = phase_max + 0.1 * phase_range
             
             self.data_valid = True
             print(f"Successfully parsed FRD file: {self.pbraudio_frd_filename}, {num_points} points")
+            
+            # Process phase data (unwrap if needed)
+            self.process_phase_data()
             
             # Apply frequency filtering
             self.update_frequency_range()
@@ -258,6 +340,27 @@ class FrequencyResponseNode(AcousticMaterialNode):
             self.data_valid = False
             self.parsed_num_points = 0
     
+    def process_phase_data(self):
+        """Process phase data (unwrap if needed)"""
+        if not self.data_valid or self.parsed_num_points == 0:
+            return
+        
+        # Get numpy arrays from stored data
+        frequencies = np.array([self.parsed_frequencies[i] for i in range(self.parsed_num_points)])
+        phases = np.array([self.parsed_phases[i] for i in range(self.parsed_num_points)])
+        
+        # Unwrap phase if requested
+        if self.unwrap_phase:
+            phases = np.unwrap(phases, period=360)
+        
+        # Store processed phases
+        for i in range(self.parsed_num_points):
+            self.parsed_phases[i] = float(phases[i])
+        
+        # Update filtered data if it exists
+        if self.parsed_filtered_num_points > 0:
+            self.update_frequency_range()
+    
     def update_frequency_range(self):
         """Filter data based on frequency range"""
         if not self.data_valid or self.parsed_num_points == 0:
@@ -266,11 +369,13 @@ class FrequencyResponseNode(AcousticMaterialNode):
         # Get numpy arrays from stored data
         frequencies = np.array([self.parsed_frequencies[i] for i in range(self.parsed_num_points)])
         magnitudes = np.array([self.parsed_magnitudes[i] for i in range(self.parsed_num_points)])
+        phases = np.array([self.parsed_phases[i] for i in range(self.parsed_num_points)])
         
         # Apply frequency filter
         mask = (frequencies >= self.frequency_min) & (frequencies <= self.frequency_max)
         filtered_freq = frequencies[mask]
         filtered_mag = magnitudes[mask]
+        filtered_phase = phases[mask]
         
         # Store filtered data
         num_filtered = min(len(filtered_freq), 32)
@@ -279,19 +384,23 @@ class FrequencyResponseNode(AcousticMaterialNode):
         for i in range(num_filtered):
             self.parsed_filtered_frequencies[i] = float(filtered_freq[i])
             self.parsed_filtered_magnitudes[i] = float(filtered_mag[i])
+            self.parsed_filtered_phases[i] = float(filtered_phase[i])
         
         # Clear remaining slots
         for i in range(num_filtered, 32):
             self.parsed_filtered_frequencies[i] = 0.0
             self.parsed_filtered_magnitudes[i] = 0.0
+            self.parsed_filtered_phases[i] = 0.0
         
         # Resample if needed
         self.resample_data()
     
     def update_magnitude_range(self):
         """Update magnitude display range (doesn't filter data, just affects display)"""
-        # This is called when magnitude_min/max changes
-        # We don't filter data based on magnitude, just update display
+        pass
+    
+    def update_phase_range(self):
+        """Update phase display range (doesn't filter data, just affects display)"""
         pass
     
     def resample_data(self):
@@ -302,22 +411,26 @@ class FrequencyResponseNode(AcousticMaterialNode):
         # Get filtered data
         frequencies = np.array([self.parsed_filtered_frequencies[i] for i in range(self.parsed_filtered_num_points)])
         magnitudes = np.array([self.parsed_filtered_magnitudes[i] for i in range(self.parsed_filtered_num_points)])
+        phases = np.array([self.parsed_filtered_phases[i] for i in range(self.parsed_filtered_num_points)])
         
         # Sort by frequency (just in case)
         sort_idx = np.argsort(frequencies)
         frequencies = frequencies[sort_idx]
         magnitudes = magnitudes[sort_idx]
+        phases = phases[sort_idx]
         
         # Resample
-        resampled_freq, resampled_mag = resample_frd_data(frequencies, magnitudes, self.curve_resolution)
+        resampled_freq, resampled_mag, resampled_phase = resample_frd_data(
+            frequencies, magnitudes, phases, self.curve_resolution
+        )
         
-        # Store resampled data (could be stored in another property if needed)
-        # For now, we'll just update the filtered data with resampled version
+        # Store resampled data
         num_resampled = min(len(resampled_freq), 32)
         
         for i in range(num_resampled):
             self.parsed_filtered_frequencies[i] = float(resampled_freq[i])
             self.parsed_filtered_magnitudes[i] = float(resampled_mag[i])
+            self.parsed_filtered_phases[i] = float(resampled_phase[i])
         
         # Update count
         self.parsed_filtered_num_points = num_resampled
@@ -326,16 +439,36 @@ class FrequencyResponseNode(AcousticMaterialNode):
         for i in range(num_resampled, 32):
             self.parsed_filtered_frequencies[i] = 0.0
             self.parsed_filtered_magnitudes[i] = 0.0
+            self.parsed_filtered_phases[i] = 0.0
     
     def get_frequency_response_data(self):
         """Get the current frequency response data as numpy arrays"""
         if not self.data_valid or self.parsed_filtered_num_points == 0:
-            return np.array([]), np.array([])
+            return np.array([]), np.array([]), np.array([])
         
         frequencies = np.array([self.parsed_filtered_frequencies[i] for i in range(self.parsed_filtered_num_points)])
         magnitudes = np.array([self.parsed_filtered_magnitudes[i] for i in range(self.parsed_filtered_num_points)])
+        phases = np.array([self.parsed_filtered_phases[i] for i in range(self.parsed_filtered_num_points)])
         
-        return frequencies, magnitudes
+        return frequencies, magnitudes, phases
+    
+    def get_complex_response(self):
+        """Get frequency response as complex numbers"""
+        frequencies, magnitudes, phases = self.get_frequency_response_data()
+        
+        if len(frequencies) == 0:
+            return np.array([]), np.array([])
+        
+        # Convert magnitude from dB to linear scale
+        linear_magnitudes = 10 ** (magnitudes / 20.0)
+        
+        # Convert phase from degrees to radians
+        phases_rad = np.radians(phases)
+        
+        # Create complex response
+        complex_response = linear_magnitudes * np.exp(1j * phases_rad)
+        
+        return frequencies, complex_response
     
     def draw_buttons(self, context, layout):
         """Draw node buttons"""
@@ -345,6 +478,9 @@ class FrequencyResponseNode(AcousticMaterialNode):
         op = row.operator("node.load_frd_file", text="", icon='FILE_FOLDER')
         op.node_name = self.name
         op.tree_name = self.id_data.name
+        
+        # Data format selection
+        layout.prop(self, "data_format")
         
         # Data validation indicator
         if self.pbraudio_frd_filepath:
@@ -374,6 +510,11 @@ class FrequencyResponseNode(AcousticMaterialNode):
                         first_mag = self.parsed_magnitudes[0]
                         last_mag = self.parsed_magnitudes[self.parsed_num_points - 1]
                         box.label(text=f"Magnitude range: {first_mag:.1f} - {last_mag:.1f} dB")
+                        
+                        # Show first and last phase
+                        first_phase = self.parsed_phases[0]
+                        last_phase = self.parsed_phases[self.parsed_num_points - 1]
+                        box.label(text=f"Phase range: {first_phase:.1f} - {last_phase:.1f}°")
                 else:
                     box.label(text="No valid data", icon='ERROR')
         
@@ -401,6 +542,17 @@ class FrequencyResponseNode(AcousticMaterialNode):
             col.prop(self, "magnitude_min", slider=True)
             col.prop(self, "magnitude_max", slider=True)
         
+        # Phase range
+        row = layout.row(align=True)
+        row.prop(self, "show_phase_range", icon='TRIA_DOWN' if self.show_phase_range else 'TRIA_RIGHT', icon_only=True, emboss=False)
+        row.label(text="Phase Range")
+        
+        if self.show_phase_range:
+            col = layout.column(align=True)
+            col.prop(self, "phase_min", slider=True)
+            col.prop(self, "phase_max", slider=True)
+            col.prop(self, "unwrap_phase")
+        
         # Curve settings
         layout.prop(self, "curve_resolution")
         
@@ -416,6 +568,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         box = layout.box()
         box.label(text="Advanced Settings:", icon='SETTINGS')
         box.prop(self, "curve_resolution")
+        box.prop(self, "unwrap_phase")
         
         # Data statistics
         if self.data_valid:
@@ -425,45 +578,42 @@ class FrequencyResponseNode(AcousticMaterialNode):
             
             if self.parsed_filtered_num_points > 0:
                 # Calculate some statistics
-                freqs, mags = self.get_frequency_response_data()
+                freqs, mags, phases = self.get_frequency_response_data()
                 box.label(text=f"Min magnitude: {np.min(mags):.2f} dB")
                 box.label(text=f"Max magnitude: {np.max(mags):.2f} dB")
                 box.label(text=f"Mean magnitude: {np.mean(mags):.2f} dB")
-        
-#        # Import/Export options
-#        row = box.row()
-#        row.operator("node.export_frequency_response", text="Export")
-#        row.operator("node.import_frequency_response", text="Import")
+                box.label(text=f"Min phase: {np.min(phases):.2f}°")
+                box.label(text=f"Max phase: {np.max(phases):.2f}°")
+                box.label(text=f"Mean phase: {np.mean(phases):.2f}°")
     
     def update(self):
         """Update node output when properties change"""
-        # This method is called when the node needs to update its output
-        # We've already parsed the data when the file was loaded or properties changed
-        
-        # If we have valid data, we could set some output value here
-        # For example, we could calculate an average magnitude or other metric
         if self.data_valid and self.parsed_filtered_num_points > 0:
             # Get the current data
-            frequencies, magnitudes = self.get_frequency_response_data()
+            frequencies, magnitudes, phases = self.get_frequency_response_data()
             
-            # Calculate some representative value
-            # For example, average magnitude in dB (converted to linear scale)
+            # Calculate some representative values
             if len(magnitudes) > 0:
                 # Convert dB to linear scale for averaging
                 linear_mags = 10 ** (magnitudes / 20.0)
                 avg_linear = np.mean(linear_mags)
                 avg_db = 20 * np.log10(avg_linear) if avg_linear > 0 else -120
                 
-                # You could set this as an output value if your socket supports it
-                # For now, we'll just store it
+                # Average phase
+                avg_phase = np.mean(phases)
+                
+                # Store values
                 self['average_magnitude'] = avg_db
+                self['average_phase'] = avg_phase
     
     def copy(self, node):
         """Copy node data"""
         self.pbraudio_frd_filepath = node.pbraudio_frd_filepath
         self.pbraudio_frd_filename = node.pbraudio_frd_filename
-        # Note: The _frequencies and _magnitudes arrays won't be copied
-        # automatically, so we need to re-parse the file
+        self.data_format = node.data_format
+        self.unwrap_phase = node.unwrap_phase
+        
+        # Re-parse the file
         if self.pbraudio_frd_filepath and os.path.exists(self.pbraudio_frd_filepath):
             self.parse_frd_data()
     
@@ -483,38 +633,32 @@ class NODE_OT_preview_frequency_response(bpy.types.Operator):
         node = context.node
         if node and node.data_valid:
             # Get the frequency response data
-            frequencies, magnitudes = node.get_frequency_response_data()
+            frequencies, magnitudes, phases = node.get_frequency_response_data()
             
             if len(frequencies) > 0:
                 # Create a simple text preview
                 preview_text = f"Frequency Response Preview:\n"
                 preview_text += f"Points: {len(frequencies)}\n"
-                preview_text += f"Frequency range: {frequencies[0]:.1f} - {frequencies[-1]:.1f} Hz"
-                preview_text += f"Magnitude range: {np.min(magnitudes):.1f} - {np.max(magnitudes):.1f} dB"
+                preview_text += f"Frequency range: {frequencies[0]:.1f} - {frequencies[-1]:.1f} Hz
+"
+                preview_text += f"Magnitude range: {np.min(magnitudes):.1f} - {np.max(magnitudes):.1f} dB
+"
+                preview_text += f"Phase range: {np.min(phases):.1f} - {np.max(phases):.1f}°\n"
                 
                 # Show first few points
                 preview_text += "\nFirst 5 points:\n"
                 for i in range(min(5, len(frequencies))):
-                    preview_text += f"  {frequencies[i]:.1f} Hz: {magnitudes[i]:.1f} dB"
+                    preview_text += f"  {frequencies[i]:.1f} Hz: {magnitudes[i]:.1f} dB, {phases[i]:.1f}°\n"
                 
                 self.report({'INFO'}, preview_text)
-                
-                # In a real implementation, you might:
-                # 1. Open a new window with a plot
-
-                # 2. Draw the curve in the node editor
-                # 3. Create a curve object in the 3D view
-                
-                # For now, just show in the info area
                 print(preview_text)
             else:
-                self.report({'WARNING'}, "No valid data to preview")
+                self.report({'({'WARNING'}, "No valid data to preview")
         else:
             self.report({'WARNING'}, "No FRD file loaded or data invalid")
         
         return {'FINISHED'}
 
-# Note: You'll need to add these operators to your classes list
 classes.extend([
     NODE_OT_load_frd_file,
     FrequencyResponseNode,

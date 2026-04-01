@@ -55,7 +55,18 @@ class CollisionExporter:
         for link in links:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
-                acoustic_dict[link] = previous_acoustic_dict
+                if link == 'AcousticMaterial':
+                    previous_acoustic_dict = previous_acoustic_dict['AcousticMaterial']
+                    for key in previous_acoustic_dict.keys():
+                        acoustic_dict[key] = previous_acoustic_dict[key]
+                elif link == 'AcousticProperties':
+                    previous_acoustic_dict = previous_acoustic_dict['AcousticProperties']
+                    acoustic_dict['acoustic_properties'] = previous_acoustic_dict
+                elif link == 'FrequencyResponse':
+#                    frd_file_dict = previous_acoustic_dict['FrequencyResponse']
+#                    frd_filepath = frd_file_dict['frd_filepath']
+#                    # Parse the FRD file
+#                    frequencies, magnitudes = parse_frd_file(frd_filepath)
             else:
                 acoustic_dict[link] = node.inputs[link].default_value
 

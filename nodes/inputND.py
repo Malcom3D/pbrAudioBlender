@@ -40,12 +40,12 @@ class AcousticPropertiesNode(AcousticMaterialNode):
 
 classes.append(AcousticPropertiesNode)
 
-class DispertionPatternGraph(AcousticMaterialNode):
-    """Dispertion Pattern Graph node"""
-    bl_idname = 'DispertionPatternGraph'
-    bl_label = "Dispertion Pattern Graph"
-
-    def init(self, context):
-        pass
-
-classes.append(DispertionPatternGraph)
+#class DispertionPatternGraph(AcousticMaterialNode):
+#    """Dispertion Pattern Graph node"""
+#    bl_idname = 'DispertionPatternGraph'
+#    bl_label = "Dispertion Pattern Graph"
+#
+#    def init(self, context):
+#        pass
+#
+#classes.append(DispertionPatternGraph)

@@ -28,7 +28,7 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldPropertyNodeSocket'
     bl_label = "pbrAudio World Property Node Socket"
 
-    type: StringProperty(default=self.bl_idname)
+#    type: StringProperty(default=self.bl_idname)
 
     default_value: FloatProperty(default=0.0)
 
@@ -45,7 +45,7 @@ class pbrAudioWorldParameterNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldParameterNodeSocket'
     bl_label = "pbrAudio World Parameter Node Socket"
 
-    type: StringProperty(default=self.bl_idname)
+#    type: StringProperty(default=self.bl_idname)
 
     default_value: FloatProperty(default=0.0)
 
@@ -65,7 +65,7 @@ class pbrAudioWorldOutputNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldOutputNodeSocket'
     bl_label = "pbrAudio World Output Node Socket"
 
-    type: StringProperty(default=self.bl_idname)
+#    type: StringProperty(default=self.bl_idname)
 
     def draw(self, context, layout, node, text):
         layout = self.layout
@@ -80,7 +80,7 @@ class pbrAudioWorldEnvironmentNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldEnvironmentNodeSocket'
     bl_label = "pbrAudio World Environment Socket"
 
-    type: StringProperty(default=self.bl_idname)
+#    type: StringProperty(default=self.bl_idname)
 
     def draw(self, context, layout, node, text):
         layout = self.layout

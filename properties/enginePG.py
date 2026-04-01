@@ -44,38 +44,58 @@ class PBRAudioEngineProperties(PropertyGroup):
 
     """ Sampling Panel """
     max_interaction: IntProperty(
-        name="Maximum number of rays interactions",
+        name="Max Interactions",
+        description="Maximum number of rays interactions",
         default=8192,
         min=1,
         max=65536
     )
 
     steps_per_octave: IntProperty(
-        name="Number of bands for octave",
+        name="Bands for Octave",
+        description="Number of bands for octave",
         default=8,
         min=0,
         max=256
     )
 
     use_dispersion_correction: BoolProperty(
-        name="Handle medium variations in speed factors like temperature and wind",
+        name="Dispersion Correction",
+        description="Handle medium variations in speed factors like temperature and wind",
         default=False,
     )
 
     dispersion_order: IntProperty(
-        name="Enable resonant structures",
+        name="Dispersion Order",
+        description="Dispersion  correction order",
         default=2,
         min=0,
         max=256
     )
 
     use_extended_reaction: BoolProperty(
-        name="Handle resonances of boundary structures from transmission absorption",
+        name="Extended Reaction",
+        description="Handle resonances of boundary structures from transmission absorption",
         default=False,
     )
 
     max_modal_reaction: IntProperty(
-        name="Maximum number of resonant modal mode for extended reaction",
+        name="Max Mode Reaction",
+        description="Maximum number of resonant modal mode for extended reaction",
+        default=3,
+        min=0,
+        max=256
+    )
+
+    use_complex_eigenray: BoolProperty(
+        name="Complex Eigenray",
+        description="Handle infrasound ray tracing",
+        default=False,
+    )
+
+    max_complex_eigenray: IntProperty(
+        name="Max Eigenray",
+        description="Maximum number of eigenray",
         default=3,
         min=0,
         max=256
@@ -83,72 +103,84 @@ class PBRAudioEngineProperties(PropertyGroup):
 
     """ Interface Panel """
     enable_interface: BoolProperty(
-        name="Enable boundary interface with rays",
+        name="Interface",
+        description="Enable boundary interface with rays",
         default=False,
     )
 
     enable_absorption: BoolProperty(
-        name="Handle absorption at boundary and in medium",
+        name="Absorption",
+        description="Handle absorption at boundary and in medium",
         default=False,
     )
 
     enable_reflection: BoolProperty(
-        name="Handle reflection with boundary",
+        name="Reflection",
+        description="Handle reflection with boundary",
         default=False,
     )
 
     max_reflection: IntProperty(
-        name="Maximum number of rays bouces for reflection",
+        name="Max Reflection",
+        description="Maximum number of rays bouces for reflection",
         default=8,
         min=1,
         max=2048
     )
 
     enable_scattering: BoolProperty(
-        name="Handle absorption at boundary and in medium",
+        name="Scattering",
+        description="Handle scattering at boundary and in medium",
         default=False,
     )
 
     max_scattering: IntProperty(
-        name="Maximum number of recursive rays for refraction",
+        name="Max Scattering",
+        description="Maximum number of scattering rays",
         default=8,
         min=1,
         max=2048
     )
 
     enable_refraction: BoolProperty(
-        name="Handle absorption at boundary and in medium",
+        name="Refraction",
+        description="Handle refraction at boundary",
         default=False,
     )
 
     max_refraction: IntProperty(
-        name="Maximum number of recursive rays for refraction",
+        name="Max Refraction",
+        description="Maximum number of recursive rays for refraction",
         default=8,
         min=1,
         max=2048
     )
 
     enable_diffraction: BoolProperty(
-        name="Handle diffraction at boundary and in medium",
+        name="Diffraction",
+        description="Handle diffraction at boundary and in medium",
         default=False,
     )
 
     max_diffraction: IntProperty(
-        name="Maximum number of rays for diffraction",
+        name="Max Diffraction",
+        description="Maximum number of rays for diffraction",
         default=8,
         min=1,
         max=2048
     )
 
     min_impedance_ratio: FloatProperty(
-        name="Minimum impedence ratio at boundaries between two materials",
+        name="Min Impedence Ratio",
+        description="Minimum impedence ratio at boundaries between two materials",
         default=0.1,
         min=0.01,
         max=100,
     )
 
     max_impedance_ratio: FloatProperty(
-        name="Maximum impedence ratio at boundaries between two materials",
+        name="Max Impedence Ratio",
+        description="Maximum impedence ratio at boundaries between two materials",
         default=10.0,
         min=0.01,
         max=100,
@@ -156,83 +188,96 @@ class PBRAudioEngineProperties(PropertyGroup):
 
     """ Resonance Panel """
     enable_resonance: BoolProperty(
-        name="Enable resonant structures",
+        name="Resonant Structures",
+        description="Enable resonant structures",
         default=False,
     )
 
     max_resonance_structure: IntProperty(
-        name="Maximum number of resonance structures",
+        name="Max Structures",
+        description="Maximum number of resonance structures",
         default=5,
         min=1,
         max=8192,
     )
 
     decay_time_constant: FloatProperty(
-        name="Pressure attenuation in amplitude over time",
+        name="Decay Constant",
+        description="Pressure attenuation in amplitude over time",
         default=0.99,
         min=0.01,
         max=1,
     )
 
     resonance_threshold: FloatProperty(
-        name="Low threshold for resonance vibration",
+        name="Low Threshold",
+        description="Low threshold for resonance vibration on structures",
         default=0.1,
         min=0.01,
         max=1,
     )
 
     enable_helmholtz: BoolProperty(
-        name="Handle Helmholtz resonator",
+        name="Helmholtz",
+        description="Handle Helmholtz resonator",
         default=False,
     )
 
     min_cavity_volume: FloatProperty(
-        name="Minimum volume of Helmholtz resonator",
+        name="Min Volume",
+        description="Minimum volume of Helmholtz resonator",
         default=0.1,
         min=0.01,
         max=1,
     )
 
     max_resonance_room_modes: IntProperty(
-        name="Maximum number of resonance room modes for room sized Helmholtz resonator",
+        name="Max Room Modes",
+        description="Maximum number of resonance room modes for room sized Helmholtz resonator",
         default=5,
         min=1,
         max=2048,
     )
 
     enable_parallel_wall: BoolProperty(
-        name="Handle parallel wall structure resonance",
+        name="Parallel Wall",
+        description="Handle parallel wall structure resonance",
         default=False,
     )
 
     min_wall_distance: FloatProperty(
-        name="Minimum distance between parallel wall",
+        name="Min Distance",
+        description="Minimum distance between parallel wall",
         default=0.5,
         min=0.01,
         max=100,
     )
 
     max_wall_distance: FloatProperty(
-        name="Minimum distance between parallel wall",
+        name="Min Distance",
+        description="Minimum distance between parallel wall",
         default=20.0,
         min=0.01,
         max=100,
     )
 
     enable_tube: BoolProperty(
-        name="Handle tube like structure resonance",
+        name="Tube Resonance",
+        description="Handle tube like structure resonance",
         default=False,
     )
 
     min_tube_length: FloatProperty(
-        name="Minimum tube length of tube resonator",
+        name="Min Length",
+        description="Minimum tube length of tube resonator",
         default=0.3,
         min=0.01,
         max=100.0,
     )
 
     min_tube_aspect_ratio: FloatProperty(
-        name="Minimum tube shape aspect ratio",
+        name="Min Shape Ratio",
+        description="Minimum tube shape aspect ratio",
         default=3.0,
         min=0.01,
         max=100.0,
@@ -240,12 +285,14 @@ class PBRAudioEngineProperties(PropertyGroup):
 
     """ Termination Panel """
     enable_termination: BoolProperty(
-        name="Enable resonant structures",
+        name="Termination",
+        description="Enable termination",
         default=False,
     )
 
     termination_type: EnumProperty(
-        name="Termination Type",
+        name="Type",
+        description="Termination Type",
         items=[
             ('FINAL_FRAME', "Final Frame", "Terminate at the Final Frame of the rendering range"),
             ('SAMPLE_END', "Sample End", "Terminate after a number of samples after end of last (minimum) active sources"),
@@ -256,33 +303,38 @@ class PBRAudioEngineProperties(PropertyGroup):
     )
 
     samples_after: IntProperty(
-        name="Number of samples after end of last (minimum) active sources",
+        name="Samples After",
+        description="Number of samples after end of last (minimum) active sources",
         default=100,
         min=1,
         max=1024000,
     )
 
     min_active_sources: IntProperty(
-        name="Minimim number of active sources",
+        name="Min Sources",
+        description="Minimim number of active sources",
         default=1,
         min=1,
         max=2048,
     )
 
     max_reverberation_time: FloatProperty(
-        name="Maximum time in seconds of reverberation before termination",
+        name="Max Time Limit",
+        description="Maximum time in seconds of reverberation before termination",
         default=2.0,
         min=0.0,
         max=3600,
     )
 
     max_energy_threshold: FloatProperty(
-        name="Maximum energy value of pressure value beyond which terminate",
+        name="Max Threshold",
+        description="Maximum energy value of pressure value beyond which terminate",
         default=1e6,
     )
 
     min_energy_threshold: FloatProperty(
-        name="Minimum energy value of pressure value beyond which terminate",
+        name="Min Threshold",
+        description="Minimum energy value of pressure value beyond which terminate",
         default=1e-6,
     )
 

@@ -88,6 +88,7 @@ class PBRAUDIO_PT_acoustic_preview_panel(Panel):
 
     def draw_header(self, context):
         scene = context.scene
+        layout = self.layout
         layout.prop(scene.pbraudio, "enable_acoustic_preview")
 
     def draw(self, context):
@@ -153,6 +154,7 @@ class PBRAUDIO_PT_interface_panel(Panel):
 
     def draw_header(self, context):
         scene = context.scene
+        layout = self.layout
         layout.prop(scene.pbraudiorender, "enable_interface")
 
     def draw(self, context):
@@ -196,6 +198,7 @@ class PBRAUDIO_PT_resonance_panel(Panel):
 
     def draw_header(self, context):
         scene = context.scene
+        layout = self.layout
         layout.prop(scene.pbraudiorender, "enable_resonance")
 
     def draw(self, context):
@@ -239,6 +242,7 @@ class PBRAUDIO_PT_termination_panel(Panel):
     
     def draw_header(self, context):
         scene = context.scene
+        layout = self.layout
         layout.prop(scene.pbraudiorender, "enable_termination")
 
     def draw(self, context):

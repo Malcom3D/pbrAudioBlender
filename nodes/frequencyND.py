@@ -556,10 +556,12 @@ class FrequencyResponseNode(AcousticMaterialNode):
         # Curve settings
         layout.prop(self, "curve_resolution")
         
-        # Preview button
+        # Preview and plot buttons
         if self.data_valid:
-            layout.operator("node.preview_frequency_response", text="Preview Response", icon='SHADING_RENDERED')
-    
+            row = layout.row(align=True)
+            row.operator("node.preview_frequency_response", text="Preview", icon='SHADING_RENDERED')
+            row.operator("node.create_curve_plot", text="Plot", icon='GRAPH')
+
     def draw_buttons_ext(self, context, layout):
         """Draw additional buttons in sidebar"""
         layout.prop(self, "pbraudio_frd_filepath")
@@ -657,8 +659,55 @@ class NODE_OT_preview_frequency_response(bpy.types.Operator):
         
         return {'FINISHED'}
 
+class NODE_OT_create_curve_plot(bpy.types.Operator):
+    """Create a curve plot node for this frequency response"""
+    bl_idname = "node.create_curve_plot"
+    bl_label = "Create Curve Plot"
+    
+    def execute(self, context):
+        node = context.node
+        if node and node.data_valid:
+            # Get the node tree
+            tree = context.space_data.edit_tree
+            
+            # Create curve plot node
+            curve_node = tree.nodes.new('FrequencyResponseCurveNode')
+            curve_node.location = (node.location.x + 400, node.location.y)
+            curve_node.name = f"{node.name}_Curve"
+            
+            # Connect the nodes
+            tree.links.new(node.outputs[0], curve_node.inputs[0])
+            
+            # Set curve node properties based on frequency response data
+            frequencies, magnitudes, phases = node.get_frequency_response_data()
+            if len(frequencies) > 0:
+                # Set magnitude range with some padding
+                mag_min = np.min(magnitudes)
+                mag_max = np.max(magnitudes)
+                mag_range = mag_max - mag_min
+                curve_node.y_axis_magnitude_range = (
+                    mag_min - 0.1 * mag_range,
+                    mag_max + 0.1 * mag_range
+                )
+                
+                # Set phase range with some padding
+                phase_min = np.min(phases)
+                phase_max = np.max(phases)
+                phase_range = phase_max - phase_min
+                curve_node.y_axis_phase_range = (
+                    phase_min - 0.1 * phase_range,
+                    phase_max + 0.1 * phase_range
+                )
+            
+            self.report({'INFO'}, f"Created curve plot node: {curve_node.name}")
+        else:
+            self.report({'WARNING'}, "No valid frequency response data")
+        
+        return {'FINISHED'}
+
 classes.extend([
     NODE_OT_load_frd_file,
     FrequencyResponseNode,
     NODE_OT_preview_frequency_response
+    NODE_OT_create_curve_plot
 ])

@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import NodeSocket
-from bpy.props import IntProperty, FloatProperty, PointerProperty
+from bpy.props import FloatProperty, stringProperty
 
 from ..properties import worldPG
 

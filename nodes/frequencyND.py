@@ -430,10 +430,10 @@ class FrequencyResponseNode(AcousticMaterialNode):
                 box.label(text=f"Max magnitude: {np.max(mags):.2f} dB")
                 box.label(text=f"Mean magnitude: {np.mean(mags):.2f} dB")
         
-        # Import/Export options
-        row = box.row()
-        row.operator("node.export_frequency_response", text="Export")
-        row.operator("node.import_frequency_response", text="Import")
+#        # Import/Export options
+#        row = box.row()
+#        row.operator("node.export_frequency_response", text="Export")
+#        row.operator("node.import_frequency_response", text="Import")
     
     def update(self):
         """Update node output when properties change"""

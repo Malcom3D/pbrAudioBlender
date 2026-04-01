@@ -19,7 +19,7 @@
 import bpy
 from numpy import sqrt
 from bpy.types import Node
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, EnumProperty
 
 classes = []
 

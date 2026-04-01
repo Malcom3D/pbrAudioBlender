@@ -33,7 +33,7 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
 
     def draw(self, context, layout, node, text):
         if not self.is_linked and not self.is_output:
-            layout.prop(self, "default_value", text=text, , slider=True)
+            layout.prop(self, "default_value", text=text, slider=True)
         else:
             layout.label(text=text)
 

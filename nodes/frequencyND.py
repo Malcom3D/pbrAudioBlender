@@ -708,6 +708,6 @@ class NODE_OT_create_curve_plot(bpy.types.Operator):
 classes.extend([
     NODE_OT_load_frd_file,
     FrequencyResponseNode,
-    NODE_OT_preview_frequency_response
+    NODE_OT_preview_frequency_response,
     NODE_OT_create_curve_plot
 ])

@@ -43,7 +43,7 @@ class PBRAudioEngineProperties(PropertyGroup):
 #        self.impedence = self.density*self.sound_speed
 
     """ Sampling Panel """
-    max_interaction: IntProperty(
+    max_interactions: IntProperty(
         name="Max Interactions",
         description="Maximum number of rays interactions",
         default=8192,

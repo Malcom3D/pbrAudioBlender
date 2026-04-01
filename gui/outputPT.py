@@ -92,7 +92,7 @@ class PBRAUDIO_PT_frame_range_panel(Panel):
         scene = context.scene
 
         col = layout.column(align=True)
-        col.enabled = False
+        col.enabled = True
         col.prop(scene, "frame_start", text="Frame Start")
         col.prop(scene, "frame_end", text="End")
         col.prop(scene.render, "fps", text="FPS")

@@ -24,7 +24,7 @@ import multiprocessing
 from functools import wraps
 from bpy.types import Operator
 
-from ..exporter.collision_export import MeshToNumpyExporter
+from ..exporter.collision_exporter import CollisionExporter
 
 def run_async(func):
     """Decorator to run function in background process"""
@@ -322,7 +322,7 @@ class PBRAUDIO_OT_physics(Operator):
                 # Create exporter
                 scene.pbraudio.shader_processing = True
                 scene.pbraudio.status_progress = 0.0
-                exporter = MeshToNumpyExporter(scene=scene, decimals=decimals)
+                exporter = CollisionExporter(scene=scene, decimals=decimals)
                 progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
                 for obj in scene.pbraudio.collision_collection.objects.values():
                     # Export animation

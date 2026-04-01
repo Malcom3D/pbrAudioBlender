@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import RenderEngine
-from .config import pbrAudioConfigInit
+#from .config import pbrAudioConfigInit
 
 classes =  []
 
@@ -27,6 +27,7 @@ class PBRAudioRenderEngine(RenderEngine):
     bl_idname = 'PBRAUDIO'
     bl_label = "pbrAudio"
     bl_use_preview = True
+    bl_use_eevee_viewport = True
     bl_use_shading_nodes_custom = False
 
     # Init is called whenever a new render engine instance is created. Multiple
@@ -39,6 +40,7 @@ class PBRAudioRenderEngine(RenderEngine):
         super().__init__(*args, **kwargs)
         self.scene_data = None
         self.draw_data = None
+        self.id_render = id(self)
 
     # When the render engine instance is destroy, this is called. Clean up any
     # render engine data here, for example stopping running render threads.
@@ -49,28 +51,30 @@ class PBRAudioRenderEngine(RenderEngine):
     # Render methods
     def update(self, data, depsgraph):
         """Update render data"""
-        self.report({'INFO'}, "pbrAudio rendering updated...")
+        self.report({'INFO'}, f"{self.id_render} pbrAudio rendering updated...")
 
     def render(self, depsgraph):
         """Main render method"""
-        self.report({'INFO'}, "pbrAudio rendering in progress...")
-        scene = depsgraph.scene
-        pbraudio_init = pbrAudioConfigInit()
-
-        # check cache tree
-        if not pbraudio_init.scene.pbraudio.cache_status:
-            pbraudio_init.create_cache()
-
-        pbraudio_init.domain_config()
-        pbraudio_init.source_config()
-        pbraudio_init.output_config()
-        #pbraudio.init.object_config()
-        pbraudio_init.create_config()
-
-        if not pbraudio_init.scene.pbraudio.cache_status:
-            pbraudio_init.initZarr()
-            pbraudio_init.scene.pbraudio.cache_status = True
-
+        self.report({'INFO'}, f"{self.id_render} pbrAudio rendering in progress...")
+#        scene = depsgraph.scene
+#        pbraudio_init = pbrAudioConfigInit()
+#
+#        # check cache tree
+#        if not pbraudio_init.scene.pbraudio.cache_status:
+#            pbraudio_init.create_cache()
+#
+#        pbraudio_init.domain_config()
+#        pbraudio_init.source_config()
+#        pbraudio_init.output_config()
+#        #pbraudio.init.object_config()
+#        pbraudio_init.create_config()
+#
+#        if not pbraudio_init.scene.pbraudio.cache_status:
+#            pbraudio_init.initZarr()
+#            pbraudio_init.scene.pbraudio.cache_status = True
+#
+#       update_progress(progress)
+#
         self.report({'INFO'}, "pbrAudio rendering end...")
 
         # For viewport renders, this method gets called once at the start and

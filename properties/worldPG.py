@@ -35,27 +35,27 @@ class PBRAudioWorldProperties(PropertyGroup):
         self.old_domain = self.acoustic_domain
         if self.acoustic_domain:
             self.acoustic_domain.display.show_shadows = False
-            self.acoustic_domain.display_type = 'WIRE'
+            self.acoustic_domain.display_type = 'BOX'
             self.acoustic_domain.show_bounds = True
 
-    def compute_speed_imp(self, context):
-       self.compute_speed(self, context)
-       self.compute_impedence(self, context)
-
-    def compute_speed(self, context):
-       if self.type == 'GAS':
-          self.sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.temperature+273.15))
-       elif self.type == 'LIQUID':
-          self.sound_speed = sqrt(self.K/self.density)
-       elif self.type == 'SOLID':
-          self.sound_speed = sqrt(self.E/self.density)
-
-       if self.outputs['Sound Speed'].is_linked:
-          self.outputs['Sound Speed'].sound_speed = self.sound_speed
-
-    def compute_impedence(self, context):
-        self.impedence = self.density*self.sound_speed
-
+#    def compute_speed_imp(self, context):
+#       self.compute_speed(self, context)
+#       self.compute_impedence(self, context)
+#
+#    def compute_speed(self, context):
+#       if self.type == 'GAS':
+#          self.sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.temperature+273.15))
+#       elif self.type == 'LIQUID':
+#          self.sound_speed = sqrt(self.K/self.density)
+#       elif self.type == 'SOLID':
+#          self.sound_speed = sqrt(self.E/self.density)
+#
+#       if self.outputs['Sound Speed'].is_linked:
+#          self.outputs['Sound Speed'].sound_speed = self.sound_speed
+#
+#    def compute_impedence(self, context):
+#        self.impedence = self.density*self.sound_speed
+#
     """World properties for pbrAudio"""
     acoustic_domain: PointerProperty(
         name="Domain",
@@ -70,84 +70,85 @@ class PBRAudioWorldProperties(PropertyGroup):
         description="Old selected target object",
     )
 
-    """World Material properties for pbrAudio"""
+
+    """World Material Node properties for pbrAudio"""
     nodetree: PointerProperty(
         name="NodeTree",
         type=AcousticWorldNodeTree
     )
 
-    type: EnumProperty(
-        name="Medium Type",
-        items=[
-            ('GAS', "Gas", "Spheric wave sound source"),
-            ('LIQUID', "Liquid", "Plane wave sound source"),
-            ('SOLID', "Solid", "Plane wave sound source"),
-        ],
-        default='GAS'
-    )
-
-    C_p: FloatProperty(
-        name="Specific heat at constant pressure",
-        default=7.0,
-        update=compute_speed
-    )
-
-    C_v: FloatProperty(
-        name="Specific heat at constant volume",
-        default=5.0,
-        update=compute_speed
-    )
-
-    R_0: FloatProperty(
-        name="Gas constant",
-        default=8.31446261815324,
-        update=compute_speed
-    )
-
-    M: FloatProperty(
-        name="Molar mass",
-        default=0.0289645,
-        update=compute_speed
-    )
-
-    K: FloatProperty(
-        name="Bulk modulus",
-        default=0.0,
-        update=compute_speed
-    )
-
-    E: FloatProperty(
-        name="Young modulus",
-        default=0.0,
-        update=compute_speed
-    )
-
-    sound_speed: FloatProperty(
-        name="Specific heat at constant pressure",
-        default=0.0,
-        update=compute_impedence
-    )
-
-    impedence: FloatProperty(
-        name="Medium impedence",
-        default=0.0
-    )
-
-    density: FloatProperty(
-        name="Medium Density",
-        default=1.2041,
-        min=0.1,
-        max=5.0,
-        update=compute_speed_imp
-    )
-
-    temperature: FloatProperty(
-        name="Temperature in Celsius degree",
-        default=20,
-        min=-273.15,
-        update=compute_speed_imp
-    )
-
+#    type: EnumProperty(
+#        name="Medium Type",
+#        items=[
+#            ('GAS', "Gas", "Spheric wave sound source"),
+#            ('LIQUID', "Liquid", "Plane wave sound source"),
+#            ('SOLID', "Solid", "Plane wave sound source"),
+#        ],
+#        default='GAS'
+#    )
+#
+#    C_p: FloatProperty(
+#        name="Specific heat at constant pressure",
+#        default=7.0,
+#        update=compute_speed
+#    )
+#
+#    C_v: FloatProperty(
+#        name="Specific heat at constant volume",
+#        default=5.0,
+#        update=compute_speed
+#    )
+#
+#    R_0: FloatProperty(
+#        name="Gas constant",
+#        default=8.31446261815324,
+#        update=compute_speed
+#    )
+#
+#    M: FloatProperty(
+#        name="Molar mass",
+#        default=0.0289645,
+#        update=compute_speed
+#    )
+#
+#    K: FloatProperty(
+#        name="Bulk modulus",
+#        default=0.0,
+#        update=compute_speed
+#    )
+#
+#    E: FloatProperty(
+#        name="Young modulus",
+#        default=0.0,
+#        update=compute_speed
+#    )
+#
+#    sound_speed: FloatProperty(
+#        name="Specific heat at constant pressure",
+#        default=0.0,
+#        update=compute_impedence
+#    )
+#
+#    impedence: FloatProperty(
+#        name="Medium impedence",
+#        default=0.0
+#    )
+#
+#    density: FloatProperty(
+#        name="Medium Density",
+#        default=1.2041,
+#        min=0.1,
+#        max=5.0,
+#        update=compute_speed_imp
+#    )
+#
+#    temperature: FloatProperty(
+#        name="Temperature in Celsius degree",
+#        default=20,
+#        min=-273.15,
+#        update=compute_speed_imp
+#    )
+#
 classes.append(PBRAudioWorldProperties)
 
 #class PBRAudioWorldEnvironmentProperties(PropertyGroup):
@@ -167,9 +168,9 @@ classes.append(PBRAudioWorldProperties)
 #        default=1.0
 #    )
 #
-#    ch_num: IntProperty(
+#    ambisonic_order: IntProperty(
 #        name="Channel number",
-#        default=6,
+#        default=3,
 #    )
 #
 #classes.append(PBRAudioWorldEnvironmentProperties)

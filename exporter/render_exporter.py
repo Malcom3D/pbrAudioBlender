@@ -23,30 +23,132 @@ import sys, os, json
 from mathutils import Matrix
 from bpy_extras.io_utils import axis_conversion
 
-class MeshToNumpyExporter:
+class RenderExporter:
     def __init__(self, scene: bpy.types.Scene, decimals: int = 18):
         np.set_printoptions(precision=decimals, floatmode='fixed', threshold=np.inf)
         self.decimals = decimals
+        self.scene = bpy.context.scene
         self.scale_factor = 1.0  # Blender units to meters
-        collision_collection = scene.pbraudio.collision_collection.name_full
-        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+        self.export_path = f"{scene.pbraudio.cache_path}/AcousticDomain"
         os.makedirs(self.export_path, exist_ok=True)
+
         system = {}
-        system["sample_rate"] = scene.pbraudio.sample_rate
-        system["bit_depth"] = scene.pbraudio.bit_depth.replace('BIT', '')
-        system["file_format"] = scene.pbraudio.file_format
-        system["fps"] = scene.render.fps
-        system["fps_base"] = scene.render.fps_base
+        system["sample_rate"] = self.scene.pbraudio.sample_rate
+        system["bit_depth"] = self.scene.pbraudio.bit_depth.replace('BIT', '')
+        system["file_format"] = self.scene.pbraudio.file_format
+        system["fps"] = self.scene.render.fps
+        system["fps_base"] = self.scene.render.fps_base
         system["subframes"] = 1
-        system["modal_modes"] = scene.pbraudio.modal_modes
-        system["collision_margin"] = scene.pbraudio.collision_margin
         system["cache_path"] = self.export_path
+
         self.config = {}
         self.config["system"] = system
 
-        self.objects = []
         self.not_valid = []
         self.obj_idx = 0
+        self.src_idx = 0
+        self.output_idx = 0
+
+    def domain_config(self):
+        domain_config = {}
+        # find world domain property
+        for world in bpy.data.worlds.values():
+            if hasattr(world, 'pbraudio'):
+                if hasattr(world.pbraudio, 'acoustic_domain'):
+                    acoustic_domain = world.pbraudio.acoustic_domain
+                    acoustic_domain['name'] = world.pbraudio.acoustic_domain.name
+
+                    # find corner vertex of domain bounding box
+                    domain_config['geometry'] = []
+                    vertexs = acoustic_domain.bound_box
+                    for idx in range(8):
+                        domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
+
+                    # Get acoustic properties from material
+                    domain_config['acoustic_shader'] = self.get_acoustic_properties_from_world()
+
+        self.config["acoustic_domain"] = domain_config
+
+    def wave_propagation(self):
+        wave_config = {}
+        # Wave propagator property
+        wave_config['max_interactions'] = self.scene.pbraudiorender.max_interactions
+        wave_config['steps_per_octave'] = self.scene.pbraudiorender.steps_per_octave
+        wave_config['enable_interface'] = self.scene.pbraudiorender.enable_interface
+        wave_config['enable_resonance'] = self.scene.pbraudiorender.enable_resonance
+        wave_config['enable_termination'] = self.scene.pbraudiorender.enable_termination
+        wave_config['use_dispersion_correction'] = self.scene.pbraudiorender.use_dispersion_correction
+        if wave_config['use_dispersion_correction']:
+            wave_config['dispersion_order'] = self.scene.pbraudiorender.use_dispersion_correction
+        wave_config['use_extended_reaction'] = self.scene.pbraudiorender.use_extended_reaction
+        if wave_config['use_extended_reaction']:
+            wave_config['max_modal_reaction'] = self.scene.pbraudiorender.max_modal_reaction
+        wave_config['use_complex_eigenray'] = self.scene.pbraudiorender.use_complex_eigenray
+        if wave_config['use_complex_eigenray']:
+            wave_config['max_complex_eigenray'] = self.scene.pbraudiorender.max_complex_eigenray
+
+        self.config["wave_propagation"] = wave_config
+
+    def interface_config(self):
+        # Interface manager property
+        interface_config = {}
+        if self.scene.pbraudiorender.enable_interface:
+            interface_config["enable_absorption"] = self.scene.pbraudiorender.enable_absorption
+            interface_config["enable_reflection"] = self.scene.pbraudiorender.enable_reflection
+            if interface_config["enable_reflection"]:
+                interface_config["max_reflection"] = self.scene.pbraudiorender.max_reflection
+            interface_config["enable_scattering"] = self.scene.pbraudiorender.enable_scattering
+            if interface_config["enable_scattering"]:
+                interface_config["max_scattering"] = self.scene.pbraudiorender.max_scattering
+            interface_config["enable_refraction"] = self.scene.pbraudiorender.enable_refraction
+            if interface_config["enable_refraction"]:
+                interface_config["max_refraction"] = self.scene.pbraudiorender.max_refraction
+            interface_config["enable_diffraction"] = self.scene.pbraudiorender.enable_diffraction
+            if interface_config["enable_diffraction"]:
+                interface_config["max_diffraction"] = self.scene.pbraudiorender.max_diffraction
+            interface_config["min_impedance_ratio"] = self.scene.pbraudiorender.min_impedance_ratio
+            interface_config["max_impedance_ratio"] = self.scene.pbraudiorender.max_impedance_ratio
+
+        self.config["interface"] = interface_config
+
+    def resonance_config(self):
+        # Resonance manager property
+        resonance_config = {}
+        if self.scene.pbraudiorender.enable_resonance:
+            resonance_config["max_resonance_structure"] = self.scene.pbraudiorender.max_resonance_structure
+            resonance_config["resonance_threshold"] = self.scene.pbraudiorender.resonance_threshold
+            resonance_config["enable_helmholtz"] = self.scene.pbraudiorender.enable_helmholtz
+            if resonance_config["enable_helmholtz"]:
+                resonance_config["min_cavity_volume"] = self.scene.pbraudiorender.min_cavity_volume
+                resonance_config["max_resonance_room_modes"] = self.scene.pbraudiorender.max_resonance_room_modes
+            resonance_config["enable_parallel_wall"] = self.scene.pbraudiorender.enable_parallel_wall
+            if resonance_config["enable_parallel_wall"]:
+                resonance_config["min_wall_distance"] = self.scene.pbraudiorender.min_wall_distance
+                resonance_config["max_wall_distance"] = self.scene.pbraudiorender.max_wall_distance
+            resonance_config["enable_tube"] = self.scene.pbraudiorender.enable_tube
+            if resonance_config["enable_tube"]:
+                resonance_config["min_tube_length"] = self.scene.pbraudiorender.min_tube_length
+                resonance_config["min_tube_aspect_ratio"] = self.scene.pbraudiorender.min_tube_aspect_ratio
+
+        self.config["resonance"] = resonance_config
+
+    def termination_config(self):
+        # Termination settings
+        termination_config = {}
+        if self.scene.pbraudiorender.enable_termination:
+            termination_config["termination_type"] = self.scene.pbraudiorender.termination_type
+            if termination_config["termination_type"] == 'SAMPLE_END':
+                termination_config["samples_after"] = self.scene.pbraudiorender.samples_after
+                termination_config["min_active_sources"] = self.scene.pbraudiorender.min_active_sources
+            if termination_config["termination_type"] == 'REVERBERATION_TIME':
+                termination_config["max_reverberation_time"] = self.scene.pbraudiorender.max_reverberation_time
+            if termination_config["termination_type"] == 'ENERGY_THRESHOLD':
+                termination_config["max_energy_threshold"] = self.scene.pbraudiorender.max_energy_threshold
+                termination_config["min_energy_threshold"] = self.scene.pbraudiorender.min_energy_threshold
+        else:
+            termination_config["termination_type"] = 'FINAL_FRAME'
+
+        self.config["termination"] = termination_config
 
     def get_from_previous(self, node):
         acoustic_dict = {}
@@ -55,8 +157,9 @@ class MeshToNumpyExporter:
         for link in links:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
-                for key in previous_acoustic_dict.keys():
-                    acoustic_dict[key] = previous_acoustic_dict[key]
+                acoustic_dict[link] = previous_acoustic_dict
+            else:
+                acoustic_dict[link] = node.inputs[link].default_value
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):
@@ -70,6 +173,20 @@ class MeshToNumpyExporter:
                 acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
 
         return acoustic_dict
+
+    def get_acoustic_properties_from_world(self):
+        """Get acoustic properties from the acoustic world node chain"""
+
+        # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
+        for world in bpy.data.worlds.values():
+            if hasattr(world, 'pbraudio'):
+                if hasattr(world.pbraudio, 'nodetree'):
+                nodetree = world.pbraudio.nodetree
+                output_node = nodetree.nodes['World Output']
+
+                acoustic_shader = self.get_from_previous(output_node)
+
+        return acoustic_shader
 
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""

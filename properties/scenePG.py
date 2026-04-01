@@ -107,11 +107,11 @@ class PBRAudioSceneProperties(PropertyGroup):
         default='24BIT',
     )
 
-    enable_graphical_preview: BoolProperty(
-        name="Enable Graphical Preview",
-        description="Enable graphical preview",
-        default=False
-    )
+#    enable_graphical_preview: BoolProperty(
+#        name="Enable Graphical Preview",
+#        description="Enable graphical preview",
+#        default=False
+#    )
 
     enable_acoustic_preview: BoolProperty(
         name="Enable Acoustic Preview",
@@ -137,6 +137,18 @@ class PBRAudioSceneProperties(PropertyGroup):
         ],
         default='MEDIUM',
         update=set_preview_sample_rate
+    )
+
+    preview_bit_depth: EnumProperty(
+        name="Bit Depth",
+        items=[
+            ('16BIT', "16 bit", "16-bit Depth per Channel"),
+            ('24BIT', "24 bit", "24-bit Depth per Channel"),
+            ('32BIT', "32 bit", "32-bit Depth per Channel"),
+            ('FLOAT', "32 bit float", "32-bit float Depth per Channel"),
+            ('DOUBLE', "64 bit float", "32-bit float Depth per Channel"),
+        ],
+        default='24BIT',
     )
 
     collision_collection: PointerProperty(

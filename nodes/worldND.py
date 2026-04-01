@@ -26,102 +26,128 @@ classes = []
 class pbrAudioWorldOutputNode(Node):
     """Acoustic world output node"""
     bl_idname = 'pbrAudioWorldOutputNode'
-    bl_label = "Acoustic World Output"
+    bl_label = "World Output"
 
     def init(self, context):
-        self.inputs.new('pbrAudioSoundSpeedNodeSocket', "Sound Speed")
-        self.inputs.new('pbrAudioImpedenceNodeSocket', "Impedence")
+        self.inputs.new('pbrAudioWorldOutputNodeSocket', "Sound Speed")
+        self.inputs.new('pbrAudioWorldOutputNodeSocket', "Impedence")
 #        self.inputs.new('pbrAudioWorldEnvironmentNodeSocket', "Environment")
 
 classes.append(pbrAudioWorldOutputNode)
 
-class pbrAudioSoundSpeedNode(Node):
+class pbrAudioWorldMediumNode(Node):
     """Acoustic sound speed properties node"""
-    bl_idname = 'pbrAudioSoundSpeedNode'
-    bl_label = "Sound speed Parameters"
+    bl_idname = 'pbrAudioWorldMediumNode'
+    bl_label = "World medium Parameters"
 
-#    def compute_speed(self, context):
-#       for world in bpy.data.worlds.values():
-#          if hasattr(world, 'pbraudio'):
-#             pbraudio = world.pbraudio
-#
-#       if pbraudio.type == 'GAS':
-#          pbraudio.sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(pbraudio.temperature+273.15))
-#       elif pbraudio.type == 'LIQUID':
-#          pbraudio.sound_speed = sqrt(self.K/pbraudio.density)
-#       elif pbraudio.type == 'SOLID':
-#          pbraudio.sound_speed = sqrt(self.E/pbraudio.density)
-#
-#       if self.outputs['Sound Speed'].is_linked:
-#          self.outputs['Sound Speed'].sound_speed = pbraudio.sound_speed
-#
-#    C_p: FloatProperty(
-#        name="Specific heat at constant pressure",
-#        default=7.0,
-#        update=compute_speed
-#    )
-#
-#    C_v: FloatProperty(
-#        name="Specific heat at constant volume",
-#        default=5.0,
-#        update=compute_speed
-#    )
-#
-#    R_0: FloatProperty(
-#        name="Gas constant",
-#        default=8.31446261815324,
-#        update=compute_speed
-#    )
-#
-#    M: FloatProperty(
-#        name="Molar mass",
-#        default=0.0289645,
-#        update=compute_speed
-#    )
-#
-#    K: FloatProperty(
-#        name="Bulk modulus",
-#        default=0.0,
-#        update=compute_speed
-#    )
-#
-#    E: FloatProperty(
-#        name="Young modulus",
-#        default=0.0,
-#        update=compute_speed
-#    )
-#
+    def compute_speed(self, context):
+       for world in bpy.data.worlds.values():
+          if hasattr(world, 'pbraudio'):
+             pbraudio = world.pbraudio
+
+       if self.type == 'GAS':
+          self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.pbraudio_temperature+273.15))
+       elif self.type == 'LIQUID':
+          self.pbraudio_sound_speed = sqrt(self.K/self.pbraudio_density)
+       elif self.type == 'SOLID':
+          self.pbraudio_sound_speed = sqrt(self.E/self.pbraudio_density)
+
+       if self.outputs['Sound Speed'].is_linked:
+          self.outputs['Sound Speed'].sound_speed = self.pbraudio_sound_speed
+
+    type: EnumProperty(
+        name="Medium Type",
+        items=[
+            ('GAS', "Gas", "Gas medium"),
+            ('LIQUID', "Liquid", "Liquid medium"),
+            ('SOLID', "Solid", "Solid medium"),
+        ],
+        default='GAS'
+    )
+
+    C_p: FloatProperty(
+        name="Specific heat at constant pressure",
+        default=7.0,
+        update=compute_speed
+    )
+
+    C_v: FloatProperty(
+        name="Specific heat at constant volume",
+        default=5.0,
+        update=compute_speed
+    )
+
+    R_0: FloatProperty(
+        name="Gas constant",
+        default=8.31446261815324,
+        update=compute_speed
+    )
+
+    M: FloatProperty(
+        name="Molar mass",
+        default=0.0289645,
+        update=compute_speed
+    )
+
+    K: FloatProperty(
+        name="Bulk modulus",
+        default=0.0,
+        update=compute_speed
+    )
+
+    E: FloatProperty(
+        name="Young modulus",
+        default=0.0,
+        update=compute_speed
+    )
+
+    pbraudio_sound_speed: FloatProperty(
+        name="Medium sound speed",
+        default=0.0,
+        update=compute_impedence
+    )
+
+    pbraudio_impedence: FloatProperty(
+        name="Medium impedence",
+        default=0.0
+    )
+
+    pbraudio_density: FloatProperty(
+        name="Medium Density",
+        default=1.2041,
+        min=0.1,
+        max=5.0,
+        update=compute_speed_imp
+    )
+
+    pbraudio_temperature: FloatProperty(
+        name="Temperature in Celsius degree",
+        default=20,
+        min=-273.15,
+        update=compute_speed_imp
+    )
+
     def init(self, context):
-        self.outputs.new('pbrAudioSoundSpeedNodeSocket', "Sound Speed")
-        self.inputs.new('pbrAudioTemperatureNodeSocket', "Temperature in Celsius degree")
-        self.inputs.new('pbrAudioDensityNodeSocket', "Density")
+        self.outputs.new('pbrAudioWorldPropertyNodeSocket', "Sound Speed")
+        self.inputs.new('pbrAudioWorldPropertyNodeSocket', "Temperature in Celsius degree")
+        self.inputs.new('pbrAudioWorldPropertyNodeSocket', "Density")
 
     def draw_buttons(self, context, layout):
-        for world in bpy.data.worlds.values():
-            if hasattr(world, 'pbraudio'):
-                pbraudio = world.pbraudio
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
 
-        layout.prop(pbraudio, "type", text='Type')
+        layout.prop(self, "type", text='Type')
 
         if pbraudio.type == 'GAS':
-            layout.prop(pbraudio, "C_p", text='Cp: Specific heat at constant pressure', slider=True)
-            layout.prop(pbraudio, "C_v", text='Cv: Specific heat at constant volume', slider=True)
-            layout.prop(pbraudio, "R_0", text='Ro: Gas constant', slider=True)
-            layout.prop(pbraudio, "M", text='M: Molar Mass', slider=True)
+            layout.prop(self, "pbraudio_C_p", text='Cp: Specific heat at constant pressure', slider=True)
+            layout.prop(self, "pbraudio_C_v", text='Cv: Specific heat at constant volume', slider=True)
+            layout.prop(self, "pbraudio_R_0", text='R0: Gas constant', slider=True)
+            layout.prop(self, "pbraudio_M", text='M: Molar Mass', slider=True)
         if pbraudio.type == 'LIQUID':
-            layout.prop(pbraudio, "K", text='K: Bulk modulus', slider=True)
+            layout.prop(self, "pbraudio_K", text='K: Bulk modulus', slider=True)
         if pbraudio.type == 'SOLID':
-            layout.prop(pbraudio, "E", text='E: Young\'s modulus', slider=True)
-
-#        if pbraudio.type == 'GAS':
-#            layout.prop(self, "C_p", text='Cp: Specific heat at constant pressure', slider=True)
-#            layout.prop(self, "C_v", text='Cv: Specific heat at constant volume', slider=True)
-#            layout.prop(self, "R_0", text='Ro: Gas constant', slider=True)
-#            layout.prop(self, "M", text='M: Molar Mass', slider=True)
-#        if pbraudio.type == 'LIQUID':
-#            layout.prop(self, "K", text='K: Bulk modulus', slider=True)
-#        if pbraudio.type == 'SOLID':
-#            layout.prop(self, "E", text='E: Young\'s modulus', slider=True)
+            layout.prop(self, "pbraudio_E", text='E: Young\'s modulus', slider=True)
 
     def draw_label(self):
         return "Acoustic Medium"
@@ -132,7 +158,7 @@ class pbrAudioSoundSpeedNode(Node):
     def free(self):
         pass
 
-classes.append(pbrAudioSoundSpeedNode)
+classes.append(pbrAudioWorldMediumNode)
 
 class pbrAudioImpedenceNode(Node):
     """Acoustic impedence properties node"""
@@ -140,9 +166,9 @@ class pbrAudioImpedenceNode(Node):
     bl_label = "Acoustic Impedence Parameters"
 
     def init(self, context):
-        self.outputs.new('pbrAudioImpedenceNodeSocket', "Impedence")
-        self.inputs.new('pbrAudioSoundSpeedNodeSocket', "Sound Speed")
-        self.inputs.new('pbrAudioDensityNodeSocket', "Density")
+        self.outputs.new('pbrAudioWorldParameterNodeSocket', "Impedence")
+        self.inputs.new('pbrAudioWorldPropertyNodeSocket', "Sound Speed")
+        self.inputs.new('pbrAudioWorldPropertyNodeSocket', "Density")
 
     def draw_buttons(self, context, layout):
         pass
@@ -164,7 +190,7 @@ class pbrAudioDensityNode(Node):
     bl_label = "Acoustic Density Parameters"
 
     def init(self, context):
-        self.outputs.new('pbrAudioDensityNodeSocket', "Density")
+        self.outputs.new('pbrAudioWorldParameterNodeSocket', "Density")
 
     def draw_buttons(self, context, layout):
         pass
@@ -186,7 +212,7 @@ class pbrAudioTemperatureNode(Node):
     bl_label = "Acoustic Temperature Parameters"
 
     def init(self, context):
-        self.outputs.new('pbrAudioTemperatureNodeSocket', "Temperature in Celsius degree")
+        self.outputs.new('pbrAudioWorldParameterNodeSocket', "Temperature in Celsius degree")
 
     def draw_buttons(self, context, layout):
         pass
@@ -202,29 +228,46 @@ class pbrAudioTemperatureNode(Node):
 
 classes.append(pbrAudioTemperatureNode)
 
-#class pbrAudioEnvironmentNode(Node):
-#    """pbrAudio environment node"""
-#    bl_idname = 'pbrAudioEnvironmentNode'
-#    bl_label = "Environment"
-#
-#    def init(self, context):
-#        self.outputs.new('pbrAudioWorldEnvironmentNodeSocket', text='Environment')
-#
-#    def draw_buttons(self, context, layout):
-#        for world in bpy.data.worlds.values():
-#            if hasattr(world, 'pbraudioEnv'):
-#                environment = world.pbraudioEnv
-#        layout.prop(environment, "ambisonic_file")
-#        layout.prop(environment, "cwsphere_radius")
-#        layout.prop(environment, "ch_num")
-#
-#    def draw_label(self):
-#        return "Acoustic Environment"
-#
-#    def update(self):
-#        pass
-#
-#    def free(self):
-#        pass
-#
-#classes.append(pbrAudioEnvironmentNode)
+class pbrAudioEnvironmentNode(Node):
+    """pbrAudio environment node"""
+    bl_idname = 'pbrAudioEnvironmentNode'
+    bl_label = "Environment"
+
+    ambisonic_file: StringProperty(
+        name="Audio File",
+        description="Path to ambisonic file",
+        subtype='FILE_PATH' 
+    )
+ 
+    sphere_radius: FloatProperty(
+        name="Radius of field sphere",
+        default=1.0
+    )
+ 
+    ambisonic_order: IntProperty(
+        name="Channel number",
+        default=3,
+    )
+
+    def init(self, context):
+        self.outputs.new('pbrAudioWorldEnvironmentNodeSocket', text='Environment')
+
+    def draw_buttons(self, context, layout):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        layout.prop(self, "ambisonic_file")
+        layout.prop(self, "ambisonic_order")
+        layout.prop(self, "sphere_radius")
+
+    def draw_label(self):
+        return "Acoustic Environment"
+
+    def update(self):
+        pass
+
+    def free(self):
+        pass
+
+classes.append(pbrAudioEnvironmentNode)

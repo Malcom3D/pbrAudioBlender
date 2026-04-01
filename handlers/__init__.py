@@ -107,10 +107,10 @@ def unregister():
     # Remove handler
     bpy.app.handlers.depsgraph_update_post.remove(item_activate_handler)
 
-    if hasattr(bpy.types.Screen, '_playback_handler'):
-        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:
-            bpy.app.handlers.animation_playback_pre.remove(bpy.types.Screen._play_handler)
-        if bpy.types.Screen._stop_handler in bpy.app.handlers.animation_playback_post:
-            bpy.app.handlers.animation_playback_post.remove(bpy.types.Screen._stop_handler)
-        delattr(bpy.types.Screen, '_play_handler')
-        delattr(bpy.types.Screen, '_stop_handler')
+#    if hasattr(bpy.types.Screen, '_playback_handler'):
+#        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:
+#            bpy.app.handlers.animation_playback_pre.remove(bpy.types.Screen._play_handler)
+#        if bpy.types.Screen._stop_handler in bpy.app.handlers.animation_playback_post:
+#            bpy.app.handlers.animation_playback_post.remove(bpy.types.Screen._stop_handler)
+#        delattr(bpy.types.Screen, '_play_handler')
+#        delattr(bpy.types.Screen, '_stop_handler')

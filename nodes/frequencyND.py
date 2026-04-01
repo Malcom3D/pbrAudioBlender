@@ -49,10 +49,10 @@ class NODE_OT_load_frd_file(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         if self.tree_name and self.node_name:
             node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
-            node.frd_filepath = self.filepath
+            node.pbraudio_frd_filepath = self.filepath
             # Extract filename without extension
             filename = os.path.basename(self.filepath)
-            node.frd_filename = os.path.splitext(filename)[0]
+            node.pbraudio_frd_filename = os.path.splitext(filename)[0]
             
             # Parse the FRD file immediately after loading
             node.parse_frd_data()
@@ -66,7 +66,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
     bl_icon = 'GRAPH'
     
     # File properties
-    frd_filepath: StringProperty(
+    pbraudio_frd_filepath: StringProperty(
         name="FRD File",
         description="Path to FRD frequency response file",
         subtype='FILE_PATH',
@@ -74,7 +74,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         update=lambda self, context: self.parse_frd_data()
     )
     
-    frd_filename: StringProperty(
+    pbraudio_frd_filename: StringProperty(
         name="Filename",
         description="Name of the FRD file",
         default=""
@@ -203,18 +203,18 @@ class FrequencyResponseNode(AcousticMaterialNode):
         
     def parse_frd_data(self):
         """Parse FRD file and store the data"""
-        if not self.frd_filepath or not os.path.exists(self.frd_filepath):
+        if not self.pbraudio_frd_filepath or not os.path.exists(self.pbraudio_frd_filepath):
             self.data_valid = False
             self.parsed_num_points = 0
             return
         
         try:
             # Parse the FRD file
-            frequencies, magnitudes = parse_frd_file(self.frd_filepath)
+            frequencies, magnitudes = parse_frd_file(self.pbraudio_frd_filepath)
             
             # Validate the data
             if not validate_frd_data(frequencies, magnitudes):
-                print(f"Invalid FRD data in {self.frd_filepath}")
+                print(f"Invalid FRD data in {self.pbraudio_frd_filepath}")
                 self.data_valid = False
                 self.parsed_num_points = 0
                 return
@@ -248,13 +248,13 @@ class FrequencyResponseNode(AcousticMaterialNode):
                 self.magnitude_max = mag_max + 0.1 * mag_range
             
             self.data_valid = True
-            print(f"Successfully parsed FRD file: {self.frd_filename}, {num_points} points")
+            print(f"Successfully parsed FRD file: {self.pbraudio_frd_filename}, {num_points} points")
             
             # Apply frequency filtering
             self.update_frequency_range()
             
         except Exception as e:
-            print(f"Error parsing FRD file {self.frd_filepath}: {e}")
+            print(f"Error parsing FRD file {self.pbraudio_frd_filepath}: {e}")
             self.data_valid = False
             self.parsed_num_points = 0
     
@@ -341,19 +341,19 @@ class FrequencyResponseNode(AcousticMaterialNode):
         """Draw node buttons"""
         # File selection
         row = layout.row()
-        row.prop(self, "frd_filename", text="")
+        row.prop(self, "pbraudio_frd_filename", text="")
         op = row.operator("node.load_frd_file", text="", icon='FILE_FOLDER')
         op.node_name = self.name
         op.tree_name = self.id_data.name
         
         # Data validation indicator
-        if self.frd_filepath:
+        if self.pbraudio_frd_filepath:
             if self.data_valid:
                 layout.label(text="✓ Data loaded successfully", icon='CHECKMARK')
             else:
                 layout.label(text="✗ Invalid or no data", icon='ERROR')
         
-        if self.frd_filepath and os.path.exists(self.frd_filepath):
+        if self.pbraudio_frd_filepath and os.path.exists(self.pbraudio_frd_filepath):
             # Raw data info
             row = layout.row(align=True)
             row.prop(self, "show_raw_data", icon='TRIA_DOWN' if self.show_raw_data else 'TRIA_RIGHT', icon_only=True, emboss=False)
@@ -410,7 +410,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
     
     def draw_buttons_ext(self, context, layout):
         """Draw additional buttons in sidebar"""
-        layout.prop(self, "frd_filepath")
+        layout.prop(self, "pbraudio_frd_filepath")
         
         # Advanced settings
         box = layout.box()
@@ -460,11 +460,11 @@ class FrequencyResponseNode(AcousticMaterialNode):
     
     def copy(self, node):
         """Copy node data"""
-        self.frd_filepath = node.frd_filepath
-        self.frd_filename = node.frd_filename
+        self.pbraudio_frd_filepath = node.pbraudio_frd_filepath
+        self.pbraudio_frd_filename = node.pbraudio_frd_filename
         # Note: The _frequencies and _magnitudes arrays won't be copied
         # automatically, so we need to re-parse the file
-        if self.frd_filepath and os.path.exists(self.frd_filepath):
+        if self.pbraudio_frd_filepath and os.path.exists(self.pbraudio_frd_filepath):
             self.parse_frd_data()
     
     def free(self):

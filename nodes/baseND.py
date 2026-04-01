@@ -132,16 +132,14 @@ class DefaultAcousticShaderNode(AcousticMaterialNode):
 
     def draw_buttons(self, context, layout):
         # Get the active material from context or node property
-        props = self
-
-        layout.prop(props, "pbraudio_sound_speed", slider=True)
-        layout.prop(props, "pbraudio_young_modulus", slider=True)
-        layout.prop(props, "pbraudio_poisson_ratio", slider=True)
-        layout.prop(props, "pbraudio_density", slider=True)
-        layout.prop(props, "pbraudio_damping", slider=True)
-        layout.prop(props, "pbraudio_friction", slider=True)
-        layout.prop(props, "pbraudio_roughness", slider=True)
-        layout.prop(props, "pbraudio_low_frequency", slider=True)
-        layout.prop(props, "pbraudio_high_frequency", slider=True)
+        layout.prop(self, "pbraudio_sound_speed", slider=True)
+        layout.prop(self, "pbraudio_young_modulus", slider=True)
+        layout.prop(self, "pbraudio_poisson_ratio", slider=True)
+        layout.prop(self, "pbraudio_density", slider=True)
+        layout.prop(self, "pbraudio_damping", slider=True)
+        layout.prop(self, "pbraudio_friction", slider=True)
+        layout.prop(self, "pbraudio_roughness", slider=True)
+        layout.prop(self, "pbraudio_low_frequency", slider=True)
+        layout.prop(self, "pbraudio_high_frequency", slider=True)
 
 classes.append(DefaultAcousticShaderNode)

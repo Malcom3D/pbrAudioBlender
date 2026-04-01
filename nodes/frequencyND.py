@@ -639,10 +639,8 @@ class NODE_OT_preview_frequency_response(bpy.types.Operator):
                 # Create a simple text preview
                 preview_text = f"Frequency Response Preview:\n"
                 preview_text += f"Points: {len(frequencies)}\n"
-                preview_text += f"Frequency range: {frequencies[0]:.1f} - {frequencies[-1]:.1f} Hz
-"
-                preview_text += f"Magnitude range: {np.min(magnitudes):.1f} - {np.max(magnitudes):.1f} dB
-"
+                preview_text += f"Frequency range: {frequencies[0]:.1f} - {frequencies[-1]:.1f} Hz"
+                preview_text += f"Magnitude range: {np.min(magnitudes):.1f} - {np.max(magnitudes):.1f} dB"
                 preview_text += f"Phase range: {np.min(phases):.1f} - {np.max(phases):.1f}°\n"
                 
                 # Show first few points

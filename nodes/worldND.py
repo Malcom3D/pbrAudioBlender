@@ -40,6 +40,13 @@ class pbrAudioWorldMediumNode(Node):
     bl_idname = 'pbrAudioWorldMediumNode'
     bl_label = "World medium Parameters"
 
+    def compute_speed_imp(self, context):
+       self.compute_speed(self, context)
+       self.compute_impedence(self, context)
+
+    def compute_impedence(self, context):
+        self.impedence = self.density*self.sound_speed
+
     def compute_speed(self, context):
        for world in bpy.data.worlds.values():
           if hasattr(world, 'pbraudio'):

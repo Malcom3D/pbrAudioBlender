@@ -35,7 +35,7 @@ class PBRAudioWorldProperties(PropertyGroup):
         self.old_domain = self.acoustic_domain
         if self.acoustic_domain:
             self.acoustic_domain.display.show_shadows = False
-            self.acoustic_domain.display_type = 'BOX'
+            self.acoustic_domain.display_type = 'BOUNDS'
             self.acoustic_domain.show_bounds = True
 
 #    def compute_speed_imp(self, context):

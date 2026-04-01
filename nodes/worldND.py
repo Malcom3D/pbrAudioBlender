@@ -197,7 +197,7 @@ class pbrAudioDensityNode(Node):
     bl_label = "Acoustic Density Parameters"
 
     def init(self, context):
-        self.outputs.new('pbrAudioWorldParameterNodeSocket', "Density")
+        self.outputs.new('pbrAudioWorldPropertyNodeSocket', "Density")
 
     def draw_buttons(self, context, layout):
         pass
@@ -219,7 +219,7 @@ class pbrAudioTemperatureNode(Node):
     bl_label = "Acoustic Temperature Parameters"
 
     def init(self, context):
-        self.outputs.new('pbrAudioWorldParameterNodeSocket', "Temperature in Celsius degree")
+        self.outputs.new('pbrAudioWorldPropertyNodeSocket', "Temperature in Celsius degree")
 
     def draw_buttons(self, context, layout):
         pass

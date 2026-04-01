@@ -28,7 +28,24 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldPropertyNodeSocket'
     bl_label = "pbrAudio World Property Node Socket"
 
-#    type: StringProperty(default=self.bl_idname)
+    type: StringProperty(default=self.bl_idname)
+
+    default_value: FloatProperty(default=0.0)
+
+    def draw(self, context, layout, node, text):
+        layout = self.layout
+        layout.prop(self, "default_value", text=text, slider=True)
+
+    def draw_color(self, context, node):
+        return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
+
+classes.append(pbrAudioWorldPropertyNodeSocket)
+
+class pbrAudioWorldParameterNodeSocket(NodeSocket):
+    bl_idname = 'pbrAudioWorldParameterNodeSocket'
+    bl_label = "pbrAudio World Parameter Node Socket"
+
+    type: StringProperty(default=self.bl_idname)
 
     default_value: FloatProperty(default=0.0)
 
@@ -42,31 +59,16 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
 
-classes.append(pbrAudioWorldPropertyNodeSocket)
-
-class pbrAudioWorldParameterNodeSocket(NodeSocket):
-    bl_idname = 'pbrAudioWorldParameterNodeSocket'
-    bl_label = "pbrAudio World Parameter Node Socket"
-
-#    type: StringProperty(default=self.bl_idname)
-
-    default_value: FloatProperty(default=0.0)
-
-    def draw(self, context, layout, node, text):
-        layout.prop(self, "default_value", text=text, slider=True)
-
-    def draw_color(self, context, node):
-        return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
-
 classes.append(pbrAudioWorldParameterNodeSocket)
 
 class pbrAudioWorldOutputNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldOutputNodeSocket'
     bl_label = "pbrAudio World Output Node Socket"
 
-#    type: StringProperty(default=self.bl_idname)
+    type: StringProperty(default=self.bl_idname)
 
     def draw(self, context, layout, node, text):
+        layout = self.layout
         layout.label(text=text)
 
     def draw_color(self, context, node):
@@ -78,10 +80,11 @@ class pbrAudioWorldEnvironmentNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldEnvironmentNodeSocket'
     bl_label = "pbrAudio World Environment Socket"
 
-#    type: StringProperty(default=self.bl_idname)
+    type: StringProperty(default=self.bl_idname)
 
     def draw(self, context, layout, node, text):
-          layout.label(text=text)
+        layout = self.layout
+        layout.label(text=text)
 
     def draw_color(self, context, node):
         return (1.0, 1.0, 1.0, 1.0) # white for collection data

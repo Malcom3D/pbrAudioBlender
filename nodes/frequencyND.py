@@ -19,8 +19,8 @@
 import bpy
 import os
 import numpy as np
-from bpy.types import Node
-from bpy.props import StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
+from bpy.types import Node, Operator
+from bpy.props import StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty, FloatVectorProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper
 
 from .baseND import AcousticMaterialNode
@@ -28,7 +28,7 @@ from ..utils.frd_parser import parse_frd_file, validate_frd_data, resample_frd_d
 
 classes = []
 
-class NODE_OT_load_frd_file(bpy.types.Operator, ImportHelper):
+class NODE_OT_load_frd_file(Operator, ImportHelper):
     """Load FRD frequency response file"""
     bl_idname = "node.load_frd_file"
     bl_label = "Load FRD File"
@@ -138,81 +138,81 @@ class FrequencyResponseNode(AcousticMaterialNode):
     )
     
     # FRD data storage (not saved with blend file)
-    parsed_frequencies: bpy.props.FloatVectorProperty(
+    parsed_frequencies: FloatVectorProperty(
         name="Frequencies",
         description="Parsed frequency data",
         size=32,
         default=[0.0] * 32
     )
     
-    parsed_magnitudes: bpy.props.FloatVectorProperty(
+    parsed_magnitudes: FloatVectorProperty(
         name="Magnitudes",
         description="Parsed magnitude data",
         size=32,
         default=[0.0] * 32
     )
     
-    parsed_phases: bpy.props.FloatVectorProperty(
+    parsed_phases: FloatVectorProperty(
         name="Phases",
         description="Parsed phase data",
         size=32,
         default=[0.0] * 32
     )
     
-    parsed_num_points: bpy.props.IntProperty(
+    parsed_num_points: IntProperty(
         name="Number of Points",
         description="Number of valid data points",
         default=0
     )
     
     # Filtered data (based on frequency range)
-    parsed_filtered_frequencies: bpy.props.FloatVectorProperty(
+    parsed_filtered_frequencies: FloatVectorProperty(
         name="Filtered Frequencies",
         description="Filtered frequency data",
         size=32,
         default=[0.0] * 32
     )
     
-    parsed_filtered_magnitudes: bpy.props.FloatVectorProperty(
+    parsed_filtered_magnitudes: FloatVectorProperty(
         name="Filtered Magnitudes",
         description="Filtered magnitude data",
         size=32,
         default=[0.0] * 32
     )
     
-    parsed_filtered_phases: bpy.props.FloatVectorProperty(
+    parsed_filtered_phases: FloatVectorProperty(
         name="Filtered Phases",
         description="Filtered phase data",
         size=32,
         default=[0.0] * 32
     )
     
-    parsed_filtered_num_points: bpy.props.IntProperty(
+    parsed_filtered_num_points: IntProperty(
         name="Filtered Number of Points",
         description="Number of filtered data points",
         default=0
     )
     
     # Display properties
-    show_frequency_range: bpy.props.BoolProperty(
+    show_frequency_range: BoolProperty(
         name="Show Frequency Range",
         description="Display frequency range controls",
         default=False
     )
     
-    show_magnitude_range: bpy.props.BoolProperty(
+    show_magnitude_range: BoolProperty(
         name="Show Magnitude Range",
         description="Display magnitude range controls",
         default=False
     )
     
-    show_phase_range: bpy.props.BoolProperty(
+    show_phase_range: BoolProperty(
         name="Show Phase Range",
         description="Display phase range controls",
         default=False
     )
     
-    show_raw_data: bpy.props.BoolProperty(
+    show_raw_data: BoolProperty(
         name="Show Raw Data",
         description="Display raw FRD data information",
         default=False
@@ -242,14 +242,14 @@ class FrequencyResponseNode(AcousticMaterialNode):
     )
     
     # Data validation flag
-    data_valid: bpy.props.BoolProperty(
+    data_valid: BoolProperty(
         name="Data Valid",
         description="Indicates if FRD data is valid",
         default=False
     )
     
     # Phase unwrapping
-    unwrap_phase: bpy.props.BoolProperty(
+    unwrap_phase: BoolProperty(
         name="Unwrap Phase",
         description="Unwrap phase to avoid 360-degree jumps",
         default=True,
@@ -626,7 +626,7 @@ class FrequencyResponseNode(AcousticMaterialNode):
         self.parsed_filtered_num_points = 0
         self.data_valid = False
 
-class NODE_OT_preview_frequency_response(bpy.types.Operator):
+class NODE_OT_preview_frequency_response(Operator):
     """Preview frequency response curve"""
     bl_idname = "node.preview_frequency_response"
     bl_label = "Preview Frequency Response"
@@ -659,7 +659,7 @@ class NODE_OT_preview_frequency_response(bpy.types.Operator):
         
         return {'FINISHED'}
 
-class NODE_OT_create_curve_plot(bpy.types.Operator):
+class NODE_OT_create_curve_plot(Operator):
     """Create a curve plot node for this frequency response"""
     bl_idname = "node.create_curve_plot"
     bl_label = "Create Curve Plot"

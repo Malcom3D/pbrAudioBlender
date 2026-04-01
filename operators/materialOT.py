@@ -81,7 +81,7 @@ class PBRAUDIO_OT_point_add(Operator):
 
 classes.append(PBRAUDIO_OT_point_add)
 
-class PBRAUDIO_OT_point_remove(bpy.types.Operator):
+class PBRAUDIO_OT_point_remove(Operator):
     bl_idname = "acoustic.point_remove"
     bl_label = "Remove Frequency Point"
     bl_description = "Remove the selected point"
@@ -96,7 +96,7 @@ class PBRAUDIO_OT_point_remove(bpy.types.Operator):
 
 classes.append(PBRAUDIO_OT_point_remove)
 
-class PBRAUDIO_OT_generate_curve(bpy.types.Operator):
+class PBRAUDIO_OT_generate_curve(Operator):
     bl_idname = "acoustic.generate_curve"
     bl_label = "Generate Curve from Frequency Response"
     bl_description = "Create or update a 2D curve representing the frequency response"

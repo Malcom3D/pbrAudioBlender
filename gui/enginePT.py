@@ -183,10 +183,10 @@ class PBRAUDIO_PT_interface_panel(Panel):
 
 classes.append(PBRAUDIO_PT_interface_panel)
 
-class PBRAUDIO_PT_resonance_panel(Panel):
+class PBRAUDIO_PT_resonances_panel(Panel):
     """Panel to configure pbrAudio resonance settings"""
     bl_label = "Resonance Settings"
-    bl_idname = "PBRAUDIO_PT_resonance_panel"
+    bl_idname = "PBRAUDIO_PT_resonances_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render"
@@ -225,7 +225,7 @@ class PBRAUDIO_PT_resonance_panel(Panel):
                 layout.prop(scene.pbraudiorender, "min_tube_length")
                 layout.prop(scene.pbraudiorender, "min_tube_aspect_ratio")
 
-classes.append(PBRAUDIO_PT_resonance_panel)
+classes.append(PBRAUDIO_PT_resonances_panel)
 
 class PBRAUDIO_PT_termination_panel(Panel):
     """Panel to configure pbrAudio termination settings"""

@@ -31,7 +31,7 @@ class pbrAudioWorldOutputNode(Node):
     def init(self, context):
         self.inputs.new('pbrAudioWorldOutputNodeSocket', "Sound Speed")
         self.inputs.new('pbrAudioWorldOutputNodeSocket', "Impedence")
-#        self.inputs.new('pbrAudioWorldEnvironmentNodeSocket', "Environment")
+        self.inputs.new('pbrAudioWorldEnvironmentNodeSocket', "Environment")
 
 classes.append(pbrAudioWorldOutputNode)
 
@@ -140,7 +140,6 @@ class pbrAudioWorldMediumNode(Node):
         self.inputs.new('pbrAudioWorldPropertyNodeSocket', "Density")
 
     def draw_buttons(self, context, layout):
-        layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
@@ -260,7 +259,6 @@ class pbrAudioEnvironmentNode(Node):
         self.outputs.new('pbrAudioWorldEnvironmentNodeSocket', text='Environment')
 
     def draw_buttons(self, context, layout):
-        layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 

@@ -65,13 +65,11 @@ class DefaultAcousticShaderNode(AcousticMaterialNode):
     bl_idname = 'DefaultAcousticShaderNode'
     bl_label = "DefaultAcousticShader"
 
-    def sound_speed_range(self, value):
-        if value > self.pbraudio_sound_speed_max:
+    def sound_speed_range(self, context):
+        if self.pbraudio_sound_speed > self.pbraudio_sound_speed_max:
            self.pbraudio_sound_speed = self.pbraudio_sound_speed_max
-        elif value < self.pbraudio_sound_speed_min:
+        elif self.pbraudio_sound_speed < self.pbraudio_sound_speed_min:
            self.pbraudio_sound_speed = self.pbraudio_sound_speed_min
-        else:
-           self.pbraudio_sound_speed = value
 
     pbraudio_type: StringProperty(default='AcousticShader')
 

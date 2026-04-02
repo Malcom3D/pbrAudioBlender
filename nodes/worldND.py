@@ -39,9 +39,9 @@ class pbrAudioWorldOutputNode(AcousticWorldNode):
 
 classes.append(pbrAudioWorldOutputNode)
 
-class pbrAudioWorldMediumNode(AcousticWorldNode):
+class pbrAudioWorldMaterialNode(AcousticWorldNode):
     """Acoustic sound speed properties node"""
-    bl_idname = 'pbrAudioWorldMediumNode'
+    bl_idname = 'pbrAudioWorldMaterialNode'
     bl_label = "World medium Parameters"
 
     def compute_speed_imp(self, context):
@@ -52,19 +52,15 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
         self.impedence = self.density*self.sound_speed
 
     def compute_speed(self, context):
-       for world in bpy.data.worlds.values():
-          if hasattr(world, 'pbraudio'):
-             pbraudio = world.pbraudio
-
        if self.medium_type == 'GAS':
-          self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.temperature+273.15))
+          self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.pbraudio_temperature+273.15))
        elif self.medium_type == 'LIQUID':
           self.pbraudio_sound_speed = sqrt(self.K/self.pbraudio_density)
        elif self.medium_type == 'SOLID':
           self.pbraudio_sound_speed = sqrt(self.E/self.pbraudio_density)
 
-       if self.outputs['Sound Speed'].is_linked:
-          self.outputs['Sound Speed'].sound_speed = self.pbraudio_sound_speed
+       if self.outputs[0].is_linked:
+          self.outputs[0].sound_speed = self.pbraudio_sound_speed
 
     pbraudio_type: StringProperty(default='WorldMedium')
 
@@ -79,14 +75,14 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
     )
 
     C_p: FloatProperty(
-        name="Specific heat at constant pressure",
-        default=7.0,
+        name="Specific heat @ constant pressure in kJ/kg·K",
+        default=1.0,
         update=compute_speed
     )
 
     C_v: FloatProperty(
-        name="Specific heat at constant volume",
-        default=5.0,
+        name="Specific heat @ constant volume in kJ/kg·K",
+        default=0.718,
         update=compute_speed
     )
 
@@ -103,47 +99,45 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
     )
 
     K: FloatProperty(
-        name="Bulk modulus",
-        default=0.0,
+        name="Bulk modulus in GPa",
+        default=2.2, #water, 0.142 for air
         update=compute_speed
     )
 
     E: FloatProperty(
-        name="Young modulus",
-        default=0.0,
+        name="Young modulus in GPa",
+        default=0.005,
         update=compute_speed
     )
 
     pbraudio_sound_speed: FloatProperty(
-        name="Medium sound speed",
-        default=0.0,
+        name="Medium sound speed in m/s",
+        default=343.21,
         update=compute_impedence
     )
 
     pbraudio_impedence: FloatProperty(
-        name="Medium impedence",
-        default=0.0
+        name="Medium impedence in Pa⋅s/m",
+        default=413.3
     )
 
     pbraudio_density: FloatProperty(
-        name="Medium Density",
+        name="Medium Density in kg/m³",
         default=1.2041,
-        min=0.1,
-        max=5.0,
         update=compute_speed_imp
     )
 
-    temperature: FloatProperty(
-        name="Temperature in Celsius degree",
+    pbraudio_temperature: FloatProperty(
+        name="Temperature in °C",
         default=20,
         min=-273.15,
         update=compute_speed_imp
     )
 
     def init(self, context):
-        self.outputs.new('pbrAudioWorldMaterialNodeSocket', "Sound Speed")
-        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Temperature in Celsius degree")
-        self.inputs.new('pbrAudioWorldPropertyNodeSocket', "Density")
+        self.outputs.new('pbrAudioWorldMaterialNodeSocket', "Sound Speed in m/s")
+        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Temperature in °C")
+        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Density in kg/m³")
 
     def draw_buttons(self, context, layout):
         layout.use_property_split = True
@@ -152,17 +146,17 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
         layout.prop(self, "medium_type", text='Type')
 
         if self.medium_type == 'GAS':
-            layout.prop(self, "pbraudio_C_p", text='Cp: Specific heat at constant pressure', slider=True)
-            layout.prop(self, "pbraudio_C_v", text='Cv: Specific heat at constant volume', slider=True)
-            layout.prop(self, "pbraudio_R_0", text='R0: Gas constant', slider=True)
-            layout.prop(self, "pbraudio_M", text='M: Molar Mass', slider=True)
+            layout.prop(self, "C_p", text='Cp: Specific heat at constant pressure', slider=True)
+            layout.prop(self, "C_v", text='Cv: Specific heat at constant volume', slider=True)
+            layout.prop(self, "R_0", text='R0: Gas constant', slider=True)
+            layout.prop(self, "M", text='M: Molar Mass', slider=True)
         if self.medium_type == 'LIQUID':
-            layout.prop(self, "pbraudio_K", text='K: Bulk modulus', slider=True)
+            layout.prop(self, "K", text='K: Bulk modulus', slider=True)
         if self.medium_type == 'SOLID':
-            layout.prop(self, "pbraudio_E", text='E: Young\'s modulus', slider=True)
+            layout.prop(self, "E", text='E: Young\'s modulus', slider=True)
 
     def draw_label(self):
-        return "Acoustic Medium"
+        return "Acoustic World Material"
 
     def update(self):
         pass
@@ -170,7 +164,7 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
     def free(self):
         pass
 
-classes.append(pbrAudioWorldMediumNode)
+classes.append(pbrAudioWorldMaterialNode)
 
 class pbrAudioImpedenceNode(AcousticWorldNode):
     """Acoustic impedence properties node"""
@@ -179,11 +173,16 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
 
     def init(self, context):
         self.outputs.new('pbrAudioWorldPropertyNodeSocket', "Impedence")
-        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Sound Speed")
-        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Density")
+        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Sound Speed in m/s")
+        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Density in kg/m³")
 
     def draw_buttons(self, context, layout):
-        pass
+        if self.outputs[0].is_linked:
+            if self.outputs[0].links[0].from_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
+                self.pbraudio_impedence = self.outputs[0].default_value
+            else:
+                nodetree = self.id_data
+                nodetree.links.remove(self.output[0].links[0])
 
     def draw_label(self):
         return "Acoustic Impedence"
@@ -201,11 +200,22 @@ class pbrAudioDensityNode(AcousticWorldNode):
     bl_idname = 'pbrAudioDensityNode'
     bl_label = "Acoustic Density Parameters"
 
+    pbraudio_density: FloatProperty(
+        name="Medium Density in kg/m³",
+        default=1.2041,
+        update=compute_speed_imp
+    )
+
     def init(self, context):
         self.outputs.new('pbrAudioWorldParameterNodeSocket', "Density")
 
     def draw_buttons(self, context, layout):
-        pass
+        if self.outputs[0].is_linked:
+            if self.outputs[0].links[0].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+                self.pbraudio_density = self.outputs[0].default_value
+            else:
+                nodetree = self.id_data
+                nodetree.links.remove(self.output[0].links[0])
 
     def draw_label(self):
         return "Density"
@@ -223,11 +233,23 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
     bl_idname = 'pbrAudioTemperatureNode'
     bl_label = "Acoustic Temperature Parameters"
 
+    pbraudio_temperature: FloatProperty(
+        name="Temperature in °C",
+        default=20,
+        min=-273.15,
+        update=compute_speed_imp
+    )
+
     def init(self, context):
         self.outputs.new('pbrAudioWorldParameterNodeSocket', "Temperature in Celsius degree")
 
     def draw_buttons(self, context, layout):
-        pass
+        if self.outputs[0].is_linked:
+            if self.outputs[0].links[0].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+                self.pbraudio_temperature = self.outputs[0].default_value
+            else:
+                nodetree = self.id_data
+                nodetree.links.remove(self.output[0].links[0])
 
     def draw_label(self):
         return "Temperature"

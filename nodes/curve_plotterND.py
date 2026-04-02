@@ -17,14 +17,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-import numpy as np
-from bpy.types import Node
-from bpy.props import FloatProperty, IntProperty, BoolProperty, EnumProperty
-from mathutils import Vector, Matrix
 import gpu
+import blf
+import numpy as np
+from bpy.types import Node, Operator
+from bpy.props import FloatProperty, IntProperty, BoolProperty, EnumProperty, FloatVectorProperty, StringProperty
+from mathutils import Vector, Matrix
+from bpy_extras.io_utils import ExportHelper
 from gpu_extras.batch import batch_for_shader
 from math import log10, floor, ceil
-import blf
 
 from .baseND import AcousticMaterialNode
 
@@ -64,7 +65,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         max=10.0
     )
     
-    magnitude_color: bpy.props.FloatVectorProperty(
+    magnitude_color: FloatVectorProperty(
         name="Magnitude Color",
         description="Color for magnitude curve",
         subtype='COLOR',
@@ -74,7 +75,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         max=1.0
     )
     
-    phase_color: bpy.props.FloatVectorProperty(
+    phase_color: FloatVectorProperty(
         name="Phase Color",
         description="Color for phase curve",
         subtype='COLOR',
@@ -84,7 +85,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         max=1.0
     )
     
-    group_delay_color: bpy.props.FloatVectorProperty(
+    group_delay_color: FloatVectorProperty(
         name="Group Delay Color",
         description="Color for group delay curve",
         subtype='COLOR',
@@ -101,7 +102,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         default=True
     )
     
-    grid_color: bpy.props.FloatVectorProperty(
+    grid_color: FloatVectorProperty(
         name="Grid Color",
         description="Color for grid lines",
         subtype='COLOR',
@@ -118,7 +119,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         default=True
     )
     
-    y_axis_magnitude_range: bpy.props.FloatVectorProperty(
+    y_axis_magnitude_range: FloatVectorProperty(
         name="Magnitude Range",
         description="Y-axis range for magnitude",
         size=2,
@@ -127,7 +128,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         max=200.0
     )
     
-    y_axis_phase_range: bpy.props.FloatVectorProperty(
+    y_axis_phase_range: FloatVectorProperty(
         name="Phase Range",
         description="Y-axis range for phase",
         size=2,
@@ -136,7 +137,7 @@ class FrequencyResponseCurveNode(AcousticMaterialNode):
         max=360.0
     )
     
-    y_axis_group_delay_range: bpy.props.FloatVectorProperty(
+    y_axis_group_delay_range: FloatVectorProperty(
         name="Group Delay Range",
         description="Y-axis range for group delay",
         size=2,
@@ -867,7 +868,7 @@ def register_draw_handler():
             'POST_PIXEL'
         )
 
-class NODE_OT_update_frequency_curve(bpy.types.Operator):
+class NODE_OT_update_frequency_curve(Operator):
     """Update frequency response curve plot"""
     bl_idname = "node.update_frequency_curve"
     bl_label = "Update Plot"
@@ -881,18 +882,18 @@ class NODE_OT_update_frequency_curve(bpy.types.Operator):
             context.area.tag_redraw()
         return {'FINISHED'}
 
-class NODE_OT_export_curve_image(bpy.types.Operator):
+class NODE_OT_export_curve_image(Operator):
     """Export frequency response curve as image"""
     bl_idname = "node.export_curve_image"
     bl_label = "Export as Image"
     
-    filepath: bpy.props.StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Path to save the image",
         subtype='FILE_PATH'
     )
     
-    image_format: bpy.props.EnumProperty(
+    image_format: EnumProperty(
         name="Format",
         items=[
             ('PNG', "PNG", "PNG format"),
@@ -903,7 +904,7 @@ class NODE_OT_export_curve_image(bpy.types.Operator):
         default='PNG'
     )
     
-    image_width: bpy.props.IntProperty(
+    image_width: IntProperty(
         name="Width",
         description="Image width in pixels",
         default=800,
@@ -911,7 +912,7 @@ class NODE_OT_export_curve_image(bpy.types.Operator):
         max=4096
     )
     
-    image_height: bpy.props.IntProperty(
+    image_height: IntProperty(
         name="Height",
         description="Image height in pixels",
         default=600,
@@ -933,14 +934,14 @@ class NODE_OT_export_curve_image(bpy.types.Operator):
             self.report({'INFO'}, f"Exporting curve to {self.filepath}")
         return {'FINISHED'}
 
-class NODE_OT_export_curve_data(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
+class NODE_OT_export_curve_data(Operator, ExportHelper):
     """Export frequency response curve data"""
     bl_idname = "node.export_curve_data"
     bl_label = "Export Data"
     
     filename_ext = ".csv"
     
-    filter_glob: bpy.props.StringProperty(
+    filter_glob: StringProperty(
         default="*.csv;*.txt",
         options={'HIDDEN'}
     )

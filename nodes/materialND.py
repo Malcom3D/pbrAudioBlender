@@ -35,7 +35,7 @@ class AcousticShaderNode(DefaultAcousticShaderNode):
 
 classes.append(AcousticShaderNode)
 
-class GlassShaderNode(AcousticShaderNode):
+class GlassShaderNode(DefaultAcousticShaderNode):
     """Glass acoustic shader node"""
     bl_idname = 'GlassShaderNode'
     bl_label = "Glass"
@@ -54,7 +54,7 @@ class GlassShaderNode(AcousticShaderNode):
         self.pbraudio_roughness = 0.001
 classes.append(GlassShaderNode)
 
-class AluminumShaderNode(AcousticShaderNode):
+class AluminumShaderNode(DefaultAcousticShaderNode):
     """Aluminum acoustic shader node"""
     bl_idname = 'AluminumShaderNode'
     bl_label = "Aluminum"
@@ -74,7 +74,7 @@ class AluminumShaderNode(AcousticShaderNode):
         self.pbraudio_high_frequency = 10000
 classes.append(AluminumShaderNode)
 
-class AcrylicShaderNode(AcousticShaderNode):
+class AcrylicShaderNode(DefaultAcousticShaderNode):
     """Acrylic acoustic shader node"""
     bl_idname = 'AcrylicShaderNode'
     bl_label = "Acrylic"
@@ -92,7 +92,7 @@ class AcrylicShaderNode(AcousticShaderNode):
         self.pbraudio_roughness = 0.1
 classes.append(AcrylicShaderNode)
 
-class AsphaltShaderNode(AcousticShaderNode):
+class AsphaltShaderNode(DefaultAcousticShaderNode):
     """Asphalt acoustic shader node"""
     bl_idname = 'AsphaltShaderNode'
     bl_label = "Asphalt"
@@ -112,7 +112,7 @@ class AsphaltShaderNode(AcousticShaderNode):
         self.pbraudio_high_frequency = 100
 classes.append(AsphaltShaderNode)
 
-class ConcreteShaderNode(AcousticShaderNode):
+class ConcreteShaderNode(DefaultAcousticShaderNode):
     """Concrete acoustic shader node"""
     bl_idname = 'ConcreteShaderNode'
     bl_label = "Concrete"
@@ -132,7 +132,7 @@ class ConcreteShaderNode(AcousticShaderNode):
         self.pbraudio_high_frequency = 500
 classes.append(ConcreteShaderNode)
 
-class MarbleShaderNode(AcousticShaderNode):
+class MarbleShaderNode(DefaultAcousticShaderNode):
     """Marble acoustic shader node"""
     bl_idname = 'MarbleShaderNode'
     bl_label = "Marble"
@@ -150,7 +150,7 @@ class MarbleShaderNode(AcousticShaderNode):
         self.pbraudio_roughness = 0.01
 classes.append(MarbleShaderNode)
 
-class IronShaderNode(AcousticShaderNode):
+class IronShaderNode(DefaultAcousticShaderNode):
     """Iron acoustic shader node"""
     bl_idname = 'IronShaderNode'
     bl_label = "Iron"
@@ -169,7 +169,7 @@ class IronShaderNode(AcousticShaderNode):
         self.pbraudio_low_frequency = 25
 classes.append(IronShaderNode)
 
-class TimberShaderNode(AcousticShaderNode):
+class TimberShaderNode(DefaultAcousticShaderNode):
     """Timber acoustic shader node"""
     bl_idname = 'TimberShaderNode'
     bl_label = "Timber"
@@ -189,7 +189,7 @@ class TimberShaderNode(AcousticShaderNode):
         self.pbraudio_high_frequency = 2000
 classes.append(TimberShaderNode)
 
-class GypsumShaderNode(AcousticShaderNode):
+class GypsumShaderNode(DefaultAcousticShaderNode):
     """Gypsum acoustic shader node"""
     bl_idname = 'GypsumShaderNode'
     bl_label = "Gypsum"
@@ -222,7 +222,7 @@ class GypsumShaderNode(AcousticShaderNode):
         self.pbraudio_high_frequency = 3700
 classes.append(GypsumShaderNode)
 
-#class ShaderNode(AcousticShaderNode):
+#class ShaderNode(DefaultAcousticShaderNode):
 #    """Template acoustic shader node"""
 #    bl_idname = 'ShaderNode'
 #    bl_label = "Shader"

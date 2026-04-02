@@ -55,7 +55,10 @@ class PBRAudioRenderEngine(RenderEngine):
 
     def render(self, depsgraph):
         """Main render method"""
-        self.report({'INFO'}, f"{self.id_render} pbrAudio rendering in progress...")
+        if self.is_animation:
+            self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
+        else:
+            self.report({'INFO'}, f"pbrAudio: rendering in progress...")
 #        scene = depsgraph.scene
 #        pbraudio_init = pbrAudioConfigInit()
 #

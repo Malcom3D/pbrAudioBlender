@@ -149,7 +149,7 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        layout.prop(self, "type", text='Type')
+        layout.prop(self, "medium_type", text='Type')
 
         if self.medium_type == 'GAS':
             layout.prop(self, "pbraudio_C_p", text='Cp: Specific heat at constant pressure', slider=True)
@@ -262,7 +262,7 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
     )
 
     def init(self, context):
-        self.outputs.new('pbrAudioWorldEnvironmentNodeSocket', text='Environment')
+        self.outputs.new('pbrAudioWorldEnvironmentNodeSocket', "Environment")
 
     def draw_buttons(self, context, layout):
         layout.use_property_split = True

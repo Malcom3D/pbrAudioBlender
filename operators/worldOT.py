@@ -42,19 +42,19 @@ class PBRAUDIO_OT_world_material_add(Operator):
 
             # Set up default nodes
             output_node = nodetree.nodes.new('pbrAudioWorldOutputNode')
-            output_node.location = (300, 0)
+            output_node.location = (200, 250)
 
             medium_node = nodetree.nodes.new('pbrAudioWorldMediumNode')
-            medium_node.location = (200, 0)
+            medium_node.location = (-250, 250)
 
             density_node = nodetree.nodes.new('pbrAudioDensityNode')
-            density_node.location = (100, 0)
+            density_node.location = (-500, 100)
 
             temperature_node = nodetree.nodes.new('pbrAudioTemperatureNode')
-            temperature_node.location = (0, 0)
+            temperature_node.location = (-500, 250)
 
             impedence_node = nodetree.nodes.new('pbrAudioImpedenceNode')
-            impedence_node.location = (200, 100)
+            impedence_node.location = (0, 100)
 
             # Connect nodes
             nodetree.links.new(medium_node.outputs[0], output_node.inputs[0])

@@ -36,10 +36,16 @@ class ImageDisplayNode(AcousticMaterialNode):
     pbraudio_type: StringProperty(default='AcousticProperties')
 
     # Property to hold the image
+    texture: PointerProperty(
+        name="previewTexture",
+        type=bpy.data.textures,
+        description="Texture to display in the node"
+    )
+
     image: PointerProperty(
         name="Image",
         type=bpy.types.Image,
-        description="Image to display in the node"
+        description="Image to load in texture"
     )
     
     # Optional: Custom node width
@@ -67,9 +73,9 @@ class ImageDisplayNode(AcousticMaterialNode):
             if self.image.preview:
                 texture = bpy.data.textures.new(name="previewTexture", type="IMAGE")
                 texture.image = self.image
-                tex = bpy.data.textures['previewTexture']
-                tex.extension = 'CLIP'  #EXTEND # CLIP # CLIP_CUBE # REPEAT # CHECKER
-                box.template_preview(tex, show_buttons=False)
+                self.texture = bpy.data.textures['previewTexture']
+                self.texture.extension = 'CLIP'  #EXTEND # CLIP # CLIP_CUBE # REPEAT # CHECKER
+                box.template_preview(self.texture, show_buttons=False)
 #                box.template_preview(bpy.data.textures['previewTexture'], show_buttons=False)
 #                box.template_preview(bpy.data.textures['previewTexture'], show_buttons=True)
 #                box.template_preview(self.image.preview, show_buttons=False)

@@ -41,21 +41,76 @@ class GlassShaderNode(DefaultAcousticShaderNode):
     bl_label = "Glass"
 
     pbraudio_sound_speed: FloatProperty(
-        default=5700,
-        soft_min=5600,
-        soft_max=5800
+        name="Sound Speed in m/s",
+        default=5700.0,
+        soft_min=5600.0,
+        soft_max=5800.0,
+        precision=5
     )
 
-    def init(self, context):
-        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
-        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+    pbraudio_young_modulus: FloatProperty(
+        name="Young modulus in GPa",
+        default=70.0,
+        soft_min=60.0,
+        soft_max=75.0,
+        precision=5
+    )
 
-        self.pbraudio_young_modulus = 70
-        self.pbraudio_poisson_ratio = 0.22
-        self.pbraudio_density = 2500
-        self.pbraudio_damping = 0.3
-        self.pbraudio_friction = 0.2
-        self.pbraudio_roughness = 0.001
+    pbraudio_poisson_ratio: FloatProperty(
+        name="Poisson Ratio",
+        default=0.22,
+        soft_min=-0.20,
+        soft_max=0.24,
+        precision=5
+    )
+
+    pbraudio_density: FloatProperty(
+        name="Density in kg/m³",
+        default=2500.0,
+        soft_min=2450.0,
+        soft_max=2550.0,
+        precision=5
+    )
+
+    pbraudio_damping: FloatProperty(
+        name="Rayleigh Damping in %",
+        default=0.005,
+        min=0.0,
+        soft_max=0.01,
+        precision=5
+    )
+
+    pbraudio_friction: FloatProperty(
+        name="Friction",
+        default=0.25,
+        soft_min=0.2,
+        soft_max=0.5,
+        precision=5
+    )
+
+    pbraudio_roughness: FloatProperty(
+        name="Normalized Roughness",
+        default=0.01,
+        min=0.0,
+        soft_max=0.1,
+        precision=5
+    )
+
+    pbraudio_low_frequency: FloatProperty(
+        name="Low Frequency",
+        default=15.0,
+        min=0.0,
+        soft_max=100.0,
+        precision=5
+    )
+
+    pbraudio_high_frequency: FloatProperty(
+        name="High Frequency",
+        default=5000.0,
+        soft_min=1000.0,
+        max=96000.0,
+        precision=5
+    )
 classes.append(GlassShaderNode)
 
 class AluminumShaderNode(DefaultAcousticShaderNode):

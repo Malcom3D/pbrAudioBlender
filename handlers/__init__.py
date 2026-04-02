@@ -73,7 +73,7 @@ def register():
     # handler to set shader in 3D View to SOLID
     @persistent
     def material_shader_only_handler(context):
-        if context.scene.render.engine == 'PBRAUDIO':
+        if bpy.context.scene.render.engine == 'PBRAUDIO':
             for area in bpy.context.screen.areas:
                 if area.type == 'VIEW_3D':
                     space = area.spaces.active

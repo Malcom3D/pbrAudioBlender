@@ -44,8 +44,6 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
     bl_idname = 'pbrAudioWorldMediumNode'
     bl_label = "World medium Parameters"
 
-    pbraudio_type: StringProperty(default='WorldMedium')
-
     def compute_speed_imp(self, context):
        self.compute_speed(self, context)
        self.compute_impedence(self, context)
@@ -67,6 +65,8 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
 
        if self.outputs['Sound Speed'].is_linked:
           self.outputs['Sound Speed'].sound_speed = self.pbraudio_sound_speed
+
+    pbraudio_type: StringProperty(default='WorldMedium')
 
     medium_type: EnumProperty(
         name="Medium Type",

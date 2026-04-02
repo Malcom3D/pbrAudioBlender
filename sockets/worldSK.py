@@ -28,8 +28,6 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldPropertyNodeSocket'
     bl_label = "pbrAudio World Property Node Socket"
 
-#    type: StringProperty(default=self.bl_idname)
-
     default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):

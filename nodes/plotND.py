@@ -38,7 +38,7 @@ class ImageDisplayNode(AcousticMaterialNode):
     # Property to hold the image
     texture: PointerProperty(
         name="previewTexture",
-        type=bpy.data.textures,
+        type=bpy.data.ImageTexture,
         description="Texture to display in the node"
     )
 
@@ -71,8 +71,8 @@ class ImageDisplayNode(AcousticMaterialNode):
 
             # Display the image preview using template_preview
             if self.image.preview:
-                texture = bpy.data.textures.new(name="previewTexture", type="IMAGE")
-                texture.image = self.image
+                tex = bpy.data.textures.new(name="previewTexture", type="IMAGE")
+                tex.image = self.image
                 self.texture = bpy.data.textures['previewTexture']
                 self.texture.extension = 'CLIP'  #EXTEND # CLIP # CLIP_CUBE # REPEAT # CHECKER
                 box.template_preview(self.texture, show_buttons=False)

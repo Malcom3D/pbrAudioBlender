@@ -29,6 +29,10 @@ class AcousticShaderNode(DefaultAcousticShaderNode):
     bl_idname = 'AcousticShaderNode'
     bl_label = "AcousticShader"
 
+    def init(self, context):
+        self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+        self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
+
 classes.append(AcousticShaderNode)
 
 class GlassShaderNode(AcousticShaderNode):

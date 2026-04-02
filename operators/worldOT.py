@@ -39,6 +39,31 @@ class PBRAUDIO_OT_world_material_add(Operator):
         if world and world.pbraudio:
             # Create new pbrAudio World node tree
             nodetree = bpy.data.node_groups.new(self.name, 'AcousticWorldNodeTree')
+
+            # Set up default nodes
+            output_node = nodetree.nodes.new('pbrAudioWorldOutputNode')
+            output_node.location = (300, 0)
+
+            medium_node = nodetree.nodes.new('pbrAudioWorldMediumNode')
+            medium_node.location = (200, 0)
+
+            density_node = nodetree.nodes.new('pbrAudioDensityNode')
+            density_node.location = (100, 0)
+
+            temperature_node = nodetree.nodes.new('pbrAudioTemperatureNode')
+            temperature_node.location = (0, 0)
+
+            impedence_node = nodetree.nodes.new('pbrAudioImpedenceNode')
+            impedence_node.location = (200, 100)
+
+            # Connect nodes
+            nodetree.links.new(medium_node.outputs[0], output_node.inputs[0])
+            nodetree.links.new(impedence_node.outputs[0], output_node.inputs[1])
+            nodetree.links.new(temperature_node.outputs[0], medium_node.inputs[0])
+            nodetree.links.new(density_node.outputs[0], medium_node.inputs[1])
+            nodetree.links.new(medium_node.outputs[0], impedence_node.outputs.inputs[0])
+            nodetree.links.new(density_node.outputs[0], impedence_node.outputs.inputs[1])
+
             # Link to active acoustic domain world if available
             world.pbraudio.nodetree = nodetree
         

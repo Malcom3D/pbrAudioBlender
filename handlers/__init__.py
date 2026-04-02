@@ -84,7 +84,7 @@ def register():
 
     @persistent
     def item_activate_handler(context):
-        if context.scene.render.engine == 'PBRAUDIO':
+        if bpy.context.scene.render.engine == 'PBRAUDIO':
             object = bpy.context.active_object
             treeType = None
             nodeTreeName = None

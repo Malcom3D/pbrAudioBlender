@@ -44,6 +44,7 @@ class GlassShaderNode(DefaultAcousticShaderNode):
         self.outputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
         self.inputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
 
+        self.pbraudio_sound_speed = 5700
         self.pbraudio_sound_speed_max = 5600
         self.pbraudio_sound_speed_min = 5800
         self.pbraudio_young_modulus = 70

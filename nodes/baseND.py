@@ -77,18 +77,10 @@ class DefaultAcousticShaderNode(AcousticMaterialNode):
     pbraudio_sound_speed: FloatProperty(
         name="Sound Speed in m/s",
         default=1000.0,
-#        soft_min=0.0,
-#        soft_max=20000.0,
+        soft_min=0.0,
+        soft_max=20000.0,
         precision=5,
         update=sound_speed_range
-    )
-
-    pbraudio_sound_speed_max: FloatProperty(
-        default=20000.0
-    )
-
-    pbraudio_sound_speed_min: FloatProperty(
-        default=0.0
     )
 
     pbraudio_young_modulus: FloatProperty(

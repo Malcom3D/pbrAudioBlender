@@ -49,18 +49,24 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
        self.compute_impedence(self, context)
 
     def compute_impedence(self, context):
-        self.impedence = self.density*self.sound_speed
+        if self.inputs[1].is_linked:
+            self.pbraudio_density = self.inputs[1].links[0].from_node.pbraudio_density
+        self.pbraudio_impedence = self.pbraudio_density*self.pbraudio_sound_speed
 
     def compute_speed(self, context):
-       if self.medium_type == 'GAS':
-          self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.pbraudio_temperature+273.15))
-       elif self.medium_type == 'LIQUID':
-          self.pbraudio_sound_speed = sqrt(self.K/self.pbraudio_density)
-       elif self.medium_type == 'SOLID':
-          self.pbraudio_sound_speed = sqrt(self.E/self.pbraudio_density)
+        if self.inputs[0].is_linked:
+            self.pbraudio_temperature = self.inputs[1].links[0].from_node.pbraudio_temperature
+        if self.inputs[1].is_linked:
+            self.pbraudio_density = self.inputs[1].links[0].from_node.pbraudio_density
+        if self.medium_type == 'GAS':
+           self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.pbraudio_temperature+273.15))
+        elif self.medium_type == 'LIQUID':
+           self.pbraudio_sound_speed = sqrt(self.K/self.pbraudio_density)
+        elif self.medium_type == 'SOLID':
+           self.pbraudio_sound_speed = sqrt(self.E/self.pbraudio_density)
 
-       if self.outputs[0].is_linked:
-          self.outputs[0].sound_speed = self.pbraudio_sound_speed
+#       if self.outputs[0].is_linked:
+#          self.outputs[0].default_value = self.pbraudio_sound_speed
 
     pbraudio_type: StringProperty(default='WorldMedium')
 
@@ -171,6 +177,20 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
     bl_idname = 'pbrAudioImpedenceNode'
     bl_label = "Acoustic Impedence Parameters"
 
+    def compute_impedence(self, context):
+        sound_speed, density = (None for _ in range(2))
+        if self.inputs[0].is_linked:
+            sound_speed = self.inputs[0].links[0].from_node.pbraudio_sound_speed
+        if self.inputs[1].is_linked:
+            density = self.inputs[1].links[0].from_node.pbraudio_density
+        if not sound_speed == None and not density == None:
+            self.pbraudio_impedence = density*sound_speed
+
+    pbraudio_impedence: FloatProperty(
+        name="Medium impedence in Pa⋅s/m",
+        default=413.3
+    )
+
     def init(self, context):
         self.outputs.new('pbrAudioWorldPropertyNodeSocket', "Impedence")
         self.inputs.new('pbrAudioWorldParameterNodeSocket', "Sound Speed in m/s")
@@ -203,7 +223,6 @@ class pbrAudioDensityNode(AcousticWorldNode):
     pbraudio_density: FloatProperty(
         name="Medium Density in kg/m³",
         default=1.2041,
-        update=compute_speed_imp
     )
 
     def init(self, context):
@@ -237,7 +256,6 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
         name="Temperature in °C",
         default=20,
         min=-273.15,
-        update=compute_speed_imp
     )
 
     def init(self, context):

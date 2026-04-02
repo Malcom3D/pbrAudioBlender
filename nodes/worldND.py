@@ -193,16 +193,17 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
 
     def init(self, context):
         self.outputs.new('pbrAudioWorldPropertyNodeSocket', "Impedence")
-        self.inputs.new('pbrAudioWorldParameterNodeSocket', "Sound Speed in m/s")
+        self.inputs.new('pbrAudioWorldMaterialNodeSocket', "Sound Speed in m/s")
         self.inputs.new('pbrAudioWorldParameterNodeSocket', "Density in kg/m³")
 
     def draw_buttons(self, context, layout):
         if self.outputs[0].is_linked:
-            if self.outputs[0].links[0].from_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
-                self.pbraudio_impedence = self.outputs[0].default_value
-            else:
-                nodetree = self.id_data
-                nodetree.links.remove(self.outputs[0].links[0])
+            for link in self.outputs[0].links
+                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
+                    self.pbraudio_impedence = self.outputs[0].default_value
+                else:
+                    nodetree = self.id_data
+                    nodetree.links.remove(self.outputs[0].links[link])
 
     def draw_label(self):
         return "Acoustic Impedence"
@@ -230,11 +231,12 @@ class pbrAudioDensityNode(AcousticWorldNode):
 
     def draw_buttons(self, context, layout):
         if self.outputs[0].is_linked:
-            if self.outputs[0].links[0].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
-                self.pbraudio_density = self.outputs[0].default_value
-            else:
-                nodetree = self.id_data
-                nodetree.links.remove(self.outputs[0].links[0])
+            for link in self.outputs[0].links
+                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+                    self.pbraudio_density = self.outputs[0].default_value
+                else:
+                    nodetree = self.id_data
+                    nodetree.links.remove(self.outputs[0].links[link])
 
     def draw_label(self):
         return "Density"
@@ -263,11 +265,12 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
 
     def draw_buttons(self, context, layout):
         if self.outputs[0].is_linked:
-            if self.outputs[0].links[0].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
-                self.pbraudio_temperature = self.outputs[0].default_value
-            else:
-                nodetree = self.id_data
-                nodetree.links.remove(self.outputs[0].links[0])
+            for link in self.outputs[0].links
+                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+                    self.pbraudio_temperature = self.outputs[0].default_value
+                else:
+                    nodetree = self.id_data
+                    nodetree.links.remove(self.outputs[0].links[link])
 
     def draw_label(self):
         return "Temperature"
@@ -305,6 +308,12 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         self.outputs.new('pbrAudioWorldEnvironmentNodeSocket', "Environment")
 
     def draw_buttons(self, context, layout):
+        if self.outputs[0].is_linked:
+            for link in self.outputs[0].links
+                if not self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldEnvironmentNodeSocket':
+                    nodetree = self.id_data
+                    nodetree.links.remove(self.outputs[0].links[link])
+
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 

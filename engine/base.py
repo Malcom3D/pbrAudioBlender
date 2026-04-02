@@ -26,8 +26,8 @@ class PBRAudioRenderEngine(RenderEngine):
     """pbrAudio render engine implementation"""
     bl_idname = 'PBRAUDIO'
     bl_label = "pbrAudio"
-    bl_use_preview = True
-    bl_use_eevee_viewport = True
+    bl_use_preview = False
+    bl_use_eevee_viewport = False
     bl_use_shading_nodes_custom = False
 
     # Init is called whenever a new render engine instance is created. Multiple
@@ -41,6 +41,10 @@ class PBRAudioRenderEngine(RenderEngine):
         self.scene_data = None
         self.draw_data = None
         self.id_render = id(self)
+        if self.is_animation:
+            self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
+        else:
+            self.report({'INFO'}, f"pbrAudio: rendering in progress...")
 
     # When the render engine instance is destroy, this is called. Clean up any
     # render engine data here, for example stopping running render threads.
@@ -51,6 +55,10 @@ class PBRAudioRenderEngine(RenderEngine):
     # Render methods
     def update(self, data, depsgraph):
         """Update render data"""
+        if self.is_animation:
+            self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
+        else:
+            self.report({'INFO'}, f"pbrAudio: rendering in progress...")
         self.report({'INFO'}, f"{self.id_render} pbrAudio rendering updated...")
 
     def render(self, depsgraph):

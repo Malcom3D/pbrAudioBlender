@@ -55,8 +55,8 @@ class pbrAudioWorldParameterNodeSocket(NodeSocket):
 
 classes.append(pbrAudioWorldParameterNodeSocket)
 
-class pbrAudioWorldOutputNodeSocket(NodeSocket):
-    bl_idname = 'pbrAudioWorldOutputNodeSocket'
+class pbrAudioWorldMaterialNodeSocket(NodeSocket):
+    bl_idname = 'pbrAudioWorldMaterialNodeSocket'
     bl_label = "pbrAudio World Output Node Socket"
 
     def draw(self, context, layout, node, text):
@@ -65,7 +65,7 @@ class pbrAudioWorldOutputNodeSocket(NodeSocket):
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
 
-classes.append(pbrAudioWorldOutputNodeSocket)
+classes.append(pbrAudioWorldMaterialNodeSocket)
 
 class pbrAudioWorldEnvironmentNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldEnvironmentNodeSocket'

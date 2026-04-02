@@ -73,45 +73,47 @@ def register():
     # handler to set shader in 3D View to SOLID
     @persistent
     def material_shader_only_handler(context):
-        for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                space = area.spaces.active
-                if space.type == 'VIEW_3D':
-                    space.shading.type = 'SOLID'
+        if context.scene.render.engine == 'PBRAUDIO':
+            for area in bpy.context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    space = area.spaces.active
+                    if space.type == 'VIEW_3D':
+                        space.shading.type = 'SOLID'
 
     pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
 
     @persistent
     def item_activate_handler(context):
-        object = bpy.context.active_object
-        treeType = None
-        nodeTreeName = None
+        if context.scene.render.engine == 'PBRAUDIO':
+            object = bpy.context.active_object
+            treeType = None
+            nodeTreeName = None
 
-        if object.type == 'EMPTY' or object.type == 'CAMERA':
-            return
+            if object.type == 'EMPTY' or object.type == 'CAMERA':
+                return
 
-        for world in bpy.data.worlds:
-            if hasattr(world.pbraudio, 'acoustic_domain'):
-                AcousticDomain = world.pbraudio.acoustic_domain
+            for world in bpy.data.worlds:
+                if hasattr(world.pbraudio, 'acoustic_domain'):
+                    AcousticDomain = world.pbraudio.acoustic_domain
 
-        if object == AcousticDomain:
-            treeType = 'AcousticWorldNodeTree'
-            if hasattr(world.pbraudio.nodetree, 'name'):
-                nodeTreeName = world.pbraudio.nodetree.name
-        else:
-            treeType = 'AcousticMaterialNodeTree'
-            if hasattr(object.pbraudio.nodetree, 'name'):
-                nodeTreeName = object.pbraudio.nodetree.name
+            if object == AcousticDomain:
+                treeType = 'AcousticWorldNodeTree'
+                if hasattr(world.pbraudio.nodetree, 'name'):
+                    nodeTreeName = world.pbraudio.nodetree.name
+            else:
+                treeType = 'AcousticMaterialNodeTree'
+                if hasattr(object.pbraudio.nodetree, 'name'):
+                    nodeTreeName = object.pbraudio.nodetree.name
 
-        if treeType is not None:
-            for area in bpy.context.screen.areas:
-                if area.type == "NODE_EDITOR":
-                    for space in area.spaces:
-                        if space.type == "NODE_EDITOR" and not space.pin:
-                            if 'Acoustic' in space.tree_type:
-                                space.tree_type = treeType
-                                if nodeTreeName is not None:
-                                    space.node_tree = bpy.data.node_groups[nodeTreeName]
+            if treeType is not None:
+                for area in bpy.context.screen.areas:
+                    if area.type == "NODE_EDITOR":
+                        for space in area.spaces:
+                            if space.type == "NODE_EDITOR" and not space.pin:
+                                if 'Acoustic' in space.tree_type:
+                                    space.tree_type = treeType
+                                    if nodeTreeName is not None:
+                                        space.node_tree = bpy.data.node_groups[nodeTreeName]
 
     pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(item_activate_handler))
 

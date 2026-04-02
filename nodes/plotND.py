@@ -62,17 +62,24 @@ class ImageDisplayNode(AcousticMaterialNode):
             # Show image name
             row = box.row()
             row.label(text=self.image.name)
-            
+
             # Display the image preview using template_preview
             if self.image.preview:
-                box.template_preview(self.image.preview, show_buttons=False)
+                texture = bpy.data.textures.new(name="previewTexture", type="IMAGE")
+                texture.image = self.image
+                tex = bpy.data.textures['previewTexture']
+                tex.extension = 'CLIP'  #EXTEND # CLIP # CLIP_CUBE # REPEAT # CHECKER
+                box.template_preview(tex, show_buttons=False)
+#                box.template_preview(bpy.data.textures['previewTexture'], show_buttons=False)
+#                box.template_preview(bpy.data.textures['previewTexture'], show_buttons=True)
+#                box.template_preview(self.image.preview, show_buttons=False)
+#            else:
+#                # Try to load preview
+#                self.image.reload()
+#                if self.image.preview:
+#                    box.template_preview(self.image.preview, show_buttons=False)
             else:
-                # Try to load preview
-                self.image.reload()
-                if self.image.preview:
-                    box.template_preview(self.image.preview, show_buttons=False)
-                else:
-                    box.label(text="No preview available")
+                box.label(text="No preview available")
             
             # Show image info
             if self.image.size[0] > 0:

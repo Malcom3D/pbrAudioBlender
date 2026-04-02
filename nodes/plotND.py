@@ -23,6 +23,8 @@ from bpy.types import Node, ShaderNodeCustomGroup
 from bpy.props import PointerProperty, StringProperty
 import os
 
+classes = []
+
 # Custom node class
 class ImageDisplayNode(Node):
     """Custom node to display an image"""
@@ -97,3 +99,4 @@ class ImageDisplayNode(Node):
     def free(self):
         # Cleanup when node is removed
         pass
+classes.append(ImageDisplayNode)

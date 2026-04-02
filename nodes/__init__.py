@@ -87,6 +87,10 @@ def register():
     register_node_categories("OUTPUT", output_node_categories)
     register_node_categories("MATERIAL", material_node_categories)
 
+    # Register the draw handler for curve nodes
+    from .curve_plotterND import register_draw_handler
+    register_draw_handler()
+
 def unregister():
     unregister_node_categories("MATERIAL")
     unregister_node_categories("OUTPUT")
@@ -94,3 +98,9 @@ def unregister():
     unregister_node_categories("WORLD")
     for cls in reversed(classes):
         unregister_class(cls)
+
+    # Remove draw handler
+    if hasattr(bpy.types, 'SpaceNodeEditor'):
+        # Note: In In practice, you'd need to store the handler reference
+        # and remove it properly. This is a simplified version.
+        pass

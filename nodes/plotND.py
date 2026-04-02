@@ -46,7 +46,7 @@ class ImageDisplayNode(AcousticMaterialNode):
         self.outputs.new('NodeSocketFloat', 'Result')
     
     def draw_buttons(self, context, layout):
-        layout.template_ID_preview(context.window_manager, 'image', open='image.open')
+        layout.template_preview(context.window_manager, 'image', open='image.open')
     
     def free(self):
         # Cleanup when node is removed

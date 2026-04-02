@@ -39,8 +39,7 @@ class ImageDisplayNode(AcousticMaterialNode):
     # Property to hold the image
     image: PointerProperty(
         name="Image",
-#        type=bpy.types.Image,
-        type=bpy.types.textures,
+        type=bpy.types.Image,
         description="Image to display in the node"
     )
     
@@ -69,7 +68,9 @@ class ImageDisplayNode(AcousticMaterialNode):
             if self.image:
 #            if self.image.preview:
 #                box.template_icon(self.image.preview.icon_id, scale=100)
-                box.template_preview(self.image, show_buttons=True)
+                image_name = self.image.filepath
+                texture = bpy.data.textures[image_name]
+                box.template_preview(texture, show_buttons=True)
             else:
                 # Try to load preview
                 self.image.reload()

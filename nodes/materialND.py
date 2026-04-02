@@ -29,7 +29,7 @@ class AcousticShaderNode(DefaultAcousticShaderNode):
     bl_idname = 'AcousticShaderNode'
     bl_label = "AcousticShader"
 
-classes.append(DefaultAcousticShaderNode)
+classes.append(AcousticShaderNode)
 
 class GlassShaderNode(AcousticShaderNode):
     """Glass acoustic shader node"""

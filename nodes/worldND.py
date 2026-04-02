@@ -58,17 +58,17 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
           if hasattr(world, 'pbraudio'):
              pbraudio = world.pbraudio
 
-       if self.type == 'GAS':
+       if self.medium_type == 'GAS':
           self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.temperature+273.15))
-       elif self.type == 'LIQUID':
+       elif self.medium_type == 'LIQUID':
           self.pbraudio_sound_speed = sqrt(self.K/self.pbraudio_density)
-       elif self.type == 'SOLID':
+       elif self.medium_type == 'SOLID':
           self.pbraudio_sound_speed = sqrt(self.E/self.pbraudio_density)
 
        if self.outputs['Sound Speed'].is_linked:
           self.outputs['Sound Speed'].sound_speed = self.pbraudio_sound_speed
 
-    type: EnumProperty(
+    medium_type: EnumProperty(
         name="Medium Type",
         items=[
             ('GAS', "Gas", "Gas medium"),
@@ -151,14 +151,14 @@ class pbrAudioWorldMediumNode(AcousticWorldNode):
 
         layout.prop(self, "type", text='Type')
 
-        if pbraudio.type == 'GAS':
+        if self.medium_type == 'GAS':
             layout.prop(self, "pbraudio_C_p", text='Cp: Specific heat at constant pressure', slider=True)
             layout.prop(self, "pbraudio_C_v", text='Cv: Specific heat at constant volume', slider=True)
             layout.prop(self, "pbraudio_R_0", text='R0: Gas constant', slider=True)
             layout.prop(self, "pbraudio_M", text='M: Molar Mass', slider=True)
-        if pbraudio.type == 'LIQUID':
+        if self.medium_type == 'LIQUID':
             layout.prop(self, "pbraudio_K", text='K: Bulk modulus', slider=True)
-        if pbraudio.type == 'SOLID':
+        if self.medium_type == 'SOLID':
             layout.prop(self, "pbraudio_E", text='E: Young\'s modulus', slider=True)
 
     def draw_label(self):

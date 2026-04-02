@@ -25,6 +25,8 @@ from bpy.props import PointerProperty, StringProperty
 
 from .baseND import AcousticMaterialNode
 
+classes = []
+
 class ImageDisplayNode(AcousticMaterialNode):
     """Custom node to display an image"""
     bl_idname = 'ImageDisplayNode'
@@ -101,3 +103,4 @@ class ImageDisplayNode(AcousticMaterialNode):
         # Cleanup when node is removed
         pass
 
+classes.append(ImageDisplayNode)

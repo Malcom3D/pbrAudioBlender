@@ -199,7 +199,8 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
     def draw_buttons(self, context, layout):
         if self.outputs[0].is_linked:
             for link in self.outputs[0].links:
-                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
+#                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
+                if link.from_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
                     self.pbraudio_impedence = self.outputs[0].default_value
                 else:
                     nodetree = self.id_data
@@ -232,7 +233,8 @@ class pbrAudioDensityNode(AcousticWorldNode):
     def draw_buttons(self, context, layout):
         if self.outputs[0].is_linked:
             for link in self.outputs[0].links:
-                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+#                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+                if link.from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
                     self.pbraudio_density = self.outputs[0].default_value
                 else:
                     nodetree = self.id_data
@@ -266,7 +268,8 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
     def draw_buttons(self, context, layout):
         if self.outputs[0].is_linked:
             for link in self.outputs[0].links:
-                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+#                if self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
+                if link.from_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
                     self.pbraudio_temperature = self.outputs[0].default_value
                 else:
                     nodetree = self.id_data
@@ -310,9 +313,11 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
     def draw_buttons(self, context, layout):
         if self.outputs[0].is_linked:
             for link in self.outputs[0].links:
-                if not self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldEnvironmentNodeSocket':
+#                if not self.outputs[0].links[link].from_socket.pbraudio_type == 'pbrAudioWorldEnvironmentNodeSocket':
+                if not link.from_socket.pbraudio_type == 'pbrAudioWorldEnvironmentNodeSocket':
                     nodetree = self.id_data
-                    nodetree.links.remove(self.outputs[0].links[link])
+#                    nodetree.links.remove(self.outputs[0].links[link])
+                    nodetree.links.remove(link)
 
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.

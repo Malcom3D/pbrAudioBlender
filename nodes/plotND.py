@@ -16,18 +16,6 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import os
-import bpy
-import nodeitems_utils
-from nodeitems_utils import NodeCategory, NodeItem
-from bpy.types import Node, ShaderNodeCustomGroup
-from bpy.props import PointerProperty, StringProperty
-
-from .baseND import AcousticMaterialNode
-
-classes = []
-
-# Custom node class
 class ImageDisplayNode(AcousticMaterialNode):
     """Custom node to display an image"""
     bl_idname = 'ImageDisplayNode'
@@ -64,14 +52,14 @@ class ImageDisplayNode(AcousticMaterialNode):
             row = box.row()
             row.label(text=self.image.name)
             
-            # Display the image preview
+            # Display the image preview using template_preview
             if self.image.preview:
-                box.template_icon(self.image.preview.icon_id, scale=6)
+                box.template_preview(self.image, show_buttons=False)
             else:
                 # Try to load preview
                 self.image.reload()
                 if self.image.preview:
-                    box.template_icon(self.image.preview.icon_id, scale=6)
+                    box.template_preview(self.image, show_buttons=False)
                 else:
                     box.label(text="No preview available")
             
@@ -103,4 +91,4 @@ class ImageDisplayNode(AcousticMaterialNode):
     def free(self):
         # Cleanup when node is removed
         pass
-classes.append(ImageDisplayNode)
+

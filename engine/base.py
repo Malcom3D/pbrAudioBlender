@@ -26,7 +26,7 @@ class PBRAudioRenderEngine(RenderEngine):
     """pbrAudio render engine implementation"""
     bl_idname = 'PBRAUDIO'
     bl_label = "pbrAudio"
-    bl_use_preview = False
+    bl_use_preview = True
     bl_use_eevee_viewport = False
     bl_use_shading_nodes_custom = False
 
@@ -38,9 +38,9 @@ class PBRAudioRenderEngine(RenderEngine):
     # `RenderEngine` data.
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.scene_data = None
-        self.draw_data = None
-        self.id_render = id(self)
+#        self.scene_data = None
+#        self.draw_data = None
+#        self.id_render = id(self)
         if self.is_animation:
             self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
         else:
@@ -55,11 +55,13 @@ class PBRAudioRenderEngine(RenderEngine):
     # Render methods
     def update(self, data, depsgraph):
         """Update render data"""
+        scene = depsgraph.scene
         if self.is_animation:
             self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
         else:
             self.report({'INFO'}, f"pbrAudio: rendering in progress...")
-        self.report({'INFO'}, f"{self.id_render} pbrAudio rendering updated...")
+
+        self.report({'INFO'}, f" pbrAudio rendering updated...")
 
     def render(self, depsgraph):
         """Main render method"""
@@ -84,8 +86,8 @@ class PBRAudioRenderEngine(RenderEngine):
 #            pbraudio_init.initZarr()
 #            pbraudio_init.scene.pbraudio.cache_status = True
 #
-#       update_progress(progress)
-#
+        update_progress(progress)
+
         self.report({'INFO'}, "pbrAudio rendering end...")
 
         # For viewport renders, this method gets called once at the start and

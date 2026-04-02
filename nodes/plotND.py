@@ -66,12 +66,12 @@ class ImageDisplayNode(AcousticMaterialNode):
             
             # Display the image preview
             if self.image.preview:
-                box.template_icon(self.image.preview.icon_id, scale=10)
+                box.template_icon(self.image.preview.icon_id, scale=1)
             else:
                 # Try to load preview
                 self.image.reload()
                 if self.image.preview:
-                    box.template_icon(self.image.preview.icon_id, scale=10)
+                    box.template_icon(self.image.preview.icon_id, scale=1)
                 else:
                     box.label(text="No preview available")
             

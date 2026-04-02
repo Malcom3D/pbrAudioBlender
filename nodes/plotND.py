@@ -236,7 +236,7 @@ class PBRAUDIO_OT_display_image(bpy.types.Operator):
         row.alignment = 'CENTER'
         
         # Use template_ID_preview for better image display
-               if hasattr(bpy.types, 'UILayout'):
+        if hasattr(bpy.types, 'UILayout'):
             # Try to use template_ID_preview if available (Blender 2.8+)
             row.template_ID_preview(image, open="image.open", rows=3, cols=3)
         else:

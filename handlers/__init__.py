@@ -66,6 +66,16 @@ def register():
 #        bpy.app.handlers.animation_playback_post.append(stop_handler)
 #        bpy.app.handlers.animation_playback_pre.append(play_handler)
 
+    # handler to set shader in 3D View to MATERIAL
+    @persistent
+    def material_shader_only_handler(context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    space.shading.type = 'MATERIAL'
+    bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
+
     @persistent
     def item_activate_handler(context):
         object = bpy.context.active_object
@@ -105,7 +115,7 @@ def unregister():
         unregister_class(cls)
 
     # Remove handler
-    bpy.app.handlers.depsgraph_update_post.remove(item_activate_handler)
+#    bpy.app.handlers.depsgraph_update_post.remove(item_activate_handler)
 
 #    if hasattr(bpy.types.Screen, '_playback_handler'):
 #        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:

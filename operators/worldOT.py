@@ -61,8 +61,8 @@ class PBRAUDIO_OT_world_material_add(Operator):
             nodetree.links.new(impedence_node.outputs[0], output_node.inputs[1])
             nodetree.links.new(temperature_node.outputs[0], medium_node.inputs[0])
             nodetree.links.new(density_node.outputs[0], medium_node.inputs[1])
-            nodetree.links.new(medium_node.outputs[0], impedence_node.outputs.inputs[0])
-            nodetree.links.new(density_node.outputs[0], impedence_node.outputs.inputs[1])
+            nodetree.links.new(medium_node.outputs[0], impedence_node.inputs[0])
+            nodetree.links.new(density_node.outputs[0], impedence_node.inputs[1])
 
             # Link to active acoustic domain world if available
             world.pbraudio.nodetree = nodetree

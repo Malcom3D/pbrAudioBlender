@@ -68,7 +68,7 @@ class ImageDisplayNode(AcousticMaterialNode):
             if self.image:
 #            if self.image.preview:
 #                box.template_icon(self.image.preview.icon_id, scale=100)
-                image_name = self.image.filepath
+                image_name = self.image.name
                 texture = bpy.data.textures[image_name]
                 box.template_preview(texture, show_buttons=True)
             else:

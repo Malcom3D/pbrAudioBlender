@@ -27,7 +27,11 @@ from . import playback
 for mod in (playback, ):
     classes += mod.classes
 
+# Global to store the the pbraudio handlers reference
+pbraudio_handler = []
+
 def register():
+    global pbraudio_handler
     for cls in classes:
         register_class(cls)
 
@@ -74,7 +78,8 @@ def register():
                 space = area.spaces.active
                 if space.type == 'VIEW_3D':
                     space.shading.type = 'MATERIAL'
-    bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
+
+    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
 
     @persistent
     def item_activate_handler(context):
@@ -108,14 +113,17 @@ def register():
                                 if nodeTreeName is not None:
                                     space.node_tree = bpy.data.node_groups[nodeTreeName]
 
-    bpy.app.handlers.depsgraph_update_post.append(item_activate_handler)
+    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(item_activate_handler))
 
 def unregister():
+    global pbraudio_handler
     for cls in reversed(classes):
         unregister_class(cls)
 
     # Remove handler
-#    bpy.app.handlers.depsgraph_update_post.remove(item_activate_handler)
+    if not len(pbraudio_handler) == 0:
+        for activate_handler in pbraudio_handler:
+            bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
 
 #    if hasattr(bpy.types.Screen, '_playback_handler'):
 #        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:

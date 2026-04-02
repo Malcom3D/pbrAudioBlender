@@ -38,16 +38,6 @@ class ImageDisplayNode(AcousticMaterialNode):
     
     pbraudio_type: StringProperty(default='AcousticProperties')
 
-    # Property to hold the image
-    image: PointerProperty(
-        name="Image",
-        type=bpy.types.Image,
-        description="Image to display in the node"
-    )
-    
-    # Optional: Custom node width
-    node_width: bpy.props.FloatProperty(default=300.0)
-    
     def init(self, context):
         # Create input socket
         self.inputs.new('NodeSocketFloat', 'Value')
@@ -57,51 +47,6 @@ class ImageDisplayNode(AcousticMaterialNode):
     
     def draw_buttons(self, context, layout):
         layout.template_ID_preview(context.window_manager, 'image', open='image.open')
-        # Display image if one is selected
-        if self.image:
-            # Create a box for the image
-            box = layout.box()
-            box.scale_y = 1.0
-            
-            # Show image name
-            row = box.row()
-            row.label(text=self.image.name)
-            
-            # Display the image preview
-            if self.image.preview:
-                box.template_icon(self.image.preview.icon_id, scale=6)
-            else:
-                # Try to load preview
-                self.image.reload()
-                if self.image.preview:
-                    box.template_icon(self.image.preview.icon_id, scale=6)
-                else:
-                    box.label(text="No preview available")
-            
-            # Show image info
-            if self.image.size[0] > 0:
-                box.label(text=f"Size: {self.image.size[0]}x{self.image.size[1]}")
-            
-            # Open image button
-            row = box.row()
-            row.operator("image.open", text="Change Image").relative_path = True
-            
-        else:
-            # Button to add an image
-            layout.operator("image.open", text="Load Image").relative_path = True
-    
-    def draw_buttons_ext(self, context, layout):
-        # Extended draw for more options
-        layout.prop(self, "image")
-        layout.prop(self, "node_width")
-        
-        if self.image:
-            layout.separator()
-            layout.operator("image.reload", text="Reload Image")
-    
-    def copy(self, node):
-        # Handle copying of the node
-        self.image = node.image
     
     def free(self):
         # Cleanup when node is removed

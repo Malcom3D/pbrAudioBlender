@@ -56,7 +56,7 @@ class ImageDisplayNode(AcousticMaterialNode):
         self.outputs.new('NodeSocketFloat', 'Result')
     
     def draw_buttons(self, context, layout):
-        self.layout.template_ID_preview(context.space_data, 'image', open='image.open')
+        layout.template_ID_preview(context.space_data, 'image', open='image.open')
         # Display image if one is selected
         if self.image:
             # Create a box for the image

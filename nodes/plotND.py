@@ -26,12 +26,14 @@ import os
 classes = []
 
 # Custom node class
-class ImageDisplayNode(Node):
+class ImageDisplayNode(AcousticMaterialNode):
     """Custom node to display an image"""
-    bl_idname = 'CustomNodeType'
+    bl_idname = 'ImageDisplayNode'
     bl_label = 'Image Display'
     bl_icon = 'IMAGE_DATA'
     
+    pbraudio_type: StringProperty(default='AcousticProperties')
+
     # Property to hold the image
     image: PointerProperty(
         name="Image",

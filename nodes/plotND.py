@@ -16,12 +16,14 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 import bpy
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from bpy.types import Node, ShaderNodeCustomGroup
 from bpy.props import PointerProperty, StringProperty
-import os
+
+from .baseND import AcousticMaterialNode
 
 classes = []
 

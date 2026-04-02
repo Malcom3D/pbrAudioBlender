@@ -22,10 +22,10 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import playback 
+#from . import playback 
 
-for mod in (playback, ):
-    classes += mod.classes
+#for mod in (playback, ):
+#    classes += mod.classes
 
 # Global to store the the pbraudio handlers reference
 pbraudio_handler = []
@@ -123,7 +123,8 @@ def unregister():
     # Remove handler
     if not len(pbraudio_handler) == 0:
         for activate_handler in pbraudio_handler:
-            bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
+            if activate_handler is not None:
+                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
 
 #    if hasattr(bpy.types.Screen, '_playback_handler'):
 #        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:

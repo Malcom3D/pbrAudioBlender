@@ -21,12 +21,16 @@ from numpy import sqrt
 from bpy.types import Node
 from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty
 
+from .baseND import AcousticWorldNode
+
 classes = []
 
-class pbrAudioWorldOutputNode(Node):
+class pbrAudioWorldOutputNode(AcousticWorldNode):
     """Acoustic world output node"""
     bl_idname = 'pbrAudioWorldOutputNode'
     bl_label = "World Output"
+
+    pbraudio_type: StringProperty(default='WorldOutput')
 
     def init(self, context):
         self.inputs.new('pbrAudioWorldOutputNodeSocket', "Sound Speed")
@@ -35,10 +39,12 @@ class pbrAudioWorldOutputNode(Node):
 
 classes.append(pbrAudioWorldOutputNode)
 
-class pbrAudioWorldMediumNode(Node):
+class pbrAudioWorldMediumNode(AcousticWorldNode):
     """Acoustic sound speed properties node"""
     bl_idname = 'pbrAudioWorldMediumNode'
     bl_label = "World medium Parameters"
+
+    pbraudio_type: StringProperty(default='WorldMedium')
 
     def compute_speed_imp(self, context):
        self.compute_speed(self, context)
@@ -53,7 +59,7 @@ class pbrAudioWorldMediumNode(Node):
              pbraudio = world.pbraudio
 
        if self.type == 'GAS':
-          self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.pbraudio_temperature+273.15))
+          self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.temperature+273.15))
        elif self.type == 'LIQUID':
           self.pbraudio_sound_speed = sqrt(self.K/self.pbraudio_density)
        elif self.type == 'SOLID':
@@ -166,7 +172,7 @@ class pbrAudioWorldMediumNode(Node):
 
 classes.append(pbrAudioWorldMediumNode)
 
-class pbrAudioImpedenceNode(Node):
+class pbrAudioImpedenceNode(AcousticWorldNode):
     """Acoustic impedence properties node"""
     bl_idname = 'pbrAudioImpedenceNode'
     bl_label = "Acoustic Impedence Parameters"
@@ -190,7 +196,7 @@ class pbrAudioImpedenceNode(Node):
 
 classes.append(pbrAudioImpedenceNode)
 
-class pbrAudioDensityNode(Node):
+class pbrAudioDensityNode(AcousticWorldNode):
     """Acoustic density properties node"""
     bl_idname = 'pbrAudioDensityNode'
     bl_label = "Acoustic Density Parameters"
@@ -212,7 +218,7 @@ class pbrAudioDensityNode(Node):
 
 classes.append(pbrAudioDensityNode)
 
-class pbrAudioTemperatureNode(Node):
+class pbrAudioTemperatureNode(AcousticWorldNode):
     """Acoustic temperature properties node"""
     bl_idname = 'pbrAudioTemperatureNode'
     bl_label = "Acoustic Temperature Parameters"
@@ -234,7 +240,7 @@ class pbrAudioTemperatureNode(Node):
 
 classes.append(pbrAudioTemperatureNode)
 
-class pbrAudioEnvironmentNode(Node):
+class pbrAudioEnvironmentNode(AcousticWorldNode):
     """pbrAudio environment node"""
     bl_idname = 'pbrAudioEnvironmentNode'
     bl_label = "Environment"

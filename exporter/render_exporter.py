@@ -159,7 +159,9 @@ class RenderExporter:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
                 pbraudio_node_type = previous_acoustic_dict['type']
                 del previous_acoustic_dict['type']
-                if pbraudio_node_type == 'AcousticMaterial':
+                if pbraudio_node_type == 'WorldMedium':
+                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
+                elif pbraudio_node_type == 'AcousticShader':
                     acoustic_dict['acoustic_shader'] = previous_acoustic_dict
                 elif pbraudio_node_type == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
@@ -184,13 +186,15 @@ class RenderExporter:
         """Get acoustic properties from the acoustic world node chain"""
 
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
+        acoustic_shader = []
         for world in bpy.data.worlds.values():
             if hasattr(world, 'pbraudio'):
                 if hasattr(world.pbraudio, 'nodetree'):
                 nodetree = world.pbraudio.nodetree
-                output_node = nodetree.nodes['World Output']
-
-                acoustic_shader = self.get_from_previous(output_node)
+                for key in nodetree.nodes.keys():
+                    if nodetree.nodes[key].pbraudio_type == 'WorldOutput'
+                        output_node = nodetree.nodes[key]
+                        acoustic_shader = self.get_from_previous(output_node)
 
         return acoustic_shader
 

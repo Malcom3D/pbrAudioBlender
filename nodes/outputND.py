@@ -30,6 +30,8 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
     bl_idname = 'AcousticMaterialPreviewNode'
     bl_label = "Acoustic Material Preview"
 
+    pbraudio_type: StringProperty(default='MaterialPreview')
+
     def init(self, context):
         self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
 
@@ -39,6 +41,8 @@ class AcousticMaterialOutputNode(AcousticMaterialNode):
     """Acoustic material output node"""
     bl_idname = 'AcousticMaterialOutputNode'
     bl_label = "Material Output"
+
+    pbraudio_type: StringProperty(default='MaterialOutput')
 
     def init(self, context):
         self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")

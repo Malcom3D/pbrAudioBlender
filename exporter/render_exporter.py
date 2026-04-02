@@ -157,9 +157,15 @@ class RenderExporter:
         for link in links:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
-                acoustic_dict[link] = previous_acoustic_dict
-            else:
-                acoustic_dict[link] = node.inputs[link].default_value
+                pbraudio_node_type = previous_acoustic_dict['type']
+                del previous_acoustic_dict['type']
+                if pbraudio_node_type == 'AcousticMaterial':
+                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
+                elif pbraudio_node_type == 'AcousticProperties':
+                    acoustic_dict['acoustic_properties'] = previous_acoustic_dict
+#                elif pbraudio_node_type == 'CoefficientResponse':     ########### Not implemented: return 2 list? frequencies + coefficients?
+#                    acoustic_dict[link] = previous_acoustic_dict     ########### Not implemented
+#                #TBD: freq_response, calibration_file, spatial_freq_response, spatial_freq_response_file, spatial_arrangement_file
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):

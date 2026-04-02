@@ -29,6 +29,8 @@ class AcousticShaderNode(DefaultAcousticShaderNode):
     bl_idname = 'AcousticShaderNode'
     bl_label = "AcousticShader"
 
+    pbraudio_type: StringProperty(default='AcousticMaterial')
+
 classes.append(AcousticShaderNode)
 
 class GlassShaderNode(DefaultAcousticShaderNode):

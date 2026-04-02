@@ -53,6 +53,8 @@ class DefaultAcousticShaderNode(AcousticMaterialNode):
     bl_idname = 'DefaultAcousticShaderNode'
     bl_label = "DefaultAcousticShader"
 
+    pbraudio_type: StringProperty(default='AcousticMaterial')
+
     """Acoustic Shader properties"""
     pbraudio_sound_speed: FloatProperty(
         name="Sound Speed in m/s",

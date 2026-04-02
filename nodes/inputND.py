@@ -31,6 +31,8 @@ class AcousticPropertiesNode(AcousticMaterialNode):
     bl_idname = 'AcousticPropertiesNode'
     bl_label = "Acoustic Properties"
 
+    pbraudio_type: StringProperty(default='AcousticProperties')
+
     def init(self, context):
         self.outputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
         self.inputs.new('AcousticValueNodeSocket', "absorption")

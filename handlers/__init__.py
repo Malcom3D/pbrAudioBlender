@@ -35,12 +35,12 @@ def register():
     for cls in classes:
         register_class(cls)
 
-#    # Add handler to set shader in 3D View to MATERIAL
+#    # Add handler to set shader in 3D View to SOLID
 #    for area in bpy.context.screen.areas: 
 #        if area.type == 'VIEW_3D':
 #            space = area.spaces.active
 #            if space.type == 'VIEW_3D':
-#                space.shading.type = 'MATERIAL'
+#                space.shading.type = 'SOLID'
 
 #    # Add handler for playback events
 #    if not hasattr(bpy.types.Screen, '_play_handler'):
@@ -70,14 +70,14 @@ def register():
 #        bpy.app.handlers.animation_playback_post.append(stop_handler)
 #        bpy.app.handlers.animation_playback_pre.append(play_handler)
 
-    # handler to set shader in 3D View to MATERIAL
+    # handler to set shader in 3D View to SOLID
     @persistent
     def material_shader_only_handler(context):
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
                 space = area.spaces.active
                 if space.type == 'VIEW_3D':
-                    space.shading.type = 'MATERIAL'
+                    space.shading.type = 'SOLID'
 
     pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
 

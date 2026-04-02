@@ -65,6 +65,14 @@ class DefaultAcousticShaderNode(AcousticMaterialNode):
     bl_idname = 'DefaultAcousticShaderNode'
     bl_label = "DefaultAcousticShader"
 
+    def sound_speed_range(self, value):
+        if value > self.pbraudio_sound_speed_max:
+           self.pbraudio_sound_speed = self.pbraudio_sound_speed_max
+        elif value < self.pbraudio_sound_speed_min:
+           self.pbraudio_sound_speed = self.pbraudio_sound_speed_min
+        else:
+           self.pbraudio_sound_speed = value
+
     pbraudio_type: StringProperty(default='AcousticShader')
 
     """Acoustic Shader properties"""
@@ -74,6 +82,15 @@ class DefaultAcousticShaderNode(AcousticMaterialNode):
         soft_min=0.0,
         soft_max=20000.0,
         precision=5
+        update=sound_speed_range
+    )
+
+    pbraudio_sound_speed_max: FloatProperty(
+        default=20000.0,
+    )
+
+    pbraudio_sound_speed_min: FloatProperty(
+        default=0.0,
     )
 
     pbraudio_young_modulus: FloatProperty(

@@ -71,7 +71,7 @@ class NODE_OT_export_frd_response(Operator):
         phase_array = np.array(phases) if node.has_phase else None
 
         # Call your frd_io utility
-        filename = bpy.path.abspath(node.filename)
+        filename = bpy.path.abspath(node.pbraudio_response_filepath)
         try:
             if node.has_phase:
                 frd_io.write_frd_file(filename, freq_array, mag_array, phase_array)

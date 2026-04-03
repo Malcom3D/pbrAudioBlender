@@ -29,7 +29,7 @@ classes = []
 
 bpy.types.WindowManager.image = bpy.props.PointerProperty(name='Image', type=bpy.types.Image)
 
-class ResponsePreviewNode(AcousticMaterialNode):
+class ResponsePreviewNode(AcousticBaseNode):
     """Custom node to display an image"""
     bl_idname = 'ResponsePreviewNode'
     bl_label = 'Preview Frequency Response Node'

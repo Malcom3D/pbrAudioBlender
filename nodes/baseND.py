@@ -60,6 +60,18 @@ class AcousticMaterialNode(Node):
 
 classes.append(AcousticMaterialNode)
 
+class AcousticBaseNode(Node):
+    """Base class for all acoustic world nodes"""
+    bl_idname = 'AcousticBaseNode'
+    bl_label = "Acoustic Base Node for Material and World NodeTree"
+    bl_icon = 'SOUND'
+
+    @classmethod
+    def poll(cls, ntree):
+        return ntree.bl_idname == 'AcousticWorldNodeTree' or ntree.bl_idname == 'AcousticMaterialNodeTree'
+
+classes.append(AcousticBaseNode)
+
 class DefaultAcousticShaderNode(AcousticMaterialNode):
     """Default acoustic shader node"""
     bl_idname = 'DefaultAcousticShaderNode'

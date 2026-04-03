@@ -128,7 +128,7 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         col.operator("node.add_frd_point", text="", icon='ADD')
         col.operator("node.remove_frd_point", text="", icon='REMOVE')
         layout.prop(self, "has_phase")
-        layout.operator("node.export_frd_response", text="Export FRD")
+        op = layout.operator("node.export_frd_response", text="Export FRD")
         op.node = self
 
     def socket_value_update(self, context):

@@ -33,11 +33,27 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
     bl_label = 'Frequency Response Files'
     bl_icon = 'FILE_FOLDER'
 
+    def validate_frd_file(self, context):
+        # validate the data inside the file
+        if frd_io.validate_frd_file(self.frd_filepath):
+            self.report({'ERROR'}, "{filename} is not a valid FRD file")
+        else:
+            self.pbraudio_response_filepath = self.frd_filepath
+
     pbraudio_type: StringProperty(default='AcousticProperties')
 
-    pbraudio_response_filepath: StringProperty(
+    frd_filepath: StringProperty(
         name="ResponseFile",
         description="Select a frequency response file (.frd or .cal)",
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default=''
+        update=validate_frd_file
+    )
+
+    pbraudio_response_filepath: StringProperty(
+        name="ValidatedResponseFile",
+        description="Validated frequency response file (.frd or .cal)",
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default=''
@@ -47,11 +63,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "pbraudio_response_filepath", text="Response File")
-        # validate the data inside the file
-        if not self.pbraudio_response_filepath == '' and not frd_io.validate_frd_file(self.pbraudio_response_filepath):
-            del self.pbraudio_response_filepath
-            self.report({'ERROR'}, "{filename} is not a valid FRD file")
+        layout.prop(self, "frd_filepath", text="Response File")
 #        layout.operator("node.load_response_file", text="Load Response").node_name = self.name
 
 classes.append(FrequencyResponseFilesNode)

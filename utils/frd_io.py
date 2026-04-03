@@ -254,12 +254,25 @@ def write_frd_file(filename, frequencies, magnitudes, phases=None):
     # Ensure directory exists
     dir_path = os.path.dirname(filename)
     os.makedirs(dir_path, exist_ok=True)
+
+    # Header
+    lines.append(f"! pbrAudioRender-0.2.1.x\n")
+    lines.append(f"!\n")
+    lines.append(f"! frd_io exporter version 0.0.7\n")
+    lines.append(f"!\n")
+    lines.append(f"! Frequency Response Data (FRD) from FrequencyResponseChartNode\n")
+    lines.append(f"!\n")
+    lines.append(f"! Format: Frequency(Hz)  Magnitude(dB)  Phase(degrees)\n")
+    lines.append(f"!\n")
+
+    # FRD data
+    for f_idx in range(len(frequencies)):
+        lines.append(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
+    
     with open(filename, 'w') as f:
-        # Write header
-        f.write("# pbrAudioRender\n")
-        f.write("# Frequency Magnitude Phase\n")
-        for f_idx in range(len(frequencies)):
-            f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
+        f.writelines(lines)
+#        for f_idx in range(len(frequencies)):
+#            f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
 #        # Write header
 #        if phases is not None:
 #            f.write("# pbrAudioRender\n")

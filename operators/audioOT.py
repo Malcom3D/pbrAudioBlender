@@ -104,6 +104,8 @@ class NODE_OT_export_frd_response(Operator):
 
             # Call your frd_io utility
             filename = bpy.path.abspath(self.filepath)
+            if not filename.endswith('.frd'):
+                filename += '.frd'
             try:
                 frd_io.write_frd_file(filename, freq_array, mag_array, phase_array)
 #                if node.has_phase:

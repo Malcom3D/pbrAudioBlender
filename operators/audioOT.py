@@ -20,6 +20,8 @@ import bpy
 from bpy.types import Operator
 from bpy.props import StringProperty, PointerProperty
 
+from ..utils import frd_io
+
 classes = []
 
 # Operators to add/remove data points to FrequencyResponseChartNode

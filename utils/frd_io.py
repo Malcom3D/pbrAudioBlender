@@ -89,22 +89,17 @@ def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
         
         if has_imaginary:
             return np.array(frequencies), np.array(real_parts), np.array(imag_parts)
-        elif has_phase:
-            return np.array(frequencies), np.array(magnitudes), np.array(phases)
         else:
-            return np.array(frequencies), np.array(magnitudes), None
+            return np.array(frequencies), np.array(magnitudes), np.array(phases)
     
     except Exception as e:
         print(f"Error parsing FRD file {filepath}: {e}")
-        if has_imaginary:
-            return np.array([]), np.array([]), np.array([])
-        elif has_phase:
-            return np.array([]), np.array([]), np.array([])
-        else:
-            return np.array([]), np.array([]), None
+        return np.array([]), np.array([]), np.array([])
 
 def validate_frd_file(filepath):
-    return validate_frd_data(parse_frd_file(filepath))
+    frequencies, magnitudes, phases = parse_frd_file(filepath))
+    if frequencies.shape[0] > 0 and magnitudes.shape[0]:
+        return validate_frd_data(frequencies, magnitudes, phases)
 
 def validate_frd_data(frequencies, magnitudes, phases=None):
     """

@@ -99,8 +99,7 @@ def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
 
 def validate_frd_file(filepath):
     frequencies, magnitudes, phases = parse_frd_file(filepath)
-    if frequencies.shape[0] > 0 and magnitudes.shape[0]:
-        return validate_frd_data(frequencies, magnitudes, phases)
+    return validate_frd_data(frequencies, magnitudes, phases)
 
 def validate_frd_data(frequencies, magnitudes, phases=None):
     """
@@ -114,13 +113,16 @@ def validate_frd_data(frequencies, magnitudes, phases=None):
     Returns:
         bool: True if data is valid
     """
-    if len(frequencies) == 0 or len(magnitudes) == 0:
+#    if len(frequencies) == 0 or len(magnitudes) == 0:
+    if frequencies.shape[0] == 0 or magnitudes.shape[0] == 0:
         return False
     
-    if len(frequencies) != len(magnitudes):
+#    if len(frequencies) != len(magnitudes):
+    if frequencies.shape[0] != magnitudes.shpae[0]:
         return False
     
-    if phases is not None and len(phases) != len(frequencies):
+#    if phases is not None and len(phases) != len(frequencies):
+    if phases.shape[0] != 0 and phases.shpae[0] != frequencies.shape[0]:
         return False
     
     # Check if frequencies are monotonic (usually they should be)
@@ -254,13 +256,18 @@ def write_frd_file(filename, frequencies, magnitudes, phases=None):
     os.makedirs(dir_path, exist_ok=True)
     with open(filename, 'w') as f:
         # Write header
-        if phases is not None:
-            f.write("# pbrAudioRender")
-            f.write("# Frequency Magnitude Phase")
-            for f_idx in range(len(frequencies)):
-                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
-        else:
-            f.write("# pbrAudioRender")
-            f.write("# Frequency Magnitude")
-            for f_idx in range(len(frequencies)):
-                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]}\n")
+        f.write("# pbrAudioRender\n")
+        f.write("# Frequency Magnitude Phase\n")
+        for f_idx in range(len(frequencies)):
+            f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
+#        # Write header
+#        if phases is not None:
+#            f.write("# pbrAudioRender\n")
+#            f.write("# Frequency Magnitude Phase\n")
+#            for f_idx in range(len(frequencies)):
+#                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
+#        else:
+#            f.write("# pbrAudioRender\n")
+#            f.write("# Frequency Magnitude\n")
+#            for f_idx in range(len(frequencies)):
+#                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]}\n")

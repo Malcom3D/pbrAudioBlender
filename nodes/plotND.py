@@ -38,18 +38,10 @@ class ImageDisplayNode(AcousticMaterialNode):
     
     pbraudio_type: StringProperty(default='AcousticProperties')
 
-    def init(self, context):
-        # Create input socket
-        self.inputs.new('NodeSocketFloat', 'Value')
-        
-        # Create output socket
-        self.outputs.new('NodeSocketFloat', 'Result')
-    
     def draw_buttons(self, context, layout):
-         layout.template_ID(context.window_manager, 'image', open='image.open')
-#        layout.template_preview(context.window_manager.image, show_buttons=True)
+        col.template_ID_preview(context.window_manager, 'image', open='image.open')
     
-    def free(self):
-        # Cleanup when node is removed
-        pass
+    def draw_buttons_ext(self, context, layout):
+        col.operator("pbraudio.big_preview")
+    
 classes.append(ImageDisplayNode)

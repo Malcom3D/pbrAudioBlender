@@ -17,12 +17,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
+import os
 from bpy.types import Operator
+from ..utils import frd_io
 
 classes = []
 
 class BigPreview(Operator):
-    bl_idname = "pbraudio.big_preview"
+    bl_idname = "node.big_preview"
     bl_label = "Big Preview"
     def execute(self, context):
         print("Running big preview")
@@ -43,3 +45,42 @@ class BigPreview(Operator):
         col.template_preview(self.texture, show_buttons=False)
         
 classes.append(BigPreview)
+
+class PBRAUDIO_OT_export_frd_response(Operator):
+    bl_idname = "node.export_frd_response"
+    bl_label = "Export FRD Response"
+    bl_description = "Export the manually entered frequency response data to a FRD file"
+
+    def execute(self, context):
+        node = context.node
+        # Gather data points
+        frequencies = []
+        magnitudes = []
+        phases = []
+
+        for point in node.frd_points:
+            frequencies.append(point.frequency)
+            magnitudes.append(point.magnitude)
+            if node.has_phase:
+                phases.append(point.phase)
+
+        # Convert to numpy arrays
+        import numpy as np
+        freq_array = np.array(frequencies)
+        mag_array = np.array(magnitudes)
+        phase_array = np.array(phases) if node.has_phase else None
+
+        # Call your frd_io utility
+        filename = bpy.path.abspath(node.filename)
+        try:
+            if node.has_phase:
+                frd_io.write_frd_file(filename, freq_array, mag_array, phase_array)
+            else:
+                frd_io.write_frd_file(filename, freq_array, mag_array)
+            self.report({'INFO'}, f"FRD file exported: {filename}")
+        except Exception as e:
+            self.report({'ERROR'}, str(e))
+            return {'CANCELLED'}
+        return {'FINISHED'}
+
+classes.append(NODE_OT_export_frd_response)

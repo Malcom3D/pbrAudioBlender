@@ -248,3 +248,17 @@ def calculate_group_delay(frequencies, phases_deg):
     group_delay = -phase_derivative / (2 * np.pi)
     
     return group_delay
+
+def write_frd_file(filename, frequencies, magnitudes, phases=None):
+    with open(filename, 'w') as f:
+        # Write header
+        if phases is not None:
+            f.write("# pbrAudioRender")
+            f.write("# Frequency Magnitude Phase")
+            for f_idx in range(len(frequencies)):
+                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
+        else:
+            f.write("# pbrAudioRender")
+            f.write("# Frequency Magnitude")
+            for f_idx in range(len(frequencies)):
+                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]}\n")

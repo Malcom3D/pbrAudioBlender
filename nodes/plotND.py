@@ -42,6 +42,6 @@ class ResponsePreviewNode(AcousticBaseNode):
 
     def draw_buttons(self, context, layout):
         layout.template_ID_preview(context.window_manager, 'image', open='image.open')
-        layout.operator("pbraudio.big_preview")
+        layout.operator("node.big_preview")
     
 classes.append(ResponsePreviewNode)

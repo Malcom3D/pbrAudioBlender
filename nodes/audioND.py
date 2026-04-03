@@ -18,8 +18,8 @@
 
 import bpy
 from bpy.types import Node
-from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty, CollectionProperty
-from bpy.types import PropertyGroup
+from bpy.props import IntProperty, StringProperty, BoolProperty, EnumProperty, FloatProperty, PointerProperty, CollectionProperty
+from bpy.types import PropertyGroup, UIList
 from bpy_extras.io_utils import ImportHelper
 
 from .baseND import AcousticBaseNode
@@ -34,7 +34,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     pbraudio_type: StringProperty(default='AcousticProperties')
 
-    pbraudio_respose_filepath: StringProperty(
+    pbraudio_response_filepath: StringProperty(
         name="Response File",
         description="Select a frequency response file (.frd or .cal)",
         subtype='FILE_PATH',
@@ -45,7 +45,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "pbraudio_respose_filepath", text="Response File")
+        layout.prop(self, "pbraudio_response_filepath", text="Response File")
 #        layout.operator("node.load_response_file", text="Load Response").node_name = self.name
 
 #    def load_response(self, context):
@@ -54,42 +54,72 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
 classes.append(FrequencyResponseFilesNode)
 
-class FrequencyResponseData(PropertyGroup):
-    frequency: FloatProperty(name="Frequency (Hz)", default=1000.0)
-    magnitude: FloatProperty(name="Magnitude", default=0.0)
-    phase: FloatProperty(name="Phase (degrees)", default=0.0)
-classes.append(FrequencyResponseData)
+class FRDDataPoint(PropertyGroup):
+    frequency: FloatProperty(
+        name="Frequency (Hz)",
+        description="Frequency in Hz",
+        default=100.0,
+        min=0.01
+    )
+    magnitude: FloatProperty(
+        name="Magnitude",
+        description="Magnitude (linear or dB based on context)",
+        default=1.0,
+        soft_min=0.0
+    )
+    phase: FloatProperty(
+        name="Phase (degrees)",
+        description="Phase in degrees",
+        default=0.0
+    )
+classes.append(FRDDataPoint)
+
+class FRDDataPointsUIList(UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        row = layout.row(align=True)
+        row.prop(item, "frequency", text="Freq")
+        row.prop(item, "magnitude", text="Mag")
+        row.prop(item, "phase", text="Phase")
+classes.append(FRDDataPointsUIList)
 
 class FrequencyResponseChartNode(AcousticBaseNode):
-    """Manual Frequency Response Data Input Node"""
     bl_idname = 'FrequencyResponseChartNode'
     bl_label = "Frequency Response Chart"
-    bl_icon = 'LINE_DATA'
+    bl_icon = 'GRAPH'
 
     pbraudio_type: StringProperty(default='AcousticProperties')
 
-    # Store the data collection
-    response_data: CollectionProperty(type=FrequencyResponseData)
+    # Collection of data points
+    frd_points: CollectionProperty(type=FRDDataPoint)
+    frd_points_index: bpy.props.IntProperty(name='Index', default=0)
 
-    # Whether to include phase
-    has_phase: BoolProperty(name="Has Phase Data", default=False)
+    # Optional: file path or name for export
+    pbraudio_response_filepath: StringProperty(
+        name="FRD Filename",
+        description="Filename to export the response data",
+        default="frequency_response.frd"
+    )
+
+    # Whether to use phase or not
+    has_phase: BoolProperty(
+        name="Include Phase",
+        description="Whether phase data is provided",
+        default=True
+    )
 
     def init(self, context):
         self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
-        # Add a collection property for input data
-        # (In UI, user will add items manually)
+        frd_id_file = id(self)
+        cache_path = self.context.scene.pbraudiorender.cache_path
+        self.pbraudio_response_filepath = f"{cache_path}/{frd_id_file}.frd"
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "has_phase")
         row = layout.row()
-        row.operator("node.add_freq_response_data", text="Add Data Point")
-        row.operator("node.clear_freq_response_data", text="Clear Data")
-
-        # Display data points
-        for idx, item in enumerate(self.response_data):
-            box = layout.box()
-            box.prop(item, "frequency")
-            box.prop(item, "magnitude")
-            if self.has_phase:
-                box.prop(item, "phase")
+        row.template_list("FRDDataPointsUIList", "", self, "frd_points", self, "frd_points_index", rows=4)
+        col = row.column(align=True)
+        col.operator("node.add_frd_point", text="", icon='ADD')
+        col.operator("node.remove_frd_point", text="", icon='REMOVE')
+#        layout.prop(self, "pbraudio_response_filepath")
+        layout.prop(self, "has_phase")
+        layout.operator("node.export_frd_response", text="Export FRD")
 classes.append(FrequencyResponseChartNode)

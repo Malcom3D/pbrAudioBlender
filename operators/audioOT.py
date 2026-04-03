@@ -18,9 +18,6 @@
 
 import bpy
 from bpy.types import Operator
-from bpy.props import StringProperty, BoolProperty, EnumProperty, CollectionProperty
-from bpy.types import PropertyGroup
-from ..sockets.materialsSK import AcousticValueNodeSocket
 
 classes = []
 

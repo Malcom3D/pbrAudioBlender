@@ -69,8 +69,8 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
         elif self.medium_type == 'SOLID':
            self.pbraudio_sound_speed = sqrt(self.E/self.pbraudio_density)
 
-       if self.outputs[0].is_linked:
-          self.outputs[0].default_value = self.pbraudio_sound_speed
+        if self.outputs[0].is_linked:
+           self.outputs[0].default_value = self.pbraudio_sound_speed
 
     pbraudio_type: StringProperty(default='WorldMedium')
 

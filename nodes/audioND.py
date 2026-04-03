@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import Node
-from bpy.props import StringProperty, BoolProperty, EnumProperty, CollectionProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty, CollectionProperty
 from bpy.types import PropertyGroup
 from bpy_extras.io_utils import ImportHelper
 

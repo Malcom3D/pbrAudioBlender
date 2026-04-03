@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import Operator
-from bpy.props import StringProperty
+from bpy.props import StringProperty, PointerProperty
 
 classes = []
 
@@ -62,13 +62,18 @@ class NODE_OT_export_frd_response(Operator):
         default=''
     )
 
+    node: PointerProperty(
+        name="node",
+        type=bpy.types.Node
+    )
+
     def invoke(self, context, event):
         if self.filepath == '':
             context.window_manager.fileselect_add(self)
             return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        node = context.node
+        node = self.node
         # Gather data points
         frequencies = []
         magnitudes = []

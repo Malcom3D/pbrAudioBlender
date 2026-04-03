@@ -51,13 +51,13 @@ class AcousticValueNodeSocket(NodeSocket):
     bl_idname = 'AcousticValueNodeSocket'
     bl_label = "Acoustic Value Socket"
 
-#    default_value: FloatProperty(
-#        default=0.0,
-#        min=-1.0,
-#        max=1.0
-#    )
+    default_value: FloatProperty(
+        default=0.0,
+        min=-1.0,
+        max=1.0
+    )
 
-    default_value: StringProperty(
+    default_path: StringProperty(
         subtype='FILE_PATH', 
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='//'

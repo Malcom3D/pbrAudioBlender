@@ -104,7 +104,7 @@ def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
             return np.array([]), np.array([])
 
 def validate_frd_file(filepath):
-    return self.validate_frd_data(self.parse_frd_file(filepath))
+    return validate_frd_data(parse_frd_file(filepath))
 
 def validate_frd_data(frequencies, magnitudes, phases=None):
     """

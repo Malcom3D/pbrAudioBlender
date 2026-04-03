@@ -21,8 +21,9 @@ from bpy.types import Node
 from bpy.props import StringProperty
 from bpy_extras.io_utils import ImportHelper
 
-# Add to your nodes list
-# classes = []
+from .baseND import AcousticBaseNode
+
+classes = []
 
 class FrequencyResponseFilesNode(AcousticBaseNode):
     """Node to load frequency response data from a file (.frd or .cal)"""

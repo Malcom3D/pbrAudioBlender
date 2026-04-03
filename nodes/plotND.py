@@ -23,7 +23,7 @@ from nodeitems_utils import NodeCategory, NodeItem
 from bpy.types import Node, ShaderNodeCustomGroup
 from bpy.props import PointerProperty, StringProperty
 
-from .baseND import AcousticMaterialNode
+from .baseND import AcousticBaseNode
 
 classes = []
 

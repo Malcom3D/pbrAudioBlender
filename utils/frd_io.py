@@ -256,6 +256,7 @@ def write_frd_file(filename, frequencies, magnitudes, phases=None):
     os.makedirs(dir_path, exist_ok=True)
 
     # Header
+    lines = []
     lines.append(f"! pbrAudioRender-0.2.1.x\n")
     lines.append(f"!\n")
     lines.append(f"! frd_io exporter version 0.0.7\n")

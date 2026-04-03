@@ -38,13 +38,10 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         if not self.frd_filepath == '' and frd_io.validate_frd_file(self.frd_filepath):
             self.pbraudio_response_filepath = self.frd_filepath
             del self.frd_filepath
-            self.valid_frd = True
         else:
-            self.valid_frd = False
+            bpy.ops.report({'ERROR'}, "{filename} is not a valid FRD file")
 
     pbraudio_type: StringProperty(default='AcousticProperties')
-
-    valid_frd: BoolProperty(default=False)
 
     frd_filepath: StringProperty(
         name="ResponseFile",
@@ -52,7 +49,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
-#        update=validate_frd_file
+        update=validate_frd_file
     )
 
     pbraudio_response_filepath: StringProperty(
@@ -68,13 +65,6 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "frd_filepath", text="Response File")
-#        layout.operator("node.load_response_file", text="Load Response").node_name = self.name
-
-    def update(self):
-        if not self.frd_filepath == '' and frd_io.validate_frd_file(self.frd_filepath):
-            self.pbraudio_response_filepath = self.frd_filepath
-            self.report({'ERROR'}, "{filename} is not a valid FRD file")
-            del self.frd_filepath
 
 classes.append(FrequencyResponseFilesNode)
 

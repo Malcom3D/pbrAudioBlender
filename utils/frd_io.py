@@ -92,7 +92,7 @@ def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
         elif has_phase:
             return np.array(frequencies), np.array(magnitudes), np.array(phases)
         else:
-            return np.array(frequencies), np.array(magnitudes)
+            return np.array(frequencies), np.array(magnitudes), None
     
     except Exception as e:
         print(f"Error parsing FRD file {filepath}: {e}")
@@ -101,7 +101,7 @@ def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
         elif has_phase:
             return np.array([]), np.array([]), np.array([])
         else:
-            return np.array([]), np.array([])
+            return np.array([]), np.array([]), None
 
 def validate_frd_file(filepath):
     return validate_frd_data(parse_frd_file(filepath))

@@ -21,28 +21,29 @@ from bpy.types import Operator
 
 classes = []
 
-# Operators to add/clear data points to FrequencyResponseChartNode
-class NODE_OT_add_freq_response_data(Operator):
-    bl_idname = "node.add_freq_response_data"
-    bl_label = "Add Frequency Response Data Point"
+# Operators to add/remove data points to FrequencyResponseChartNode
+class NODE_OT_add_frd_point(Operator):
+    bl_idname = "node.add_frd_point"
+    bl_label = "Add FRD Point"
+    bl_description = "Add a new frequency response point"
 
     def execute(self, context):
-        node = context.active_node
-        if hasattr(node, "response_data"):
-            new_item = node.response_data.add()
-            new_item.frequency = 1000.0
-            new_item.magnitude = 0.0
-            new_item.phase = 0.0
+        node = context.node
+        node.frd_points.add()
+        node.frd_points_index = len(node.frd_points) - 1
         return {'FINISHED'}
-classes.append(NODE_OT_add_freq_response_data)
+classes.append(NODE_OT_add_frd_point)
 
-class NODE_OT_clear_freq_response_data(Operator):
-    bl_idname = "node.clear_freq_response_data"
-    bl_label = "Clear Frequency Response Data"
+class NODE_OT_remove_frd_point(Operator):
+    bl_idname = "node.remove_frd_point"
+    bl_label = "Remove FRD Point"
+    bl_description = "Remove selected frequency response point"
 
     def execute(self, context):
-        node = context.active_node
-        if hasattr(node, "response_data"):
-            node.response_data.clear()
+        node = context.node
+        index = node.frd_points_index
+        if index >= 0 and index < len(node.frd_points):
+            node.frd_points.remove(index)
+            node.frd_points_index = min(max(0, index - 1), len(node.frd_points) - 1)
         return {'FINISHED'}
-classes.append(NODE_OT_clear_freq_response_data)
+classes.append(NODE_OT_remove_frd_point)

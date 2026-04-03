@@ -54,7 +54,7 @@ class AcousticValueNodeSocket(NodeSocket):
     default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
-        if not self.is_linked:
+        if not self.is_linked or self.is_output:
             layout.prop(self, "default_value", text=text, slider=True)
         else:
             layout.label(text=text)

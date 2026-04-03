@@ -204,7 +204,7 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
                     self.pbraudio_impedence = self.outputs[0].default_value
                 else:
                     nodetree = self.id_data
-                    nodetree.links.remove(self.outputs[0].links[link])
+                    nodetree.links.remove(link)
 
     def draw_label(self):
         return "Acoustic Impedence"
@@ -238,7 +238,7 @@ class pbrAudioDensityNode(AcousticWorldNode):
                     self.pbraudio_density = self.outputs[0].default_value
                 else:
                     nodetree = self.id_data
-                    nodetree.links.remove(self.outputs[0].links[link])
+                    nodetree.links.remove(link)
 
     def draw_label(self):
         return "Density"
@@ -273,7 +273,7 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
                     self.pbraudio_temperature = self.outputs[0].default_value
                 else:
                     nodetree = self.id_data
-                    nodetree.links.remove(self.outputs[0].links[link])
+                    nodetree.links.remove(link)
 
     def draw_label(self):
         return "Temperature"

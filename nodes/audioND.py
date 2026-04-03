@@ -42,7 +42,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
     )
 
     def init(self, context):
-        self.outputs.new('AcousticValueNodeSocket', "Frequency Response", slider=False)
+        self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "pbraudio_respose_filepath", text="Response File")

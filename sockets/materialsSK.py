@@ -53,7 +53,7 @@ class AcousticValueNodeSocket(NodeSocket):
 
     default_value: FloatProperty(
         default=0.0,
-        min=-1.0
+        min=-1.0,
         max=1.0
     )
 

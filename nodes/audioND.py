@@ -59,19 +59,19 @@ class FRDDataPoint(PropertyGroup):
         name="Frequency (Hz)",
         description="Frequency in Hz",
         default=1000.0,
-        min=0.01
+        min=0.01,
         max=96000
     )
     magnitude: FloatProperty(
         name="Magnitude",
         description="Magnitude (linear or dB based on context)",
-        default=0.0,
+        default=0.0
     )
     phase: FloatProperty(
         name="Phase (degrees)",
         description="Phase in degrees",
-        default=0.0
-        soft_min=-360.0
+        default=0.0,
+        soft_min=-360.0,
         soft_max=360.0
     )
 classes.append(FRDDataPoint)

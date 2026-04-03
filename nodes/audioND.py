@@ -125,8 +125,10 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         row = layout.row()
         row.template_list("FRDDATA_UL_Points", "", self, "frd_points", self, "frd_points_index", rows=4)
         col = row.column(align=True)
-        col.operator("node.add_frd_point", text="", icon='ADD')
-        col.operator("node.remove_frd_point", text="", icon='REMOVE')
+        op = col.operator("node.add_frd_point", text="", icon='ADD')
+        op.node = self
+        op = col.operator("node.remove_frd_point", text="", icon='REMOVE')
+        op.node = self
         layout.prop(self, "has_phase")
         op = layout.operator("node.export_frd_response", text="Export FRD")
         op.node = self

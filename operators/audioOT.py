@@ -28,8 +28,13 @@ class NODE_OT_add_frd_point(Operator):
     bl_label = "Add FRD Point"
     bl_description = "Add a new frequency response point"
 
+    node: PointerProperty(
+        name="node",
+        type=bpy.types.Node
+    )
+
     def execute(self, context):
-        node = context.node
+        node = self.node
         node.frd_points.add()
         node.frd_points_index = len(node.frd_points) - 1
         return {'FINISHED'}
@@ -40,8 +45,13 @@ class NODE_OT_remove_frd_point(Operator):
     bl_label = "Remove FRD Point"
     bl_description = "Remove selected frequency response point"
 
+    node: PointerProperty(
+        name="node",
+        type=bpy.types.Node
+    )
+
     def execute(self, context):
-        node = context.node
+        node = self.node
         index = node.frd_points_index
         if index >= 0 and index < len(node.frd_points):
             node.frd_points.remove(index)

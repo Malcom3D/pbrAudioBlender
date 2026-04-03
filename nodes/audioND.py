@@ -93,7 +93,7 @@ class FrequencyResponseChartNode(AcousticBaseNode):
     frd_points: CollectionProperty(type=FRDDataPoint)
     frd_points_index: bpy.props.IntProperty(name='Index', default=0)
 
-    frd_id_file: bpy.props.IntProperty(name='frd_id_file', default=0)
+    frd_id_file: bpy.props.StringProperty(name='frd_id_file', default=0)
 
     # File path or name for export
     pbraudio_response_filepath: StringProperty(
@@ -112,7 +112,7 @@ class FrequencyResponseChartNode(AcousticBaseNode):
 
     def init(self, context):
         self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
-        self.frd_id_file = id(self)
+        self.frd_id_file = str(id(self))
         cache_path = bpy.context.scene.pbraudio.cache_path
         self.pbraudio_response_filepath = f"{cache_path}/{self.frd_id_file}.frd"
 

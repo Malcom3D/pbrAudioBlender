@@ -47,7 +47,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         description="Select a frequency response file (.frd or .cal)",
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
-        default=''
+        default='',
         update=validate_frd_file
     )
 

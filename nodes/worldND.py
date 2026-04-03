@@ -31,10 +31,10 @@ class pbrAudioWorldOutputNode(AcousticWorldNode):
     bl_label = "World Output"
 
     def sync_data(self, context):
-        if not self.inputs[0].default_value == self.inputs[0].links[0].from_soket.default_value:
-           self.inputs[0].default_value = self.inputs[0].links[0].from_soket.default_value
-        if not self.inputs[1].default_value == self.inputs[1].links[0].from_soket.default_value:
-           self.inputs[1].default_value = self.inputs[1].links[0].from_soket.default_value
+        if not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+           self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
+        if not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value:
+           self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
 
     pbraudio_type: StringProperty(default='WorldOutput')
 
@@ -56,10 +56,10 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
     bl_label = "World medium Parameters"
 
     def sync_data(self, context):
-        if self.inputs[0].is_linked and (not self.inputs[0].default_value == self.inputs[0].links[0].from_soket.default_value):
-           self.inputs[0].default_value = self.inputs[0].links[0].from_soket.default_value
-        if self.inputs[0].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_soket.default_value):
-           self.inputs[1].default_value = self.inputs[1].links[0].from_soket.default_value
+        if self.inputs[0].is_linked and (not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value):
+           self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
+        if self.inputs[0].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value):
+           self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
         if self.outputs[0].is_linked:
            self.outputs[0].default_value = self.pbraudio_sound_speed
 
@@ -200,10 +200,10 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
     bl_label = "Acoustic Impedence Parameters"
 
     def sync_data(self, context):
-        if self.inputs[0].is_linked and (not self.inputs[0].default_value == self.inputs[0].links[0].from_soket.default_value):
-           self.inputs[0].default_value = self.inputs[0].links[0].from_soket.default_value
-        if self.inputs[0].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_soket.default_value):
-           self.inputs[1].default_value = self.inputs[1].links[0].from_soket.default_value
+        if self.inputs[0].is_linked and (not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value):
+           self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
+        if self.inputs[0].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value):
+           self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
         if self.outputs[0].is_linked:
            self.outputs[0].default_value = self.pbraudio_impedence
 

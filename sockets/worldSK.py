@@ -29,6 +29,7 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     bl_label = "pbrAudio World Property Node Socket"
 
     pbraudio_type: StringProperty(default='WorldProperty')
+    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         layout.label(text=text)
@@ -77,6 +78,7 @@ class pbrAudioWorldEnvironmentNodeSocket(NodeSocket):
     bl_label = "pbrAudio World Environment Socket"
 
     pbraudio_type: StringProperty(default='WorldEnvironment')
+    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         layout.label(text=text)

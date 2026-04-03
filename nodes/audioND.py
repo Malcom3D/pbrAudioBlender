@@ -126,7 +126,7 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         layout.prop(self, "has_phase")
         layout.operator("node.export_frd_response", text="Export FRD")
 
-    def socket_value_update(self, context)
+    def socket_value_update(self, context):
         #layout.operator("node.export_frd_response", text="Export FRD")
         pass
 

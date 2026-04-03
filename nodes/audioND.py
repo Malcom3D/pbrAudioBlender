@@ -23,6 +23,7 @@ from bpy.types import PropertyGroup, UIList
 from bpy_extras.io_utils import ImportHelper
 
 from .baseND import AcousticBaseNode
+from ..utils import frd_io 
 
 classes = []
 
@@ -38,7 +39,8 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         name="ResponseFile",
         description="Select a frequency response file (.frd or .cal)",
         subtype='FILE_PATH',
-        options={'PATH_SUPPORTS_BLEND_RELATIVE'}
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default=''
     )
 
     def init(self, context):
@@ -46,11 +48,11 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "pbraudio_response_filepath", text="Response File")
+        # validate the data inside the file
+        if not self.pbraudio_response_filepath == '' and not frd_io.validate_frd_file(self.pbraudio_response_filepath):
+            self.pbraudio_response_filepath = ''
+            self.report({'ERROR'}, "{filename} is not a valid FRD file")
 #        layout.operator("node.load_response_file", text="Load Response").node_name = self.name
-
-#    def load_response(self, context):
-#        # Optional: Implement custom loading/parsing logic here
-#        pass
 
 classes.append(FrequencyResponseFilesNode)
 

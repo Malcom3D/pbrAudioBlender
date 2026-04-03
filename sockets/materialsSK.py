@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import NodeSocket
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, StringProperty
 
 classes = []
 

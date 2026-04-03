@@ -39,9 +39,9 @@ class ImageDisplayNode(AcousticMaterialNode):
     pbraudio_type: StringProperty(default='AcousticProperties')
 
     def draw_buttons(self, context, layout):
-        self.layout.template_ID_preview(context.window_manager, 'image', open='image.open')
+        layout.template_ID_preview(context.window_manager, 'image', open='image.open')
     
     def draw_buttons_ext(self, context, layout):
-        self.layout.operator("pbraudio.big_preview")
+        layout.operator("pbraudio.big_preview")
     
 classes.append(ImageDisplayNode)

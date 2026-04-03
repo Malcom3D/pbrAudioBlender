@@ -64,6 +64,7 @@ class pbrAudioWorldMaterialNodeSocket(NodeSocket):
     bl_label = "pbrAudio World Material Node Socket"
 
     pbraudio_type: StringProperty(default='WorldMaterial')
+    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         layout.label(text=text)

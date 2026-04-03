@@ -28,12 +28,12 @@ class NODE_OT_add_frd_point(Operator):
     bl_label = "Add FRD Point"
     bl_description = "Add a new frequency response point"
 
-    node_tree: PointerProperty(type=bpy.types.NodeTree)
+    node_tree: StringProperty(name="Node Tree", default="")
     node_name: StringProperty(name="Node Name", default="")
 
     def execute(self, context):
         if not self.node_name == "":
-            node = self.node_tree.nodes[self.node_name]
+            node = bpy.data.node_groups[node_tree]nodes[self.node_name]
             node.frd_points.add()
             node.frd_points_index = len(node.frd_points) - 1
             return {'FINISHED'}
@@ -45,12 +45,12 @@ class NODE_OT_remove_frd_point(Operator):
     bl_label = "Remove FRD Point"
     bl_description = "Remove selected frequency response point"
 
-    node_tree: PointerProperty(type=bpy.types.NodeTree)
+    node_tree: StringProperty(name="Node Tree", default="")
     node_name: StringProperty(name="Node Name", default="")
 
     def execute(self, context):
         if not self.node_name == "":
-            node = self.node_tree.nodes[self.node_name]
+            node = bpy.data.node_groups[node_tree]nodes[self.node_name]
             index = node.frd_points_index
             if index >= 0 and index < len(node.frd_points):
                 node.frd_points.remove(index)
@@ -72,8 +72,8 @@ class NODE_OT_export_frd_response(Operator):
         default=''
     )
 
-    node_tree: bpy.props.PointerProperty(type=bpy.types.NodeTree)
-    node_name: bpy.props.StringProperty(name="Node Name", default="")
+    node_tree: StringProperty(name="Node Tree", default="")
+    node_name: StringProperty(name="Node Name", default="")
 
     def invoke(self, context, event):
         if self.filepath == '':
@@ -82,7 +82,7 @@ class NODE_OT_export_frd_response(Operator):
 
     def execute(self, context):
         if not self.node_name == "":
-            node = self.node_tree.nodes[self.node_name]
+            node = bpy.data.node_groups[node_tree]nodes[self.node_name]
             # Gather data points
             frequencies = []
             magnitudes = []

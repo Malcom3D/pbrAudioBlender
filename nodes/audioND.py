@@ -50,7 +50,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         layout.prop(self, "pbraudio_response_filepath", text="Response File")
         # validate the data inside the file
         if not self.pbraudio_response_filepath == '' and not frd_io.validate_frd_file(self.pbraudio_response_filepath):
-            self.pbraudio_response_filepath = ''
+            del self.pbraudio_response_filepath
             self.report({'ERROR'}, "{filename} is not a valid FRD file")
 #        layout.operator("node.load_response_file", text="Load Response").node_name = self.name
 

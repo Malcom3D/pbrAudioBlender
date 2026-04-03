@@ -20,6 +20,7 @@
 FRD file parser for frequency response data with magnitude and phase support
 FRD format is typically a text file with frequency, magnitude, and optionally phase
 """
+import os
 import numpy as np
 
 def parse_frd_file(filepath, has_phase=False, has_imaginary=False):

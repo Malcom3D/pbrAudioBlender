@@ -28,13 +28,11 @@ class NODE_OT_add_frd_point(Operator):
     bl_label = "Add FRD Point"
     bl_description = "Add a new frequency response point"
 
-    node: PointerProperty(
-        name="node",
-        type=bpy.types.Node
-    )
+    node_tree: bpy.props.PointerProperty(type=bpy.types.NodeTree)
+    node_name: bpy.props.StringProperty(name="Node Name")
 
     def execute(self, context):
-        node = self.node
+        node = self.node_tree.nodes[self.node_name]
         node.frd_points.add()
         node.frd_points_index = len(node.frd_points) - 1
         return {'FINISHED'}
@@ -45,13 +43,11 @@ class NODE_OT_remove_frd_point(Operator):
     bl_label = "Remove FRD Point"
     bl_description = "Remove selected frequency response point"
 
-    node: PointerProperty(
-        name="node",
-        type=bpy.types.Node
-    )
+    node_tree: bpy.props.PointerProperty(type=bpy.types.NodeTree)
+    node_name: bpy.props.StringProperty(name="Node Name")
 
     def execute(self, context):
-        node = self.node
+        node = self.node_tree.nodes[self.node_name]
         index = node.frd_points_index
         if index >= 0 and index < len(node.frd_points):
             node.frd_points.remove(index)
@@ -72,10 +68,8 @@ class NODE_OT_export_frd_response(Operator):
         default=''
     )
 
-    node: PointerProperty(
-        name="node",
-        type=bpy.types.Node
-    )
+    node_tree: bpy.props.PointerProperty(type=bpy.types.NodeTree)
+    node_name: bpy.props.StringProperty(name="Node Name")
 
     def invoke(self, context, event):
         if self.filepath == '':
@@ -83,7 +77,7 @@ class NODE_OT_export_frd_response(Operator):
             return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        node = self.node
+        node = self.node_tree.nodes[self.node_name]
         # Gather data points
         frequencies = []
         magnitudes = []

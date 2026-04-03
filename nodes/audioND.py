@@ -126,14 +126,17 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         row.template_list("FRDDATA_UL_Points", "", self, "frd_points", self, "frd_points_index", rows=4)
         col = row.column(align=True)
         op = col.operator("node.add_frd_point", text="", icon='ADD')
-        op.node = self
+        op.node_name = self.name
+        op.node_tree = self.id_data
         op = col.operator("node.remove_frd_point", text="", icon='REMOVE')
-        op.node = self
+        op.node_name = self.name
+        op.node_tree = self.id_data
         layout.prop(self, "has_phase")
         op = layout.operator("node.export_frd_response", text="Export FRD")
-        op.node = self
+        op.node_name = self.name
+        op.node_tree = self.id_data
 
     def socket_value_update(self, context):
-        bpy.ops.node.export_frd_response(node=self, filepath=self.pbraudio_response_filepath)
+        bpy.ops.node.export_frd_response(node_tree=self.id_data, node_name=self.name, filepath=self.pbraudio_response_filepath)
 
 classes.append(FrequencyResponseChartNode)

@@ -250,6 +250,9 @@ def calculate_group_delay(frequencies, phases_deg):
     return group_delay
 
 def write_frd_file(filename, frequencies, magnitudes, phases=None):
+    # Ensure directory exists
+    dir_path = os.path.dirname(filename)
+    os.makedirs(dir_path, exist_ok=True)
     with open(filename, 'w') as f:
         # Write header
         if phases is not None:

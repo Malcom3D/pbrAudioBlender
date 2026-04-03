@@ -35,10 +35,10 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
     pbraudio_type: StringProperty(default='AcousticProperties')
 
     pbraudio_response_filepath: StringProperty(
-        name="Response File",
+        name="ResponseFile",
         description="Select a frequency response file (.frd or .cal)",
         subtype='FILE_PATH',
-        default="",
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'}
     )
 
     def init(self, context):
@@ -102,7 +102,8 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         name="FRD Filename",
         description="Filename to export the response data",
         default="frequency_response.frd",
-        subtype='FILE_PATH'
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'}
     )
 
     # Whether to use phase or not
@@ -124,12 +125,10 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         col = row.column(align=True)
         col.operator("node.add_frd_point", text="", icon='ADD')
         col.operator("node.remove_frd_point", text="", icon='REMOVE')
-#        layout.prop(self, "pbraudio_response_filepath")
         layout.prop(self, "has_phase")
-        layout.operator("node.export_frd_response", text="Export FRD")
+        op = layout.operator("node.export_frd_response", text="Export FRD")
 
     def socket_value_update(self, context):
-        #layout.operator("node.export_frd_response", text="Export FRD")
-        pass
+        bpy.ops.node.export_frd_response(filepath=self.pbraudio_response_filepath)
 
 classes.append(FrequencyResponseChartNode)

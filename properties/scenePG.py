@@ -81,6 +81,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Output",
         description="Path to save audio files",
         subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='/tmp/'
     )
 
@@ -215,6 +216,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Cache",
         description="Path to save cache files",
         subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='//pbrAudioCache'
     )
 

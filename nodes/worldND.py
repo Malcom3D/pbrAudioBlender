@@ -294,7 +294,8 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
     ambisonic_file: StringProperty(
         name="Audio File",
         description="Path to ambisonic file",
-        subtype='FILE_PATH' 
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'}
     )
  
     sphere_radius: FloatProperty(

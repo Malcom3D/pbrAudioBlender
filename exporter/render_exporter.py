@@ -73,7 +73,7 @@ class RenderExporter:
         wave_config = {}
         # Wave propagator property
         wave_config['max_interactions'] = self.scene.pbraudiorender.max_interactions
-        wave_config['steps_per_octave'] = self.scene.pbraudiorender.steps_per_octave
+        wave_config['bands_per_octave'] = self.scene.pbraudiorender.bands_per_octave
         wave_config['enable_interface'] = self.scene.pbraudiorender.enable_interface
         wave_config['enable_resonance'] = self.scene.pbraudiorender.enable_resonance
         wave_config['enable_termination'] = self.scene.pbraudiorender.enable_termination

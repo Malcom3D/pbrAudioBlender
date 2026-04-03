@@ -22,9 +22,9 @@ from nodeitems_utils import NodeCategory, NodeItem, register_node_categories, un
 
 classes = []
 
-from . import worldND, baseND, materialND, inputND, outputND, plotND
+from . import worldND, baseND, materialND, inputND, outputND, plotND, audioND
 
-for mod in (worldND, baseND, materialND, inputND, outputND, plotND):
+for mod in (worldND, baseND, materialND, inputND, outputND, plotND, audioND):
     classes += mod.classes
 
 class WorldNodeCategory(NodeCategory):
@@ -51,7 +51,7 @@ class MaterialNodeCategory(NodeCategory):
 input_node_categories = [
     MaterialNodeCategory("INPUT_NODES", "Input", items=[
         NodeItem("AcousticPropertiesNode"),
-        NodeItem("ImageDisplayNode"),
+        NodeItem("FrequencyResponseFilesNode"),
     ]),
 ]
 
@@ -59,6 +59,7 @@ output_node_categories = [
     MaterialNodeCategory("OUTPUT_NODES", "Output", items=[
         NodeItem("AcousticMaterialOutputNode"),
         NodeItem("AcousticMaterialPreviewNode"),
+        NodeItem("ResponsePreviewNode"),
     ]),
 ]
 

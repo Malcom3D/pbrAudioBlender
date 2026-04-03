@@ -127,7 +127,7 @@ class PBRAUDIO_PT_sampling_panel(Panel):
         scene = context.scene
 
         layout.prop(scene.pbraudiorender, "max_interactions")
-        layout.prop(scene.pbraudiorender, "steps_per_octave")
+        layout.prop(scene.pbraudiorender, "bands_per_octave")
         layout.prop(scene.pbraudiorender, "use_dispersion_correction")
         if scene.pbraudiorender.use_dispersion_correction:
             layout.prop(scene.pbraudiorender, "dispersion_order")

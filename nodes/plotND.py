@@ -29,17 +29,19 @@ classes = []
 
 bpy.types.WindowManager.image = bpy.props.PointerProperty(name='Image', type=bpy.types.Image)
 
-# Custom node class
-class ImageDisplayNode(AcousticMaterialNode):
+class ResponsePreviewNode(AcousticMaterialNode):
     """Custom node to display an image"""
-    bl_idname = 'ImageDisplayNode'
-    bl_label = 'Image Display'
+    bl_idname = 'ResponsePreviewNode'
+    bl_label = 'Preview Frequency Response Node'
     bl_icon = 'IMAGE_DATA'
     
     pbraudio_type: StringProperty(default='AcousticProperties')
+
+    def init(self, context):
+        self.inputs.new('AcousticValueNodeSocket', "Frequency Response")
 
     def draw_buttons(self, context, layout):
         layout.template_ID_preview(context.window_manager, 'image', open='image.open')
         layout.operator("pbraudio.big_preview")
     
-classes.append(ImageDisplayNode)
+classes.append(ResponsePreviewNode)

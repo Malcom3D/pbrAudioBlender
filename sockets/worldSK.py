@@ -42,11 +42,13 @@ class pbrAudioWorldParameterNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldParameterNodeSocket'
     bl_label = "pbrAudio World Parameter Node Socket"
 
-    default_value: FloatProperty(default=0.0)
     pbraudio_type: StringProperty(default='WorldParameter')
+    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         if self.is_output:
+            layout.prop(self, "default_value", text=text, slider=True)
+        elif not self.is_output and not self.is_linked:
             layout.prop(self, "default_value", text=text, slider=True)
         else:
             layout.label(text=text)

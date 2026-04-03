@@ -74,13 +74,13 @@ class FRDDataPoint(PropertyGroup):
     )
 classes.append(FRDDataPoint)
 
-class FRDDataPointsUIList(UIList):
+class FRDData_UL_Points(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         row = layout.row(align=True)
         row.prop(item, "frequency", text="Freq")
         row.prop(item, "magnitude", text="Mag")
         row.prop(item, "phase", text="Phase")
-classes.append(FRDDataPointsUIList)
+classes.append(FRDData_UL_Points)
 
 class FrequencyResponseChartNode(AcousticBaseNode):
     bl_idname = 'FrequencyResponseChartNode'
@@ -110,12 +110,12 @@ class FrequencyResponseChartNode(AcousticBaseNode):
     def init(self, context):
         self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
         frd_id_file = id(self)
-        cache_path = self.context.scene.pbraudiorender.cache_path
+        cache_path = context.scene.pbraudiorender.cache_path
         self.pbraudio_response_filepath = f"{cache_path}/{frd_id_file}.frd"
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.template_list("FRDDataPointsUIList", "", self, "frd_points", self, "frd_points_index", rows=4)
+        row.template_list("FRDData_UL_Points", "", self, "frd_points", self, "frd_points_index", rows=4)
         col = row.column(align=True)
         col.operator("node.add_frd_point", text="", icon='ADD')
         col.operator("node.remove_frd_point", text="", icon='REMOVE')

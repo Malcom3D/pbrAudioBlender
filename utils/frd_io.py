@@ -118,11 +118,11 @@ def validate_frd_data(frequencies, magnitudes, phases=None):
         return False
     
 #    if len(frequencies) != len(magnitudes):
-    if frequencies.shape[0] != magnitudes.shpae[0]:
+    if frequencies.shape[0] != magnitudes.shape[0]:
         return False
     
 #    if phases is not None and len(phases) != len(frequencies):
-    if phases.shape[0] != 0 and phases.shpae[0] != frequencies.shape[0]:
+    if phases.shape[0] != 0 and phases.shape[0] != frequencies.shape[0]:
         return False
     
     # Check if frequencies are monotonic (usually they should be)

@@ -103,11 +103,18 @@ class FrequencyResponseChartNode(AcousticBaseNode):
     bl_label = "Frequency Response Chart"
     bl_icon = 'GRAPH'
 
+    def write_frd_file_id(self, context):
+        bpy.ops.node.export_frd_response(node_tree=self.id_data.name, node_name=self.name, filepath=self.pbraudio_response_filepath)
+
     pbraudio_type: StringProperty(default='AcousticProperties')
 
     # Collection of data points
     frd_points: CollectionProperty(type=FRDDataPoint)
-    frd_points_index: bpy.props.IntProperty(name='Index', default=0)
+    frd_points_index: bpy.props.IntProperty(
+        name='Index',
+        default=0,
+        update=write_frd_file_id
+    )
 
     frd_id_file: bpy.props.StringProperty(default='frd_id_file')
 
@@ -147,8 +154,5 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         op = layout.operator("node.export_frd_response", text="Export FRD")
         op.node_name = self.name
         op.node_tree = self.id_data.name
-
-    def socket_value_update(self, context):
-        bpy.ops.node.export_frd_response(node_tree=self.id_data.name, node_name=self.name, filepath=self.pbraudio_response_filepath)
 
 classes.append(FrequencyResponseChartNode)

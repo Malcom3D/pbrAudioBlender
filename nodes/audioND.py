@@ -74,13 +74,13 @@ class FRDDataPoint(PropertyGroup):
     )
 classes.append(FRDDataPoint)
 
-class FRDData_UL_Points(UIList):
+class FRDDATA_UL_Points(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         row = layout.row(align=True)
         row.prop(item, "frequency", text="Freq")
         row.prop(item, "magnitude", text="Mag")
         row.prop(item, "phase", text="Phase")
-classes.append(FRDData_UL_Points)
+classes.append(FRDDATA_UL_Points)
 
 class FrequencyResponseChartNode(AcousticBaseNode):
     bl_idname = 'FrequencyResponseChartNode'
@@ -93,11 +93,14 @@ class FrequencyResponseChartNode(AcousticBaseNode):
     frd_points: CollectionProperty(type=FRDDataPoint)
     frd_points_index: bpy.props.IntProperty(name='Index', default=0)
 
-    # Optional: file path or name for export
+    frd_id_file: bpy.props.IntProperty(name='frd_id_file', default=0)
+
+    # File path or name for export
     pbraudio_response_filepath: StringProperty(
         name="FRD Filename",
         description="Filename to export the response data",
-        default="frequency_response.frd"
+        default="frequency_response.frd",
+        subtype='FILE_PATH'
     )
 
     # Whether to use phase or not
@@ -109,17 +112,22 @@ class FrequencyResponseChartNode(AcousticBaseNode):
 
     def init(self, context):
         self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
-        frd_id_file = id(self)
-        cache_path = context.scene.pbraudiorender.cache_path
-        self.pbraudio_response_filepath = f"{cache_path}/{frd_id_file}.frd"
+        self.frd_id_file = id(self)
+        cache_path = bpy.context.scene.pbraudio.cache_path
+        self.pbraudio_response_filepath = f"{cache_path}/{self.frd_id_file}.frd"
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.template_list("FRDData_UL_Points", "", self, "frd_points", self, "frd_points_index", rows=4)
+        row.template_list("FRDDATA_UL_Points", "", self, "frd_points", self, "frd_points_index", rows=4)
         col = row.column(align=True)
         col.operator("node.add_frd_point", text="", icon='ADD')
         col.operator("node.remove_frd_point", text="", icon='REMOVE')
 #        layout.prop(self, "pbraudio_response_filepath")
         layout.prop(self, "has_phase")
         layout.operator("node.export_frd_response", text="Export FRD")
+
+    def socket_value_update(self, context)
+        #layout.operator("node.export_frd_response", text="Export FRD")
+        pass
+
 classes.append(FrequencyResponseChartNode)

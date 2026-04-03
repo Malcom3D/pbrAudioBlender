@@ -33,7 +33,7 @@ class BigPreview(Operator):
         wm = context.window_manager
         self.texture = bpy.data.textures.new(name="previewTexture", type="IMAGE")
         self.texture.image = context.window_manager.image
-        self.texture.extension = 'CLIP'  #EXTEND # CLIP # CLIP_CUBE # REPEAT # CHECKER
+        self.texture.extension = 'EXTEND'  #EXTEND # CLIP # CLIP_CUBE # REPEAT # CHECKER
         print("Invoke big preview")
         return wm.invoke_props_dialog(self, width=600)
     def draw(self, context):

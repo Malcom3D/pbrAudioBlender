@@ -23,7 +23,7 @@ from ..utils import frd_io
 
 classes = []
 
-class BigPreview(Operator):
+class NODE_OT_BigPreview(Operator):
     bl_idname = "node.big_preview"
     bl_label = "Big Preview"
     def execute(self, context):
@@ -44,9 +44,9 @@ class BigPreview(Operator):
         #col.scale_y = 2
         col.template_preview(self.texture, show_buttons=False)
         
-classes.append(BigPreview)
+classes.append(NODE_OT_BigPreview)
 
-class PBRAUDIO_OT_export_frd_response(Operator):
+class NODE_OT_export_frd_response(Operator):
     bl_idname = "node.export_frd_response"
     bl_label = "Export FRD Response"
     bl_description = "Export the manually entered frequency response data to a FRD file"

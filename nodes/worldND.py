@@ -289,7 +289,7 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
         self.outputs[0].default_value = self.pbraudio_temperature
 
     def draw_buttons(self, context, layout):
-        if not self.outputs[0].default_value == self.pbraudio_temperature
+        if not self.outputs[0].default_value == self.pbraudio_temperature:
             self.pbraudio_temperature = self.outputs[0].default_value
 #        if self.outputs[0].is_linked:
 #            for link in self.outputs[0].links:

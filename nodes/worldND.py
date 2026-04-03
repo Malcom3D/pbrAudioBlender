@@ -197,6 +197,7 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
         self.inputs.new('pbrAudioWorldParameterNodeSocket', "Density in kg/m³")
 
     def draw_buttons(self, context, layout):
+        pass
 #        if self.outputs[0].is_linked:
 #            for link in self.outputs[0].links:
 #                if link.to_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
@@ -230,6 +231,7 @@ class pbrAudioDensityNode(AcousticWorldNode):
         self.outputs.new('pbrAudioWorldParameterNodeSocket', "Density")
 
     def draw_buttons(self, context, layout):
+        pass
 #        if self.outputs[0].is_linked:
 #            for link in self.outputs[0].links:
 #                if link.to_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
@@ -264,6 +266,7 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
         self.outputs.new('pbrAudioWorldParameterNodeSocket', "Temperature in Celsius degree")
 
     def draw_buttons(self, context, layout):
+        pass
 #        if self.outputs[0].is_linked:
 #            for link in self.outputs[0].links:
 #                if link.to_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':

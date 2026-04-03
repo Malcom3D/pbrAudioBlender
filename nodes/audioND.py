@@ -37,9 +37,9 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         # validate the data inside the file
         if not self.frd_filepath == '' and frd_io.validate_frd_file(self.frd_filepath):
             self.pbraudio_response_filepath = self.frd_filepath
-            del self.frd_filepath
+            self.frd_filepath = ''
         else:
-            bpy.ops.report({'ERROR'}, "{filename} is not a valid FRD file")
+            bpy.ops.report({'ERROR'}, f"An unexpected error occurred while processing the file: {filename} is not a valid FRD file")
 
     pbraudio_type: StringProperty(default='AcousticProperties')
 
@@ -154,5 +154,8 @@ class FrequencyResponseChartNode(AcousticBaseNode):
         op = layout.operator("node.export_frd_response", text="Export FRD")
         op.node_name = self.name
         op.node_tree = self.id_data.name
+
+    def update(self):
+        bpy.ops.node.export_frd_response(node_tree=self.id_data.name, node_name=self.name, filepath=self.pbraudio_response_filepath)
 
 classes.append(FrequencyResponseChartNode)

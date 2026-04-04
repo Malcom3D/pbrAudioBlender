@@ -76,7 +76,7 @@ classes.append(PBRAUDIO_PT_device_panel)
 class PBRAUDIO_PT_frequencies_range_panel(Panel):
     """Panel to set the pbrAudio acoustic frequencies range"""
     bl_label = ""
-    bl_idname = "PBRAUDIO_PT_acoustic_preview_panel"
+    bl_idname = "PBRAUDIO_PT_frequencies_range_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render"

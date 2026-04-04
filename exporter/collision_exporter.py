@@ -61,7 +61,8 @@ class CollisionExporter:
                 pbraudio_node_type = previous_acoustic_dict['type']
                 del previous_acoustic_dict['type']
                 if pbraudio_node_type == 'AcousticShader':
-                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict['acoustic_shader']
+#                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
+                    acoustic_dict.update(previous_acoustic_dict)
                 elif pbraudio_node_type == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
                 elif pbraudio_node_type == 'FrequencyResponse':

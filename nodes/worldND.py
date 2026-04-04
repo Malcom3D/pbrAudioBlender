@@ -31,7 +31,9 @@ class pbrAudioPreviewNode(AcousticWorldNode):
     bl_label = "Acoustic World Preview"
 
     def sync_data(self, context):
+        # input Sound Speed
         if self.inputs[0].is_linked and not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[0].default_value to be viewed
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
 
     def init(self, context):
@@ -45,10 +47,18 @@ class pbrAudioWorldOutputNode(AcousticWorldNode):
     bl_label = "World Output"
 
     def sync_data(self, context):
-        if not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+        # input Sound Speed
+        if self.inputs[0].is_linked and not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[0].default_value
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
-        if not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value:
+        # input Impedence
+        if self.inputs[1].is_linked and not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[1].default_value
            self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
+        # input Environment
+        if self.inputs[2].is_linked and not self.inputs[2].default_value == self.inputs[2].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[2].default_value
+           self.inputs[2].default_value = self.inputs[2].links[0].from_socket.default_value
 
     pbraudio_type: StringProperty(default='WorldOutput')
 
@@ -72,11 +82,30 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
     bl_label = "World medium Parameters"
 
     def sync_data(self, context):
-        if self.inputs[0].is_linked and (not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value):
+        # input Temperature
+        if self.inputs[0].is_linked and not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[0].default_value
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
-        if self.inputs[1].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value):
+        if self.inputs[0].is_linked and not self.temperature == self.inputs[0].default_value:
+           # read the local self.inputs[0].default_value and write to self.temperature to be used for computation
+           self.temperature = self.inputs[0].default_value
+        else:
+           # the value of the slider is the input socket, write it's value to self.temperature to be readed from exporter and used for computation
+           self.temperature = self.inputs[0].default_value
+        # input Density
+        if self.inputs[1].is_linked and not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[1].default_value
            self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
-        if self.outputs[0].is_linked:
+        if self.inputs[0].is_linked and not self.density == self.inputs[1].default_value:
+           # read the local self.inputs[0].default_value and write to self.density to be used for computation
+           self.density = self.inputs[0].default_value
+        else:
+           # the value of the slider is the input socket, write it's value to self.density to be readed from exporter and used for computation
+           self.density = self.inputs[0].default_value
+
+        # output Sound Speed
+        if self.outputs[0].is_linked and not self.outputs[0].default_value == self.pbraudio_sound_speed:
+           # self.pbraudio_sound_speed is computed with compute_speed(). write it's value to output socket to be readed from to_node
            self.outputs[0].default_value = self.pbraudio_sound_speed
 
     def compute_speed_imp(self, context):
@@ -84,21 +113,15 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
        self.compute_impedence(self, context)
 
     def compute_impedence(self, context):
-        if self.inputs[1].is_linked:
-            self.pbraudio_density = self.inputs[1].links[0].from_node.pbraudio_density
-        self.pbraudio_impedence = self.pbraudio_density*self.pbraudio_sound_speed
+        self.impedence = self.density*self.pbraudio_sound_speed
 
     def compute_speed(self, context):
-        if self.inputs[0].is_linked:
-            self.pbraudio_temperature = self.inputs[1].links[0].from_node.pbraudio_temperature
-        if self.inputs[1].is_linked:
-            self.pbraudio_density = self.inputs[1].links[0].from_node.pbraudio_density
         if self.medium_type == 'GAS':
            self.pbraudio_sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.pbraudio_temperature+273.15))
         elif self.medium_type == 'LIQUID':
-           self.pbraudio_sound_speed = sqrt(self.K/self.pbraudio_density)
+           self.pbraudio_sound_speed = sqrt(self.K/self.density)
         elif self.medium_type == 'SOLID':
-           self.pbraudio_sound_speed = sqrt(self.E/self.pbraudio_density)
+           self.pbraudio_sound_speed = sqrt(self.E/self.density)
 
     pbraudio_type: StringProperty(default='WorldMedium')
 
@@ -154,18 +177,18 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
         update=compute_impedence
     )
 
-    pbraudio_impedence: FloatProperty(
+    impedence: FloatProperty(
         name="Medium impedence in Pa⋅s/m",
         default=413.3
     )
 
-    pbraudio_density: FloatProperty(
+    density: FloatProperty(
         name="Medium Density in kg/m³",
         default=1.2041,
         update=compute_speed_imp
     )
 
-    pbraudio_temperature: FloatProperty(
+    temperature: FloatProperty(
         name="Temperature in °C",
         default=20,
         min=-273.15,
@@ -198,8 +221,8 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.label(text=f"Sound Speed: {self.pbraudio_sound_speed} m/s")
-        layout.label(text=f"Temperature: {self.pbraudio_temperature} °C")
-        layout.label(text=f"Density: {self.pbraudio_density} kg/m³")
+        layout.label(text=f"Temperature: {self.temperature} °C")
+        layout.label(text=f"Density: {self.density} kg/m³")
 
     def socket_value_update(context):
         self.sync_data(context)
@@ -218,19 +241,25 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
     bl_label = "Acoustic Impedence Parameters"
 
     def sync_data(self, context):
-        if self.inputs[0].is_linked and (not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value):
+        # input Sound Speed
+        if self.inputs[0].is_linked and not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[0].default_value
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
-        if self.inputs[0].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value):
+        # input Density
+        if self.inputs[1].is_linked and not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value:
+           # Read the value from_socket.default_value and write to local self.inputs[1].default_value
            self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
-        if self.outputs[0].is_linked:
+        # output Impedence
+        if self.outputs[0].is_linked and self.outputs[0].default_value == self.pbraudio_impedence:
+           # self.pbraudio_impedence is computed with compute_impedence(). write it's value to output socket to be readed from to_node
            self.outputs[0].default_value = self.pbraudio_impedence
 
     def compute_impedence(self, context):
         sound_speed, density = (None for _ in range(2))
         if self.inputs[0].is_linked:
-            sound_speed = self.inputs[0].links[0].from_node.pbraudio_sound_speed
+            sound_speed = self.inputs[0].default_value
         if self.inputs[1].is_linked:
-            density = self.inputs[1].links[0].from_node.pbraudio_density
+            density = self.inputs[1].default_value
         if not sound_speed == None and not density == None:
             self.pbraudio_impedence = density*sound_speed
 
@@ -281,7 +310,9 @@ class pbrAudioDensityNode(AcousticWorldNode):
     bl_label = "Acoustic Density Parameters"
 
     def sync_data(self, context):
-        if self.outputs[0].is_linked:
+        # output Density
+        if self.outputs[0].is_linked and not self.pbraudio_density == self.outputs[0].default_value:
+           # the value of the slider is the output socket, write it's value to self.pbraudio_density to be readed from exporter
            self.pbraudio_density = self.outputs[0].default_value
 
     pbraudio_density: FloatProperty(
@@ -328,7 +359,9 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
     bl_label = "Acoustic Temperature Parameters"
 
     def sync_data(self, context):
-        if self.outputs[0].is_linked:
+        # output Temperature
+        if self.outputs[0].is_linked and not self.outputs[0].default_value == self.pbraudio_temperature:
+           # the value of the slider is the output socket, write it's value to self.pbraudio_temperature to be readed from exporter
            self.pbraudio_temperature = self.outputs[0].default_value
 
     pbraudio_temperature: FloatProperty(

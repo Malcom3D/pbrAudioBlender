@@ -45,7 +45,7 @@ class pbrAudioWorldNodeSocket(NodeSocket):
             layout.label(text=text)
 
     def draw_color(self, context, node):
-        return (0.0, 0.0, 1.0, 1.0) # Blue
+        return (1.0, 0.1, 0.0, 1.0) # Orange
 
 classes.append(pbrAudioWorldNodeSocket)
 
@@ -81,7 +81,7 @@ class pbrAudioWorldMaterialNodeSocket(pbrAudioWorldNodeSocket):
         layout.label(text=text)
 
     def draw_color(self, context, node):
-        return (1.0, 0.1, 0.0, 1.0) # Orange
+        return (0.3, 0.5, 0.8, 1.0) # Light Blue
 
 classes.append(pbrAudioWorldMaterialNodeSocket)
 
@@ -89,7 +89,16 @@ class pbrAudioWorldEnvironmentNodeSocket(pbrAudioWorldNodeSocket):
     bl_idname = 'pbrAudioWorldEnvironmentNodeSocket'
     bl_label = "pbrAudio World Environment Socket"
 
+    default_value: StringProperty(
+        name="default_value",
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'}
+    )
+
     pbraudio_type: StringProperty(default='WorldEnvironment')
+
+    def draw(self, context, layout, node, text):
+        layout.label(text=text)
 
     def draw_color(self, context, node):
         return (0.0, 1.0, 0.0, 1.0) # Green

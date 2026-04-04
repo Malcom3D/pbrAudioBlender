@@ -103,6 +103,7 @@ class pbrAudioWorldOutputNode(AcousticWorldNode):
     def draw_buttons_ext(self, context, layout):
         layout.label(text=f"Sound Speed: {self.inputs[0].default_value} m/s")
         layout.label(text=f"Impedence: {self.inputs[1].default_value} kg/m³")
+        layout.label(text=f"Environment: {self.inputs[2].default_value}")
 
     def socket_value_update(context):
         self.sync_data(context)
@@ -439,6 +440,19 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
     """pbrAudio environment node"""
     bl_idname = 'pbrAudioEnvironmentNode'
     bl_label = "Environment"
+
+    def sync_data(self, context):
+        # output Temperature
+        if self.outputs[0].is_linked and not self.outputs[0].default_value == self.pbraudio_field_datafile:
+           # the value of the filename is the output socket, write it's value to self.pbraudio_field_datafile to be readed from exporter
+           self.pbraudio_field_datafile = self.outputs[0].default_value
+
+    pbraudio_field_datafile: StringProperty(
+        name="Field Data File",
+        description="Path to json file with field data for the ambisonic 3D decoder (sphere field)",
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'}
+    )
 
     ambisonic_file: StringProperty(
         name="Audio File",

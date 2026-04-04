@@ -102,7 +102,7 @@ class NODE_OT_remove_spatial_point(Operator):
                 node.update_dynamic_inputs()
                 
                 # Update the node
-                node node.update()
+                node.update()
             
             return {'FINISHED'}
         return {'CANCELLED'}

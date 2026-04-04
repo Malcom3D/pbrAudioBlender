@@ -42,11 +42,10 @@ class pbrAudioWorldNodeSocket(NodeSocket):
         if self.is_output or (not self.is_output and not self.is_linked):
             layout.prop(self, "default_value", text=text, slider=True)
         elif not self.is_output and self.is_linked:
-#            layout.prop(self, "default_value", text=text, slider=True) #################### To Be removed: Test with preview
-            layout.label(text=f"{text}: {self.default_value}")
+            layout.label(text=text)
 
     def draw_color(self, context, node):
-        return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
+        return (0.0, 0.0, 1.0, 1.0) # Blue
 
 classes.append(pbrAudioWorldNodeSocket)
 
@@ -57,7 +56,7 @@ class pbrAudioWorldPropertyNodeSocket(pbrAudioWorldNodeSocket):
     pbraudio_type: StringProperty(default='WorldMaterial')
 
     def draw_color(self, context, node):
-        return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
+        return (1.0, 1.0, 1.0, 1.0) # white
 
 classes.append(pbrAudioWorldPropertyNodeSocket)
 
@@ -68,7 +67,7 @@ class pbrAudioWorldParameterNodeSocket(pbrAudioWorldNodeSocket):
     pbraudio_type: StringProperty(default='WorldParameter')
 
     def draw_color(self, context, node):
-        return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
+        return (0.65, 0.65, 0.65, 1.0) # Light Gray
 
 classes.append(pbrAudioWorldParameterNodeSocket)
 
@@ -78,8 +77,11 @@ class pbrAudioWorldMaterialNodeSocket(pbrAudioWorldNodeSocket):
 
     pbraudio_type: StringProperty(default='WorldMaterial')
 
+    def draw(self, context, layout, node, text):
+        layout.label(text=text)
+
     def draw_color(self, context, node):
-        return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
+        return (1.0, 0.1, 0.0, 1.0) # Orange
 
 classes.append(pbrAudioWorldMaterialNodeSocket)
 
@@ -90,6 +92,6 @@ class pbrAudioWorldEnvironmentNodeSocket(pbrAudioWorldNodeSocket):
     pbraudio_type: StringProperty(default='WorldEnvironment')
 
     def draw_color(self, context, node):
-        return (1.0, 1.0, 1.0, 1.0) # white for collection data
+        return (0.0, 1.0, 0.0, 1.0) # Green
 
 classes.append(pbrAudioWorldEnvironmentNodeSocket)

@@ -47,9 +47,9 @@ class NODE_OT_add_spatial_point(Operator):
         max=90.0
     )
     
-    def invoke(self, context, event):
-        # Open a dialog to set azimuth and elevation
-        return context.window_manager.invoke_props_dialog(self)
+#    def invoke(self, context, event):
+#        # Open a dialog to set azimuth and elevation
+#        return context.window_manager.invoke_props_dialog(self)
     
     def draw(self, context):
         layout = self.layout

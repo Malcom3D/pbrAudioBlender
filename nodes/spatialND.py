@@ -59,6 +59,11 @@ class SpatialResponsePoint(PropertyGroup):
         description="Name of the node tree containing the response node",
         default=""
     )
+
+    link_idx: IntProperty(
+        name="Input link idx",
+        default=0
+    )
 classes.append(SpatialResponsePoint)
 
 class SPATIALRESPONSE_UL_Points(UIList):
@@ -113,21 +118,32 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
     dynamic_inputs_initialized: BoolProperty(default=False)
     
     def init(self, context):
-        """Initialize the node with default outputs"""
         self.outputs.new('AcousticValueNodeSocket', "Spatial Frequency Response")
+    
+    def add_inputs(self):
+        i, point in enumerate(self.spatial_points)[-1]
+        input_name = f"Response {i+1:02d} ({point.azimuth:.0f}°, {point.elevation:.0f}°)"
+        socket = self.inputs.new('AcousticValueNodeSocket', input_name)
+        socket.identifier = f"response_{i}"
         
-        # Add a default spatial points
-        if len(self.spatial_points) == 0:
-            # Front
-            point = self.spatial_points.add()
-            point.azimuth = 0.0
-            point.elevation = 0.0
-            
-        # Initialize dynamic inputs
-        self.update_dynamic_inputs()
+        # Store point index in socket for reference
+        socket.point_index = i
     
     def update_dynamic_inputs(self):
         """Create dynamic inputs based on spatial points"""
+        # Update point references in connected nodes
+        for i, point in enumerate(self.spatial_points):
+            input_idx = self.get_input_index_for_point(i)
+            if input_idx >= 0 and self.inputs[input_idx].is_linked:
+                # Get the connected node
+                link = self.inputs[input_idx].links[0]
+                from_node = link.from_node
+
+                # Update the point with node reference
+                point.response_node_name = from_node.name
+                point.node_tree_name = from_node.id_data.name
+                point.link_idx = input_idx
+
         # Remove existing dynamic inputs
         for i in range(len(self.inputs) - 1, -1, -1):
             if self.inputs[i].name.startswith("Response "):
@@ -142,6 +158,12 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
             # Store point index in socket for reference
             socket.point_index = i
     
+        # Connect nodes
+        for i, point in enumerate(self.spatial_points):
+            nodetree = bpy.data.node_groups[point.node_tree_name]
+            response_node = nodetree.nodes[point.response_node_name]
+            nodetree.links.new(response_node.outputs[0], self.inputs[point.link_idx])
+
     def draw_buttons(self, context, layout):
         """Draw the node UI"""
         # Spatial points list
@@ -204,18 +226,6 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
             self.update_dynamic_inputs()
             self.dynamic_inputs_initialized = True
         
-        # Update point references in connected nodes
-        for i, point in enumerate(self.spatial_points):
-            input_idx = self.get_input_index_for_point(i)
-            if input_idx >= 0 and self.inputs[input_idx].is_linked:
-                # Get the connected node
-                link = self.inputs[input_idx].links[0]
-                from_node = link.from_node
-                
-                # Update the point with node reference
-                point.response_node_name = from_node.name
-                point.node_tree_name = from_node.id_data.name
-    
     def free(self):
         """Clean up when node is deleted"""
         self.dynamic_inputs_initialized = False

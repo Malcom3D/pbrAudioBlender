@@ -39,6 +39,9 @@ class pbrAudioPreviewNode(AcousticWorldNode):
     def init(self, context):
         self.inputs.new('pbrAudioWorldParameterNodeSocket', "data")
 
+    def socket_value_update(context):
+        self.sync_data(context)
+
 classes.append(pbrAudioPreviewNode)
 
 class pbrAudioWorldOutputNode(AcousticWorldNode):

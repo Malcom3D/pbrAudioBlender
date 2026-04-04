@@ -41,13 +41,3 @@ class AcousticPropertiesNode(AcousticMaterialNode):
         self.inputs.new('AcousticValueNodeSocket', "scattering")
 
 classes.append(AcousticPropertiesNode)
-
-#class DispertionPatternGraph(AcousticMaterialNode):
-#    """Dispertion Pattern Graph node"""
-#    bl_idname = 'DispertionPatternGraph'
-#    bl_label = "Dispertion Pattern Graph"
-#
-#    def init(self, context):
-#        pass
-#
-#classes.append(DispertionPatternGraph)

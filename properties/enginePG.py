@@ -24,23 +24,33 @@ from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty, 
 classes = []
 
 class PBRAudioEngineProperties(PropertyGroup):
-#    def compute_speed_imp(self, context):
-#       self.compute_speed(self, context)
-#       self.compute_impedence(self, context)
+    def nyquist_limit(self, context):
+        sample_rate = context.scene.pbraudio.sample_rate
+        nyquist = sample_rate / 2
+        if self.higher_frequency > nyquist:
+            self.higher_frequency = nyquist
 
-#    def compute_speed(self, context):
-#       if self.type == 'GAS':
-#          self.sound_speed = sqrt((self.C_p/self.C_v)*(self.R_0/self.M)*(self.temperature+273.15))
-#       elif self.type == 'LIQUID':
-#          self.sound_speed = sqrt(self.K/self.density)
-#       elif self.type == 'SOLID':
-#          self.sound_speed = sqrt(self.E/self.density)
-#
-#       if self.outputs['Sound Speed'].is_linked:
-#          self.outputs['Sound Speed'].sound_speed = self.sound_speed
-#
-#    def compute_impedence(self, context):
-#        self.impedence = self.density*self.sound_speed
+    """ Frequency Range Panel """
+    enable_frequencies_range_set: BoolProperty(
+        name="Frequency Range",
+        description="Set the frequency range within the default medium",
+    )
+
+    lowest_frequency: FloatProperty(
+        name="Lower Frequency",
+        description="Limit minimum frequency to the lower frequency",
+        default=20,
+        min=1,
+        max=20000,
+    )
+
+    higher_frequency: FloatProperty(
+        name="Max Impedence Ratio",
+        description="Limit maximum frequency to the higher frequency",
+        default=20000,
+        min=1,
+        update=nyquist_limit
+    )
 
     """ Sampling Panel """
     max_interactions: IntProperty(

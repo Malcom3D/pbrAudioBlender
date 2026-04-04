@@ -25,55 +25,6 @@ from .baseND import AcousticWorldNode
 
 classes = []
 
-class pbrAudioPreviewNode(AcousticWorldNode):
-    """Acoustic data value previewer node"""
-    bl_idname = 'pbrAudioPreviewNode'
-    bl_label = "Acoustic World Preview"
-
-    def sync_data(self, context):
-        # input Value
-        if self.inputs[0].is_linked and not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
-           # Read the value from_socket.default_value and write to local self.inputs[0].default_value to be viewed
-           self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
-
-    def init(self, context):
-        self.inputs.new('pbrAudioWorldNodeSocket', "data")
-
-    def draw_buttons_ext(self, context, layout):
-        layout.label(text=f"Socket Value: {self.inputs[0].default_value}")
-
-    def socket_value_update(context):
-        self.sync_data(context)
-
-classes.append(pbrAudioPreviewNode)
-
-class pbrAudioValueNode(AcousticWorldNode):
-    """Acoustic data value output node"""
-    bl_idname = 'pbrAudioValueNode'
-    bl_label = "Acoustic World Preview"
-
-    default_value: FloatProperty(
-        name="default value"
-    )
-
-    def sync_data(self, context):
-        # output Value
-        if self.outputs[0].is_linked and not self.default_value == self.outputs[0].default_value:
-           # the default_value of the slider is the output socket, write it's value to self.value to be readed from exporter
-           self.default_value = self.outputs[0].default_value
-
-    def init(self, context):
-        self.outputs.new('pbrAudioWorldNodeSocket', "data")
-
-    def draw_buttons_ext(self, context, layout):
-        layout.label(text=f"Value: {self.value}")
-        layout.label(text=f"Socket Value: {self.outputs[0].default_value}")
-
-    def socket_value_update(context):
-        self.sync_data(context)
-
-classes.append(pbrAudioValueNode)
-
 class pbrAudioWorldOutputNode(AcousticWorldNode):
     """Acoustic world output node"""
     bl_idname = 'pbrAudioWorldOutputNode'
@@ -130,9 +81,9 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
         if self.inputs[1].is_linked and not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value:
            # Read the value from_socket.default_value and write to local self.inputs[1].default_value
            self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
-        if self.inputs[0].is_linked and not self.density == self.inputs[1].default_value:
-           # read the local self.inputs[0].default_value and write to self.density to be used for computation
-           self.density = self.inputs[0].default_value
+        if self.inputs[1].is_linked and not self.density == self.inputs[1].default_value:
+           # read the local self.inputs[1].default_value and write to self.density to be used for computation
+           self.density = self.inputs[1].default_value
         else:
            # the value of the slider is the input socket, write it's value to self.density to be readed from exporter and used for computation
            self.density = self.inputs[0].default_value

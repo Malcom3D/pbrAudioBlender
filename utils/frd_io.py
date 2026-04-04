@@ -18,77 +18,176 @@
 
 import os
 import numpy as np
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import CubicSpline, SmoothSphereBivariateSpline, RectBivariateSpline
+import warnings
+
 
 def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
     """
-    Parse FRD, CAL, CSV, or TXT file and return frequency, magnitude, phase arrays or real/imaginary parts.
+    Parse FRD file and return frequency, magnitude, and phase arrays.
+    Supports default, .cal, .csv, and .txt formats.
+    """
+    ext = os.path.splitext(filepath)[1].lower()
 
-    Args:
-        filepath (str): Path to the data file.
-        has_phase (bool): True if file contains magnitude and phase.
-        has_imaginary (bool): True if file contains real and imaginary parts.
+    if ext == '.cal':
+        return parse_cal_file(filepath)
+    elif ext == '.csv':
+        return parse_csv_file(filepath)
+    elif ext == '.txt':
+        return parse_txt_file(filepath)
+    else:
+        # Default parsing (assuming space-separated columns)
+        return parse_default_file(filepath, has_phase, has_imaginary)
 
-    Returns:
-        tuple: Depending on flags, returns:
-            - (frequencies, magnitudes, phases)
-            - (frequencies, real_parts, imag_parts)
+def parse_cal_file(filepath):
+    """
+    Parse .cal file assuming it has columns: frequency, magnitude, phase (degrees)
     """
     frequencies = []
     magnitudes = []
     phases = []
-    real_parts = []
-    imag_parts = []
-
-    # Determine file extension
-    ext = os.path.splitext(filepath)[1].lower()
 
     try:
         with open(filepath, 'r') as f:
             for line in f:
                 line = line.strip()
-                if not line or line.startswith('#') or line.startswith('!'):
+                if not line or line.startswith('#'):
                     continue
-                # split by comma, space, or tab
-                parts = [p.strip() for p in line.replace(',', ' ').split()]
-                if len(parts) == 0:
-                    continue
+                parts = line.split()
+                if len(parts) >= 3:
+                    try:
+                        freq = float(parts[0])
+                        mag = float(parts[1])
+                        phase = float(parts[2])
+                        frequencies.append(freq)
+                        magnitudes.append(mag)
+                        phases.append(phase)
+                    except ValueError:
+                        continue
+        return np.array(frequencies), np.array(magnitudes), np.array(phases)
+    except Exception as e:
+        print(f"Error parsing CAL file {filepath}: {e}")
+        return np.array([]), np.array([]), np.array([])
 
-                try:
-                    if has_imaginary:
-                        # Expecting frequency, real, imag
-                        if len(parts) >= 3:
+def parse_csv_file(filepath):
+    """
+    Parse .csv file expecting columns: frequency, magnitude, phase
+    """
+    import csv
+    frequencies = []
+    magnitudes = []
+    phases = []
+
+    try:
+        with open(filepath, 'r') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                if len(row) >= 3:
+                    try:
+                        freq = float(row[0])
+                        mag = float(row[1])
+                        phase = float(row[2])
+                        frequencies.append(freq)
+                        magnitudes.append(mag)
+                        phases.append(phase)
+                    except ValueError:
+                        continue
+        return np.array(frequencies), np.array(magnitudes), np.array(phases)
+    except Exception as e:
+        print(f"Error parsing CSV file {filepath}: {e}")
+        return np.array([]), np.array([]), np.array([])
+
+def parse_txt_file(filepath):
+    """
+    Parse .txt file assuming space-separated columns: frequency, magnitude, phase
+    """
+    frequencies = []
+    magnitudes = []
+    phases = []
+
+    try:
+        with open(filepath, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                parts = line.split()
+                if len(parts) >= 3:
+                    try:
+                        freq = float(parts[0])
+                        mag = float(parts[1])
+                        phase = float(parts[2])
+                        frequencies.append(freq)
+                        magnitudes.append(mag)
+                        phases.append(phase)
+                    except ValueError:
+                        continue
+        return np.array(frequencies), np.array(magnitudes), np.array(phases)
+    except Exception as e:
+        print(f"Error parsing TXT file {filepath}: {e}")
+        return np.array([]), np.array([]), np.array([])
+
+def parse_default_file(filepath, has_phase=False, has_imaginary=False):
+    """
+    Fallback parser assuming space-separated: freq, mag[, phase]
+    """
+    frequencies = []
+    magnitudes = []
+    phases = []
+
+    try:
+        with open(filepath, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                parts = line.split()
+                if has_imaginary:
+                    # Expect: freq, real, imaginary
+                    if len(parts) >= 3:
+                        try:
                             freq = float(parts[0])
                             real = float(parts[1])
                             imag = float(parts[2])
                             frequencies.append(freq)
-                            real_parts.append(real)
-                            imag_parts.append(imag)
-                    elif has_phase:
-                        # Expecting frequency, magnitude, phase
-                        if len(parts) >= 3:
+                            # complex form
+                            mag = np.abs(complex(real, imag))
+                            phase = np.angle(complex(real, imag), deg=True)
+                            magnitudes.append(mag)
+                            phases.append(phase)
+                        except ValueError:
+                            continue
+                elif has_phase:
+                    # Expect: freq, mag, phase
+                    if len(parts) >= 3:
+                        try:
                             freq = float(parts[0])
                             mag = float(parts[1])
                             phase = float(parts[2])
                             frequencies.append(freq)
                             magnitudes.append(mag)
                             phases.append(phase)
-                    else:
-                        # Expecting frequency, magnitude
-                        if len(parts) >= 2:
+                        except ValueError:
+                            continue
+                else:
+                    # Expect: freq, mag
+                    if len(parts) >= 2:
+                        try:
                             freq = float(parts[0])
                             mag = float(parts[1])
                             frequencies.append(freq)
                             magnitudes.append(mag)
-                except ValueError:
-                    continue
-        if has_imaginary:
-            return np.array(frequencies), np.array(real_parts), np.array(imag_parts)
-        else:
-            return np.array(frequencies), np.array(magnitudes), np.array(phases)
+                        except ValueError:
+                            continue
+        return np.array(frequencies), np.array(magnitudes), np.array(phases)
     except Exception as e:
-        print(f"Error parsing {filepath}: {e}")
+        print(f"Error parsing default file {filepath}: {e}")
         return np.array([]), np.array([]), np.array([])
+
+
+def validate_frd_file(filepath):
+    frequencies, magnitudes, phases = parse_frd_file(filepath)
+    return validate_frd_data(frequencies, magnitudes, phases)
 
 def validate_frd_data(frequencies, magnitudes, phases=None):
     """
@@ -122,43 +221,182 @@ def compute_group_delay(frequencies, phases_deg):
     group_delay = -dphase_domega
     return group_delay
 
-def resample_data(frequencies, magnitudes, phases=None, num_points=100, use_spline=True):
+def resample_frd(frequencies, magnitudes, phases=None, num_points=100):
     """
-    Resample data to num_points over the frequency range using cubic spline or linear interpolation.
+    Resample frequency response data to 'num_points' over log-spaced frequencies
+    using cubic spline interpolation.
     """
     if len(frequencies) < 2:
-        # Not enough data to resample
-        if phases is not None:
-            return frequencies, magnitudes, phases
-        else:
-            return frequencies, magnitudes
+        # Not enough points to resample
+        return frequencies, magnitudes, phases
 
-    # Create log-spaced frequency points for resampling
-    f_min = np.log10(frequencies[0]) if frequencies[0] > 0 else np.log10(max(frequencies[0], 1e-6))
-    f_max = np.log10(frequencies[-1])
-    resampled_freqs = np.logspace(f_min, f_max, num_points)
+    # Logarithmic space of frequencies
+    log_f_min = np.log10(frequencies[0])
+    log_f_max = np.log10(frequencies[-1])
+    resampled_freqs = np.logspace(log_f_min, log_f_max, num_points)
 
     # Interpolate magnitude
-    mag_spline = CubicSpline(np.log10(frequencies), magnitudes) if use_spline else None
-    if use_spline:
-        resampled_magnitudes = mag_spline(np.log10(resampled_freqs))
-    else:
-        resampled_magnitudes = np.interp(np.log10(resampled_freqs), np.log10(frequencies), magnitudes)
+    mag_spline = CubicSpline(np.log10(frequencies), magnitudes)
+    resampled_magnitudes = mag_spline(np.log10(resampled_freqs))
 
-    # Resample phase if available
     if phases is not None:
-        # Unwrap phase to avoid discontinuities
-        unwrapped_phase = np.unwrap(np.radians(phases))
-        phase_spline = CubicSpline(np.log10(frequencies), unwrapped_phase) if use_spline else None
-        if use_spline:
-            resampled_phase_unwrapped = phase_spline(np.log10(resampled_freqs))
-        else:
-            resampled_phase_unwrapped = np.interp(np.log10(resampled_freqs), np.log10(frequencies), np.radians(phases))
-        # Wrap phase back to degrees within -180 to 180
-        resampled_phases_deg = (np.degrees(resampled_phase_unwrapped) + 180) % 360 - 180
+        # Unwrap phases to avoid jumps
+        unwrapped_phases = np.unwrap(np.radians(phases))
+        phase_spline = CubicSpline(np.log10(frequencies), unwrapped_phases)
+        resampled_phases_unwrapped = phase_spline(np.log10(resampled_freqs))
+        # Wrap phases to [-180, 180] 
+        resampled_phases_deg = (np.degrees(resampled_phases_unwrapped) + 180) % 360 - 180
         return resampled_freqs, resampled_magnitudes, resampled_phases_deg
     else:
-        return resampled_freqs, resampled_magnitudes
+        return resampled_freqs, resampled_magnitudes, None
+
+def interpolate_spatial_response(target_azimuth, target_elevation, spatial_points, responses, method='BILINEAR'):
+    """
+    Interpolate frequency response at a target direction from spatial points.
+    
+    Parameters:
+        target_azimuth (float): Target azimuth in degrees
+        target_elevation (float): Target elevation in degrees
+        spatial_points (list): List of (azimuth, elevation) tuples in degrees
+        responses (list): List of corresponding frequency response data (freq, mag, phase)
+        method (str): Interpolation method ('NEAREST', 'BILINEAR', 'SPHERICAL')
+    
+    Returns:
+        tuple: Interpolated (frequencies, magnitudes, phases)
+    """
+    if not spatial_points or not responses:
+        return None
+    
+    # Convert to numpy arrays for easier manipulation
+    spatial_points = np.array(spatial_points)
+    
+    # Check if all responses have the same frequency points
+    base_freq = responses[0][0]
+    for freq, _, _ in responses:
+        if not np.array_equal(freq, base_freq):
+            raise ValueError("All responses must have the same frequency points")
+    
+    if method == 'NEAREST':
+        # Find nearest point using Euclidean distance
+        distances = np.sqrt(
+            (spatial_points[:, 0] - target_azimuth) ** 2 + 
+            (spatial_points[:, 1] - target_elevation) ** 2
+        )
+        nearest_idx = np.argmin(distances)
+        return responses[nearest_idx]
+    
+    elif method == 'BILINEAR':
+        # Extract unique azimuth and elevation values
+        azimuths = np.unique(spatial_points[:, 0])
+        elevations = np.unique(spatial_points[:, 1])
+        
+        # Check if points form a regular grid
+        if len(azimuths) * len(elevations) != len(spatial_points):
+            warnings.warn("Points do not form a regular grid. Using nearest neighbor for BILINEAR.")
+            return interpolate_spatial_response(
+                target_azimuth, target_elevation, 
+                spatial_points, responses, method='NEAREST'
+            )
+        
+        # Create meshgrid for the regular grid
+        az_grid, el_grid = np.meshgrid(azimuths, elevations, indexing='ij')
+        
+        # Initialize arrays for interpolated magnitude and phase
+        n_freq = len(base_freq)
+        interp_mag = np.zeros(n_freq)
+        interp_phase = np.zeros(n_freq)
+        
+        # For each frequency, create a 2D interpolation
+        for freq_idx in range(n_freq):
+            # Extract magnitude and phase values at this frequency
+            mag_grid = np.zeros_like(az_grid)
+            phase_grid = np.zeros_like(az_grid)
+            
+            # Fill the grids
+            for i, (az, el) in enumerate(spatial_points):
+                az_idx = np.where(azimuths == az)[0][0]
+                el_idx = np.where(elevations == el)[0][0]
+                mag_grid[az_idx, el_idx] = responses[i][1][freq_idx]
+                phase_grid[az_idx, el_idx] = responses[i][2][freq_idx]
+            
+            # Create cubic interpolation splines
+            mag_spline = RectBivariateSpline(azimuths, elevations, mag_grid, kx=3, ky=3)
+            phase_spline = RectBivariateSpline(azimuths, elevations, phase_grid, kx=3, ky=3)
+            
+            # Interpolate at target point
+            interp_mag[freq_idx] = mag_spline(target_azimuth, target_elevation)[0, 0]
+            interp_phase[freq_idx] = phase_spline(target_azimuth, target_elevation)[0, 0]
+        
+        return (base_freq, interp_mag, interp_phase)
+    
+    elif method == 'SPHERICAL':
+        # Convert to radians for spherical coordinates
+        # Note: SmoothSphereBivariateSpline expects colatitude (π/2 - elevation) and longitude (azimuth)
+        # in radians, with colatitude in [0, π] and longitude in [0, 2π]
+        
+        # Convert to radians and adjust ranges
+        azimuths_rad = np.radians(spatial_points[:, 0])
+        elevations_rad = np.radians(spatial_points[:, 1])
+        
+        # Convert to colatitude (π/2 - elevation)
+        colatitudes = np.pi/2 - elevations_rad
+        
+        # Ensure azimuths are in [0, 2π]
+        azimuths_rad = np.mod(azimuths_rad, 2*np.pi)
+        
+        # Check for duplicate points
+        unique_points = np.unique(np.column_stack([colatitudes, azimuths_rad]), axis=0)
+        if len(unique_points) < len(colatitudes):
+            warnings.warn("Duplicate spherical points detected. Using nearest neighbor.")
+            return interpolate_spatial_response(
+                target_azimuth, target_elevation, 
+                spatial_points, responses, method='NEAREST'
+            )
+        
+        # Convert target point
+        target_az_rad = np.radians(target_azimuth) % (2*np.pi)
+        target_el_rad = np.radians(target_elevation)
+        target_colat = np.pi/2 - target_el_rad
+        
+        # Initialize arrays for interpolated magnitude and phase
+        n_freq = len(base_freq)
+        interp_mag = np.zeros(n_freq)
+        interp_phase = np.zeros(n_freq)
+        
+        # For each frequency, create a spherical interpolation
+        for freq_idx in range(n_freq):
+            # Extract magnitude and phase values at this frequency
+            mag_values = np.array([resp[1][freq_idx] for resp in responses])
+            phase_values = np.array([resp[2][freq_idx] for resp in responses])
+            
+            try:
+                # Create spherical spline for magnitude
+                mag_spline = SmoothSphereBivariateSpline(
+                    colatitudes, azimuths_rad, mag_values, 
+                    s=len(colatitudes)  # Smoothing parameter
+                )
+                
+                # Create spherical spline for phase
+                phase_spline = SmoothSphereBivariateSpline(
+                    colatitudes, azimuths_rad, phase_values,
+                    s=len(colatitudes)  # Smoothing parameter
+                )
+                
+                # Interpolate at target point
+                interp_mag[freq_idx] = mag_spline(target_colat, target_az_rad)[0]
+                interp_phase[freq_idx] = phase_spline(target_colat, target_az_rad)[0]
+                
+            except Exception as e:
+                warnings.warn(f"Spherical interpolation failed: {e}. Using nearest neighbor.")
+                return interpolate_spatial_response(
+                    target_azimuth, target_elevation, 
+                    spatial_points, responses, method='NEAREST'
+                )
+        
+        return (base_freq, interp_mag, interp_phase)
+    
+    else:
+        raise ValueError(f"Unknown interpolation method: {method}")
 
 def write_frd_file(filename, frequencies, magnitudes, phases_deg=None, data_from=None):
     """
@@ -189,3 +427,35 @@ def write_frd_file(filename, frequencies, magnitudes, phases_deg=None, data_from
     with open(filename, 'w') as f:
         f.writelines(lines)
 
+def generate_bands(freq_min, freq_max, bands_per_octave):
+    """
+    Generate frequency bands from freq_min to frq_max with bands_per_octave bands per octave.
+
+    Parameters:
+        freq_min (float): Minimum frequency in Hz.
+        freq_max (float): Maximum frequency in Hz.
+        bands_per_octave (int): Number of bands per octave.
+
+    Returns:
+        Tuple[total number of bands, list of tuples]:
+            total number of bands: The number of bands per octave for the number of computed number of octaves in the range
+            list of tuples: Each tuple contains (lower_bound, upper_bound) of a band.
+    """
+    # Calculate the number of octaves in the range
+    octaves = math.log2(freq_max / freq_min)
+    total_bands = int(math.ceil(octaves * bands_per_octave))
+    
+    bands = []
+    for i in range(total_bands):
+        # Calculate the lower and upper bounds of each band
+        lower_freq = freq_min * (2 ** (i / n_bands_per_octave))
+        upper_freq = freq_min * (2 ** ((i + 1) / n_bands_per_octave))
+        # Ensure the upper bound does not exceed freq_max
+        if upper_freq > freq_max:
+            upper_freq = freq_max
+        # Append the band edges
+        bands.append((lower_freq, upper_freq))
+        # Stop if we've reached or exceeded freq_max
+        if upper_freq >= freq_max:
+            break
+    return total_bands, bands

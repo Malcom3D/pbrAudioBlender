@@ -22,9 +22,9 @@ from nodeitems_utils import NodeCategory, NodeItem, register_node_categories, un
 
 classes = []
 
-from . import worldND, baseND, materialND, inputND, outputND, plotND, audioND
+from . import worldND, baseND, materialND, inputND, outputND, plotND, audioND, spatialND
 
-for mod in (worldND, baseND, materialND, inputND, outputND, plotND, audioND):
+for mod in (worldND, baseND, materialND, inputND, outputND, plotND, audioND, spatialND):
     classes += mod.classes
 
 class WorldNodeCategory(NodeCategory):
@@ -34,8 +34,6 @@ class WorldNodeCategory(NodeCategory):
 
 world_node_categories = [
     WorldNodeCategory("WORLD_NODES", "World", items=[
-        NodeItem("pbrAudioPreviewNode"),
-        NodeItem("pbrAudioValueNode"),
         NodeItem("pbrAudioWorldOutputNode"),
         NodeItem("pbrAudioWorldMaterialNode"),
         NodeItem("pbrAudioImpedenceNode"),
@@ -50,11 +48,17 @@ class MaterialNodeCategory(NodeCategory):
     def poll(cls, context):
         return context.space_data.tree_type == 'AcousticMaterialNodeTree'
 
+property_node_categories = [
+    MaterialNodeCategory("PROPERTY_NODE", "Property", items=[
+        NodeItem("AcousticPropertiesNode"),
+    ]),
+]
+
 input_node_categories = [
     MaterialNodeCategory("INPUT_NODES", "Input", items=[
-        NodeItem("AcousticPropertiesNode"),
         NodeItem("FrequencyResponseFilesNode"),
         NodeItem("FrequencyResponseChartNode"),
+        NodeItem("SpatialFrequencyResponseNode"),
     ]),
 ]
 
@@ -88,8 +92,10 @@ def register():
     register_node_categories("INPUT", input_node_categories)
     register_node_categories("OUTPUT", output_node_categories)
     register_node_categories("MATERIAL", material_node_categories)
+    register_node_categories("PROPERTY", property_node_categories)
 
 def unregister():
+    unregister_node_categories("PROPERTY")
     unregister_node_categories("MATERIAL")
     unregister_node_categories("OUTPUT")
     unregister_node_categories("INPUT")

@@ -41,7 +41,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
             bpy.ops.report({'ERROR'}, f"An unexpected error occurred while processing the file: {self.frd_filepath} is not a valid FRD file")
             self.frd_filepath = ''
 
-    pbraudio_type: StringProperty(default='AcousticProperties')
+    pbraudio_type: StringProperty(default='FrequencyResponse')
 
     frd_filepath: StringProperty(
         name="ResponseFile",
@@ -85,8 +85,8 @@ class FRDDataPoint(PropertyGroup):
         name="Phase (degrees)",
         description="Phase in degrees",
         default=0.0,
-        soft_min=-360.0,
-        soft_max=360.0
+        soft_min=-180.0,
+        soft_max=180.0
     )
 classes.append(FRDDataPoint)
 
@@ -106,7 +106,7 @@ class FrequencyResponseChartNode(AcousticBaseNode):
     def write_frd_file_id(self, context):
         bpy.ops.node.export_frd_response(node_tree=self.id_data.name, node_name=self.name, filepath=self.pbraudio_response_filepath)
 
-    pbraudio_type: StringProperty(default='AcousticProperties')
+    pbraudio_type: StringProperty(default='FrequencyResponse')
 
     # Collection of data points
     frd_points: CollectionProperty(type=FRDDataPoint)

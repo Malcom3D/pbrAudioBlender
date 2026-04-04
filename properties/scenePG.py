@@ -69,7 +69,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         update=set_quality
     )
 
-    sample_rate: IntProperty(
+    sample_rate: FloatProperty(
         name="Sample Rate",
         description="Audio sample rate in Hz",
         default=48000,

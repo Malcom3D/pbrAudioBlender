@@ -142,8 +142,8 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
            self.outputs[0].default_value = self.pbraudio_sound_speed
 
     def compute_speed_imp(self, context):
-       self.compute_speed(self, context)
-       self.compute_impedence(self, context)
+       self.compute_speed(context)
+       self.compute_impedence(context)
 
     def compute_impedence(self, context):
         self.impedence = self.density*self.pbraudio_sound_speed

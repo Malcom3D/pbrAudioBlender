@@ -75,7 +75,7 @@ class CollisionExporter:
                     desired_points, _ = frd_io.generate_bands(freq_max, freq_min, bands_per_octave)
                     freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                     resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
-                    acoustic_dict[link] = {"frequencies": resampled_freqs, quantity_type: resampled_mags, 'phases': resampled_phases}
+                    acoustic_dict[link] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):

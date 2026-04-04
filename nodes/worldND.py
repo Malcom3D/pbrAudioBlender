@@ -60,7 +60,7 @@ class pbrAudioValueNode(AcousticWorldNode):
 #    def sync_data(self, context):
     def sync_data(self):
         # output Value
-        if self.outputs[0].is_linked and not self.pbraudio_density == self.outputs[0].default_value:
+        if self.outputs[0].is_linked and not self.value == self.outputs[0].default_value:
            # the value of the slider is the output socket, write it's value to self.value to be readed from exporter
            self.value = self.outputs[0].default_value
 

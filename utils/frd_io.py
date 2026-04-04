@@ -17,6 +17,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import math
 import numpy as np
 from scipy.interpolate import CubicSpline, SmoothSphereBivariateSpline, RectBivariateSpline
 import warnings

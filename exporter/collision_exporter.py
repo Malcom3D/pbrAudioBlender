@@ -65,6 +65,7 @@ class CollisionExporter:
                 elif pbraudio_node_type == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
                 elif pbraudio_node_type == 'FrequencyResponse':
+                    print(previous_acoustic_dict['response_filepath'])
                     freq_resp_file = previous_acoustic_dict['response_filepath']
                     if not os.path.isabs(freq_resp_file):
                         freq_resp_file = bpy.path.abspath(freq_resp_file)

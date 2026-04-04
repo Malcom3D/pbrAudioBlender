@@ -82,7 +82,7 @@ class CollisionExporter:
                         acoustic_dict[link] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
                     else:
                         freqs = [freq_max, freq_min]
-                        mags = [link.default_value, link.default_value]
+                        mags = [node.inputs[link].default_value, node.inputs[link].default_value]
                         phases = []
                         acoustic_dict[link] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
 

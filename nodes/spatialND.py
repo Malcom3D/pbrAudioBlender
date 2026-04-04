@@ -62,7 +62,6 @@ class SpatialResponsePoint(PropertyGroup):
 
     link_idx: IntProperty(
         name="Input link idx",
-        default=0
     )
 classes.append(SpatialResponsePoint)
 
@@ -131,23 +130,25 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
     
     def update_dynamic_inputs(self):
         """Create dynamic inputs based on spatial points"""
-        # Update point references in connected nodes
-        for i, point in enumerate(self.spatial_points):
-            input_idx = self.get_input_index_for_point(i)
-            if input_idx >= 0 and self.inputs[input_idx].is_linked:
-                # Get the connected node
-                link = self.inputs[input_idx].links[0]
-                from_node = link.from_node
+        if not self.inputs.keys == []:
+            # Update point references in connected nodes
+            for i, point in enumerate(self.spatial_points):
+                input_idx = self.get_input_index_for_point(i)
+                if input_idx >= 0 and self.inputs[input_idx].is_linked:
+                    # Get the connected node
+                    link = self.inputs[input_idx].links[0]
+                    from_node = link.from_node
 
-                # Update the point with node reference
-                point.response_node_name = from_node.name
-                point.node_tree_name = from_node.id_data.name
-                point.link_idx = input_idx
+                    # Update the point with node reference
+                    point.response_node_name = from_node.name
+                    point.node_tree_name = from_node.id_data.name
+                    point.link_idx = input_idx
 
-        # Remove existing dynamic inputs
-        for i in range(len(self.inputs) - 1, -1, -1):
-            if self.inputs[i].name.startswith("Response "):
-                self.inputs.remove(self.inputs[i])
+        if not self.inputs.keys == []:
+            # Remove existing dynamic inputs
+            for i in range(len(self.inputs) - 1, -1, -1):
+                if self.inputs[i].name.startswith("Response "):
+                    self.inputs.remove(self.inputs[i])
         
         # Add new inputs for each spatial point
         for i, point in enumerate(self.spatial_points):
@@ -160,9 +161,10 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
     
         # Connect nodes
         for i, point in enumerate(self.spatial_points):
-            nodetree = bpy.data.node_groups[point.node_tree_name]
-            response_node = nodetree.nodes[point.response_node_name]
-            nodetree.links.new(response_node.outputs[0], self.inputs[point.link_idx])
+            if point.link_idx:
+                nodetree = bpy.data.node_groups[point.node_tree_name]
+                response_node = nodetree.nodes[point.response_node_name]
+                nodetree.links.new(response_node.outputs[0], self.inputs[point.link_idx])
 
     def draw_buttons(self, context, layout):
         """Draw the node UI"""

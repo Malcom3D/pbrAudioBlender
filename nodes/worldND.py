@@ -30,8 +30,9 @@ class pbrAudioPreviewNode(AcousticWorldNode):
     bl_idname = 'pbrAudioPreviewNode'
     bl_label = "Acoustic World Preview"
 
-    def sync_data(self, context):
-        # input Sound Speed
+#    def sync_data(self, context):
+    def sync_data(self):
+        # input Value
         if self.inputs[0].is_linked and not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
            # Read the value from_socket.default_value and write to local self.inputs[0].default_value to be viewed
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
@@ -39,10 +40,41 @@ class pbrAudioPreviewNode(AcousticWorldNode):
     def init(self, context):
         self.inputs.new('pbrAudioWorldParameterNodeSocket', "data")
 
-    def socket_value_update(context):
-        self.sync_data(context)
+    def draw_buttons_ext(self, context, layout):
+        layout.label(text=f"Socket Value: {self.inputs[0].default_value}")
+
+    def update(self):
+        self.sync_data()
 
 classes.append(pbrAudioPreviewNode)
+
+class pbrAudioValueNode(AcousticWorldNode):
+    """Acoustic data value output node"""
+    bl_idname = 'pbrAudioValueNode'
+    bl_label = "Acoustic World Preview"
+
+    value: FloatProperty(
+        name="value"
+    )
+
+#    def sync_data(self, context):
+    def sync_data(self):
+        # output Value
+        if self.outputs[0].is_linked and not self.pbraudio_density == self.outputs[0].default_value:
+           # the value of the slider is the output socket, write it's value to self.value to be readed from exporter
+           self.value = self.outputs[0].default_value
+
+    def init(self, context):
+        self.outputs.new('pbrAudioWorldParameterNodeSocket', "data")
+
+    def draw_buttons_ext(self, context, layout):
+        layout.label(text=f"Value: {self.value}")
+        layout.label(text=f"Socket Value: {self.outputs[0].default_value}")
+
+    def update(self):
+        self.sync_data()
+
+classes.append(pbrAudioValueNode)
 
 class pbrAudioWorldOutputNode(AcousticWorldNode):
     """Acoustic world output node"""

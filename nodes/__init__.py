@@ -35,6 +35,7 @@ class WorldNodeCategory(NodeCategory):
 world_node_categories = [
     WorldNodeCategory("WORLD_NODES", "World", items=[
         NodeItem("pbrAudioPreviewNode"),
+        NodeItem("pbrAudioValueNode"),
         NodeItem("pbrAudioWorldOutputNode"),
         NodeItem("pbrAudioWorldMaterialNode"),
         NodeItem("pbrAudioImpedenceNode"),

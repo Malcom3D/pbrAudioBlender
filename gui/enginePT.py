@@ -89,7 +89,7 @@ class PBRAUDIO_PT_frequencies_range_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.prop(scene.pbraudio, "enable_frequencies_range_set")
+        layout.prop(scene.pbraudiorender, "enable_frequencies_range_set")
 
     def draw(self, context):
         layout = self.layout
@@ -99,8 +99,8 @@ class PBRAUDIO_PT_frequencies_range_panel(Panel):
         scene = context.scene
 
         if scene.pbraudio.enable_acoustic_preview:
-            layout.prop(scene.pbraudio, "lowest_frequency", text="Lowest Frequency")
-            layout.prop(scene.pbraudio, "higher_frequency", text="Higher Frequency")
+            layout.prop(scene.pbraudiorender, "lowest_frequency", text="Lowest Frequency")
+            layout.prop(scene.pbraudiorender, "higher_frequency", text="Higher Frequency")
 
 classes.append(PBRAUDIO_PT_frequencies_range_panel)
 

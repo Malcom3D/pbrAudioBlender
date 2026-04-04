@@ -30,6 +30,10 @@ class pbrAudioPreviewNode(AcousticWorldNode):
     bl_idname = 'pbrAudioPreviewNode'
     bl_label = "Acoustic World Preview"
 
+    def sync_data(self, context):
+        if not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+           self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
+
     def init(self, context):
         self.input.new('pbrAudioWorldParameterNodeSocket', "data")
 
@@ -54,9 +58,11 @@ class pbrAudioWorldOutputNode(AcousticWorldNode):
         self.inputs.new('pbrAudioWorldEnvironmentNodeSocket', "Environment")
 
     def draw_buttons_ext(self, context, layout):
-        self.sync_data(context)
         layout.label(text=f"Sound Speed: {self.inputs[0].default_value} m/s")
         layout.label(text=f"Impedence: {self.inputs[1].default_value} kg/m³")
+
+    def socket_value_update(context):
+        self.sync_data(context)
 
 classes.append(pbrAudioWorldOutputNode)
 

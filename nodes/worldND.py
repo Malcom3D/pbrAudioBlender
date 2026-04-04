@@ -455,7 +455,7 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
     )
 
     ambisonic_file: StringProperty(
-        name="Audio File",
+        name="Ambisonic File",
         description="Path to ambisonic file",
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'}
@@ -484,6 +484,7 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
+        layout.prop(self, "ambisonic_file")
         layout.prop(self, "ambisonic_order")
         layout.prop(self, "sphere_radius")
 

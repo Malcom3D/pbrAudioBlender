@@ -64,7 +64,7 @@ class CollisionExporter:
                 elif pbraudio_node_type == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
                 elif pbraudio_node_type == 'FrequencyResponse':
-                    freq_resp_file = previous_acoustic_dict['response_filepath']
+                    freq_resp_file = bpy.path.abspath(previous_acoustic_dict['response_filepath'])
                     quantity_type = 'magnitude'
                     if link in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
@@ -73,6 +73,7 @@ class CollisionExporter:
                     freq_max = pbraudiorender.higher_frequency
                     freq_min = pbraudiorender.lowest_frequency
                     desired_points, _ = frd_io.generate_bands(freq_max, freq_min, bands_per_octave)
+                    freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                     resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_data(freqs, mags, phases, num_points=desired_points)
                     acoustic_dict[link] = {"frequencies": resampled_freqs, quantity_type: resampled_mags, 'phases': resampled_phases}
 

@@ -215,7 +215,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     cache_path: StringProperty(
         name="Cache",
         description="Path to save cache files",
-        subtype='FILE_PATH',
+        subtype='DIR_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='//pbrAudioCache'
     )

@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import Operator
-from bpy.props import StringProperty, FloatProperty
+from bpy.props import StringProperty, FloatProperty, IntProperty
 
 classes = []
 

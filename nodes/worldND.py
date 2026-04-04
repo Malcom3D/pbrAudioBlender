@@ -86,7 +86,7 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
            self.density = self.inputs[1].default_value
         else:
            # the value of the slider is the input socket, write it's value to self.density to be readed from exporter and used for computation
-           self.density = self.inputs[0].default_value
+           self.density = self.inputs[1].default_value
 
         # output Sound Speed
         if self.outputs[0].is_linked and not self.outputs[0].default_value == self.pbraudio_sound_speed:

@@ -31,7 +31,7 @@ class CollisionExporter:
         self.decimals = decimals
         self.scale_factor = 1.0  # Blender units to meters
         collision_collection = scene.pbraudio.collision_collection.name_full
-        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+        self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}/{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)
         system = {}
         system["sample_rate"] = scene.pbraudio.sample_rate

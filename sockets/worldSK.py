@@ -24,6 +24,34 @@ from ..properties import worldPG
 
 classes = []
 
+class pbrAudioWorldNodeSocket(NodeSocket):
+    bl_idname = 'pbrAudioWorldNodeSocket'
+    bl_label = "pbrAudio World Node Socket"
+
+    def default_value_update(self, context):
+        if self.is_output and self.is_linked:
+            for link in self.links:
+                link.to_node.socket_value_update(context)
+
+    default_value: FloatProperty(
+        default=0.0
+        update=default_value_update
+    )
+
+    pbraudio_type: StringProperty(default='WorldSocket')
+
+    def draw(self, context, layout, node, text):
+        if self.is_output or (not self.is_output and not self.is_linked):
+            layout.prop(self, "default_value", text=text, slider=True)
+        elif not self.is_output and self.is_linked:
+            layout.prop(self, "default_value", text=text, slider=True) #################### To Be removed: Test with preview
+#            layout.label(text=f"{text}: {default_value}")
+
+    def draw_color(self, context, node):
+        return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
+
+classes.append(pbrAudioWorldNodeSocket)
+
 class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldPropertyNodeSocket'
     bl_label = "pbrAudio World Property Node Socket"
@@ -52,8 +80,7 @@ class pbrAudioWorldParameterNodeSocket(NodeSocket):
         elif not self.is_output and not self.is_linked:
             layout.prop(self, "default_value", text=text, slider=True)
         else:
-            layout.prop(self, "default_value", text=text, slider=True) #################### To Be removed: Test with preview
-#            layout.label(text=text)
+            layout.label(text=text)
 
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float

@@ -23,7 +23,7 @@ import sys, os, json
 from mathutils import Matrix
 from bpy_extras.io_utils import axis_conversion
 
-from ...utils import frd_io
+from ..utils import frd_io
 
 class CollisionExporter:
     def __init__(self, scene: bpy.types.Scene, decimals: int = 18):

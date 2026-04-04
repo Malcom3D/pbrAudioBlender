@@ -444,8 +444,8 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
     def sync_data(self, context):
         # output Temperature
         if self.outputs[0].is_linked and not self.outputs[0].default_value == self.pbraudio_field_datafile:
-           # the value of the filename is the output socket, write it's value to self.pbraudio_field_datafile to be readed from exporter
-           self.pbraudio_field_datafile = self.outputs[0].default_value
+           # the value of the self.pbraudio_field_datafile is computed, write it's value to self.outputs[0].default_value to be readed from exporter
+           self.outputs[0].default_value = self.pbraudio_field_datafile
 
     pbraudio_field_datafile: StringProperty(
         name="Field Data File",
@@ -484,7 +484,6 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        layout.prop(self, "ambisonic_file")
         layout.prop(self, "ambisonic_order")
         layout.prop(self, "sphere_radius")
 

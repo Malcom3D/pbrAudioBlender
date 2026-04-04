@@ -97,12 +97,6 @@ class pbrAudioWorldEnvironmentNodeSocket(pbrAudioWorldNodeSocket):
 
     pbraudio_type: StringProperty(default='WorldEnvironment')
 
-    def draw(self, context, layout, node, text):
-        if self.is_output:
-            layout.prop(self, "default_value", text=text)
-        elif not self.is_output and self.is_linked:
-            layout.label(text=text)
-
     def draw_color(self, context, node):
         return (0.0, 1.0, 0.0, 1.0) # Green
 

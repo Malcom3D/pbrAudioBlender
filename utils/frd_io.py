@@ -16,272 +16,176 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""
-FRD file parser for frequency response data with magnitude and phase support
-FRD format is typically a text file with frequency, magnitude, and optionally phase
-"""
 import os
 import numpy as np
+from scipy.interpolate import CubicSpline
 
 def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
     """
-    Parse FRD file and return frequency, magnitude, and phase arrays
-    
+    Parse FRD, CAL, CSV, or TXT file and return frequency, magnitude, phase arrays or real/imaginary parts.
+
     Args:
-        filepath: Path to FRD file
-        has_phase: If True, expects frequency, magnitude, phase columns
-        has_imaginary: If True, expects frequency, real, imaginary columns
-        
+        filepath (str): Path to the data file.
+        has_phase (bool): True if file contains magnitude and phase.
+        has_imaginary (bool): True if file contains real and imaginary parts.
+
     Returns:
-        tuple: (frequencies, magnitudes, phases) as numpy arrays
-                or (frequencies, magnitudes) if has_phase=False and has_imaginary=False
-                or (frequencies, real_parts, imag_parts) if has_imaginary=True
+        tuple: Depending on flags, returns:
+            - (frequencies, magnitudes, phases)
+            - (frequencies, real_parts, imag_parts)
     """
     frequencies = []
     magnitudes = []
     phases = []
     real_parts = []
     imag_parts = []
-    
+
+    # Determine file extension
+    ext = os.path.splitext(filepath)[1].lower()
+
     try:
         with open(filepath, 'r') as f:
             for line in f:
                 line = line.strip()
-                if not line or line.startswith('#'):
+                if not line or line.startswith('#') or line.startswith('!'):
                     continue
-                
-                # Try to parse numbers
-                parts = line.split()
-                
-                if has_imaginary:
-                    # Expecting frequency, real, imaginary
-                    if len(parts) >= 3:
-                        try:
+                # split by comma, space, or tab
+                parts = [p.strip() for p in line.replace(',', ' ').split()]
+                if len(parts) == 0:
+                    continue
+
+                try:
+                    if has_imaginary:
+                        # Expecting frequency, real, imag
+                        if len(parts) >= 3:
                             freq = float(parts[0])
                             real = float(parts[1])
                             imag = float(parts[2])
                             frequencies.append(freq)
                             real_parts.append(real)
                             imag_parts.append(imag)
-                        except ValueError:
-                            continue
-                elif has_phase:
-                    # Expecting frequency, magnitude, phase
-                    if len(parts) >= 3:
-                        try:
+                    elif has_phase:
+                        # Expecting frequency, magnitude, phase
+                        if len(parts) >= 3:
                             freq = float(parts[0])
                             mag = float(parts[1])
                             phase = float(parts[2])
                             frequencies.append(freq)
                             magnitudes.append(mag)
                             phases.append(phase)
-                        except ValueError:
-                            continue
-                else:
-                    # Expecting frequency, magnitude only
-                    if len(parts) >= 2:
-                        try:
+                    else:
+                        # Expecting frequency, magnitude
+                        if len(parts) >= 2:
                             freq = float(parts[0])
                             mag = float(parts[1])
                             frequencies.append(freq)
                             magnitudes.append(mag)
-                        except ValueError:
-                            continue
-        
+                except ValueError:
+                    continue
         if has_imaginary:
             return np.array(frequencies), np.array(real_parts), np.array(imag_parts)
         else:
             return np.array(frequencies), np.array(magnitudes), np.array(phases)
-    
     except Exception as e:
-        print(f"Error parsing FRD file {filepath}: {e}")
+        print(f"Error parsing {filepath}: {e}")
         return np.array([]), np.array([]), np.array([])
-
-def validate_frd_file(filepath):
-    frequencies, magnitudes, phases = parse_frd_file(filepath)
-    return validate_frd_data(frequencies, magnitudes, phases)
 
 def validate_frd_data(frequencies, magnitudes, phases=None):
     """
-    Validate FRD data
-    
-    Args:
-        frequencies: Array of frequencies
-        magnitudes: Array of magnitudes
-        phases: Array of phases (optional)
-        
-    Returns:
-        bool: True if data is valid
+    Validate the data arrays.
     """
-#    if len(frequencies) == 0 or len(magnitudes) == 0:
-    if frequencies.shape[0] == 0 or magnitudes.shape[0] == 0:
+    if frequencies.size == 0 or magnitudes.size == 0:
         return False
-    
-#    if len(frequencies) != len(magnitudes):
     if frequencies.shape[0] != magnitudes.shape[0]:
         return False
-    
-#    if phases is not None and len(phases) != len(frequencies):
-    if phases.shape[0] != 0 and phases.shape[0] != frequencies.shape[0]:
+    if phases is not None and phases.size != 0 and phases.shape[0] != frequencies.shape[0]:
         return False
-    
-    # Check if frequencies are monotonic (usually they should be)
     if not np.all(np.diff(frequencies) > 0):
         print("Warning: Frequencies are not strictly increasing")
-    
     return True
 
-def resample_frd_data(frequencies, magnitudes, phases=None, num_points=100):
+def compute_group_delay(frequencies, phases_deg):
     """
-    Resample FRD data to specified number of points
-    
-    Args:
-        frequencies: Original frequency array
-        magnitudes: Original magnitude array
-        phases: Original phase array (optional)
-        num_points: Number of points for resampling
-        
-    Returns:
-        tuple: (resampled_frequencies, resampled_magnitudes[, resampled_phases])
+    Calculate group delay from phase data
     """
     if len(frequencies) < 2:
+        return np.zeros_like(frequencies)
+    # Convert phase from degrees to radians
+    phases_rad = np.radians(phases_deg)
+    # Calculate the derivative d(phase_rad)/d(omega), where omega=2*pi*f
+    # Using np.gradient for numerical derivative
+    dphase_df = np.gradient(phases_rad, frequencies)
+    # Convert derivative with respect to frequency to derivative with respect to omega
+    # d(phase_rad)/d(omega) = d(phase_rad)/d(f) * (1 / (2*pi))
+    dphase_domega = dphase_df / (2 * np.pi)
+    # Group delay is negative of this
+    group_delay = -dphase_domega
+    return group_delay
+
+def resample_data(frequencies, magnitudes, phases=None, num_points=100, use_spline=True):
+    """
+    Resample data to num_points over the frequency range using cubic spline or linear interpolation.
+    """
+    if len(frequencies) < 2:
+        # Not enough data to resample
         if phases is not None:
             return frequencies, magnitudes, phases
         else:
             return frequencies, magnitudes
-    
-    # Create log-spaced frequencies for resampling
-    log_freq_min = np.log10(frequencies[0])
-    log_freq_max = np.log10(frequencies[-1])
-    resampled_freq = np.logspace(log_freq_min, log_freq_max, num_points)
-    
-    # Interpolate magnitudes
-    resampled_mag = np.interp(np.log10(resampled_freq), 
-                             np.log10(frequencies), 
-                             magnitudes)
-    
-    if phases is not None:
-        # For phase interpolation, we need to handle phase wrapping
-        # First unwrap the phase
-        unwrapped_phases = np.unwrap(phases, period=360)
-        
-        # Interpolate unwrapped phases
-        resampled_phase_unwrapped = np.interp(np.log10(resampled_freq),
-                                            np.log10(frequencies),
-                                            unwrapped_phases)
-        
-        # Wrap back to -180 to 180 range
-        resampled_phase = (resampled_phase_unwrapped + 180) % 360 - 180
-        
-        return resampled_freq, resampled_mag, resampled_phase
+
+    # Create log-spaced frequency points for resampling
+    f_min = np.log10(frequencies[0]) if frequencies[0] > 0 else np.log10(max(frequencies[0], 1e-6))
+    f_max = np.log10(frequencies[-1])
+    resampled_freqs = np.logspace(f_min, f_max, num_points)
+
+    # Interpolate magnitude
+    mag_spline = CubicSpline(np.log10(frequencies), magnitudes) if use_spline else None
+    if use_spline:
+        resampled_magnitudes = mag_spline(np.log10(resampled_freqs))
     else:
-        return resampled_freq, resampled_mag
+        resampled_magnitudes = np.interp(np.log10(resampled_freqs), np.log10(frequencies), magnitudes)
 
-def magnitude_phase_to_complex(magnitudes_db, phases_deg):
-    """
-    Convert magnitude (dB) and phase (degrees) to complex numbers
-    
-    Args:
-        magnitudes_db: Magnitude in dB
-        phases_deg: Phase in degrees
-        
-    Returns:
-        numpy.array: Complex frequency response
-    """
-    # Convert dB to linear magnitude
-    linear_magnitudes = 10 ** (magnitudes_db / 20.0)
-    
-    # Convert degrees to radians
-    phases_rad = np.radians(phases_deg)
-    
-    # Create complex response
-    complex_response = linear_magnitudes * np.exp(1j * phases_rad)
-    
-    return complex_response
+    # Resample phase if available
+    if phases is not None:
+        # Unwrap phase to avoid discontinuities
+        unwrapped_phase = np.unwrap(np.radians(phases))
+        phase_spline = CubicSpline(np.log10(frequencies), unwrapped_phase) if use_spline else None
+        if use_spline:
+            resampled_phase_unwrapped = phase_spline(np.log10(resampled_freqs))
+        else:
+            resampled_phase_unwrapped = np.interp(np.log10(resampled_freqs), np.log10(frequencies), np.radians(phases))
+        # Wrap phase back to degrees within -180 to 180
+        resampled_phases_deg = (np.degrees(resampled_phase_unwrapped) + 180) % 360 - 180
+        return resampled_freqs, resampled_magnitudes, resampled_phases_deg
+    else:
+        return resampled_freqs, resampled_magnitudes
 
-def complex_to_magnitude_phase(complex_response):
+def write_frd_file(filename, frequencies, magnitudes, phases_deg=None, data_from=None):
     """
-    Convert complex numbers to magnitude (dB) and phase (degrees)
-    
-    Args:
-        complex_response: Complex frequency response
-        
-    Returns:
-        tuple: (magnitudes_db, phases_deg)
+    Write the frequency response data to a file.
     """
-    # Calculate magnitude in linear scale
-    linear_magnitudes = np.abs(complex_response)
-    
-    # Convert to dB
-    magnitudes_db = 20 * np.log10(linear_magnitudes)
-    
-    # Calculate phase in radians, then convert to degrees
-    phases_rad = np.angle(complex_response)
-    phases_deg = np.degrees(phases_rad)
-    
-    return magnitudes_db, phases_deg
-
-def calculate_group_delay(frequencies, phases_deg):
-    """
-    Calculate group delay from phase data
-    
-    Args:
-        frequencies: Frequency array in Hz
-        phases_deg: Phase array in degrees
-        
-    Returns:
-        numpy.array: Group delay in seconds
-    """
-    if len(frequencies) < 2:
-        return np.zeros_like(frequencies)
-    
-    # Convert phase to radians
-    phases_rad = np.radians(phases_deg)
-    
-    # Calculate negative derivative of phase with respect to angular frequency
-    # d(phase)/d(omega) = d(phase)/d(f) * d(f)/d(omega) = d(phase)/d(f) * (1/(2π))
-    # Group delay = -d(phase)/d(omega) = -d(phase)/d(f) * (1/(2π))
-    
-    # Calculate phase derivative with respect to frequency
-    phase_derivative = np.gradient(phases_rad, frequencies)
-    
-    # Calculate group delay
-    group_delay = -phase_derivative / (2 * np.pi)
-    
-    return group_delay
-
-def write_frd_file(filename, frequencies, magnitudes, phases=None):
-    # Ensure directory exists
-    dir_path = os.path.dirname(filename)
-    os.makedirs(dir_path, exist_ok=True)
-
-    # Header
+    if not data_from == None:
+        data_from = " from " + data_from
     lines = []
     lines.append(f"! pbrAudioRender-0.2.1.x\n")
+    lines.append(f"! pbrAudio FRD Data\n")
     lines.append(f"!\n")
     lines.append(f"! frd_io exporter version 0.0.7\n")
-    lines.append(f"!\n")
-    lines.append(f"! Frequency Response Data (FRD) from FrequencyResponseChartNode\n")
+    lines.append(f"! Frequency Response Data (FRD){data_from}\n")
     lines.append(f"!\n")
     lines.append(f"! Format: Frequency(Hz)  Magnitude(dB)  Phase(degrees)\n")
     lines.append(f"!\n")
 
-    # FRD data
-    for f_idx in range(len(frequencies)):
-        lines.append(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
-    
+    for i in range(len(frequencies)):
+        f = frequencies[i]
+        mag = magnitudes[i]
+        if phases_deg is not None:
+            phase = phases_deg[i]
+            lines.append(f"{f} {mag} {phase}\n")
+        else:
+            lines.append(f"{f} {mag}\n")
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w') as f:
         f.writelines(lines)
-#        for f_idx in range(len(frequencies)):
-#            f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
-#        # Write header
-#        if phases is not None:
-#            f.write("# pbrAudioRender\n")
-#            f.write("# Frequency Magnitude Phase\n")
-#            for f_idx in range(len(frequencies)):
-#                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]} {phases[f_idx]}\n")
-#        else:
-#            f.write("# pbrAudioRender\n")
-#            f.write("# Frequency Magnitude\n")
-#            for f_idx in range(len(frequencies)):
-#                f.write(f"{frequencies[f_idx]} {magnitudes[f_idx]}\n")
+

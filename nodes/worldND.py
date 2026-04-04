@@ -185,7 +185,7 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
         layout.label(text=f"Temperature: {self.pbraudio_temperature} °C")
         layout.label(text=f"Density: {self.pbraudio_density} kg/m³")
 
-    def socket_value_update(context)
+    def socket_value_update(context):
         self.sync_data(context)
 
     def update(self):
@@ -248,7 +248,7 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
         layout.label(text=f"Sound Speed: {self.inputs[0].default_value} m/s")
         layout.label(text=f"Density: {self.inputs[1].default_value} kg/m³")
 
-    def socket_value_update(context)
+    def socket_value_update(context):
         self.sync_data(context)
 
     def update(self):
@@ -295,7 +295,7 @@ class pbrAudioDensityNode(AcousticWorldNode):
         self.sync_data(context)
         layout.label(text=f"Density: {self.pbraudio_density} kg/m³")
 
-    def socket_value_update(context)
+    def socket_value_update(context):
         self.sync_data(context)
 
     def update(self):
@@ -342,7 +342,7 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
     def draw_buttons_ext(self, context, layout):
         layout.label(text=f"Temperature: {self.pbraudio_temperature} °C")
 
-    def socket_value_update(context)
+    def socket_value_update(context):
         self.sync_data(context)
 
     def update(self):

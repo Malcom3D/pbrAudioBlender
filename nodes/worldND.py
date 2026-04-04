@@ -25,6 +25,16 @@ from .baseND import AcousticWorldNode
 
 classes = []
 
+class pbrAudioPreviewNode(AcousticWorldNode):
+    """Acoustic data value previewer node"""
+    bl_idname = 'pbrAudioPreviewNode'
+    bl_label = "Acoustic World Preview"
+
+    def init(self, context):
+        self.input.new('pbrAudioWorldParameterNodeSocket', "data")
+
+classes.append(pbrAudioPreviewNode)
+
 class pbrAudioWorldOutputNode(AcousticWorldNode):
     """Acoustic world output node"""
     bl_idname = 'pbrAudioWorldOutputNode'

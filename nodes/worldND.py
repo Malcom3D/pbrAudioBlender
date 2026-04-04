@@ -37,7 +37,7 @@ class pbrAudioPreviewNode(AcousticWorldNode):
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
 
     def init(self, context):
-        self.inputs.new('pbrAudioNodeSocket', "data")
+        self.inputs.new('pbrAudioWorldNodeSocket', "data")
 
     def draw_buttons_ext(self, context, layout):
         layout.label(text=f"Socket Value: {self.inputs[0].default_value}")
@@ -63,7 +63,7 @@ class pbrAudioValueNode(AcousticWorldNode):
            self.value = self.outputs[0].default_value
 
     def init(self, context):
-        self.outputs.new('pbrAudioNodeSocket', "data")
+        self.outputs.new('pbrAudioWorldNodeSocket', "data")
 
     def draw_buttons_ext(self, context, layout):
         layout.label(text=f"Value: {self.value}")

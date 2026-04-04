@@ -44,8 +44,8 @@ class pbrAudioWorldNodeSocket(NodeSocket):
         if self.is_output or (not self.is_output and not self.is_linked):
             layout.prop(self, "default_value", text=text, slider=True)
         elif not self.is_output and self.is_linked:
-            layout.prop(self, "default_value", text=text, slider=True) #################### To Be removed: Test with preview
-#            layout.label(text=f"{text}: {default_value}")
+#            layout.prop(self, "default_value", text=text, slider=True) #################### To Be removed: Test with preview
+            layout.label(text=f"{text}: {default_value}")
 
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float
@@ -56,8 +56,17 @@ class pbrAudioWorldPropertyNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldPropertyNodeSocket'
     bl_label = "pbrAudio World Property Node Socket"
 
+    def default_value_update(self, context):
+        if self.is_output and self.is_linked:
+            for link in self.links:
+                link.to_node.sync_data(context)
+
+    default_value: FloatProperty(
+        default=0.0,
+        update=default_value_update
+    )
+
     pbraudio_type: StringProperty(default='WorldProperty')
-    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         layout.label(text=text)
@@ -71,8 +80,17 @@ class pbrAudioWorldParameterNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldParameterNodeSocket'
     bl_label = "pbrAudio World Parameter Node Socket"
 
+    def default_value_update(self, context):
+        if self.is_output and self.is_linked:
+            for link in self.links:
+                link.to_node.sync_data(context)
+
+    default_value: FloatProperty(
+        default=0.0,
+        update=default_value_update
+    )
+
     pbraudio_type: StringProperty(default='WorldParameter')
-    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         if self.is_output:
@@ -91,8 +109,17 @@ class pbrAudioWorldMaterialNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldMaterialNodeSocket'
     bl_label = "pbrAudio World Material Node Socket"
 
+    def default_value_update(self, context):
+        if self.is_output and self.is_linked:
+            for link in self.links:
+                link.to_node.sync_data(context)
+
+    default_value: FloatProperty(
+        default=0.0,
+        update=default_value_update
+    )
+
     pbraudio_type: StringProperty(default='WorldMaterial')
-    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         layout.label(text=text)
@@ -106,8 +133,17 @@ class pbrAudioWorldEnvironmentNodeSocket(NodeSocket):
     bl_idname = 'pbrAudioWorldEnvironmentNodeSocket'
     bl_label = "pbrAudio World Environment Socket"
 
+    def default_value_update(self, context):
+        if self.is_output and self.is_linked:
+            for link in self.links:
+                link.to_node.sync_data(context)
+
+    default_value: StringProperty(
+        default="",
+        update=default_value_update
+    )
+
     pbraudio_type: StringProperty(default='WorldEnvironment')
-    default_value: FloatProperty(default=0.0)
 
     def draw(self, context, layout, node, text):
         layout.label(text=text)

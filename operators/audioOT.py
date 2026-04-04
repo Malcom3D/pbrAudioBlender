@@ -84,7 +84,8 @@ class NODE_OT_export_frd_response(Operator):
 
     def execute(self, context):
         if not self.node_name == "":
-            node = bpy.data.node_groups[self.node_tree].nodes[self.node_name]
+            nodetree = bpy.data.node_groups.get(self.node_tree)
+            node = nodetree.nodes[self.node_name]
             # Gather data points
             frequencies = []
             magnitudes = []

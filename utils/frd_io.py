@@ -28,17 +28,18 @@ def parse_frd_file(filepath, has_phase=False, has_imaginary=False):
     Parse FRD file and return frequency, magnitude, and phase arrays.
     Supports default, .cal, .csv, and .txt formats.
     """
-    ext = os.path.splitext(filepath)[1].lower()
-
-    if ext == '.cal':
-        return parse_cal_file(filepath)
-    elif ext == '.csv':
-        return parse_csv_file(filepath)
-    elif ext == '.txt':
-        return parse_txt_file(filepath)
+    if os.path.exists(filepath):
+        if filepath.endswith('.cal'):
+            return parse_cal_file(filepath)
+        elif filepath.endswith('.csv'):
+            return parse_csv_file(filepath)
+        elif filepath.endswith('.txt'):
+            return parse_txt_file(filepath)
+        else:
+            # Default parsing (assuming space-separated columns)
+            return parse_default_file(filepath, has_phase, has_imaginary)
     else:
-        # Default parsing (assuming space-separated columns)
-        return parse_default_file(filepath, has_phase, has_imaginary)
+        print(f"[Errno 2] No such file or directory: {filepath}")
 
 def parse_cal_file(filepath):
     """

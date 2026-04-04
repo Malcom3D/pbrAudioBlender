@@ -16,6 +16,7 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 import bpy
 import numpy as np
 import trimesh
@@ -60,11 +61,13 @@ class CollisionExporter:
                 pbraudio_node_type = previous_acoustic_dict['type']
                 del previous_acoustic_dict['type']
                 if pbraudio_node_type == 'AcousticShader':
-                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
+                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict['acoustic_shader']
                 elif pbraudio_node_type == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
                 elif pbraudio_node_type == 'FrequencyResponse':
-                    freq_resp_file = bpy.path.abspath(previous_acoustic_dict['response_filepath'])
+                    freq_resp_file = previous_acoustic_dict['response_filepath']
+                    if not os.path.isabs(freq_resp_file):
+                        freq_resp_file = bpy.path.abspath(freq_resp_file)
                     quantity_type = 'magnitude'
                     if link in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'

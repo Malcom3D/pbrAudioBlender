@@ -31,7 +31,7 @@ class pbrAudioPreviewNode(AcousticWorldNode):
     bl_label = "Acoustic World Preview"
 
     def sync_data(self, context):
-        if not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
+        if self.inputs[0].is_linked and not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value:
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
 
     def init(self, context):
@@ -74,7 +74,7 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
     def sync_data(self, context):
         if self.inputs[0].is_linked and (not self.inputs[0].default_value == self.inputs[0].links[0].from_socket.default_value):
            self.inputs[0].default_value = self.inputs[0].links[0].from_socket.default_value
-        if self.inputs[0].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value):
+        if self.inputs[1].is_linked and (not self.inputs[1].default_value == self.inputs[1].links[0].from_socket.default_value):
            self.inputs[1].default_value = self.inputs[1].links[0].from_socket.default_value
         if self.outputs[0].is_linked:
            self.outputs[0].default_value = self.pbraudio_sound_speed
@@ -282,7 +282,7 @@ class pbrAudioDensityNode(AcousticWorldNode):
 
     def sync_data(self, context):
         if self.outputs[0].is_linked:
-           self.outputs[0].default_value = self.pbraudio_density
+           self.pbraudio_density = self.outputs[0].default_value
 
     pbraudio_density: FloatProperty(
         name="Medium Density in kg/m³",
@@ -329,7 +329,7 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
 
     def sync_data(self, context):
         if self.outputs[0].is_linked:
-           self.outputs[0].default_value = self.pbraudio_temperature
+           self.pbraudio_temperature = self.outputs[0].default_value
 
     pbraudio_temperature: FloatProperty(
         name="Temperature in °C",

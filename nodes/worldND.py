@@ -162,7 +162,6 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
         self.inputs.new('pbrAudioWorldParameterNodeSocket', "Density in kg/m³")
 
     def draw_buttons(self, context, layout):
-        self.sync_data(context)
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
@@ -185,6 +184,9 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
         layout.label(text=f"Sound Speed: {self.pbraudio_sound_speed} m/s")
         layout.label(text=f"Temperature: {self.pbraudio_temperature} °C")
         layout.label(text=f"Density: {self.pbraudio_density} kg/m³")
+
+    def socket_value_update(context)
+        self.sync_data(context)
 
     def update(self):
         pass
@@ -228,7 +230,7 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
         self.outputs[0].default_value = self.pbraudio_impedence
 
     def draw_buttons(self, context, layout):
-        self.sync_data(context)
+        pass
 
 #        if self.outputs[0].is_linked:
 #            for link in self.outputs[0].links:
@@ -245,6 +247,9 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
         layout.label(text=f"Impedence: {self.pbraudio_impedence} Pa⋅s/m")
         layout.label(text=f"Sound Speed: {self.inputs[0].default_value} m/s")
         layout.label(text=f"Density: {self.inputs[1].default_value} kg/m³")
+
+    def socket_value_update(context)
+        self.sync_data(context)
 
     def update(self):
         pass
@@ -273,7 +278,7 @@ class pbrAudioDensityNode(AcousticWorldNode):
         self.outputs[0].default_value = self.pbraudio_density
 
     def draw_buttons(self, context, layout):
-        self.sync_data(context)
+        pass
 
 #        if self.outputs[0].is_linked:
 #            for link in self.outputs[0].links:
@@ -289,6 +294,9 @@ class pbrAudioDensityNode(AcousticWorldNode):
     def draw_buttons_ext(self, context, layout):
         self.sync_data(context)
         layout.label(text=f"Density: {self.pbraudio_density} kg/m³")
+
+    def socket_value_update(context)
+        self.sync_data(context)
 
     def update(self):
         pass
@@ -318,7 +326,7 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
         self.outputs[0].default_value = self.pbraudio_temperature
 
     def draw_buttons(self, context, layout):
-        self.sync_data(context)
+         pass
 
 #        if self.outputs[0].is_linked:
 #            for link in self.outputs[0].links:
@@ -333,6 +341,9 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.label(text=f"Temperature: {self.pbraudio_temperature} °C")
+
+    def socket_value_update(context)
+        self.sync_data(context)
 
     def update(self):
         pass

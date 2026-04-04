@@ -35,7 +35,8 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     def validate_frd_file(self, context):
         # validate the data inside the file
-        if not self.frd_filepath == '' and frd_io.validate_frd_file(self.frd_filepath):
+        abs_frd_filepath = bpy.path.abspath(self.frd_filepath)
+        if not abs_frd_filepath == '' and frd_io.validate_frd_file(abs_frd_filepath):
             self.pbraudio_response_filepath = self.frd_filepath
         else:
             bpy.ops.report({'ERROR'}, f"An unexpected error occurred while processing the file: {self.frd_filepath} is not a valid FRD file")

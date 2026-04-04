@@ -34,7 +34,7 @@ class pbrAudioWorldNodeSocket(NodeSocket):
                 link.to_node.socket_value_update(context)
 
     default_value: FloatProperty(
-        default=0.0
+        default=0.0,
         update=default_value_update
     )
 

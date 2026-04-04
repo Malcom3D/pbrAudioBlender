@@ -31,7 +31,7 @@ class pbrAudioWorldNodeSocket(NodeSocket):
     def default_value_update(self, context):
         if self.is_output and self.is_linked:
             for link in self.links:
-                link.to_node.socket_value_update(context)
+                link.to_node.sync_data(context)
 
     default_value: FloatProperty(
         default=0.0,

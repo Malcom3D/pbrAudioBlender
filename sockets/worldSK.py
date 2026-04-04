@@ -52,7 +52,8 @@ class pbrAudioWorldParameterNodeSocket(NodeSocket):
         elif not self.is_output and not self.is_linked:
             layout.prop(self, "default_value", text=text, slider=True)
         else:
-            layout.label(text=text)
+            layout.prop(self, "default_value", text=text, slider=True) #################### To Be removed: Test with preview
+#            layout.label(text=text)
 
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1.0) # Light Gray for Float

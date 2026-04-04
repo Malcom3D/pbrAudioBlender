@@ -110,7 +110,7 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
     )
     
     # Reference to the node tree for dynamic inputs
-    _dynamic_inputs_initialized: BoolProperty(default=False)
+    dynamic_inputs_initialized: BoolProperty(default=False)
     
     def init(self, context):
         """Initialize the node with default outputs"""
@@ -215,9 +215,9 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
     def update(self):
         """Update the node when connections change"""
         # Update dynamic inputs if needed
-        if not self._dynamic_inputs_initialized or len(self.inputs) != len(self.spatial_points):
+        if not self.dynamic_inputs_initialized or len(self.inputs) != len(self.spatial_points):
             self.update_dynamic_inputs()
-            self._dynamic_inputs_initialized = True
+            self.dynamic_inputs_initialized = True
         
         # Update point references in connected nodes
         for i, point in enumerate(self.spatial_points):
@@ -233,6 +233,6 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
     
     def free(self):
         """Clean up when node is deleted"""
-        self._dynamic_inputs_initialized = False
+        self.dynamic_inputs_initialized = False
 
 classes.append(SpatialFrequencyResponseNode)

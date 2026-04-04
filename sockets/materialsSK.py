@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import NodeSocket
-from bpy.props import FloatProperty, StringProperty
+from bpy.props import FloatProperty, StringProperty, IntProperty
 
 classes = []
 
@@ -61,6 +61,14 @@ class AcousticValueNodeSocket(NodeSocket):
         subtype='FILE_PATH', 
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='//'
+    )
+
+    identifier: StringProperty(
+        name='identifier',
+    )
+
+    point_index: IntProperty(
+        name='point_index',
     )
 
     def draw(self, context, layout, node, text):

@@ -116,28 +116,13 @@ class SpatialFrequencyResponseNode(AcousticBaseNode):
         """Initialize the node with default outputs"""
         self.outputs.new('AcousticValueNodeSocket', "Spatial Frequency Response")
         
-        # Add a few default spatial points
+        # Add a default spatial points
         if len(self.spatial_points) == 0:
             # Front
             point = self.spatial_points.add()
             point.azimuth = 0.0
             point.elevation = 0.0
             
-            # Left
-            point = self.spatial_points.add()
-            point.azimuth = 90.0
-            point.elevation = 0.0
-            
-            # Right
-            point = self.spatial_points.add()
-            point.azimuth = 270.0
-            point.elevation = 0.0
-            
-            # Back
-            point = self.spatial_points.add()
-            point.azimuth = 180.0
-            point.elevation = 0.0
-        
         # Initialize dynamic inputs
         self.update_dynamic_inputs()
     

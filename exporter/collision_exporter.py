@@ -61,7 +61,7 @@ class CollisionExporter:
         for in_idx in inputs:
             if node.inputs[in_idx].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
-                print(previous_acoustic_dict['type'])
+                print(previous_acoustic_dict)
 #                pbraudio_node_type = previous_acoustic_dict['type']
 #                del previous_acoustic_dict['type']
                 if previous_acoustic_dict['type'] == 'AcousticShader':
@@ -83,17 +83,17 @@ class CollisionExporter:
                     freq_min = pbraudiorender.lowest_frequency
                     desired_points, _ = frd_io.generate_bands(freq_min, freq_max, bands_per_octave)
                     freq_resp_file = previous_acoustic_dict['response_filepath']
-                    if freq_resp_file.startswith('//'):
-                        freq_resp_file = bpy.path.abspath(freq_resp_file)
+#                    if freq_resp_file.startswith('//'):
+#                        freq_resp_file = bpy.path.abspath(freq_resp_file)
                     print('freq_resp_file: ', freq_resp_file)
-                    if os.path.exists(freq_resp_file):
-                        freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
-                        resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
-                        acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
+#                    if os.path.exists(freq_resp_file):
+                    freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
+                    resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
+                    acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
                     print(f"previous_acoustic_dict[{in_idx}]: ", previous_acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'AcousticProperties':
-                    print('unlinked FrequencyResponse: ')
+                    print('unlinked AcousticProperties')
                     quantity_type = 'magnitude'
                     if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
@@ -130,15 +130,16 @@ class CollisionExporter:
         """Get acoustic properties from the acoustic material node chain"""
 
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
-        acoustic_shader = []
+        acoustic_shader = {}
 
         nodetree = obj.pbraudio.nodetree
         for key in nodetree.nodes.keys():
             if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
                 output_node = nodetree.nodes[key]
                 acoustic_shader = self.get_from_previous(output_node)
-
+        print('acoustic_shader before clean: ', acoustic_shader)
         acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
+        print('acoustic_shader after clean: ', acoustic_shader)
                     
         return acoustic_shader
 

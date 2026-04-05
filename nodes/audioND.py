@@ -39,13 +39,15 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         abs_frd_filepath = self.frd_filepath
         if self.frd_filepath.startswith('//'):
             abs_frd_filepath = bpy.path.abspath(self.frd_filepath)
+        if not abs_frd_filepath == '' and os.path.exists(abs_frd_filepath):
+            print('abs_frd_filepath: ', abs_frd_filepath)
+            frd_valid = frd_io.validate_frd_file(abs_frd_filepath):
+            if frd_valid:
+                self.pbraudio_response_filepath = abs_frd_filepath
+            else:
+                self.frd_filepath = ''
         else:
-            print(f"{self.frd_filepath} is absolute path {self.frd_filepath.startswith('//')} {bpy.path.abspath(self.frd_filepath)}")
-
-        if not abs_frd_filepath == '' and frd_io.validate_frd_file(abs_frd_filepath):
-            self.pbraudio_response_filepath = self.frd_filepath
-        else:
-            self.frd_filepath = ''
+            print('abs_frd_filepath: NO PATH ')
 
     pbraudio_type: StringProperty(default='FrequencyResponse')
 
@@ -60,9 +62,8 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     pbraudio_response_filepath: StringProperty(
         name="ValidatedResponseFile",
-        description="Validated frequency response file (.frd or .cal or .csv or .txt or text file)",
+        description="Validated frequency response file with absolute path (.frd or .cal or .csv or .txt or text file)",
         subtype='FILE_PATH',
-        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default=''
     )
 

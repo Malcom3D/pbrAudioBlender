@@ -16,8 +16,8 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import os, sys, json
 import bpy
+import os, sys, json
 import numpy as np
 import trimesh
 from mathutils import Matrix

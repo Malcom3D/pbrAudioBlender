@@ -191,7 +191,7 @@ def validate_frd_file(filepath):
     frequencies, magnitudes, phases = parse_frd_file(filepath)
     return validate_frd_data(frequencies, magnitudes, phases)
 
-def validate_frd_data(frequencies, magnitudes, phases=None):
+def validate_frd_data(frequencies, magnitudes, phases=np.array([])):
     """
     Validate the data arrays.
     """
@@ -223,7 +223,7 @@ def compute_group_delay(frequencies, phases_deg):
     group_delay = -dphase_domega
     return group_delay
 
-def resample_frd(frequencies, magnitudes, phases=None, num_points=100):
+def resample_frd(frequencies, magnitudes, phases=np.array([]), num_points=100):
     """
     Resample frequency response data to 'num_points' over log-spaced frequencies
     using cubic spline interpolation.
@@ -241,7 +241,7 @@ def resample_frd(frequencies, magnitudes, phases=None, num_points=100):
     mag_spline = CubicSpline(np.log10(frequencies), magnitudes)
     resampled_magnitudes = mag_spline(np.log10(resampled_freqs))
 
-    if phases is not None:
+    if not phases.shape[0] == 0:
         # Unwrap phases to avoid jumps
         unwrapped_phases = np.unwrap(np.radians(phases))
         phase_spline = CubicSpline(np.log10(frequencies), unwrapped_phases)
@@ -250,7 +250,7 @@ def resample_frd(frequencies, magnitudes, phases=None, num_points=100):
         resampled_phases_deg = (np.degrees(resampled_phases_unwrapped) + 180) % 360 - 180
         return resampled_freqs, resampled_magnitudes, resampled_phases_deg
     else:
-        return resampled_freqs, resampled_magnitudes, None
+        return resampled_freqs, resampled_magnitudes, np.array([])
 
 def interpolate_spatial_response(target_azimuth, target_elevation, spatial_points, responses, method='BILINEAR'):
     """

@@ -89,8 +89,9 @@ class CollisionExporter:
                     print('freq_resp_file: ', freq_resp_file)
 #                    if os.path.exists(freq_resp_file):
                     freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
-                    resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
-                    acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
+#                    resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
+#                    acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
+                    acoustic_dict[in_idx] = {"frequencies": freqs.tolist(), quantity_type: mags.tolist(), 'phases': phases.tolist()}
                     print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'AcousticProperties':
@@ -123,8 +124,8 @@ class CollisionExporter:
                 new_element[ac_key] = element[ac_key]
             elif isinstance(element[ac_key], dict):
                 new_dict = self.clean_acoustic_dict(element[ac_key])
-                if not new_dict == {}:
-                    new_element[ac_key] = new_dict 
+#                if not new_dict == {}:
+#                    new_element[ac_key] = new_dict 
         return new_element
 
     def get_acoustic_properties_from_material(self, obj):
@@ -139,8 +140,8 @@ class CollisionExporter:
                 output_node = nodetree.nodes[key]
                 acoustic_shader = self.get_from_previous(output_node)
         print('acoustic_shader before clean: ', acoustic_shader)
-#        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
-#        print('acoustic_shader after clean: ', acoustic_shader)
+        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
+        print('acoustic_shader after clean: ', acoustic_shader)
                     
         return acoustic_shader
 

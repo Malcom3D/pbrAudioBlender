@@ -35,7 +35,9 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     def validate_frd_file(self, context):
         # validate the data inside the file
-        abs_frd_filepath = bpy.path.abspath(self.frd_filepath)
+        abs_frd_filepath = self.frd_filepath
+        if not os.path.isabs(self.frd_filepath):
+            abs_frd_filepath = bpy.path.abspath(self.frd_filepath)
         if not abs_frd_filepath == '' and frd_io.validate_frd_file(abs_frd_filepath):
             self.pbraudio_response_filepath = self.frd_filepath
         else:
@@ -55,7 +57,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     pbraudio_response_filepath: StringProperty(
         name="ValidatedResponseFile",
-        description="Validated frequency response file (.frd or .cal)",
+        description="Validated frequency response file (.frd or .cal or .csv or .txt or text file)",
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default=''

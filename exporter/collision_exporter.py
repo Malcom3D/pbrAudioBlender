@@ -86,6 +86,15 @@ class CollisionExporter:
                         mags = [node.inputs[link].default_value, node.inputs[link].default_value]
                         phases = []
                         acoustic_dict[link] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
+            elif not node.inputs[link].is_linked:
+                if node.pbraudio_type == 'FrequencyResponse':
+                    quantity_type = 'magnitude'
+                    if link in ['absorption', 'refraction', 'reflection', 'scattering']:
+                        quantity_type = 'coefficients'
+                    freqs = [freq_max, freq_min]
+                    mags = [node.inputs[link].default_value, node.inputs[link].default_value]
+                    phases = []
+                    acoustic_dict[link] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):

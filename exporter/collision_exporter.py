@@ -139,8 +139,8 @@ class CollisionExporter:
                 output_node = nodetree.nodes[key]
                 acoustic_shader = self.get_from_previous(output_node)
         print('acoustic_shader before clean: ', acoustic_shader)
-        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
-        print('acoustic_shader after clean: ', acoustic_shader)
+#        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
+#        print('acoustic_shader after clean: ', acoustic_shader)
                     
         return acoustic_shader
 

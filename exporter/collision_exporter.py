@@ -66,12 +66,14 @@ class CollisionExporter:
 #                del previous_acoustic_dict['type']
                 if previous_acoustic_dict['type'] == 'AcousticShader':
 #                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
-                    print(previous_acoustic_dict)
-                    acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
 #                    acoustic_dict.update(previous_acoustic_dict)
+                    acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
+                    print('AcousticShader: ', previous_acoustic_dict)
                 elif previous_acoustic_dict['type'] == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
+                    print('AcousticProperties: ', previous_acoustic_dict)
                 elif previous_acoustic_dict['type'] == 'FrequencyResponse':
+                    print('FrequencyResponse: ', previous_acoustic_dict)
                     quantity_type = 'magnitude'
                     if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
@@ -90,7 +92,8 @@ class CollisionExporter:
                         acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
                     print(f"previous_acoustic_dict[{in_idx}]: ", previous_acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
-                if node.pbraudio_type == 'FrequencyResponse':
+                if node.pbraudio_type == 'AcousticProperties':
+                    print('unlinked FrequencyResponse: ')
                     quantity_type = 'magnitude'
                     if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
@@ -98,7 +101,7 @@ class CollisionExporter:
                     mags = [node.inputs[in_idx].default_value, node.inputs[in_idx].default_value]
                     phases = []
                     acoustic_dict[in_idx] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
-                    print(f"previous_acoustic_dict[{in_idx}]: ", previous_acoustic_dict[in_idx])
+                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):

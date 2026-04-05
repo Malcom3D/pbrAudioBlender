@@ -450,8 +450,8 @@ def generate_bands(freq_min, freq_max, bands_per_octave):
     bands = []
     for i in range(total_bands):
         # Calculate the lower and upper bounds of each band
-        lower_freq = freq_min * (2 ** (i / n_bands_per_octave))
-        upper_freq = freq_min * (2 ** ((i + 1) / n_bands_per_octave))
+        lower_freq = freq_min * (2 ** (i / bands_per_octave))
+        upper_freq = freq_min * (2 ** ((i + 1) / bands_per_octave))
         # Ensure the upper bound does not exceed freq_max
         if upper_freq > freq_max:
             upper_freq = freq_max

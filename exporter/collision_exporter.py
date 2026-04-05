@@ -55,6 +55,11 @@ class CollisionExporter:
         self.obj_idx = 0
 
     def get_from_previous(self, node):
+        pbraudiorender = bpy.context.scene.pbraudiorender
+        bands_per_octave = pbraudiorender.bands_per_octave 
+        freq_max = pbraudiorender.higher_frequency
+        freq_min = pbraudiorender.lowest_frequency
+
         acoustic_dict = {}
         # get inputs
         inputs = node.inputs.keys()
@@ -77,10 +82,6 @@ class CollisionExporter:
                     quantity_type = 'magnitude'
                     if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
-                    pbraudiorender = bpy.context.scene.pbraudiorender
-                    bands_per_octave = pbraudiorender.bands_per_octave 
-                    freq_max = pbraudiorender.higher_frequency
-                    freq_min = pbraudiorender.lowest_frequency
                     desired_points, _ = frd_io.generate_bands(freq_min, freq_max, bands_per_octave)
                     freq_resp_file = previous_acoustic_dict['response_filepath']
 #                    if freq_resp_file.startswith('//'):

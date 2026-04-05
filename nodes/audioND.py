@@ -71,7 +71,6 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
 
     def init(self, context):
         self.outputs.new('AcousticValueNodeSocket', "Frequency Response Data")
-        self.validate_frd_file(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "frd_filepath", text="Response File")

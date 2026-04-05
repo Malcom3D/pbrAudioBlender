@@ -104,7 +104,8 @@ class CollisionExporter:
                     acoustic_value *= 0.01
  
                 acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
-        return self.clean_acoustic_dict(acoustic_dict)
+
+        return acoustic_dict
 
     def clean_acoustic_dict(self, element):
         for ac_key in element.keys():
@@ -126,6 +127,7 @@ class CollisionExporter:
             if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
                 output_node = nodetree.nodes[key]
                 acoustic_shader = self.get_from_previous(output_node)
+                acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
                     
         return acoustic_shader
 

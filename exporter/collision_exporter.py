@@ -76,7 +76,7 @@ class CollisionExporter:
                     bands_per_octave = pbraudiorender.bands_per_octave 
                     freq_max = pbraudiorender.higher_frequency
                     freq_min = pbraudiorender.lowest_frequency
-                    desired_points, _ = frd_io.generate_bands(freq_max, freq_min, bands_per_octave)
+                    desired_points, _ = frd_io.generate_bands(freq_min, freq_max, bands_per_octave)
                     freq_resp_file = previous_acoustic_dict['response_filepath']
                     if freq_resp_file.startswith('//'):
                         freq_resp_file = bpy.path.abspath(freq_resp_file)

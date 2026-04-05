@@ -50,18 +50,29 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.prop(scene.pbraudio, "modal_modes", text="Modal Modes")
 
         # scene fracture value
-        fracture_emboss = False
+        fracture_enabled = False
         if hasattr(scene.pbraudio.collision_collection, 'objects'):
             for object in scene.pbraudio.collision_collection.objects.values():
                 if object.pbraudio.fractured and not len(object.pbraudio_shard.values()) == 0 and not scene.pbraudio.fracture:
-                    fracture_emboss = True
+                    fracture_enabled = True
 
         # operator button
-        layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
-        layout.operator('scene.pbraudio_physics', emboss=True if not scene.pbraudio.physics else False)
-        layout.operator('scene.pbraudio_prebake', emboss=True if not scene.pbraudio.prebake else False)
-        layout.operator('scene.pbraudio_bake', emboss=True if not scene.pbraudio.bake else False)
-        layout.operator('scene.pbraudio_fracture', emboss=fracture_emboss)
+        op_clear_cache = layout.operator('scene.pbraudio_clear_cache')
+        op_clear_cache.enabled = True if scene.pbraudio.cache_status else False
+        op_physics = layout.operator('scene.pbraudio_physics')
+        op_physics.enabled = True if not scene.pbraudio.physics else False
+        op_prebake = layout.operator('scene.pbraudio_prebake')
+        op_prebake.enabled = True if not scene.pbraudio.prebake else False
+        op_bake = layout.operator('scene.pbraudio_bake')
+        op_bake.enabled = True if not scene.pbraudio.bake else False
+        op_fracture = layout.operator('scene.pbraudio_fracture')
+        op_fracture.enabled = fracture_enabled
+
+#        layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
+#        layout.operator('scene.pbraudio_physics', emboss=True if not scene.pbraudio.physics else False)
+#        layout.operator('scene.pbraudio_prebake', emboss=True if not scene.pbraudio.prebake else False)
+#        layout.operator('scene.pbraudio_bake', emboss=True if not scene.pbraudio.bake else False)
+#        layout.operator('scene.pbraudio_fracture', emboss=fracture_emboss)
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 

@@ -322,6 +322,8 @@ class PBRAUDIO_OT_clear_cache(Operator):
                 scene.pbraudio.prebake = False
                 scene.pbraudio.physics = False
                 scene.pbraudio.cache_status = False
+                scene.pbraudio.status_progress = 1
+                scene.pbraudio.shader_processing = False
                 self.report({'INFO'}, f"Collision cache for {scene.pbraudio.collision_collection.name_full} cleared")
         return {'FINISHED'}
 

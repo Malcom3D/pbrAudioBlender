@@ -61,14 +61,14 @@ class CollisionExporter:
         for in_idx in inputs:
             if node.inputs[in_idx].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
-                pbraudio_node_type = previous_acoustic_dict['type']
+#                pbraudio_node_type = previous_acoustic_dict['type']
 #                del previous_acoustic_dict['type']
-                if pbraudio_node_type == 'AcousticShader':
+                if previous_acoustic_dict['type'] == 'AcousticShader':
 #                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
                     acoustic_dict.update(previous_acoustic_dict)
-                elif pbraudio_node_type == 'AcousticProperties':
+                elif previous_acoustic_dict['type'] == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
-                elif pbraudio_node_type == 'FrequencyResponse':
+                elif previous_acoustic_dict['type'] == 'FrequencyResponse':
                     quantity_type = 'magnitude'
                     if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
@@ -78,9 +78,9 @@ class CollisionExporter:
                     freq_min = pbraudiorender.lowest_frequency
                     desired_points, _ = frd_io.generate_bands(freq_max, freq_min, bands_per_octave)
                     freq_resp_file = previous_acoustic_dict['response_filepath']
+                    if freq_resp_file.startswith('//'):
+                        freq_resp_file = bpy.path.abspath(freq_resp_file)
                     if os.path.exists(freq_resp_file):
-                        if freq_resp_file.startswith('//'):
-                            freq_resp_file = bpy.path.abspath(freq_resp_file)
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                         resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
                         acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
@@ -108,11 +108,12 @@ class CollisionExporter:
 
     def clean_acoustic_dict(self, element):
         for ac_key in element.keys():
-            if ac_key == 'type':
-                del element[ac_key]
-            elif isinstance(element, dict):
-                element[ac_key] = self.clean_acoustic_dict(element[ac_key])
-        return element
+            element = {}
+            if not ac_key == 'type':
+                new_element[ac_key] = element[ac_key]
+            elif isinstance(element[ac_key], dict):
+                new_element[ac_key] = self.clean_acoustic_dict(element[ac_key])
+        return new_element
 
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""

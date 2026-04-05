@@ -61,6 +61,7 @@ class CollisionExporter:
         for in_idx in inputs:
             if node.inputs[in_idx].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
+                print(previous_acoustic_dict['type'])
 #                pbraudio_node_type = previous_acoustic_dict['type']
 #                del previous_acoustic_dict['type']
                 if previous_acoustic_dict['type'] == 'AcousticShader':
@@ -87,7 +88,7 @@ class CollisionExporter:
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                         resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
                         acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
-                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
+                    print(f"previous_acoustic_dict[{in_idx}]: ", previous_acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'FrequencyResponse':
                     quantity_type = 'magnitude'
@@ -97,7 +98,7 @@ class CollisionExporter:
                     mags = [node.inputs[in_idx].default_value, node.inputs[in_idx].default_value]
                     phases = []
                     acoustic_dict[in_idx] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
-                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
+                    print(f"previous_acoustic_dict[{in_idx}]: ", previous_acoustic_dict[in_idx])
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):

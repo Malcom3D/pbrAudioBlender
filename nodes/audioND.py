@@ -41,7 +41,7 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
             abs_frd_filepath = bpy.path.abspath(self.frd_filepath)
         if not abs_frd_filepath == '' and os.path.exists(abs_frd_filepath):
             print('abs_frd_filepath: ', abs_frd_filepath)
-            frd_valid = frd_io.validate_frd_file(abs_frd_filepath):
+            frd_valid = frd_io.validate_frd_file(abs_frd_filepath)
             if frd_valid:
                 self.pbraudio_response_filepath = abs_frd_filepath
             else:

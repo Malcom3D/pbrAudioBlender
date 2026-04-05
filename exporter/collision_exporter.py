@@ -16,8 +16,10 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
+import sys
+import json
 import bpy
-import os, sys, json
 import numpy as np
 import trimesh
 from mathutils import Matrix
@@ -32,7 +34,7 @@ class CollisionExporter:
         self.scale_factor = 1.0  # Blender units to meters
         collision_collection = scene.pbraudio.collision_collection.name_full
         self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
-        if os.path.isabs(scene.pbraudio.cache_path):
+        if scene.pbraudio.cache_path.startswith('//'):
             self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)
         system = {}
@@ -78,7 +80,7 @@ class CollisionExporter:
                     desired_points, _ = frd_io.generate_bands(freq_max, freq_min, bands_per_octave)
                     freq_resp_file = previous_acoustic_dict['response_filepath']
                     if os.path.exists(freq_resp_file):
-                        if not os.path.isabs(freq_resp_file):
+                        if freq_resp_file.startswith('//'):
                             freq_resp_file = bpy.path.abspath(freq_resp_file)
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                         resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)

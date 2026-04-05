@@ -17,7 +17,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import io
-import os, sys
+import os
+import sys
 import bpy
 import time
 import multiprocessing
@@ -107,11 +108,6 @@ class PBRAUDIO_OT_fracture(Operator):
     bl_description = "Bake of fracture data for sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def __init__(self):
-        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
-        if os.path.isabs(scene.pbraudio.cache_path):
-            self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
-
     def update_progress(self, scene, status_file):
         """Update progress from status file"""
         if os.path.exists(status_file):
@@ -151,8 +147,11 @@ class PBRAUDIO_OT_fracture(Operator):
             # Start async processing
             scene.pbraudio.shader_processing = True
             scene.pbraudio.status_progress = 0.0
-            config_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
-            status_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
+            export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+            if scene.pbraudio.cache_path.startswith('//'):
+                export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
+            config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
+            status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
             process = pbrAudio_fracture(config_file, status_file)
 
             # Monitor completion
@@ -168,58 +167,6 @@ class PBRAUDIO_OT_bake(Operator):
     bl_description = "Bake of prebaked data for sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
                 
-    def __init__(self):
-        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
-        if os.path.isabs(scene.pbraudio.cache_path):
-            self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
-
-    def update_progress(self, scene, status_file):
-        """Update progress from status file"""
-        if os.path.exists(status_file):
-            try:
-                with open(status_file, 'r') as f:
-                    progress = f.read().strip()
-                    if progress:
-                        scene.pbraudio.status_progress = float(progress) / 100
-                return True
-            except:
-                pass
-        return False
-
-    def check_completion(self, scene, process, status_file):
-        """Update UI"""
-        for area in bpy.context.screen.areas:
-            area.tag_redraw()
-        """Check if the process has completed"""
-        if not process.is_alive():
-            # Process finished
-            scene.pbraudio.shader_processing = False
-            scene.pbraudio.bake = True
-            scene.pbraudio.status_progress = 1.0
-            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
-            return None
-        else:
-            # Update progress
-            self.update_progress(scene, status_file)
-            # Continue timer
-            return 1.0
-
-    def execute(self, context):
-        scene = context.scene
-        if hasattr(scene.pbraudio, 'bake') and not scene.pbraudio.bake:
-            if not scene.pbraudio.prebake:
-                bpy.ops.scene.pbraudio_prebake('EXEC_DEFAULT')
-            # Start async processing
-            scene.pbraudio.shader_processing = True
-            scene.pbraudio.status_progress = 0.0
-            config_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
-            status_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/bake"
-            process = pbrAudio_bake(config_file, status_file)
-            # Monitor completion
-            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
-            self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
-        return {'FINISHED'}
-
 classes.append(PBRAUDIO_OT_bake)
 
 class PBRAUDIO_OT_prebake(Operator):
@@ -227,11 +174,6 @@ class PBRAUDIO_OT_prebake(Operator):
     bl_label = "PreBake"
     bl_description = "PreBake baked physics dynamics for sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
-
-    def __init__(self):
-        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
-        if os.path.isabs(scene.pbraudio.cache_path):
-            self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
 
     def update_progress(self, scene, status_file):
         """Update progress from status file"""
@@ -272,8 +214,11 @@ class PBRAUDIO_OT_prebake(Operator):
             # Start async processing
             scene.pbraudio.shader_processing = True
             scene.pbraudio.status_progress = 0.0
-            config_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
-            status_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
+            export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+            if scene.pbraudio.cache_path.startswith('//'):
+                export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
+            config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
+            status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
             process = pbrAudio_prebake(config_file, status_file)
             # Monitor completion
             bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
@@ -287,11 +232,6 @@ class PBRAUDIO_OT_physics(Operator):
     bl_label = "BakePhysics"
     bl_description = "Bake physics"
     bl_options = {'REGISTER', 'UNDO'}
-
-    def __init__(self):
-        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
-        if os.path.isabs(scene.pbraudio.cache_path):
-            self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
 
     def update_progress(self, scene, status_file):
         """Update progress from status file"""
@@ -354,8 +294,12 @@ class PBRAUDIO_OT_physics(Operator):
                 exporter.save_config()
 
                 # Start async processing
-                config_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
-                status_file = f"{self.export_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
+                export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+                if scene.pbraudio.cache_path.startswith('//'):
+                    export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
+
+                config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
+                status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
                 process = pbrAudio_physics(config_file, status_file)
 
                 # Monitor completion

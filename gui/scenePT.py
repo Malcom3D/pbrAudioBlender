@@ -58,15 +58,15 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
         # operator button
         op_clear_cache = layout.operator('scene.pbraudio_clear_cache')
-        op_clear_cache.enabled = True if scene.pbraudio.cache_status else False
+        op_clear_cache.active = True if scene.pbraudio.cache_status else False
         op_physics = layout.operator('scene.pbraudio_physics')
-        op_physics.enabled = True if not scene.pbraudio.physics else False
+        op_physics.active = True if not scene.pbraudio.physics else False
         op_prebake = layout.operator('scene.pbraudio_prebake')
-        op_prebake.enabled = True if not scene.pbraudio.prebake else False
+        op_prebake.active = True if not scene.pbraudio.prebake else False
         op_bake = layout.operator('scene.pbraudio_bake')
-        op_bake.enabled = True if not scene.pbraudio.bake else False
+        op_bake.active = True if not scene.pbraudio.bake else False
         op_fracture = layout.operator('scene.pbraudio_fracture')
-        op_fracture.enabled = fracture_enabled
+        op_fracture.active = fracture_enabled
 
 #        layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
 #        layout.operator('scene.pbraudio_physics', emboss=True if not scene.pbraudio.physics else False)

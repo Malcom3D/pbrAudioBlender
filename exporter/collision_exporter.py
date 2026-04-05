@@ -90,7 +90,7 @@ class CollisionExporter:
                     freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                     resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
                     acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
-                    print(f"previous_acoustic_dict[{in_idx}]: ", previous_acoustic_dict[in_idx])
+                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'AcousticProperties':
                     print('unlinked AcousticProperties')

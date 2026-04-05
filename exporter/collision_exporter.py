@@ -139,9 +139,9 @@ class CollisionExporter:
             if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
                 output_node = nodetree.nodes[key]
                 acoustic_shader = self.get_from_previous(output_node)
-        print('acoustic_shader before clean: ', acoustic_shader)
-        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
-        print('acoustic_shader after clean: ', acoustic_shader)
+#        print('acoustic_shader before clean: ', acoustic_shader)
+#        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
+#        print('acoustic_shader after clean: ', acoustic_shader)
                     
         return acoustic_shader
 
@@ -394,7 +394,7 @@ class CollisionExporter:
 
         object["acoustic_shader"] = acoustic_shader
 
-        print(f"to_add: {self.to_add(name)} object: {name} not_valid: {self.not_valid}")
+#        print(f"to_add: {self.to_add(name)} object: {name} not_valid: {self.not_valid}")
 
         if self.to_add(name):
             self.objects.append(object)

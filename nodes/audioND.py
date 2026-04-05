@@ -16,8 +16,8 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import bpy
 import os
+import bpy
 from bpy.types import Node
 from bpy.props import IntProperty, StringProperty, BoolProperty, EnumProperty, FloatProperty, PointerProperty, CollectionProperty
 from bpy.types import PropertyGroup, UIList
@@ -39,6 +39,9 @@ class FrequencyResponseFilesNode(AcousticBaseNode):
         abs_frd_filepath = self.frd_filepath
         if not os.path.isabs(self.frd_filepath):
             abs_frd_filepath = bpy.path.abspath(self.frd_filepath)
+        else:
+            bpy.ops.report({'INFO'}, f"{self.frd_filepath} is absolute path")
+
         if not abs_frd_filepath == '' and frd_io.validate_frd_file(abs_frd_filepath):
             bpy.ops.report({'INFO'}, f"{self.frd_filepath} is a valid FRD file")
             self.pbraudio_response_filepath = self.frd_filepath

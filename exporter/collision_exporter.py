@@ -32,7 +32,9 @@ class CollisionExporter:
         self.decimals = decimals
         self.scale_factor = 1.0  # Blender units to meters
         collision_collection = scene.pbraudio.collision_collection.name_full
-        self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}/{scene.pbraudio.collision_collection.name_full}"
+        self.export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+        if os.path.isabs(scene.pbraudio.cache_path):
+            self.export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)
         system = {}
         system["sample_rate"] = scene.pbraudio.sample_rate
@@ -54,10 +56,10 @@ class CollisionExporter:
     def get_from_previous(self, node):
         acoustic_dict = {}
         # get inputs
-        links = node.inputs.keys()
-        for link in links:
-            if node.inputs[link].is_linked:
-                previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
+        inputs = node.inputs.keys()
+        for in_idx in inputs:
+            if node.inputs[in_idx].is_linked:
+                previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
                 pbraudio_node_type = previous_acoustic_dict['type']
                 del previous_acoustic_dict['type']
                 if pbraudio_node_type == 'AcousticShader':
@@ -67,7 +69,7 @@ class CollisionExporter:
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
                 elif pbraudio_node_type == 'FrequencyResponse':
                     quantity_type = 'magnitude'
-                    if link in ['absorption', 'refraction', 'reflection', 'scattering']:
+                    if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
                     pbraudiorender = bpy.context.scene.pbraudiorender
                     bands_per_octave = pbraudiorender.bands_per_octave 
@@ -80,21 +82,16 @@ class CollisionExporter:
                             freq_resp_file = bpy.path.abspath(freq_resp_file)
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                         resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
-                        acoustic_dict[link] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
-                    else:
-                        freqs = [freq_min, freq_max]
-                        mags = [node.inputs[link].default_value, node.inputs[link].default_value]
-                        phases = []
-                        acoustic_dict[link] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
-            elif not node.inputs[link].is_linked:
+                        acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
+            elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'FrequencyResponse':
                     quantity_type = 'magnitude'
-                    if link in ['absorption', 'refraction', 'reflection', 'scattering']:
+                    if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
                     freqs = [freq_min, freq_max]
-                    mags = [node.inputs[link].default_value, node.inputs[link].default_value]
+                    mags = [node.inputs[in_idx].default_value, node.inputs[in_idx].default_value]
                     phases = []
-                    acoustic_dict[link] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
+                    acoustic_dict[in_idx] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):

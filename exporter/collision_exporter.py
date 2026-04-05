@@ -106,7 +106,7 @@ class CollisionExporter:
                 acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
         return self.clean_acoustic_dict(acoustic_dict)
 
-   def clean_acoustic_dict(self, element):
+    def clean_acoustic_dict(self, element):
         for ac_key in element.keys():
             if ac_key == 'type':
                 del element[ac_key]

@@ -65,7 +65,9 @@ class CollisionExporter:
 #                del previous_acoustic_dict['type']
                 if previous_acoustic_dict['type'] == 'AcousticShader':
 #                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
-                    acoustic_dict.update(previous_acoustic_dict)
+                    print(previous_acoustic_dict)
+                    acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
+#                    acoustic_dict.update(previous_acoustic_dict)
                 elif previous_acoustic_dict['type'] == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'FrequencyResponse':
@@ -102,7 +104,6 @@ class CollisionExporter:
                     acoustic_value *= 1E9
                 elif 'damping' in property:
                     acoustic_value *= 0.01
- 
                 acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
 
         return acoustic_dict
@@ -127,7 +128,8 @@ class CollisionExporter:
             if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
                 output_node = nodetree.nodes[key]
                 acoustic_shader = self.get_from_previous(output_node)
-                acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
+
+        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
                     
         return acoustic_shader
 

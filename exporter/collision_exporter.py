@@ -62,10 +62,9 @@ class CollisionExporter:
             if node.inputs[in_idx].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
                 pbraudio_node_type = previous_acoustic_dict['type']
-                del previous_acoustic_dict['type']
+#                del previous_acoustic_dict['type']
                 if pbraudio_node_type == 'AcousticShader':
 #                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
-                    del previous_acoustic_dict['type']
                     acoustic_dict.update(previous_acoustic_dict)
                 elif pbraudio_node_type == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
@@ -105,8 +104,15 @@ class CollisionExporter:
                     acoustic_value *= 0.01
  
                 acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
+        return self.clean_acoustic_dict(acoustic_dict)
 
-        return acoustic_dict
+   def clean_acoustic_dict(self, element):
+        for ac_key in element.keys():
+            if ac_key == 'type':
+                del element[ac_key]
+            elif isinstance(element, dict):
+                element[ac_key] = self.clean_acoustic_dict(element[ac_key])
+        return element
 
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""

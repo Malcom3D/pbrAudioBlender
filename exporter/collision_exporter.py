@@ -82,10 +82,12 @@ class CollisionExporter:
                     freq_resp_file = previous_acoustic_dict['response_filepath']
                     if freq_resp_file.startswith('//'):
                         freq_resp_file = bpy.path.abspath(freq_resp_file)
+                    print('freq_resp_file: ', freq_resp_file)
                     if os.path.exists(freq_resp_file):
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                         resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
                         acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
+                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'FrequencyResponse':
                     quantity_type = 'magnitude'
@@ -95,6 +97,7 @@ class CollisionExporter:
                     mags = [node.inputs[in_idx].default_value, node.inputs[in_idx].default_value]
                     phases = []
                     acoustic_dict[in_idx] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
+                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):
@@ -114,7 +117,9 @@ class CollisionExporter:
             if not ac_key == 'type':
                 new_element[ac_key] = element[ac_key]
             elif isinstance(element[ac_key], dict):
-                new_element[ac_key] = self.clean_acoustic_dict(element[ac_key])
+                new_dict = self.clean_acoustic_dict(element[ac_key])
+                if not new_dict == {}:
+                    new_element[ac_key] = new_dict 
         return new_element
 
     def get_acoustic_properties_from_material(self, obj):

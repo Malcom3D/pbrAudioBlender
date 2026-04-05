@@ -120,10 +120,10 @@ class CollisionExporter:
     def clean_acoustic_dict(self, element):
         for ac_key in element.keys():
             new_element = {}
-            if not ac_key == 'type':
-                new_element[ac_key] = element[ac_key]
-            elif isinstance(element[ac_key], dict):
+            if isinstance(element[ac_key], dict):
                 new_dict = self.clean_acoustic_dict(element[ac_key])
+            elif not ac_key == 'type':
+                new_element[ac_key] = element[ac_key]
 #                if not new_dict == {}:
 #                    new_element[ac_key] = new_dict 
         return new_element

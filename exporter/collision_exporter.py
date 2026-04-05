@@ -82,7 +82,7 @@ class CollisionExporter:
                         resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
                         acoustic_dict[link] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
                     else:
-                        freqs = [freq_max, freq_min]
+                        freqs = [freq_min, freq_max]
                         mags = [node.inputs[link].default_value, node.inputs[link].default_value]
                         phases = []
                         acoustic_dict[link] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
@@ -91,7 +91,7 @@ class CollisionExporter:
                     quantity_type = 'magnitude'
                     if link in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
-                    freqs = [freq_max, freq_min]
+                    freqs = [freq_min, freq_max]
                     mags = [node.inputs[link].default_value, node.inputs[link].default_value]
                     phases = []
                     acoustic_dict[link] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}

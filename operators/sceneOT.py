@@ -147,9 +147,9 @@ class PBRAUDIO_OT_fracture(Operator):
             # Start async processing
             scene.pbraudio.shader_processing = True
             scene.pbraudio.status_progress = 0.0
-            export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+            export_path = f"{scene.pbraudio.cache_path}"
             if scene.pbraudio.cache_path.startswith('//'):
-                export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
+                export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
             process = pbrAudio_fracture(config_file, status_file)
@@ -214,9 +214,9 @@ class PBRAUDIO_OT_prebake(Operator):
             # Start async processing
             scene.pbraudio.shader_processing = True
             scene.pbraudio.status_progress = 0.0
-            export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+            export_path = f"{scene.pbraudio.cache_path}"
             if scene.pbraudio.cache_path.startswith('//'):
-                export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
+                export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
             process = pbrAudio_prebake(config_file, status_file)
@@ -294,10 +294,9 @@ class PBRAUDIO_OT_physics(Operator):
                 exporter.save_config()
 
                 # Start async processing
-                export_path = f"{scene.pbraudio.cache_path}/{scene.pbraudio.collision_collection.name_full}"
+                export_path = f"{scene.pbraudio.cache_path}"
                 if scene.pbraudio.cache_path.startswith('//'):
-                    export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}{scene.pbraudio.collision_collection.name_full}"
-
+                    export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
                 config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
                 status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
                 process = pbrAudio_physics(config_file, status_file)

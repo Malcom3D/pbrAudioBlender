@@ -28,8 +28,8 @@ for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_men
     classes += mod.classes
 
 def register():
-    # Unregister blender DATA_PT_empty
-    bpy.utils.unregister_class(bpy.types.DATA_PT_empty)
+#    # Unregister blender DATA_PT_empty
+#    bpy.utils.unregister_class(bpy.types.DATA_PT_empty)
 
     for cls in classes:
         register_class(cls)
@@ -43,5 +43,5 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
-    # Register blender DATA_PT_empty
-    bpy.utils.register_class(bpy.types.DATA_PT_empty)
+#    # Register blender DATA_PT_empty
+#    bpy.utils.register_class(bpy.types.DATA_PT_empty)

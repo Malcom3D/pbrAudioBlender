@@ -23,7 +23,7 @@ classes = []
 
 from . import renderOT, materialOT, worldOT, sceneOT, objectOT, plotOT, audioOT, spatialOT#, soundOT
 
-for mod in (renderOT, materialOT, worldOT, sceneOT, objectOT, plotOT, audioOT, spatialOT#, soundOT):
+for mod in (renderOT, materialOT, worldOT, sceneOT, objectOT, plotOT, audioOT, spatialOT): #, soundOT):
     classes += mod.classes
 
 def register():

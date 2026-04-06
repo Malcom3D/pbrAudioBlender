@@ -24,7 +24,7 @@ classes = []
 
 from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT#, view3d_menu
 
-for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT#, view3d_menu):
+for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT): #, view3d_menu):
     classes += mod.classes
 
 def register():

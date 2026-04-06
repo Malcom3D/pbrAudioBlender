@@ -33,7 +33,7 @@ class DataButtonsPanel:
         ob = context.object
         return (ob and ob.type == 'EMPTY')
 
-class PBRAUDIO_PT_empty(DataButtonsPanel, Panel):
+class PBRAUDIO_PT_empty(Panel):
     bl_label = "Empty"
     bl_idname = 'PBRAUDIO_PT_empty'
 

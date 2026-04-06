@@ -33,13 +33,13 @@ def register():
 
     for cls in classes:
         register_class(cls)
-#    # Add menu to 3D Viewport Add menu
-#    bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
+    # Add menu to 3D Viewport Add menu
+    bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
 
 def unregister():
     """Unregister all classes and properties"""
-#    # Remove menu from 3D Viewport Add menu
-#    bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
+    # Remove menu from 3D Viewport Add menu
+    bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
     for cls in reversed(classes):
         unregister_class(cls)
 

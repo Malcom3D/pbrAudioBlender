@@ -61,10 +61,10 @@ class pbrAudioWorldOutputNode(AcousticWorldNode):
 
 classes.append(pbrAudioWorldOutputNode)
 
-class pbrAudioWorldMaterialNode(AcousticWorldNode):
+class pbrAudioWorldShaderNode(AcousticWorldNode):
     """Acoustic sound speed properties node"""
-    bl_idname = 'pbrAudioWorldMaterialNode'
-    bl_label = "World medium Parameters"
+    bl_idname = 'pbrAudioWorldShaderNode'
+    bl_label = "World medium shader parameters"
 
     def sync_data(self, context):
         # input Temperature
@@ -108,7 +108,7 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
         elif self.medium_type == 'SOLID':
            self.pbraudio_sound_speed = sqrt(self.E/self.density)
 
-    pbraudio_type: StringProperty(default='WorldMedium')
+    pbraudio_type: StringProperty(default='WorldShader')
 
     medium_type: EnumProperty(
         name="Medium Type",
@@ -218,7 +218,7 @@ class pbrAudioWorldMaterialNode(AcousticWorldNode):
     def free(self):
         pass
 
-classes.append(pbrAudioWorldMaterialNode)
+classes.append(pbrAudioWorldShaderNode)
 
 class pbrAudioImpedenceNode(AcousticWorldNode):
     """Acoustic impedence properties node"""
@@ -248,6 +248,8 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
         if not sound_speed == None and not density == None:
             self.pbraudio_impedence = density*sound_speed
 
+    pbraudio_type: StringProperty(default='WorldImpedence')
+
     pbraudio_impedence: FloatProperty(
         name="Medium impedence in Pa⋅s/m",
         default=413.3
@@ -261,14 +263,6 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
 
     def draw_buttons(self, context, layout):
         pass
-
-#        if self.outputs[0].is_linked:
-#            for link in self.outputs[0].links:
-#                if link.to_socket.pbraudio_type == 'pbrAudioWorldPropertyNodeSocket':
-#                    self.pbraudio_impedence = self.outputs[0].default_value
-#                else:
-#                    nodetree = self.id_data
-#                    nodetree.links.remove(link)
 
     def draw_label(self):
         return f"Acoustic Impedence"
@@ -300,6 +294,8 @@ class pbrAudioDensityNode(AcousticWorldNode):
            # the value of the slider is the output socket, write it's value to self.pbraudio_density to be readed from exporter
            self.pbraudio_density = self.outputs[0].default_value
 
+    pbraudio_type: StringProperty(default='WorldDensity')
+
     pbraudio_density: FloatProperty(
         name="Medium Density in kg/m³",
         default=1.2041,
@@ -311,14 +307,6 @@ class pbrAudioDensityNode(AcousticWorldNode):
 
     def draw_buttons(self, context, layout):
         pass
-
-#        if self.outputs[0].is_linked:
-#            for link in self.outputs[0].links:
-#                if link.to_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
-#                    self.pbraudio_density = self.outputs[0].default_value
-#                else:
-#                    nodetree = self.id_data
-#                    nodetree.links.remove(link)
 
     def draw_label(self):
         return "Density"
@@ -349,6 +337,8 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
            # the value of the slider is the output socket, write it's value to self.pbraudio_temperature to be readed from exporter
            self.pbraudio_temperature = self.outputs[0].default_value
 
+    pbraudio_type: StringProperty(default='WorldTemperature')
+
     pbraudio_temperature: FloatProperty(
         name="Temperature in °C",
         default=20,
@@ -361,14 +351,6 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
 
     def draw_buttons(self, context, layout):
          pass
-
-#        if self.outputs[0].is_linked:
-#            for link in self.outputs[0].links:
-#                if link.to_socket.pbraudio_type == 'pbrAudioWorldParameterNodeSocket':
-#                    self.pbraudio_temperature = self.outputs[0].default_value
-#                else:
-#                    nodetree = self.id_data
-#                    nodetree.links.remove(link)
 
     def draw_label(self):
         return "Temperature"
@@ -411,27 +393,29 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'}
     )
+
+    environment_object: PointerProperty(
+        name="Environment Object",
+        description="Environment Object that define rendered sources",
+        type=bpy.types.Object
+    }
  
     sphere_radius: FloatProperty(
         name="Radius of field sphere",
         default=1.0
     )
  
-    ambisonic_order: IntProperty(
-        name="Channel number",
+    number_channels: IntProperty(
+        name="Number of channels to dedecode from the ambisonic file",
         default=3,
     )
+
+    pbraudio_type: StringProperty(default='WorldEnvironment')
 
     def init(self, context):
         self.outputs.new('pbrAudioWorldEnvironmentNodeSocket', "Environment")
 
     def draw_buttons(self, context, layout):
-#        if self.outputs[0].is_linked:
-#            for link in self.outputs[0].links:
-#                if not link.to_socket.pbraudio_type == 'pbrAudioWorldEnvironmentNodeSocket':
-#                    nodetree = self.id_data
-#                    nodetree.links.remove(link)
-
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 

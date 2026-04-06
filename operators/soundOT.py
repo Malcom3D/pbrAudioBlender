@@ -1,0 +1,306 @@
+# Copyright (C) 2025 Malcom3D <malcom3d.gpl@gmail.com>
+#
+# This file is part of pbrAudio.
+#
+# pbrAudio is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# pbrAudio is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+import bpy
+import math
+import mathutils
+from bpy.types import Operator
+from bpy.props import FloatProperty, IntProperty, StringProperty
+from bpy_extras.object_utils import AddObjectHelper
+
+classes = []
+
+class PBRAUDIO_OT_add_spherical_source(Operator, AddObjectHelper):
+    """Add a spherical sound source"""
+    bl_idname = "object.pbraudio_add_spherical_source"
+    bl_label = "Spherical Source"
+    bl_description = "Add a spherical sound source"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    radius: FloatProperty(
+        name="Radius",
+        description="Radius of the spherical source",
+        default=0.25,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+
+    def execute(self, context):
+        # Create empty object
+        empty = bpy.data.objects.new("SphericalSource", None)
+        empty.empty_display_type = 'SPHERE'
+        empty.empty_display_size = self.radius
+        empty.location = self.location
+        
+        # Link to collection
+        context.collection.objects.link(empty)
+        
+        # Set as active object
+        context.view_layer.objects.active = empty
+        empty.select_set(True)
+        
+        # Add pbrAudio properties
+        if not hasattr(empty, 'pbraudio'):
+            bpy.ops.object.pbraudio_add_properties()
+        
+        # Configure as source
+        empty.pbraudio.source = True
+        empty.pbraudio.source_type = 'SPHERE'
+        empty.show_axis = True
+        
+        self.report({'INFO'}, f"Added spherical source with radius {self.radius}")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.location = context.scene.cursor.location
+        return self.execute(context)
+
+classes.append(PBRAUDIO_OT_add_spherical_source)
+
+class PBRAUDIO_OT_add_planar_source(Operator, AddObjectHelper):
+    """Add a planar sound source"""
+    bl_idname = "object.pbraudio_add_planar_source"
+    bl_label = "Planar Source"
+    bl_description = "Add a planar sound source"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    width: FloatProperty(
+        name="Width",
+        description="Width of the planar source",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+    
+    height: FloatProperty(
+        name="Height",
+        description="Height of the planar source",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+
+    def execute(self, context):
+        # Create empty object
+        empty = bpy.data.objects.new("PlanarSource", None)
+        empty.empty_display_type = 'CUBE'
+        empty.empty_display_size = max(self.width, self.height) / 2
+        empty.location = self.location
+        
+        # Scale to match width and height (cube is 2x2x2 units)
+        empty.scale = (self.width / 2, self.height / 2, 0.01)
+        
+        # Link to collection
+        context.collection.objects.link(empty)
+        
+        # Set as active object
+        context.view_layer.objects.active = empty
+        empty.select_set(True)
+        
+        # Add pbrAudio properties
+        if not hasattr(empty, 'pbraudio'):
+            bpy.ops.object.pbraudio_add_properties()
+        
+        # Configure as source
+        empty.pbraudio.source = True
+        empty.pbraudio.source_type = 'PLANE'
+        empty.show_axis = True
+        
+        self.report({'INFO'}, f"Added planar source with size {self.width}x{self.height}")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.location = context.scene.cursor.location
+        return self.execute(context)
+
+classes.append(PBRAUDIO_OT_add_planar_source)
+
+class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
+    """Add a world environment sphere with boundary empties"""
+    bl_idname = "object.pbraudio_add_world_environment"
+    bl_label = "World Environment"
+    bl_description = "Add a world environment sphere with boundary empties"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    sphere_radius: FloatProperty(
+        name="Sphere Radius",
+        description="Radius of the environment sphere",
+        default=1.0,
+        min=0.1,
+        max=100.0,
+        unit='LENGTH'
+    )
+    
+    number_channels: IntProperty(
+        name="Number of Channels",
+        description="Number of boundary empties (channels)",
+        default=8,
+        min=1,
+        max=64
+    )
+
+    def get_acoustic_domain_bounds(self):
+        """Get the bounding box of the acoustic domain"""
+        for world in bpy.data.worlds:
+            if hasattr(world, 'pbraudio') and hasattr(world.pbraudio, 'acoustic_domain'):
+                domain = world.pbraudio.acoustic_domain
+                if domain:
+                    # Get world matrix
+                    matrix = domain.matrix_world
+                    
+                    # Get bounding box corners in world space
+                    corners = [matrix @ mathutils.Vector(corner) for corner in domain.bound_box]
+                    
+                    # Calculate min and max
+                    min_co = mathutils.Vector((
+                        min(c.x for c in corners),
+                        min(c.y for c in corners),
+                        min(c.z for c in corners)
+                    ))
+                    max_co = mathutils.Vector((
+                        max(c.x for c in corners),
+                        max(c.y for c in corners),
+                        max(c.z for c in corners)
+                    ))
+                    
+                    return min_co, max_co
+        
+        return None, None
+
+    def is_point_inside_domain(self, point):
+        """Check if a point is inside the acoustic domain"""
+        min_co, max_co = self.get_acoustic_domain_bounds()
+        if min_co is None or max_co is None:
+            return True  # No domain defined, allow placement anywhere
+        
+        return (min_co.x <= point.x <= max_co.x and
+                min_co.y <= point.y <= max_co.y and
+                min_co.z <= point.z <= max_co.z)
+
+    def execute(self, context):
+        # Check if point is inside acoustic domain
+        if not self.is_point_inside_domain(self.location):
+            self.report({'ERROR'}, "World Environment must be placed inside the Acoustic Domain")
+            return {'CANCELLED'}
+        
+        # Create central empty
+        center_empty = bpy.data.objects.new("WorldEnvironment_Center", None)
+        center_empty.empty_display_type = 'SPHERE'
+        center_empty.empty_display_size = 0.1
+        center_empty.location = self.location
+        center_empty.show_axis = True
+        
+        # Link to collection
+        context.collection.objects.link(center_empty)
+        
+        # Add pbrAudio properties
+        if not hasattr(center_empty, 'pbraudio'):
+            bpy.ops.object.pbraudio_add_properties()
+        
+        # Configure as output
+        center_empty.pbraudio.output = True
+        center_empty.pbraudio.output_type = 'AMBI'
+        
+        # Calculate ambisonic order from number of channels
+        # For ambisonics: number of channels = (order + 1)^2
+        order = int(math.sqrt(self.number_channels)) - 1
+        center_empty.pbraudio.ambisonic_order = str(max(1, min(3, order)))
+        
+        # Create boundary empties
+        for i in range(self.number_channels):
+            # Calculate spherical coordinates
+            # Distribute points on a sphere using Fibonacci spiral
+            golden_angle = math.pi * (3 - math.sqrt(5))
+            y = 1 - (i / (self.number_channels - 1)) * 2  # y goes from 1 to -1
+            radius = math.sqrt(1 - y * y)
+            theta = golden_angle * i
+            
+            x = math.cos(theta) * radius
+            z = math.sin(theta) * radius
+            
+            # Calculate position
+            position = self.location + mathutils.Vector((x, y, z)) * self.sphere_radius
+            
+            # Check if boundary empty is inside domain
+            if not self.is_point_inside_domain(position):
+                # Move point towards center until it's inside domain
+                direction = (position - self.location).normalized()
+                for t in range(100):
+                    test_position = self.location + direction * (self.sphere_radius - t * 0.01)
+                    if self.is_point_inside_domain(test_position):
+                        position = test_position
+                        break
+            
+            # Create boundary empty
+            boundary_empty = bpy.data.objects.new(f"WorldEnvironment_Boundary_{i:02d}", None)
+            boundary_empty.empty_display_type = 'SPHERE'
+            boundary_empty.empty_display_size = 0.05
+            boundary_empty.location = position
+            
+            # Link to collection
+            context.collection.objects.link(boundary_empty)
+            
+            # Parent to center empty
+            boundary_empty.parent = center_empty
+        
+        # Set center empty as active
+        context.view_layer.objects.active = center_empty
+        center_empty.select_set(True)
+        
+        self.report({'INFO'}, f"Added world environment with {self.number_channels} boundary empties")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.location = context.scene.cursor.location
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "sphere_radius")
+        layout.prop(self, "number_channels")
+        
+        # Show warning if outside domain
+        if not self.is_point_inside_domain(self.location):
+            layout.label(text="Warning: Outside Acoustic Domain", icon='ERROR')
+
+classes.append(PBRAUDIO_OT_add_world_environment)
+
+class PBRAUDIO_OT_add_properties(Operator):
+    """Add pbrAudio properties to selected object"""
+    bl_idname = "object.pbraudio_add_properties"
+    bl_label = "Add pbrAudio Properties"
+    bl_description = "Add pbrAudio properties to selected object"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        obj = context.object
+        if obj:
+            # Ensure pbrAudio properties exist
+            if not hasattr(obj, 'pbraudio'):
+                # This will be handled by the property registration
+                # We just need to ensure the property group is initialized
+                pass
+            
+            self.report({'INFO'}, f"Added pbrAudio properties to {obj.name}")
+        return {'FINISHED'}
+
+classes.append(PBRAUDIO_OT_add_properties)
+

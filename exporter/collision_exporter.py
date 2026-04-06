@@ -58,8 +58,12 @@ class CollisionExporter:
     def get_from_previous(self, node):
         pbraudiorender = bpy.context.scene.pbraudiorender
         bands_per_octave = pbraudiorender.bands_per_octave 
-        freq_max = pbraudiorender.higher_frequency
-        freq_min = pbraudiorender.lowest_frequency
+        if pbraudiorender.enable_frequencies_range_set:
+            freq_max = pbraudiorender.higher_frequency
+            freq_min = pbraudiorender.lowest_frequency
+        else:
+            freq_max = scene.pbraudio.sample_rate / 2
+            freq_min = 5
 
         acoustic_dict = {}
         # get inputs
@@ -121,16 +125,16 @@ class CollisionExporter:
 
         return acoustic_dict
 
-    def clean_acoustic_dict(self, element):
-        for ac_key in element.keys():
-            new_element = {}
-            if isinstance(element[ac_key], dict):
-                new_dict = self.clean_acoustic_dict(element[ac_key])
-            elif not ac_key == 'type':
-                new_element[ac_key] = element[ac_key]
+#    def clean_acoustic_dict(self, element):
+#        for ac_key in element.keys():
+#            new_element = {}
+#            if isinstance(element[ac_key], dict):
+#                new_dict = self.clean_acoustic_dict(element[ac_key])
+#            elif not ac_key == 'type':
+#                new_element[ac_key] = element[ac_key]
 #                if not new_dict == {}:
 #                    new_element[ac_key] = new_dict 
-        return new_element
+#        return new_element
 
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""
@@ -267,8 +271,8 @@ class CollisionExporter:
         name = obj.name_full.replace('.', '_')
         quest_mesh = trimesh.Trimesh(vertices=vertices, vertex_normals=normals, faces=faces)
         if not quest_mesh.is_watertight or not quest_mesh.is_volume and self.to_add(name):
-            print('watertight: ', quest_mesh.is_watertight)
-            print('volume: ', quest_mesh.is_volume)
+#            print('watertight: ', quest_mesh.is_watertight)
+#            print('volume: ', quest_mesh.is_volume)
             self.not_valid.append(name)
 #            print(f"Warming: {obj.name} is not manifold/watertight.")
 #            print(f"Warming: trying to fix {obj.name} manifold/watertight.")

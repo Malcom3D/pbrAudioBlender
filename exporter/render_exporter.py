@@ -40,6 +40,13 @@ class RenderExporter:
         system["fps_base"] = self.scene.render.fps_base
         system["subframes"] = 1
         system["cache_path"] = self.export_path
+        bands_per_octave = self.scene.pbraudiorender.bands_per_octave
+        if self.scene.pbraudiorender.enable_frequencies_range_set:
+            system['freq_max'] = self.scene.pbraudiorender.higher_frequency
+            system['freq_min'] = self.scene.pbraudiorender.lowest_frequency
+        else:
+            system['freq_max'] = self.scene.scene.pbraudio.sample_rate / 2
+            system['freq_min'] = 5
 
         self.config = {}
         self.config["system"] = system
@@ -150,23 +157,77 @@ class RenderExporter:
 
         self.config["termination"] = termination_config
 
-    def get_from_previous(self, node):
+    def get_from_previous_material(self, node):
+        pbraudiorender = bpy.context.scene.pbraudiorender
+        bands_per_octave = pbraudiorender.bands_per_octave
+        if pbraudiorender.enable_frequencies_range_set:
+            freq_max = pbraudiorender.higher_frequency
+            freq_min = pbraudiorender.lowest_frequency
+        else:
+            freq_max = scene.pbraudio.sample_rate / 2
+            freq_min = 5
+
+        acoustic_dict = {}
+        # get inputs
+        inputs = node.inputs.keys()
+        for in_idx in inputs:
+            if node.inputs[in_idx].is_linked:
+                previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
+                if previous_acoustic_dict['type'] == 'AcousticShader':
+                    acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
+                elif previous_acoustic_dict['type'] == 'AcousticProperties':
+                    acoustic_dict['acoustic_properties'] = previous_acoustic_dict
+                elif previous_acoustic_dict['type'] == 'FrequencyResponse':
+                    quantity_type = 'magnitude'
+                    if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
+                        quantity_type = 'coefficients'
+                    desired_points, _ = frd_io.generate_bands(freq_min, freq_max, bands_per_octave)
+                    freq_resp_file = previous_acoustic_dict['response_filepath']
+                    if os.path.exists(freq_resp_file):
+                        freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
+                        acoustic_dict[in_idx] = {"frequencies": freqs.tolist(), quantity_type: mags.tolist(), 'phases': phases.tolist()}
+
+            elif not node.inputs[in_idx].is_linked:
+                if node.pbraudio_type == 'AcousticProperties':
+                    quantity_type = 'magnitude'
+                    if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
+                        quantity_type = 'coefficients'
+                    delta_f = (freq_max - freq_min)/4
+                    freqs = [freq_min, freq_min + delta_f, freq_min + 2*delta_f, freq_max - delta_f, freq_max]
+                    mag = node.inputs[in_idx].default_value
+                    mags = [mag for _ in range(5)]
+                    phases = []
+                    acoustic_dict[in_idx] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
+
+        for property in node.bl_rna.properties.keys():
+            if property.startswith('pbraudio_'):
+                node_property = "node." + property
+                acoustic_value = eval(node_property)
+                if 'young_modulus' in property:
+                    acoustic_value *= 1E9
+                elif 'damping' in property:
+                    acoustic_value *= 0.01
+                acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
+
+        return acoustic_dict
+
+    def get_from_previous_world(self, node):
         acoustic_dict = {}
         # get inputs
         links = node.inputs.keys()
         for link in links:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
-                pbraudio_node_type = previous_acoustic_dict['type']
-                del previous_acoustic_dict['type']
-                if pbraudio_node_type == 'WorldMedium':
+                if previous_acoustic_dict['type'] == 'WorldShader':
                     acoustic_dict['acoustic_shader'] = previous_acoustic_dict
-                elif pbraudio_node_type == 'AcousticShader':
+                elif previous_acoustic_dict['type'] == 'WorldImpedence':
                     acoustic_dict['acoustic_shader'] = previous_acoustic_dict
-                elif pbraudio_node_type == 'AcousticProperties':
+                elif previous_acoustic_dict['type'] == 'WorldDensity':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
-#                elif pbraudio_node_type == 'CoefficientResponse':     ########### Not implemented: return 2 list? frequencies + coefficients?
-#                    acoustic_dict[link] = previous_acoustic_dict     ########### Not implemented
+                elif previous_acoustic_dict['type'] == 'WorldTemperature':
+                    acoustic_dict[link] = previous_acoustic_dict
+                elif previous_acoustic_dict['type'] == 'WorldEnvironment':
+                    acoustic_dict[link] = previous_acoustic_dict
 #                #TBD: freq_response, calibration_file, spatial_freq_response, spatial_freq_response_file, spatial_arrangement_file
 
         for property in node.bl_rna.properties.keys():
@@ -185,7 +246,7 @@ class RenderExporter:
     def get_acoustic_properties_from_world(self):
         """Get acoustic properties from the acoustic world node chain"""
 
-        # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
+        # ADD DEFAULT VALUE IF DOMAIN HAVE NO MATERIAL
         acoustic_shader = []
         for world in bpy.data.worlds.values():
             if hasattr(world, 'pbraudio'):
@@ -194,7 +255,7 @@ class RenderExporter:
                 for key in nodetree.nodes.keys():
                     if nodetree.nodes[key].pbraudio_type == 'WorldOutput'
                         output_node = nodetree.nodes[key]
-                        acoustic_shader = self.get_from_previous(output_node)
+                        acoustic_shader = self.get_from_previous_world(output_node)
 
         return acoustic_shader
 
@@ -203,9 +264,12 @@ class RenderExporter:
 
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         nodetree = obj.pbraudio.nodetree
-        output_node = nodetree.nodes['Material Output']
+        for key in nodetree.nodes.keys():
+            if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
+                output_node = nodetree.nodes[key]
+                acoustic_shader = self.get_from_previous(output_node)
 
-        acoustic_shader = self.get_from_previous(output_node)
+        acoustic_shader = self.get_from_previous_material(output_node)
                     
         return acoustic_shader
 

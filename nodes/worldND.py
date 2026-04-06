@@ -398,7 +398,7 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         name="Environment Object",
         description="Environment Object that define rendered sources",
         type=bpy.types.Object
-    }
+    )
  
     sphere_radius: FloatProperty(
         name="Radius of field sphere",

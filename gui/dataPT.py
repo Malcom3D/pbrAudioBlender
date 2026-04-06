@@ -36,6 +36,8 @@ classes.append(DataButtonsPanel)
 
 class PBRAUDIO_PT_empty(DataButtonsPanel, Panel):
     bl_label = "Empty"
+    bl_idname = 'PBRAUDIO_PT_empty'
+
     bl_translation_context = i18n_contexts.id_id
 
     @classmethod

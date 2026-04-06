@@ -36,6 +36,9 @@ class DataButtonsPanel:
 class PBRAUDIO_PT_empty(Panel):
     bl_label = "Empty"
     bl_idname = 'PBRAUDIO_PT_empty'
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "data"
 
     bl_translation_context = i18n_contexts.id_id
 

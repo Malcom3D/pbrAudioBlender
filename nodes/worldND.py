@@ -394,22 +394,6 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         options={'PATH_SUPPORTS_BLEND_RELATIVE'}
     )
 
-    environment_object: PointerProperty(
-        name="Environment Object",
-        description="Environment Object that define rendered sources",
-        type=bpy.types.Object
-    )
- 
-    sphere_radius: FloatProperty(
-        name="Radius of field sphere",
-        default=1.0
-    )
- 
-    number_channels: IntProperty(
-        name="Number of channels to dedecode from the ambisonic file",
-        default=3,
-    )
-
     pbraudio_type: StringProperty(default='WorldEnvironment')
 
     def init(self, context):

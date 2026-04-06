@@ -18,8 +18,19 @@
 
 import bpy
 from bpy.types import Panel
+from bpy.app.translations import contexts as i18n_contexts
 
 classes = []
+
+class DataButtonsPanel:
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "data"
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return (ob and ob.type == 'EMPTY')
 
 class PBRAUDIO_PT_empty(DataButtonsPanel, Panel):
     bl_label = "Empty"

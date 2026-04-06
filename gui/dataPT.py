@@ -32,7 +32,6 @@ class DataButtonsPanel:
     def poll(cls, context):
         ob = context.object
         return (ob and ob.type == 'EMPTY')
-classes.append(DataButtonsPanel)
 
 class PBRAUDIO_PT_empty(DataButtonsPanel, Panel):
     bl_label = "Empty"

@@ -84,14 +84,15 @@ class CollisionExporter:
                         quantity_type = 'coefficients'
                     desired_points, _ = frd_io.generate_bands(freq_min, freq_max, bands_per_octave)
                     freq_resp_file = previous_acoustic_dict['response_filepath']
+                    if os.path.exists(freq_resp_file):
+                        freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
+                        acoustic_dict[in_idx] = {"frequencies": freqs.tolist(), quantity_type: mags.tolist(), 'phases': phases.tolist()}
+
 #                    if freq_resp_file.startswith('//'):
 #                        freq_resp_file = bpy.path.abspath(freq_resp_file)
 #                    print('freq_resp_file: ', freq_resp_file)
-#                    if os.path.exists(freq_resp_file):
-                    freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
 #                    resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
 #                    acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
-                    acoustic_dict[in_idx] = {"frequencies": freqs.tolist(), quantity_type: mags.tolist(), 'phases': phases.tolist()}
 #                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'AcousticProperties':

@@ -19,6 +19,7 @@
 import bpy
 from bpy.types import Panel
 from bpy.app.translations import contexts as i18n_contexts
+from bpy.props import FloatProperty
 
 classes = []
 

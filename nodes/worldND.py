@@ -19,7 +19,7 @@
 import bpy
 from numpy import sqrt
 from bpy.types import Node
-from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty
+from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty, PointerProperty
 
 from .baseND import AcousticWorldNode
 
@@ -394,6 +394,13 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         options={'PATH_SUPPORTS_BLEND_RELATIVE'}
     )
 
+    selected_object: PointerProperty(
+        name="Selected Object",
+        description="Select an object for environment reference",
+        type=bpy.types.Object,
+        poll=lambda self, obj: obj.type in {'EMPTY'}# and obj.pbraudio.environment
+    )
+
     pbraudio_type: StringProperty(default='WorldEnvironment')
 
     def init(self, context):
@@ -404,9 +411,7 @@ class pbrAudioEnvironmentNode(AcousticWorldNode):
         layout.use_property_decorate = False  # No animation.
 
         layout.prop(self, "ambisonic_file")
-        layout.prop(self, "ambisonic_order")
-        layout.prop(self, "sphere_radius")
-
+        layout.prop(self, "selected_object", text="Environment Object")
     def draw_label(self):
         return "Acoustic Environment"
 

@@ -71,19 +71,11 @@ class CollisionExporter:
         for in_idx in inputs:
             if node.inputs[in_idx].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
-#                print(previous_acoustic_dict)
-#                pbraudio_node_type = previous_acoustic_dict['type']
-#                del previous_acoustic_dict['type']
                 if previous_acoustic_dict['type'] == 'AcousticShader':
-#                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
-#                    acoustic_dict.update(previous_acoustic_dict)
                     acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
-#                    print('AcousticShader: ', previous_acoustic_dict)
                 elif previous_acoustic_dict['type'] == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
-#                    print('AcousticProperties: ', previous_acoustic_dict)
                 elif previous_acoustic_dict['type'] == 'FrequencyResponse':
-#                    print('FrequencyResponse: ', previous_acoustic_dict)
                     quantity_type = 'magnitude'
                     if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
@@ -93,15 +85,8 @@ class CollisionExporter:
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                         acoustic_dict[in_idx] = {"frequencies": freqs.tolist(), quantity_type: mags.tolist(), 'phases': phases.tolist()}
 
-#                    if freq_resp_file.startswith('//'):
-#                        freq_resp_file = bpy.path.abspath(freq_resp_file)
-#                    print('freq_resp_file: ', freq_resp_file)
-#                    resampled_freqs, resampled_mags, resampled_phases = frd_io.resample_frd(freqs, mags, phases, num_points=desired_points)
-#                    acoustic_dict[in_idx] = {"frequencies": resampled_freqs.tolist(), quantity_type: resampled_mags.tolist(), 'phases': resampled_phases.tolist()}
-#                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
             elif not node.inputs[in_idx].is_linked:
                 if node.pbraudio_type == 'AcousticProperties':
-#                    print('unlinked AcousticProperties')
                     quantity_type = 'magnitude'
                     if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
                         quantity_type = 'coefficients'
@@ -111,7 +96,6 @@ class CollisionExporter:
                     mags = [mag for _ in range(5)]
                     phases = []
                     acoustic_dict[in_idx] = {"frequencies": freqs, quantity_type: mags, 'phases': phases}
-#                    print(f"acoustic_dict[{in_idx}]: ", acoustic_dict[in_idx])
 
         for property in node.bl_rna.properties.keys():
             if property.startswith('pbraudio_'):
@@ -125,17 +109,6 @@ class CollisionExporter:
 
         return acoustic_dict
 
-#    def clean_acoustic_dict(self, element):
-#        for ac_key in element.keys():
-#            new_element = {}
-#            if isinstance(element[ac_key], dict):
-#                new_dict = self.clean_acoustic_dict(element[ac_key])
-#            elif not ac_key == 'type':
-#                new_element[ac_key] = element[ac_key]
-#                if not new_dict == {}:
-#                    new_element[ac_key] = new_dict 
-#        return new_element
-
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""
 
@@ -147,9 +120,6 @@ class CollisionExporter:
             if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
                 output_node = nodetree.nodes[key]
                 acoustic_shader = self.get_from_previous(output_node)
-#        print('acoustic_shader before clean: ', acoustic_shader)
-#        acoustic_shader = self.clean_acoustic_dict(acoustic_shader)
-#        print('acoustic_shader after clean: ', acoustic_shader)
                     
         return acoustic_shader
 

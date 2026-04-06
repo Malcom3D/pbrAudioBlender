@@ -28,6 +28,9 @@ for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_men
     classes += mod.classes
 
 def register():
+    # Unregister blender DATA_PT_empty
+    bpy.utils.unregister_class(bpy.types.DATA_PT_empty)
+
     for cls in classes:
         register_class(cls)
     # Add menu to 3D Viewport Add menu
@@ -39,3 +42,6 @@ def unregister():
     bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
     for cls in reversed(classes):
         unregister_class(cls)
+
+    # Register blender DATA_PT_empty
+    bpy.utils.register_class(bpy.types.DATA_PT_empty)

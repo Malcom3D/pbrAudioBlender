@@ -21,6 +21,51 @@ from bpy.types import Panel
 
 classes = []
 
+class PBRAUDIO_PT_empty(DataButtonsPanel, Panel):
+    bl_label = "Empty"
+    bl_translation_context = i18n_contexts.id_id
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None and context.active_object.type == 'EMPTY' and not hasattr(context.active_object, 'pbraudio')
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        ob = context.object
+
+        layout.prop(ob, "empty_display_type", text="Display As")
+        layout.prop(ob, "empty_display_size", text="Size")
+
+        if ob.empty_display_type == 'IMAGE':
+            col = layout.column(align=True)
+            col.prop(ob, "empty_image_offset", text="Offset X", index=0)
+            col.prop(ob, "empty_image_offset", text="Y", index=1)
+
+            col = layout.column()
+            depth_row = col.row()
+            depth_row.enabled = not ob.show_in_front
+            depth_row.prop(ob, "empty_image_depth", text="Depth", expand=True)
+            col.row().prop(ob, "empty_image_side", text="Side", expand=True)
+
+            col = layout.column(heading="Show In", align=True)
+            col.prop(ob, "show_empty_image_orthographic", text="Orthographic")
+            col.prop(ob, "show_empty_image_perspective", text="Perspective")
+            col.prop(ob, "show_empty_image_only_axis_aligned", text="Only Axis Aligned")
+
+            col = layout.column(align=False, heading="Opacity")
+            col.use_property_decorate = False
+            row = col.row(align=True)
+            sub = row.row(align=True)
+            sub.prop(ob, "use_empty_image_alpha", text="")
+            sub = sub.row(align=True)
+            sub.active = ob.use_empty_image_alpha
+            sub.prop(ob, "color", text="", index=3, slider=True)
+            row.prop_decorator(ob, "color", index=3)
+
+classes.append(PBRAUDIO_PT_empty)
+
 class PBRAUDIO_PT_data_panel(Panel):
     """Panel for pbrAudio sound I/O settings"""
     bl_label = 'Sound I/O'
@@ -29,28 +74,47 @@ class PBRAUDIO_PT_data_panel(Panel):
     bl_region_type = 'WINDOW'
     bl_context = 'data'
 
+    width: FloatProperty(
+        name="Width",
+        description="Width of the planar source",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+
+    height: FloatProperty(
+        name="Height",
+        description="Height of the planar source",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
     @classmethod
     def poll(cls, context):
-        return context.scene.render.engine == 'PBRAUDIO' and context.object.type == 'EMPTY' or context.object.type == 'CAMERA'
+        return context.scene.render.engine == 'PBRAUDIO' and context.active_object.type == 'EMPTY' or context.active_object.type == 'CAMERA' and hasattr(context.active_object, 'pbraudio')
 
     def draw(self, context):
         layout = self.layout
         object = context.object
         snode = object.pbraudio
 
-        layout.prop(object.pbraudio, "output")
-
         if not object.pbraudio.output and object.type == 'EMPTY':
             # Object is a Sound Source
-            layout.prop(object.pbraudio, "source_type")
-            layout.template_ID(snode, "source", new="sound.open_mono")
+#            layout.prop(object.pbraudio, "source_type")
+            layout.label(object.pbraudio.source_type)
             # use gizmo shape - text editor -> templates -> gizmo_custom_geometry
             if object.pbraudio.source and object.pbraudio.source_type == 'SPHERE':
-                object.empty_display_type = 'SPHERE'
-                object.empty_display_size = 0.25
+#                object.empty_display_type = 'SPHERE'
+                layout.prop(object, "empty_display_size")
             elif object.pbraudio.source and object.pbraudio.source_type == 'PLANE':
-                object.empty_display_type = 'CUBE'
-                object.empty_display_size = 0.25
+#                object.empty_display_type = 'CUBE'
+                layout.prop(self, "width")
+                layout.prop(self, "height")
+                object.empty_display_size = max(self.width, self.height) / 2
+                object.scale = (self.width / 2, self.height / 2, 0.01)
+            layout.template_ID(snode, "source", new="sound.open_mono")
         else:
             # Object is a Sound Output
             layout.prop(object.pbraudio, "output_type")

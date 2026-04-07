@@ -526,11 +526,6 @@ class RenderExporter:
         os.makedirs(f"{self.render_path}/data/{name}", exist_ok=True)
         scene = bpy.context.scene
 
-        if start_frame is None:
-            start_frame = scene.frame_current
-        if end_frame is None:
-            end_frame = start_frame
-        
         frame_data = {}
         fractured = False
         location, rotation = ([] for _ in range(2))
@@ -631,7 +626,7 @@ class RenderExporter:
 
     def export_animation(self, start_frame=None, end_frame=None):
         if start_frame is None:
-            start_frame = scene.frame_current
+            start_frame = self.scene.frame_current
         if end_frame is None:
             end_frame = start_frame
 

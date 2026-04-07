@@ -44,7 +44,7 @@ class PBRAUDIO_OT_world_material_add(Operator):
             output_node = nodetree.nodes.new('pbrAudioWorldOutputNode')
             output_node.location = (200, 250)
 
-            medium_node = nodetree.nodes.new('pbrAudioWorldMaterialNode')
+            medium_node = nodetree.nodes.new('pbrAudioWorldShaderNode')
             medium_node.location = (-250, 250)
 
             density_node = nodetree.nodes.new('pbrAudioDensityNode')

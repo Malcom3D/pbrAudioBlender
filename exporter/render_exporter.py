@@ -273,6 +273,7 @@ class RenderExporter:
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""
 
+        print('get_acoustic_properties_from_material: ', obj)
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         nodetree = obj.pbraudio.nodetree
         for key in nodetree.nodes.keys():

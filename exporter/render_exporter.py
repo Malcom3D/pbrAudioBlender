@@ -661,7 +661,7 @@ class RenderExporter:
 
     def save_config(self):
         # remove invalid objects and replace object name with idx in connected
-        for obj_idx in range(self.objects):
+        for obj_idx in range(len(self.objects)):
             connected = self.objects[obj_idx]["connected"]
             if not isinstance(connected, bool):
                 for not_valid in self.not_valid:

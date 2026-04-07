@@ -35,12 +35,12 @@ def register():
     for cls in classes:
         register_class(cls)
 
-#    # Add handler to set shader in 3D View to SOLID
-#    for area in bpy.context.screen.areas: 
-#        if area.type == 'VIEW_3D':
-#            space = area.spaces.active
-#            if space.type == 'VIEW_3D':
-#                space.shading.type = 'SOLID'
+    # Add handler to set shader in 3D View to SOLID
+    for area in bpy.context.screen.areas: 
+        if area.type == 'VIEW_3D':
+            space = area.spaces.active
+            if space.type == 'VIEW_3D':
+                space.shading.type = 'SOLID'
 
 #    # Add handler for playback events
 #    if not hasattr(bpy.types.Screen, '_play_handler'):
@@ -73,8 +73,8 @@ def register():
     # handler to set shader in 3D View to SOLID
     @persistent
     def material_shader_only_handler(context):
-        if bpy.context.scene.render.engine == 'PBRAUDIO':
-            for area in bpy.context.screen.areas:
+        if scene.render.engine == 'PBRAUDIO':
+            for area in context.screen.areas:
                 if area.type == 'VIEW_3D':
                     space = area.spaces.active
                     if space.type == 'VIEW_3D':
@@ -84,7 +84,7 @@ def register():
 
     @persistent
     def item_activate_handler(context):
-        if context.scene.render.engine == 'PBRAUDIO':
+        if scene.render.engine == 'PBRAUDIO':
             if hasattr(context, 'active_object'):
                 object = context.active_object
                 treeType = None
@@ -123,11 +123,11 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
-#    # Remove handler
-#    if not len(pbraudio_handler) == 0:
-#        for activate_handler in pbraudio_handler:
-#            if activate_handler is not None:
-#                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
+    # Remove handler
+    if not len(pbraudio_handler) == 0:
+        for activate_handler in pbraudio_handler:
+            if activate_handler is not None:
+                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
 
 #    if hasattr(bpy.types.Screen, '_playback_handler'):
 #        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:

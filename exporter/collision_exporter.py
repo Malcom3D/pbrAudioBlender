@@ -56,6 +56,7 @@ class CollisionExporter:
         self.obj_idx = 0
 
     def get_from_previous(self, node):
+        scene = bpy.context.scene
         pbraudiorender = bpy.context.scene.pbraudiorender
         bands_per_octave = pbraudiorender.bands_per_octave 
         if pbraudiorender.enable_frequencies_range_set:

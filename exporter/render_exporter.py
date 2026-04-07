@@ -84,6 +84,7 @@ class RenderExporter:
 
                     # Get acoustic properties from material
                     domain_config['acoustic_shader'] = self.get_acoustic_properties_from_world()
+                    break
 
         self.config["acoustic_domain"] = domain_config
 

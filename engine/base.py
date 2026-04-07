@@ -68,6 +68,7 @@ class PBRAudioRenderEngine(RenderEngine):
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
 #        update_progress(progress_step)
         scene = depsgraph.scene
+        decimals = 18
         export = render_exporter.RenderExporter(scene=scene, decimals=decimals)
         start_frame = scene.frame_start
         end_frame = scene.frame_end

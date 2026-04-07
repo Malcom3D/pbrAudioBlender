@@ -69,7 +69,7 @@ class PBRAudioRenderEngine(RenderEngine):
 #        update_progress(progress_step)
         scene = depsgraph.scene
         decimals = 18
-        export = render_exporter.RenderExporter(scene=scene, decimals=decimals)
+        exporter = render_exporter.RenderExporter(scene=scene, decimals=decimals)
         start_frame = scene.frame_start
         end_frame = scene.frame_end
         frame_number = scene.frame_current

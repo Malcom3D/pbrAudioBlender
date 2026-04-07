@@ -617,14 +617,14 @@ class RenderExporter:
         if not obj.name == self.config["acoustic_domain"]["name"]:
             acoustic_shader = self.get_acoustic_properties_from_material(obj)
 
-        object["acoustic_shader"] = acoustic_shader
+            object["acoustic_shader"] = acoustic_shader
 
-        print(f"to_add: {self.to_add(name)} object: {name} not_valid: {self.not_valid}")
+            print(f"to_add: {self.to_add(name)} object: {name} not_valid: {self.not_valid}")
 
-        if self.to_add(name):
-            self.objects.append(object)
-            self.obj_idx += 1
-        obj.select_set(False)            
+            if self.to_add(name):
+                self.objects.append(object)
+                self.obj_idx += 1
+            obj.select_set(False)            
 
     def export_animation(self, start_frame=None, end_frame=None):
         if start_frame is None:

@@ -55,6 +55,7 @@ class RenderExporter:
             system['freq_max'] = self.scene.pbraudio.sample_rate / 2
             system['freq_min'] = 5
 
+        self.objects = []
         self.config = {}
         self.config["system"] = system
 

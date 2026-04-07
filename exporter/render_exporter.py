@@ -31,9 +31,9 @@ class RenderExporter:
         self.decimals = decimals
         self.scene = bpy.context.scene
         self.scale_factor = 1.0  # Blender units to meters
-        render_path = f"{scene.pbraudio.cache_path}"
+        render_path = scene.pbraudio.cache_path
+#        render_path = os.path.isabs(scene.pbraudio.cache_path)
         if render_path.startswith('//'):
-            print('Path relative')
             render_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
         os.makedirs(render_path, exist_ok=True)
         self.render_path = f"{scene.pbraudio.cache_path}/AcousticDomain"

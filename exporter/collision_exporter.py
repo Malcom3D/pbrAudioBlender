@@ -35,7 +35,7 @@ class CollisionExporter:
         collision_collection = scene.pbraudio.collision_collection.name_full
         export_path = f"{scene.pbraudio.cache_path}"
         if export_path.startswith('//'):
-            export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
+            export_path = f"{bpy.path.abspath(export_path)}"
         os.makedirs(export_path, exist_ok=True)
         self.export_path = f"{export_path}/{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)

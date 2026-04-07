@@ -630,10 +630,11 @@ class RenderExporter:
         obj.select_set(False)            
 
     def export_animation(self, start_frame=None, end_frame=None):
-        return {'FINISHED'}
+        if start_frame is None:
+            start_frame = scene.frame_current
+        if end_frame is None:
+            end_frame = start_frame
 
-    def export_frame(self, frame_number):
-        """Export data for a single frame"""
         self.domain_config()
         domain_vertices = self.config["acoustic_domain"]['geometry']
         print('domain_vertices: ', domain_vertices)
@@ -642,7 +643,7 @@ class RenderExporter:
             domain_vectors.append(Vector((vertex)))
         objects = self.find_objs_in_domain(domain_vertices=domain_vectors, object_types='MESH')
         for obj in objects:
-            self.export_frame_obj(obj, frame_number)
+            self.export_animation_obj(obj, start_frame, end_frame)
 
         empty = self.find_objs_in_domain(domain_vertices=domain_vectors, object_types='EMPTY')
         for sound_io in empty:
@@ -659,7 +660,7 @@ class RenderExporter:
 
     def save_config(self):
         # remove invalid objects and replace object name with idx in connected
-        for obj_idx in range(len(self.objects)):
+        for obj_idx in range(len(self.config[objects])):
             connected = self.objects[obj_idx]["connected"]
             if not isinstance(connected, bool):
                 for not_valid in self.not_valid:

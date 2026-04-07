@@ -51,7 +51,7 @@ class RenderExporter:
             system['freq_max'] = self.scene.pbraudiorender.higher_frequency
             system['freq_min'] = self.scene.pbraudiorender.lowest_frequency
         else:
-            system['freq_max'] = self.scene.scene.pbraudio.sample_rate / 2
+            system['freq_max'] = self.scene.pbraudio.sample_rate / 2
             system['freq_min'] = 5
 
         self.config = {}

@@ -253,11 +253,11 @@ class RenderExporter:
         for world in bpy.data.worlds.values():
             if hasattr(world, 'pbraudio'):
                 if hasattr(world.pbraudio, 'nodetree'):
-                nodetree = world.pbraudio.nodetree
-                for key in nodetree.nodes.keys():
-                    if nodetree.nodes[key].pbraudio_type == 'WorldOutput'
-                        output_node = nodetree.nodes[key]
-                        acoustic_shader = self.get_from_previous_world(output_node)
+                    nodetree = world.pbraudio.nodetree
+                    for key in nodetree.nodes.keys():
+                        if nodetree.nodes[key].pbraudio_type == 'WorldOutput'
+                            output_node = nodetree.nodes[key]
+                            acoustic_shader = self.get_from_previous_world(output_node)
 
         return acoustic_shader
 

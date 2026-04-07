@@ -21,7 +21,6 @@ import bmesh
 import numpy as np
 import trimesh
 import sys, os, json
-from typing import List, Tuple
 from mathutils import Matrix, Vector
 from bpy_extras.io_utils import axis_conversion
 
@@ -377,7 +376,7 @@ class RenderExporter:
                 0 <= p_local.y <= 1 and 
                 0 <= p_local.z <= 1)
 
-    def find_objs_in_domain(domain_vertices: List[Tuple[float, float, float]], check_partial=True, object_types=None):
+    def find_objs_in_domain(domain_vertices, object_types=None, check_partial=True):
         """
         Find all mesh objects inside or intersecting a parallelepiped.
     

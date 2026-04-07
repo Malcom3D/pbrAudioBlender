@@ -381,7 +381,7 @@ class RenderExporter:
         Find all mesh objects inside or intersecting a parallelepiped.
     
         Args:
-            parallelepiped_vertices: list of 8 Vectors - vertices of the parallelepiped
+            domain_vertices: list of 8 Vectors - vertices of the parallelepiped
             check_partial: bool - If True, include objects partially inside.
                                   If False, only include objects fully inside.
     
@@ -407,14 +407,14 @@ class RenderExporter:
             if check_partial:
                 # Check if ANY vertex is inside (partial inclusion)
                 for vert in world_vertices:
-                    if self.is_point_inside_domain(vert, parallelepiped_vertices):
+                    if self.is_point_inside_domain(vert, domain_vertices):
                         objects_inside.append(obj)
                         break
             else:
                 # Check if ALL vertices are inside (full inclusion)
                 all_inside = True
                 for vert in world_vertices:
-                    if not self.is_point_inside_domain(vert, parallelepiped_vertices):
+                    if not self.is_point_inside_domain(vert, domain_vertices):
                         all_inside = False
                         break
                 if all_inside:

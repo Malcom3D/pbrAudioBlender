@@ -35,12 +35,12 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    # Add handler to set shader in 3D View to SOLID
-    for area in context.screen.areas: 
-        if area.type == 'VIEW_3D':
-            space = area.spaces.active
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'SOLID'
+#    # Add handler to set shader in 3D View to SOLID
+#    for area in context.screen.areas: 
+#        if area.type == 'VIEW_3D':
+#            space = area.spaces.active
+#            if space.type == 'VIEW_3D':
+#                space.shading.type = 'SOLID'
 
 #    # Add handler for playback events
 #    if not hasattr(bpy.types.Screen, '_play_handler'):
@@ -70,64 +70,64 @@ def register():
 #        bpy.app.handlers.animation_playback_post.append(stop_handler)
 #        bpy.app.handlers.animation_playback_pre.append(play_handler)
 
-    # handler to set shader in 3D View to SOLID
-    @persistent
-    def material_shader_only_handler(context):
-        if scene.render.engine == 'PBRAUDIO':
-            for area in context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    space = area.spaces.active
-                    if space.type == 'VIEW_3D':
-                        space.shading.type = 'SOLID'
+#    # handler to set shader in 3D View to SOLID
+#    @persistent
+#    def material_shader_only_handler(context):
+#        if scene.render.engine == 'PBRAUDIO':
+#            for area in context.screen.areas:
+#                if area.type == 'VIEW_3D':
+#                    space = area.spaces.active
+#                    if space.type == 'VIEW_3D':
+#                        space.shading.type = 'SOLID'
+#
+#    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
+#
+#    @persistent
+#    def item_activate_handler(context):
+#        if scene.render.engine == 'PBRAUDIO':
+#            if hasattr(context, 'active_object'):
+#                object = context.active_object
+#                treeType = None
+#                nodeTreeName = None
+#
+#                if object.type == 'EMPTY' or object.type == 'CAMERA':
+#                    return
+#
+#            for world in bpy.data.worlds:
+#                if hasattr(world.pbraudio, 'acoustic_domain'):
+#                    AcousticDomain = world.pbraudio.acoustic_domain
+#
+#            if object == AcousticDomain:
+#                treeType = 'AcousticWorldNodeTree'
+#                if hasattr(world.pbraudio.nodetree, 'name'):
+#                    nodeTreeName = world.pbraudio.nodetree.name
+#            else:
+#                treeType = 'AcousticMaterialNodeTree'
+#                if hasattr(object.pbraudio.nodetree, 'name'):
+#                    nodeTreeName = object.pbraudio.nodetree.name
+#
+#            if treeType is not None:
+#                for area in context.screen.areas:
+#                    if area.type == "NODE_EDITOR":
+#                        for space in area.spaces:
+#                            if space.type == "NODE_EDITOR" and not space.pin:
+#                                if 'Acoustic' in space.tree_type:
+#                                    space.tree_type = treeType
+#                                    if nodeTreeName is not None:
+#                                        space.node_tree = bpy.data.node_groups[nodeTreeName]
 
-    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
-
-    @persistent
-    def item_activate_handler(context):
-        if scene.render.engine == 'PBRAUDIO':
-            if hasattr(context, 'active_object'):
-                object = context.active_object
-                treeType = None
-                nodeTreeName = None
-
-                if object.type == 'EMPTY' or object.type == 'CAMERA':
-                    return
-
-            for world in bpy.data.worlds:
-                if hasattr(world.pbraudio, 'acoustic_domain'):
-                    AcousticDomain = world.pbraudio.acoustic_domain
-
-            if object == AcousticDomain:
-                treeType = 'AcousticWorldNodeTree'
-                if hasattr(world.pbraudio.nodetree, 'name'):
-                    nodeTreeName = world.pbraudio.nodetree.name
-            else:
-                treeType = 'AcousticMaterialNodeTree'
-                if hasattr(object.pbraudio.nodetree, 'name'):
-                    nodeTreeName = object.pbraudio.nodetree.name
-
-            if treeType is not None:
-                for area in context.screen.areas:
-                    if area.type == "NODE_EDITOR":
-                        for space in area.spaces:
-                            if space.type == "NODE_EDITOR" and not space.pin:
-                                if 'Acoustic' in space.tree_type:
-                                    space.tree_type = treeType
-                                    if nodeTreeName is not None:
-                                        space.node_tree = bpy.data.node_groups[nodeTreeName]
-
-    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(item_activate_handler))
+#    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(item_activate_handler))
 
 def unregister():
     global pbraudio_handler
     for cls in reversed(classes):
         unregister_class(cls)
 
-    # Remove handler
-    if not len(pbraudio_handler) == 0:
-        for activate_handler in pbraudio_handler:
-            if activate_handler is not None:
-                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
+#    # Remove handler
+#    if not len(pbraudio_handler) == 0:
+#        for activate_handler in pbraudio_handler:
+#            if activate_handler is not None:
+#                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
 
 #    if hasattr(bpy.types.Screen, '_playback_handler'):
 #        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:

@@ -178,7 +178,7 @@ class RenderExporter:
         inputs = node.inputs.keys()
         for in_idx in inputs:
             if node.inputs[in_idx].is_linked:
-                previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
+                previous_acoustic_dict = self.get_from_previous_material(node.inputs[in_idx].links[0].from_node)
                 if previous_acoustic_dict['type'] == 'AcousticShader':
                     acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
                 elif previous_acoustic_dict['type'] == 'AcousticProperties':
@@ -223,7 +223,7 @@ class RenderExporter:
         links = node.inputs.keys()
         for link in links:
             if node.inputs[link].is_linked:
-                previous_acoustic_dict = self.get_from_previous(node.inputs[link].links[0].from_node)
+                previous_acoustic_dict = self.get_from_previous_world(node.inputs[link].links[0].from_node)
                 if previous_acoustic_dict['type'] == 'WorldShader':
                     acoustic_dict['acoustic_shader'] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldImpedence':
@@ -273,9 +273,7 @@ class RenderExporter:
         for key in nodetree.nodes.keys():
             if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
                 output_node = nodetree.nodes[key]
-                acoustic_shader = self.get_from_previous(output_node)
-
-        acoustic_shader = self.get_from_previous_material(output_node)
+                acoustic_shader = self.get_from_previous_material(output_node)
                     
         return acoustic_shader
 

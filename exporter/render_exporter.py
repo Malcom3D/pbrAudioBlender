@@ -73,8 +73,14 @@ class RenderExporter:
                     # find corner vertex of domain bounding box
                     domain_config['geometry'] = []
                     vertexs = acoustic_domain.bound_box
+                    # 1 5 7 3
                     for idx in range(8):
-                        domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
+                        if not num % 2 == 0:
+                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
+                    # 0 4 6 2
+                    for idx in range(8):
+                        if num % 2 == 0:
+                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
 
                     # Get acoustic properties from material
                     domain_config['acoustic_shader'] = self.get_acoustic_properties_from_world()

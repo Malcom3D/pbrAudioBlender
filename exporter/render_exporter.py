@@ -630,11 +630,13 @@ class RenderExporter:
     def export_frame(self, frame_number):
         """Export data for a single frame"""
         self.domain_config()
-        objects = self.find_objs_in_domain(domain_vertices=self.config["acoustic_domain"]['geometry'], object_types='MESH')
+        domain_vertices = self.config["acoustic_domain"]['geometry']
+        print('domain_vertices: ', domain_vertices)
+        objects = self.find_objs_in_domain(domain_vertices=domain_vertices, object_types='MESH')
         for obj in objects:
             self.export_frame_obj(obj, frame_number)
 
-        empty = self.find_objs_in_domain(domain_vertices=self.config["acoustic_domain"]['geometry'], object_types='EMPTY')
+        empty = self.find_objs_in_domain(domain_vertices=domain_vertices, object_types='EMPTY')
         for sound_io in empty:
             if sound_io.pbraudio.output:
                 self.export_frame_output(sound_io, frame_number)

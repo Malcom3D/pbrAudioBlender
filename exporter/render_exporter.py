@@ -358,8 +358,6 @@ class RenderExporter:
         Returns:
             bool: True if point is inside the parallelepiped
         """
-        vertices = np.array(vertices)
-
         # Create basis vectors from the parallelepiped edges
         u = vertices[1] - vertices[0]  # edge from v0 to v1
         v = vertices[3] - vertices[0]  # edge from v0 to v3
@@ -639,11 +637,14 @@ class RenderExporter:
         self.domain_config()
         domain_vertices = self.config["acoustic_domain"]['geometry']
         print('domain_vertices: ', domain_vertices)
-        objects = self.find_objs_in_domain(domain_vertices=domain_vertices, object_types='MESH')
+        domain_vectors = []
+        for vertex in domain_vertices:
+            domain_vectors.append(Vector((vertex)))
+        objects = self.find_objs_in_domain(domain_vertices=domain_vectors, object_types='MESH')
         for obj in objects:
             self.export_frame_obj(obj, frame_number)
 
-        empty = self.find_objs_in_domain(domain_vertices=domain_vertices, object_types='EMPTY')
+        empty = self.find_objs_in_domain(domain_vertices=domain_vectors, object_types='EMPTY')
         for sound_io in empty:
             if sound_io.pbraudio.output:
                 self.export_frame_output(sound_io, frame_number)

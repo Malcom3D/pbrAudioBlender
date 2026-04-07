@@ -614,7 +614,7 @@ class RenderExporter:
         object["shard"] = shard
 
         # Get acoustic properties from material
-        print('get_acoustic_properties_from_material: ', obj, self.config["acoustic_domain"]['name'])
+        print('get_acoustic_properties_from_material: ', obj, self.config["acoustic_domain"])
         if not obj.name == self.config["acoustic_domain"]['name']:
             acoustic_shader = self.get_acoustic_properties_from_material(obj)
 

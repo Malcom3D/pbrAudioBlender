@@ -32,6 +32,9 @@ class RenderExporter:
         self.decimals = decimals
         self.scene = bpy.context.scene
         self.scale_factor = 1.0  # Blender units to meters
+        export_path = f"{scene.pbraudio.cache_path}"
+        if scene.pbraudio.cache_path.startswith('//'):
+            export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
         self.export_path = f"{scene.pbraudio.cache_path}/AcousticDomain"
         os.makedirs(self.export_path, exist_ok=True)
 
@@ -337,7 +340,7 @@ class RenderExporter:
             'fractured': fractured
         }
 
-    def is_point_inside_parallelepiped(point, vertices):
+    def is_point_inside_domain(point, vertices):
         """
         Check if a point is inside a parallelepiped using barycentric coordinates.
     
@@ -407,14 +410,14 @@ class RenderExporter:
             if check_partial:
                 # Check if ANY vertex is inside (partial inclusion)
                 for vert in world_vertices:
-                    if is_point_inside_parallelepiped(vert, parallelepiped_vertices):
+                    if is_point_inside_domain(vert, parallelepiped_vertices):
                         objects_inside.append(obj)
                         break
             else:
                 # Check if ALL vertices are inside (full inclusion)
                 all_inside = True
                 for vert in world_vertices:
-                    if not is_point_inside_parallelepiped(vert, parallelepiped_vertices):
+                    if not is_point_inside_domain(vert, parallelepiped_vertices):
                         all_inside = False
                         break
                 if all_inside:
@@ -510,7 +513,7 @@ class RenderExporter:
                 to_be_added = False
         return to_be_added
     
-    def export_animation(self, obj, start_frame=None, end_frame=None):
+    def export_animation_obj(self, obj, start_frame=None, end_frame=None):
         """Export animation sequence"""
 
         obj.select_set(True)
@@ -623,6 +626,9 @@ class RenderExporter:
             self.obj_idx += 1
         obj.select_set(False)            
 
+    def export_animation(self, start_frame=None, end_frame=None):
+        return {'FINISHED'}
+
     def export_frame(self, frame_number):
         """Export data for a single frame"""
         self.domain_config()
@@ -641,6 +647,7 @@ class RenderExporter:
         self.interface_config()
         self.resonance_config()
         self.termination_config()
+        self.config()
 
     def save_config(self):
         # remove invalid objects and replace object name with idx in connected

@@ -55,7 +55,7 @@ class PBRAUDIO_OT_material_add(Operator):
             context.active_object.pbraudio.nodetree = nodetree
         
         # Set the node tree as active in the node editor
-        for area in bpy.context.screen.areas:
+        for area in context.screen.areas:
             if area.type == 'NODE_EDITOR':
                 for space in area.spaces:
                     if space.type == 'NODE_EDITOR':

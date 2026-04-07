@@ -36,7 +36,7 @@ def register():
         register_class(cls)
 
     # Add handler to set shader in 3D View to SOLID
-    for area in bpy.context.screen.areas: 
+    for area in context.screen.areas: 
         if area.type == 'VIEW_3D':
             space = area.spaces.active
             if space.type == 'VIEW_3D':
@@ -74,7 +74,7 @@ def register():
     @persistent
     def material_shader_only_handler(context):
         if scene.render.engine == 'PBRAUDIO':
-            for area in bpy.context.screen.areas:
+            for area in context.screen.areas:
                 if area.type == 'VIEW_3D':
                     space = area.spaces.active
                     if space.type == 'VIEW_3D':
@@ -107,7 +107,7 @@ def register():
                     nodeTreeName = object.pbraudio.nodetree.name
 
             if treeType is not None:
-                for area in bpy.context.screen.areas:
+                for area in context.screen.areas:
                     if area.type == "NODE_EDITOR":
                         for space in area.spaces:
                             if space.type == "NODE_EDITOR" and not space.pin:

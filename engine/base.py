@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.types import RenderEngine
-#from .config import pbrAudioConfigInit
+from ..exporter import render_exporter
 
 classes =  []
 
@@ -65,10 +65,19 @@ class PBRAudioRenderEngine(RenderEngine):
 
     def render(self, depsgraph):
         """Main render method"""
+#        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
+#        update_progress(progress_step)
+        scene = depsgraph.scene
+        export = RenderExporter(scene=scene, decimals=decimals)
         if self.is_animation:
             self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
+            start_frame = scene.frame_start
+            end_frame = scene.frame_end
+            exporter.export_animation(start_frame, end_frame)
         else:
             self.report({'INFO'}, f"pbrAudio: rendering in progress...")
+            exporter.export_frame()
+
 #        scene = depsgraph.scene
 #        pbraudio_init = pbrAudioConfigInit()
 #

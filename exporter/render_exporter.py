@@ -16,11 +16,13 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import numpy as np
 import bpy
+import bmesh
 import numpy as np
 import trimesh
 import sys, os, json
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 from bpy_extras.io_utils import axis_conversion
 
 class RenderExporter:
@@ -333,8 +335,99 @@ class RenderExporter:
             'rotation': rotation,
             'fractured': fractured
         }
+
+    def is_point_inside_parallelepiped(point, vertices):
+        """
+        Check if a point is inside a parallelepiped using barycentric coordinates.
     
-    def export_frame(self, obj, frame_number):
+        Args:
+            point: Vector - The point to test
+            vertices: list of 8 Vectors - The vertices of the parallelepiped in order:
+                      [v0, v1, v2, v3, v4, v5, v6, v7]
+                      Where:
+                      v0-v3: bottom face (counter-clockwise)
+                      v4-v7: top face (counter-clockwise, directly above v0-v3)
+    
+        Returns:
+            bool: True if point is inside the parallelepiped
+        """
+        # Create basis vectors from the parallelepiped edges
+        u = vertices[1] - vertices[0]  # edge from v0 to v1
+        v = vertices[3] - vertices[0]  # edge from v0 to v3
+        w = vertices[4] - vertices[0]  # edge from v0 to v4 (height)
+    
+        # Create transformation matrix
+        M = Matrix([u, v, w]).transposed()
+    
+        # Check if matrix is invertible
+        if M.determinant() == 0:
+            print("Warning: Parallelepiped vertices are coplanar or degenerate")
+            return False
+    
+        # Calculate inverse matrix
+        M_inv = M.inverted()
+    
+        # Transform point to parallelepipediped's coordinate system
+        p_local = M_inv @ (point - vertices[0])
+    
+        # Check if point is inside unit cube in local coordinates
+        return (0 <= p_local.x <= 1 and 
+                0 <= p_local.y <= 1 and 
+                0 <= p_local.z <= 1)
+
+    def find_objs_in_domain(domain_vertices: List[Tuple[Float, Float, Float]], check_partial=True, object_types=None):
+        """
+        Find all mesh objects inside or intersecting a parallelepiped.
+    
+        Args:
+            parallelepiped_vertices: list of 8 Vectors - vertices of the parallelepiped
+            check_partial: bool - If True, include objects partially inside.
+                                  If False, only include objects fully inside.
+    
+        Returns:
+            list: Objects inside/intersecting the parallelepiped
+        """
+        objects_inside = []
+    
+        # Get all mesh objects in the scene
+        # Default object types if not specified
+        if object_types is None:
+            object_types = ['MESH', 'EMPTY']
+        mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type in object_types]
+    
+        for obj in mesh_objects:
+            # Get world coordinates of object vertices
+            mesh = obj.data
+            world_matrix = obj.matrix_world
+        
+            # Get all vertices in world space
+            world_vertices = [world_matrix @ vert.co for vert in mesh.vertices]
+        
+            if check_partial:
+                # Check if ANY vertex is inside (partial inclusion)
+                for vert in world_vertices:
+                    if is_point_inside_parallelepiped(vert, parallelepiped_vertices):
+                        objects_inside.append(obj)
+                        break
+            else:
+                # Check if ALL vertices are inside (full inclusion)
+                all_inside = True
+                for vert in world_vertices:
+                    if not is_point_inside_parallelepiped(vert, parallelepiped_vertices):
+                        all_inside = False
+                        break
+                if all_inside:
+                    objects_inside.append(obj)
+    
+        return objects_inside
+        
+    def export_frame_source(self, source, frame_number):
+        pass
+
+    def export_frame_output(self, output, frame_number):
+        pass
+
+    def export_frame_obj(self, obj, frame_number):
         """Export mesh data for a single frame"""
         # Set current frame
         bpy.context.scene.frame_set(frame_number)
@@ -528,6 +621,25 @@ class RenderExporter:
             self.objects.append(object)
             self.obj_idx += 1
         obj.select_set(False)            
+
+    def export_frame(self, frame_number):
+        """Export data for a single frame"""
+        self.domain_config()
+        objects = self.find_objs_in_domain(domain_vertices=self.config["acoustic_domain"]['geometry'], object_types='MESH')
+        for obj in objects:
+            self.export_frame_obj(obj, frame_number)
+
+        empty = self.find_objs_in_domain(domain_vertices=self.config["acoustic_domain"]['geometry'], object_types='EMPTY')
+        for sound_io in empty:
+            if sound_io.pbraudio.output:
+                self.export_frame_output(sound_io, frame_number)
+            elif sound_io.pbraudio.source:
+                self.export_frame_source(sound_io, frame_number)
+
+        self.wave_propagation()
+        self.interface_config()
+        self.resonance_config()
+        self.termination_config()
 
     def save_config(self):
         # remove invalid objects and replace object name with idx in connected

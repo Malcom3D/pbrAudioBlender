@@ -84,13 +84,14 @@ def register():
 
     @persistent
     def item_activate_handler(context):
-        if bpy.context.scene.render.engine == 'PBRAUDIO':
-            object = context.active_object
-            treeType = None
-            nodeTreeName = None
+        if context.scene.render.engine == 'PBRAUDIO':
+            if hasattr(context, 'active_object'):
+                object = context.active_object
+                treeType = None
+                nodeTreeName = None
 
-            if object.type == 'EMPTY' or object.type == 'CAMERA':
-                return
+                if object.type == 'EMPTY' or object.type == 'CAMERA':
+                    return
 
             for world in bpy.data.worlds:
                 if hasattr(world.pbraudio, 'acoustic_domain'):
@@ -122,11 +123,11 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
-    # Remove handler
-    if not len(pbraudio_handler) == 0:
-        for activate_handler in pbraudio_handler:
-            if activate_handler is not None:
-                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
+#    # Remove handler
+#    if not len(pbraudio_handler) == 0:
+#        for activate_handler in pbraudio_handler:
+#            if activate_handler is not None:
+#                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
 
 #    if hasattr(bpy.types.Screen, '_playback_handler'):
 #        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:

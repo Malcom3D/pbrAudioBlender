@@ -561,7 +561,7 @@ class RenderExporter:
                 scene.frame_float = frame
                 bpy.context.view_layer.update()
 #                print(f"Exporting {obj.name} frame {frame} in {self.render_path}/data/{name}...")
-                frame_result = self.export_frame(obj, frame)
+                frame_result = self.export_frame_obj(obj, frame)
             
                 # Store each component separately for easy access
                 frame_data['vertices'] = frame_result['vertices']
@@ -577,7 +577,7 @@ class RenderExporter:
             print(f"Exporting pose for {obj.name} to {output_pose}...")
             np.savez_compressed(output_pose, location=location[0], rotation=rotation[0])            
             print(f"Exporting {obj.name} in {self.render_path}/data/{name}...")
-            frame_result = self.export_frame(obj, start_frame)
+            frame_result = self.export_frame_obj(obj, start_frame)
 
             # Store each component separately for easy access
             frame_data[f'vertices'] = frame_result['vertices']

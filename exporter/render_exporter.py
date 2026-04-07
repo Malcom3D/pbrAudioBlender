@@ -22,6 +22,7 @@ import bmesh
 import numpy as np
 import trimesh
 import sys, os, json
+from typing import List, Tuple
 from mathutils import Matrix, Vector
 from bpy_extras.io_utils import axis_conversion
 

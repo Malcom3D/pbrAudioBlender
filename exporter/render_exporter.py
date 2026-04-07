@@ -655,7 +655,7 @@ class RenderExporter:
         self.interface_config()
         self.resonance_config()
         self.termination_config()
-        self.config()
+        self.save_config()
 
     def save_config(self):
         # remove invalid objects and replace object name with idx in connected

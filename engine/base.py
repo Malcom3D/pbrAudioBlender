@@ -80,7 +80,7 @@ class PBRAudioRenderEngine(RenderEngine):
         else:
             self.report({'INFO'}, f"pbrAudio: rendering in progress...")
             print('frame_number: ', frame_number)
-            exporter.export_frame(frame_number)
+            exporter.export_animation()
 
 #        scene = depsgraph.scene
 #        pbraudio_init = pbrAudioConfigInit()

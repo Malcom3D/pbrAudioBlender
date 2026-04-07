@@ -407,14 +407,14 @@ class RenderExporter:
             if check_partial:
                 # Check if ANY vertex is inside (partial inclusion)
                 for vert in world_vertices:
-                    if is_point_inside_domain(vert, parallelepiped_vertices):
+                    if self.is_point_inside_domain(vert, parallelepiped_vertices):
                         objects_inside.append(obj)
                         break
             else:
                 # Check if ALL vertices are inside (full inclusion)
                 all_inside = True
                 for vert in world_vertices:
-                    if not is_point_inside_domain(vert, parallelepiped_vertices):
+                    if not self.is_point_inside_domain(vert, parallelepiped_vertices):
                         all_inside = False
                         break
                 if all_inside:

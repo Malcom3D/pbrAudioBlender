@@ -337,7 +337,7 @@ class RenderExporter:
             'fractured': fractured
         }
 
-    def is_point_inside_domain(point, vertices):
+    def is_point_inside_domain(self, point, vertices):
         """
         Check if a point is inside a parallelepiped using barycentric coordinates.
     
@@ -376,7 +376,7 @@ class RenderExporter:
                 0 <= p_local.y <= 1 and 
                 0 <= p_local.z <= 1)
 
-    def find_objs_in_domain(domain_vertices, object_types=None, check_partial=True):
+    def find_objs_in_domain(self, domain_vertices, object_types=None, check_partial=True):
         """
         Find all mesh objects inside or intersecting a parallelepiped.
     

@@ -376,7 +376,7 @@ class RenderExporter:
                 0 <= p_local.y <= 1 and 
                 0 <= p_local.z <= 1)
 
-    def find_objs_in_domain(domain_vertices: List[Tuple[Float, Float, Float]], check_partial=True, object_types=None):
+    def find_objs_in_domain(domain_vertices: List[Tuple[float, float, float]], check_partial=True, object_types=None):
         """
         Find all mesh objects inside or intersecting a parallelepiped.
     

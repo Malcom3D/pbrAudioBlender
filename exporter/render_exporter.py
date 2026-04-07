@@ -35,6 +35,7 @@ class RenderExporter:
         export_path = f"{scene.pbraudio.cache_path}"
         if scene.pbraudio.cache_path.startswith('//'):
             export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
+        os.makedirs(export_path, exist_ok=True)
         self.export_path = f"{scene.pbraudio.cache_path}/AcousticDomain"
         os.makedirs(self.export_path, exist_ok=True)
 

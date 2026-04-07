@@ -74,7 +74,7 @@ def register():
     @persistent
     def material_shader_only_handler(context):
         if scene.render.engine == 'PBRAUDIO':
-            for area in context.screen.areas:
+            for area in bpy.context.screen.areas:
                 if area.type == 'VIEW_3D':
                     space = area.spaces.active
                     if space.type == 'VIEW_3D':

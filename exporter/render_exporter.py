@@ -16,7 +16,6 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import numpy as np
 import bpy
 import bmesh
 import numpy as np
@@ -32,12 +31,13 @@ class RenderExporter:
         self.decimals = decimals
         self.scene = bpy.context.scene
         self.scale_factor = 1.0  # Blender units to meters
-        export_path = f"{scene.pbraudio.cache_path}"
-        if scene.pbraudio.cache_path.startswith('//'):
-            export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
-        os.makedirs(export_path, exist_ok=True)
-        self.export_path = f"{scene.pbraudio.cache_path}/AcousticDomain"
-        os.makedirs(self.export_path, exist_ok=True)
+        render_path = f"{scene.pbraudio.cache_path}"
+        if render_path.startswith('//'):
+            print('Path relative')
+            render_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
+        os.makedirs(render_path, exist_ok=True)
+        self.render_path = f"{scene.pbraudio.cache_path}/AcousticDomain"
+        os.makedirs(self.render_path, exist_ok=True)
 
         system = {}
         system["sample_rate"] = self.scene.pbraudio.sample_rate
@@ -46,7 +46,7 @@ class RenderExporter:
         system["fps"] = self.scene.render.fps
         system["fps_base"] = self.scene.render.fps_base
         system["subframes"] = 1
-        system["cache_path"] = self.export_path
+        system["cache_path"] = self.render_path
         bands_per_octave = self.scene.pbraudiorender.bands_per_octave
         if self.scene.pbraudiorender.enable_frequencies_range_set:
             system['freq_max'] = self.scene.pbraudiorender.higher_frequency
@@ -520,8 +520,8 @@ class RenderExporter:
         obj.select_set(True)
         name = obj.name_full.replace('.', '_')
         
-        os.makedirs(f"{self.export_path}/data/pose", exist_ok=True)
-        os.makedirs(f"{self.export_path}/data/{name}", exist_ok=True)
+        os.makedirs(f"{self.render_path}/data/pose", exist_ok=True)
+        os.makedirs(f"{self.render_path}/data/{name}", exist_ok=True)
         scene = bpy.context.scene
 
         if start_frame is None:
@@ -545,13 +545,13 @@ class RenderExporter:
 
         location = np.round(np.array(location), self.decimals)
         rotation = np.round(np.array(rotation), self.decimals)
-        output_pose = os.path.join(self.export_path, f"data/pose/{name}.npz")
+        output_pose = os.path.join(self.render_path, f"data/pose/{name}.npz")
 
         object = {}
         object["idx"] = self.obj_idx
         object["name"] = name
-        object["obj_path"] = f"{self.export_path}/data/{name}"
-        object["pose_path"] = f"{self.export_path}/data/pose"
+        object["obj_path"] = f"{self.render_path}/data/{name}"
+        object["pose_path"] = f"{self.render_path}/data/pose"
 
         # verify is not static
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
@@ -563,7 +563,7 @@ class RenderExporter:
             for frame in range(start_frame, end_frame + 1):
                 scene.frame_float = frame
                 bpy.context.view_layer.update()
-#                print(f"Exporting {obj.name} frame {frame} in {self.export_path}/data/{name}...")
+#                print(f"Exporting {obj.name} frame {frame} in {self.render_path}/data/{name}...")
                 frame_result = self.export_frame(obj, frame)
             
                 # Store each component separately for easy access
@@ -572,14 +572,14 @@ class RenderExporter:
                 frame_data['faces'] = frame_result['faces']
 
                 # Save to npz
-                output_file = os.path.join(self.export_path, f"data/{name}/{name}_{frame:05d}.npz")
+                output_file = os.path.join(self.render_path, f"data/{name}/{name}_{frame:05d}.npz")
                 np.savez_compressed(output_file, **frame_data)
         else:
             object["static"] = True
             print(f"{obj.name} is static...")
             print(f"Exporting pose for {obj.name} to {output_pose}...")
             np.savez_compressed(output_pose, location=location[0], rotation=rotation[0])            
-            print(f"Exporting {obj.name} in {self.export_path}/data/{name}...")
+            print(f"Exporting {obj.name} in {self.render_path}/data/{name}...")
             frame_result = self.export_frame(obj, start_frame)
 
             # Store each component separately for easy access
@@ -588,7 +588,7 @@ class RenderExporter:
             frame_data[f'faces'] = frame_result['faces']
 
             # Save to npz
-            output_file = os.path.join(self.export_path, f"data/{name}/{name}.npz")
+            output_file = os.path.join(self.render_path, f"data/{name}/{name}.npz")
             np.savez_compressed(output_file, **frame_data)
 
         object["stochastic_variation"] = obj.pbraudio.stochastic_variation
@@ -687,7 +687,7 @@ class RenderExporter:
         self.config["objects"] = self.objects
 
         # create config file
-        config_file = f"{self.export_path}/config.json"
+        config_file = f"{self.render_path}/config.json"
         js = json.dumps(self.config, indent=2, separators=(',', ': '))
         with open(config_file, 'w+') as json_file:
             json_file.write(js)

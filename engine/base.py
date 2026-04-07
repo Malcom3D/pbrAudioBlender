@@ -99,7 +99,7 @@ class PBRAudioRenderEngine(RenderEngine):
 #            pbraudio_init.initZarr()
 #            pbraudio_init.scene.pbraudio.cache_status = True
 #
-        update_progress(progress)
+#        update_progress(progress)
 
         self.report({'INFO'}, "pbrAudio rendering end...")
 

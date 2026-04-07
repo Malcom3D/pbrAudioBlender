@@ -255,7 +255,7 @@ class RenderExporter:
                 if hasattr(world.pbraudio, 'nodetree'):
                     nodetree = world.pbraudio.nodetree
                     for key in nodetree.nodes.keys():
-                        if nodetree.nodes[key].pbraudio_type == 'WorldOutput'
+                        if nodetree.nodes[key].pbraudio_type == 'WorldOutput':
                             output_node = nodetree.nodes[key]
                             acoustic_shader = self.get_from_previous_world(output_node)
 

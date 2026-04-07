@@ -68,7 +68,7 @@ class RenderExporter:
             if hasattr(world, 'pbraudio'):
                 if hasattr(world.pbraudio, 'acoustic_domain'):
                     acoustic_domain = world.pbraudio.acoustic_domain
-                    acoustic_domain['name'] = world.pbraudio.acoustic_domain.name
+                    domain_config['name'] = acoustic_domain.name
 
                     # find corner vertex of domain bounding box
                     domain_config['geometry'] = []
@@ -274,7 +274,6 @@ class RenderExporter:
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""
 
-        print('get_acoustic_properties_from_material: ', obj, self.config["acoustic_domain"])
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         nodetree = obj.pbraudio.nodetree
         for key in nodetree.nodes.keys():
@@ -615,8 +614,7 @@ class RenderExporter:
         object["shard"] = shard
 
         # Get acoustic properties from material
-        print('get_acoustic_properties_from_material: ', obj, self.config["acoustic_domain"])
-        if not obj.name == self.config["acoustic_domain"]:
+        if not obj.name == self.config["acoustic_domain"]["name"]:
             acoustic_shader = self.get_acoustic_properties_from_material(obj)
 
         object["acoustic_shader"] = acoustic_shader

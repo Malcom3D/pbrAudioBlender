@@ -170,6 +170,7 @@ class RenderExporter:
         self.config["termination"] = termination_config
 
     def get_from_previous_material(self, node):
+        scene = bpy.context.scene
         pbraudiorender = bpy.context.scene.pbraudiorender
         bands_per_octave = pbraudiorender.bands_per_octave
         if pbraudiorender.enable_frequencies_range_set:

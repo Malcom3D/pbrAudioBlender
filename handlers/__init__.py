@@ -71,7 +71,7 @@ def select_nodetree_handler(context):
                 if area.type == "NODE_EDITOR":
                     for space in area.spaces:
                         if space.type == "NODE_EDITOR" and not space.pin:
-                             if 'Acoustic' in space.tree_type:
+#                            if 'Acoustic' in space.tree_type:
                             space.tree_type = treeType
                             if nodeTreeName is not None:
                                 space.node_tree = bpy.data.node_groups[nodeTreeName]

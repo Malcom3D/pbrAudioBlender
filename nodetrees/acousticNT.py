@@ -18,6 +18,7 @@
 
 import bpy
 from bpy.types import NodeTree
+from bpy.props import StringProperty
 
 classes = []
 

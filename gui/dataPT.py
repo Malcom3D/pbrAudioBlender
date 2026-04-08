@@ -119,14 +119,14 @@ class PBRAUDIO_PT_data_panel(Panel):
 
         if not object.pbraudio.output and object.type == 'EMPTY':
             # Object is a Sound Source
-#            layout.prop(object.pbraudio, "source_type")
-            layout.label(object.pbraudio.source_type)
+            layout.prop(object.pbraudio, "source_type")
+#            layout.label(text=object.pbraudio.source_type)
             # use gizmo shape - text editor -> templates -> gizmo_custom_geometry
             if object.pbraudio.source and object.pbraudio.source_type == 'SPHERE':
-#                object.empty_display_type = 'SPHERE'
+                object.empty_display_type = 'SPHERE'
                 layout.prop(object, "empty_display_size")
             elif object.pbraudio.source and object.pbraudio.source_type == 'PLANE':
-#                object.empty_display_type = 'CUBE'
+                object.empty_display_type = 'CUBE'
                 layout.prop(self, "width")
                 layout.prop(self, "height")
                 object.empty_display_size = max(self.width, self.height) / 2

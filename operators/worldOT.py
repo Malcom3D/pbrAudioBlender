@@ -80,7 +80,7 @@ class PBRAUDIO_OT_environment_item_add(Operator):
     
     @classmethod
     def poll(cls, context):
-        return context.space_data.node_tree == 'AcousticNodeTree' and ntree.pbraudio.acoustic_shader_type == 'WORLD'
+        return context.space_data.node_tree == 'AcousticNodeTree' and context.scene.acoustic_node_editor_props.acoustic_shader_type == 'WORLD'
     
     def execute(self, context):
         node = context.active_node
@@ -101,7 +101,7 @@ class PBRAUDIO_OT_environment_item_remove(Operator):
     
     @classmethod
     def poll(cls, context):
-        return context.space_data.node_tree == 'AcousticNodeTree' and ntree.pbraudio.acoustic_shader_type == 'WORLD'
+        return context.space_data.node_tree == 'AcousticNodeTree' and context.scene.acoustic_node_editor_props.acoustic_shader_type == 'WORLD'
     
     def execute(self, context):
         node = context.active_node

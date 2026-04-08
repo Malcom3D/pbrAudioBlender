@@ -25,11 +25,11 @@ def draw_acoustic_shader_type(self, context):
     row = layout.row(align=True)
     row.prop(context.scene.acoustic_node_editor_props, "acoustic_shader_type", text="")
 
-    if context.scene.pbraudio.acoustic_shader_type == 'OBJECT':
+    if context.scene.acoustic_node_editor_props.acoustic_shader_type == 'OBJECT':
         row.label(icon='OBJECT_DATA')
-    elif context.scene.pbraudio.acoustic_shader_type == 'WORLD':
+    elif context.scene.acoustic_node_editor_props.acoustic_shader_type == 'WORLD':
         row.label(icon='WORLD')
-    elif context.scene.pbraudio.acoustic_shader_type == 'SOUND':
+    elif context.scene.acoustic_node_editor_props.acoustic_shader_type == 'SOUND':
         row.label(icon='SPEAKER')
     
 # Register and add to NODE_MT_editor_menus

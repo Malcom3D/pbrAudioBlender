@@ -36,10 +36,10 @@ def draw_shader_type(self, context):
 
 def register():
     # Register to draw in the node editor header
-#    bpy.types.NODE_HT_header.append(draw_shader_type)
-    bpy.types.NODE_MT_editor_menus.prepend(draw_shader_type)
+    bpy.types.NODE_HT_header.append(draw_shader_type)
+#    bpy.types.NODE_MT_editor_menus.prepend(draw_shader_type)
 
 def unregister():
     # Remove from node editor header
-#    bpy.types.NODE_HT_header.remove(draw_shader_type)
-    bpy.types.NODE_MT_editor_menus.remove(draw_shader_type)
+    bpy.types.NODE_HT_header.remove(draw_shader_type)
+#    bpy.types.NODE_MT_editor_menus.remove(draw_shader_type)

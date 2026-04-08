@@ -112,12 +112,17 @@ class PBRAUDIO_PT_data_panel(Panel):
             layout.prop(object.pbraudio, "source_type")
             if object.pbraudio.source_type == 'SPHERE':
                 layout.prop(object, "object.pbraudio.source_sphere_size")
-                object.empty_display_size = object.source_sphere_size
+                op = object.pbraudio_resize_source
+                op.size = object.pbraudio.source_sphere_size
+#                object.empty_display_size = object.pbraudio.source_sphere_size
             elif object.pbraudio.source_type == 'PLANE':
                 layout.prop(object.pbraudio, "source_planar_width")
                 layout.prop(object.pbraudio, "source_planar_height")
-                object.empty_display_size = max(object.pbraudio.source_planar_width, object.pbraudio.source_planar_height) / 2
-                object.scale = (object.pbraudio.source_planar_width / 2, object.pbraudio.source_planar_height / 2, 0.01)
+                op = object.pbraudio_resize_source
+                op.height = object.pbraudio.source_planar_height
+                op.width = object.pbraudio.source_planar_width
+#                object.empty_display_size = max(object.pbraudio.source_planar_width, object.pbraudio.source_planar_height) / 2
+#                object.scale = (object.pbraudio.source_planar_width / 2, object.pbraudio.source_planar_height / 2, 0.01)
             layout.template_ID(snode, "source_file", new="sound.open_mono")
             
         elif object.pbraudio.environment:
@@ -153,8 +158,9 @@ class PBRAUDIO_PT_data_panel(Panel):
 #                        icon='FILE_REFRESH')
             
             # Show warning if boundaries might be outside domain
-            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
-            op = PBRAUDIO_OT_add_world_environment()
+#            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+#            op = PBRAUDIO_OT_add_world_environment()
+            op = object.pbraudio_add_world_environment
             min_co, max_co = op.get_acoustic_domain_bounds()
             
             if min_co is not None and max_co is not None:

@@ -149,6 +149,50 @@ class PBRAUDIO_OT_add_planar_source(Operator, AddObjectHelper):
 
 classes.append(PBRAUDIO_OT_add_planar_source)
 
+class PBRAUDIO_OT_resize_source(Operator, AddObjectHelper):
+    """Resize a sound source"""
+    bl_idname = "object.pbraudio_resize_source"
+    bl_label = "Resize Source"
+    bl_description = "Resize a sound source"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    size: FloatProperty(
+        name="Width",
+        description="Size of spherical source",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+
+    width: FloatProperty(
+        name="Width",
+        description="Width of the planar source",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+
+    height: FloatProperty(
+        name="Height",
+        description="Height of the planar source",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+
+    def execute(self, context):
+        empty = context.object
+        if empty.pbraudio.source_type == 'SPHERE':
+            empty.empty_display_size = self.size
+        elif empty.pbraudio.source_type == 'PLANE':
+            empty.empty_display_size = max(self.width, self.height) / 2
+            # Scale to match width and height (cube is 2x2x2 units)
+            empty.scale = (self.width / 2, self.height / 2, 0.01)
+
+classes.append(PBRAUDIO_OT_resize_source)
 
 class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
     """Add a world environment sphere with boundary empties"""

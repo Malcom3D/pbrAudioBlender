@@ -34,9 +34,9 @@ pbraudio_handler = []
 
 # handler to set shader in 3D View to SOLID
 @persistent
-def material_shader_only_handler(context):
+def material_shader_only_handler(scene):
     if scene.render.engine == 'PBRAUDIO':
-        for area in context.screen.areas:
+        for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
                 space = area.spaces.active
                 if space.type == 'VIEW_3D':
@@ -45,10 +45,10 @@ def material_shader_only_handler(context):
 #pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
 
 @persistent
-def select_nodetree_handler(context):
+def select_nodetree_handler(scene):
     if scene.render.engine == 'PBRAUDIO':
-        if hasattr(context, 'active_object'):
-            object = context.active_object
+        if hasattr(bpy.context, 'active_object'):
+            object = bpy.context.active_object
             treeType = 'AcousticNodeTree'
             nodeTreeName = None
 
@@ -67,7 +67,7 @@ def select_nodetree_handler(context):
                 nodeTreeName = object.pbraudio.nodetree.name
 
         if treeType is not None:
-            for area in context.screen.areas:
+            for area in bpy.context.screen.areas:
                 if area.type == "NODE_EDITOR":
                     for space in area.spaces:
                         if space.type == "NODE_EDITOR" and not space.pin:
@@ -97,7 +97,7 @@ def update_world_environment_boundaries(scene):
                 
                 if boundary_empties:
                     # Update boundary positions
-                    from .operators.soundOT import PBRAUDIO_OT_add_world_environment
+                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
                     op = PBRAUDIO_OT_add_world_environment
                     
                     # Get current radius from object property

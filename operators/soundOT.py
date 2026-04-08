@@ -292,7 +292,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
                             break
                     
                     # Use the maximum allowed radius
-                    desired_position = center_obj.location + direction * max_allowedowed_radius
+                    desired_position = center_obj.location + direction * max_allowed_radius
             
             # Update boundary position
             boundary.location = desired_position

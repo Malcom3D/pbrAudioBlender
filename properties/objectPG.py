@@ -160,7 +160,13 @@ class PBRAudioObjectProperties(PropertyGroup):
     )
 
     """Source properties for pbrAudio"""
-    source: PointerProperty(
+    source: BoolProperty(
+        name="pbraudio_source"
+        description="Object is sound source",
+        default=False
+    )
+
+    source_file: PointerProperty(
         name="SoundSource",
         type=bpy.types.Sound,
         description="Select the sound for the source"

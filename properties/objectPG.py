@@ -98,7 +98,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     def update_plane_size(self, context):
         bpy.ops.object.pbraudio_resize_source(height=self.source_planar_height, width=self.source_planar_width)
 
-   def update_environment_channels(self, context):
+    def update_environment_channels(self, context):
         """Update boundary empties when channel count changes"""
         obj = context.object
         if obj and obj.pbraudio.environment:

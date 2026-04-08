@@ -22,9 +22,9 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT#, view3d_menu
+from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu
 
-for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT): #, view3d_menu):
+for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu):
     classes += mod.classes
 
 def register():
@@ -33,13 +33,14 @@ def register():
 
     for cls in classes:
         register_class(cls)
-#    # Add menu to 3D Viewport Add menu
-#    bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
+
+    # Add menu to 3D Viewport Add menu
+    bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
 
 def unregister():
     """Unregister all classes and properties"""
-#    # Remove menu from 3D Viewport Add menu
-#    bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
+    # Remove menu from 3D Viewport Add menu
+    bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
     for cls in reversed(classes):
         unregister_class(cls)
 

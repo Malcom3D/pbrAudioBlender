@@ -373,7 +373,7 @@ class RenderExporter:
     
         # Check if matrix is invertible
         if M.determinant() == 0:
-            print("Warning: Parallelepiped vertices are coplanar or degenerate")
+            print("Warning: AcousticDomain vertices are coplanar or degenerate")
             return False
     
         # Calculate inverse matrix
@@ -638,7 +638,6 @@ class RenderExporter:
 
         self.domain_config()
         domain_vertices = self.config["acoustic_domain"]['geometry']
-        print('domain_vertices: ', domain_vertices)
         domain_vectors = []
         for vertex in domain_vertices:
             domain_vectors.append(Vector((vertex)))

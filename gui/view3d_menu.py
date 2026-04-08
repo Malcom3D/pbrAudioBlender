@@ -30,10 +30,10 @@ class VIEW3D_MT_pbraudio_add(Menu):
         layout = self.layout
         
         # Sources
-        layout.menu("VIEW3D_MT_pbraudio_sources", text="Sources", icon='LIGHT_SPOT')
+        layout.menu("VIEW3D_MT_pbraudio_sources", text="Sources", icon='SPEAKER')
         
         # Outputs
-        layout.menu("VIEW3D_MT_pbraudio_outputs", text="Outputs", icon='SPEAKER')
+        layout.menu("VIEW3D_MT_pbraudio_outputs", text="Outputs", icon='LIGHT_SPOT')
         
         # Separator
         layout.separator()

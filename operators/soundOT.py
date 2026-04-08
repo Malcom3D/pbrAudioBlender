@@ -25,19 +25,19 @@ from bpy_extras.object_utils import AddObjectHelper
 
 classes = []
 
-class PBRAUDIO_OT_switch_source_type(Operator):
-    """Switch sound source type"""
-    bl_idname = "object.pbraudio_switch_source_type"
-    bl_label = "Switch Source Type"
-    bl_description = "Switch sound source type"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        pass
+#class PBRAUDIO_OT_switch_source_type(Operator):
+#    """Switch sound source type"""
+#    bl_idname = "object.pbraudio_switch_source_type"
+#    bl_label = "Switch Source Type"
+#    bl_description = "Switch sound source type"
+#    bl_options = {'REGISTER', 'UNDO'}
+#
+#    def execute(self, context):
+#        pass
 #        empty.empty_display_type = 'SPHERE'
 #        empty.pbraudio.source_type = 'SPHERE'
-
-classes.append(PBRAUDIO_OT_switch_source_type)
+#
+#classes.append(PBRAUDIO_OT_switch_source_type)
 
 class PBRAUDIO_OT_add_spherical_source(Operator, AddObjectHelper):
     """Add a spherical sound source"""

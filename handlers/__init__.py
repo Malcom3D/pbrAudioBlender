@@ -30,11 +30,6 @@ classes = []
 # Global to store the the pbraudio handlers reference
 pbraudio_handler = []
 
-def register():
-    global pbraudio_handler
-    for cls in classes:
-        register_class(cls)
-
 #    # Add handler to set shader in 3D View to SOLID
 #    for area in context.screen.areas: 
 #        if area.type == 'VIEW_3D':
@@ -118,10 +113,46 @@ def register():
 
 #    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(item_activate_handler))
 
-def unregister():
+@persistent
+def update_world_environment_boundaries(scene):
+    """Update boundary empties when world environment moves"""
+    for obj in bpy.data.objects:
+        if hasattr(obj, 'pbraudio') and obj.pbraudio.environment:
+            # Check if we have boundary empties stored
+            if "pbraudio_boundary_empties" in obj:
+                boundary_names = obj["pbraudio_boundary_empties"]
+                boundary_empties = []
+                
+                # Get actual boundary objects
+                for name in boundary_names:
+                    boundary_obj = bpy.data.objects.get(name)
+                    if boundary_obj:
+                        boundary_empties.append(boundary_obj)
+                
+                if boundary_empties:
+                    # Update boundary positions
+                    from .operators.soundOT import PBRAUDIO_OT_add_world_environment
+                    op = PBRAUDIO_OT_add_world_environment
+                    
+                    # Get current radius from object property
+                    radius = obj.pbraudio.environment_size
+                    
+                    # Update positions
+                    op.update_boundary_positions(obj, boundary_empties, radius)
+
+def register():
     global pbraudio_handler
-    for cls in reversed(classes):
-        unregister_class(cls)
+    for cls in classes:
+        register_class(cls)
+
+    bpy.app.handlers.depsgraph_update_post.append(update_world_environment_boundaries)
+    bpy.app.handlers.frame_change_post.append(update_world_environment_boundaries)
+
+def unregister():
+    if update_world_environment_boundaries in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(update_world_environment_boundaries)
+    if update_world_environment_boundaries in bpy.app.handlers.frame_change_post:
+        bpypy.app.handlers.frame_change_post.remove(update_world_environment_boundaries)
 
 #    # Remove handler
 #    if not len(pbraudio_handler) == 0:
@@ -136,3 +167,6 @@ def unregister():
 #            bpy.app.handlers.animation_playback_post.remove(bpy.types.Screen._stop_handler)
 #        delattr(bpy.types.Screen, '_play_handler')
 #        delattr(bpy.types.Screen, '_stop_handler')
+    global pbraudio_handler
+    for cls in reversed(classes):
+        unregister_class(cls)

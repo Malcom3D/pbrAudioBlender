@@ -209,6 +209,88 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
                 min_co.y <= point.y <= max_co.y and
                 min_co.z <= point.z <= max_co.z)
 
+    def create_boundary_empties(self, center_obj, num_channels, radius):
+        """Create boundary empties around the center object"""
+        boundary_empties = []
+        
+        for i in range(num_channels):
+            # Calculate spherical coordinates using Fibonacci spiral
+            golden_angle = math.pi * (3 - math.sqrt(5))
+            y = 1 - (i / (num_channels - 1)) * 2 if num_channels > 1 else 0
+            r = math.sqrt(1 - y * y)
+            theta = golden_angle * i
+            
+            x = math.cos(theta) * r
+            z = math.sin(theta) * r
+            
+            # Calculate position relative to center
+            position = center_obj.location + mathutils.Vector((x, y, z)) * radius
+            
+            # Create boundary empty
+            boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)
+            boundary_empty.empty_display_type = 'PLAIN_AXES'
+            boundary_empty.empty_display_size = 0.05
+            boundary_empty.location = position
+            
+            # Make non-selectable
+            boundary_empty.hide_select = True
+            
+            # Link to collection
+            bpy.context.collection.objects.link(boundary_empty)
+            
+            # Parent to center empty
+            boundary_empty.parent = center_obj
+            
+            # Store reference
+            boundary_empties.append(boundary_empty)
+        
+        return boundary_empties
+
+    def update_boundary_positions(self, center_obj, boundary_empties, radius):
+        """Update boundary positions based on center object location and domain constraints"""
+        min_co, max_co = self.get_acoustic_domain_bounds()
+        
+        for i, boundary in enumerate(boundary_empties):
+            # Calculate original relative position
+            golden_angle = math.pi * (3 - math.sqrt(5))
+            y = 1 - (i / (len(boundary_empties) - 1)) * 2 if len(boundary_empties) > 1 else 0
+            r = math.sqrt(1 - y * y)
+            theta = golden_angle * i
+            
+            x = math.cos(theta) * r
+            z = math.sin(theta) * r
+            
+            # Calculate desired position
+            desired_position = center_obj.location + mathutils.Vector((x, y, z)) * radius
+            
+            # Constrain to domain if domain exists
+            if min_co is not None and max_co is not None:
+                # Clamp position to domain bounds
+                clamped_position = mathutils.Vector((
+                    max(min_co.x, min(max_co.x, desired_position.x)),
+                    max(min_co.y, min(max_co.y, desired_position.y)),
+                    max(min_co.z, min(max_co.z, desired_position.z))
+                ))
+                
+                # If clamped, adjust radius to keep spherical distribution
+                if clamped_position != desired_position:
+                    # Find intersection with domain along the radial direction
+                    direction = (desired_position - center_obj.location).normalized()
+                    
+                    # Test multiple distances to find maximum allowed
+                    max_allowed_radius = radius
+                    for test_radius in range(int(radius * 100), 0, -1):
+                        test_position = center_obj.location + direction * (test_radius / 100.0)
+                        if self.is_point_inside_domain(test_position):
+                            max_allowed_radius = test_radius / 100.0
+                            break
+                    
+                    # Use the maximum allowed radius
+                    desired_position = center_obj.location + direction * max_allowedowed_radius
+            
+            # Update boundary position
+            boundary.location = desired_position
+
     def execute(self, context):
         # Check if point is inside acoustic domain
         if not self.is_point_inside_domain(self.location):
@@ -229,45 +311,23 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         if not hasattr(center_empty, 'pbraudio'):
             bpy.ops.object.pbraudio_add_properties()
         
-        # Configure as output
+        # Configure as environment
         center_empty.pbraudio.environment = True
+        center_empty.pbraudio.environment_size = self.sphere_radius
+        center_empty.pbraudio.environment_chanels = self.number_channels
         
         # Create boundary empties
-        for i in range(self.number_channels):
-            # Calculate spherical coordinates
-            # Distribute points on a sphere using Fibonacci spiral
-            golden_angle = math.pi * (3 - math.sqrt(5))
-            y = 1 - (i / (self.number_channels - 1)) * 2  # y goes from 1 to -1
-            radius = math.sqrt(1 - y * y)
-            theta = golden_angle * i
-            
-            x = math.cos(theta) * radius
-            z = math.sin(theta) * radius
-            
-            # Calculate position
-            position = self.location + mathutils.Vector((x, y, z)) * self.sphere_radius
-            
-            # Check if boundary empty is inside domain
-            if not self.is_point_inside_domain(position):
-                # Move point towards center until it's inside domain
-                direction = (position - self.location).normalized()
-                for t in range(100):
-                    test_position = self.location + direction * (self.sphere_radius - t * 0.01)
-                    if self.is_point_inside_domain(test_position):
-                        position = test_position
-                        break
-            
-            # Create boundary empty
-            boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)
-            boundary_empty.empty_display_type = 'PLAIN_AXES'
-            boundary_empty.empty_display_size = 0.05
-            boundary_empty.location = position
-            
-            # Link to collection
-            context.collection.objects.link(boundary_empty)
-            
-            # Parent to center empty
-            boundary_empty.parent = center_empty
+        boundary_empties = self.create_boundary_empties(
+            center_empty, 
+            self.number_channels, 
+            self.sphere_radius
+        )
+        
+        # Store boundary references in a custom property
+        center_empty["pbraudio_boundary_empties"] = [obj.name for obj in boundary_empties]
+        
+        # Add handler for location updates
+        center_empty.pbraudio.environment_size = self.sphere_radius
         
         # Set center empty as active
         context.view_layer.objects.active = center_empty

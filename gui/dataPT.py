@@ -17,7 +17,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.types import Panel
+from bpy.types import Panel, Operator
 from bpy.app.translations import contexts as i18n_contexts
 from bpy.props import FloatProperty
 
@@ -108,39 +108,176 @@ class PBRAUDIO_PT_data_panel(Panel):
         max=100.0,
         unit='LENGTH'
     )
+    
     @classmethod
     def poll(cls, context):
-        return context.scene.render.engine == 'PBRAUDIO' and context.active_object.type == 'EMPTY' or context.active_object.type == 'CAMERA' and hasattr(context.active_object, 'pbraudio') and context.active_object.pbraudio.source and context.active_object.pbraudio.output
+        return (context.scene.render.engine == 'PBRAUDIO' and 
+                context.active_object is not None and
+                context.active_object.type == 'EMPTY' and
+                hasattr(context.active_object, 'pbraudio') and
+                (context.active_object.pbraudio.source or 
+                 context.active_object.pbraudio.output or
+                 context.active_object.pbraudio.environment))
 
     def draw(self, context):
         layout = self.layout
         object = context.object
         snode = object.pbraudio
 
-        if object.pbraudio.source and object.type == 'EMPTY':
+        if object.pbraudio.source:
             # Object is a Sound Source
             layout.prop(object.pbraudio, "source_type")
-            # use gizmo shape - text editor -> templates -> gizmo_custom_geometry
-            if object.pbraudio.source and object.pbraudio.source_type == 'SPHERE':
-                # run operator to switch from PLANE to SPHERE
-#                object.empty_display_type = 'SPHERE'
+            if object.pbraudio.source_type == 'SPHERE':
                 layout.prop(object, "empty_display_size")
-            elif object.pbraudio.source and object.pbraudio.source_type == 'PLANE':
-                # run operator to switch from SPHERE to PLANE
-#                object.empty_display_type = 'CUBE'
+            elif object.pbraudio.source_type == 'PLANE':
                 layout.prop(self, "width")
                 layout.prop(self, "height")
                 object.empty_display_size = max(self.width, self.height) / 2
                 object.scale = (self.width / 2, self.height / 2, 0.01)
             layout.template_ID(snode, "source_file", new="sound.open_mono")
-        elif object.pbraudio.environment and object.type == 'EMPTY':
-            layout.prop(object.pbraudio, "environment_size")
-            layout.prop(object.pbraudio, "environment_chanels")
-            layout.prop(object.pbraudio, "environment_file")
-        elif object.pbraudio.output and object.type == 'EMPTY':
+            
+        elif object.pbraudio.environment:
+            # Object is a World Environment
+            box = layout.box()
+            box.label(text="Environment Settings:", icon='WORLD')
+            
+            # Environment properties
+            row = box.row()
+            row.prop(snode, "environment_size", text="Radius")
+            row.prop(snode, "environment_chanels", text="Channels")
+            
+            # File path
+            box.prop(snode, "environment_file", text="Sound File")
+            
+            # Boundary management
+            box.separator()
+            box.label(text="Boundary Management:", icon='ORIENTATION_GIMBAL')
+            
+            # Show boundary count
+            if "pbraudio_boundary_empties" in object:
+                boundary_count = len(object["pbraudio_boundary_empties"])
+                box.label(text=f"Boundaries: {boundary_count}")
+            
+            # Update button
+            row = box.row()
+            row.operator("object.pbraudio_update_environment_boundaries", 
+                        text="Update Boundaries", 
+                        icon='FILE_REFRESH')
+            
+            # Show warning if boundaries might be outside domain
+            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+            op = PBRAUDIO_OT_add_world_environment()
+            min_co, max_co = op.get_acoustic_domain_bounds()
+            
+            if min_co is not None and max_co is not None:
+                # Check if any boundary might be outside
+                if "pbraudio_boundary_empties" in object:
+                    boundary_names = object["pbraudio_boundary_empties"]
+                    for name in boundary_names:
+                        boundary_obj = bpy.data.objects.get(name)
+                        if boundary_obj and not op.is_point_inside_domain(boundary_obj.location):
+                            box.label(text="Some boundaries outside domain!", icon='ERROR')
+                            break
+            
+        elif object.pbraudio.output:
             # Object is a Sound Output
             layout.prop(object.pbraudio, "output_type")
             if object.pbraudio.output_type == 'AMBI':
                 layout.prop(object.pbraudio, "ambisonic_order")
 
 classes.append(PBRAUDIO_PT_data_panel)
+
+#class PBRAUDIO_PT_data_panel(Panel):
+#    """Panel for pbrAudio sound I/O settings"""
+#    bl_label = 'Sound I/O'
+#    bl_idname = 'PBRAUDIO_PT_data_panel'
+#    bl_space_type = 'PROPERTIES'
+#    bl_region_type = 'WINDOW'
+#    bl_context = 'data'
+#
+#    width: FloatProperty(
+#        name="Width",
+#        description="Width of the planar source",
+#        default=0.5,
+#        min=0.01,
+#        max=100.0,
+#        unit='LENGTH'
+#    )
+#
+#    height: FloatProperty(
+#        name="Height",
+#        description="Height of the planar source",
+#        default=0.5,
+#        min=0.01,
+#        max=100.0,
+#        unit='LENGTH'
+#    )
+#    @classmethod
+#    def poll(cls, context):
+#        return context.scene.render.engine == 'PBRAUDIO' and context.active_object.type == 'EMPTY' or context.active_object.type == 'CAMERA' and hasattr(context.active_object, 'pbraudio') and context.active_object.pbraudio.source and context.active_object.pbraudio.output
+#
+#    def draw(self, context):
+#        layout = self.layout
+#        object = context.object
+#        snode = object.pbraudio
+#
+#        if object.pbraudio.source and object.type == 'EMPTY':
+#            # Object is a Sound Source
+#            layout.prop(object.pbraudio, "source_type")
+#            # use gizmo shape - text editor -> templates -> gizmo_custom_geometry
+#            if object.pbraudio.source and object.pbraudio.source_type == 'SPHERE':
+#                # run operator to switch from PLANE to SPHERE
+###                object.empty_display_type = 'SPHERE'
+#                layout.prop(object, "empty_display_size")
+#            elif object.pbraudio.source and object.pbraudio.source_type == 'PLANE':
+##                # run operator to switch from SPHERE to PLANE
+##                object.empty_display_type = 'CUBE'
+#                layout.prop(self, "width")
+#                layout.prop(self, "height")
+#                object.empty_display_size = max(self.width, self.height) / 2
+#                object.scale = (self.width / 2, self.height / 2, 0.01)
+#            layout.template_ID(snode, "source_file", new="sound.open_mono")
+#        elif object.pbraudio.environment and object.type == 'EMPTY':
+#            layout.prop(object.pbraudio, "environment_size")
+#            layout.prop(object.pbraudio, "environment_chanels")
+#            layout.prop(object.pbraudio, "environment_file")
+#        elif object.pbraudio.output and object.type == 'EMPTY':
+#            # Object is a Sound Output
+#            layout.prop(object.pbraudio, "output_type")
+#            if object.pbraudio.output_type == 'AMBI':
+#                layout.prop(object.pbraudio, "ambisonic_order")
+#
+#classes.append(PBRAUDIO_PT_data_panel)
+
+class PBRAUDIO_OT_update_environment_boundaries(Operator):
+    """Update environment boundaries"""
+    bl_idname = "object.pbraudio_update_environment_boundaries"
+    bl_label = "Update Boundaries"
+    bl_description = "Update boundary positions for environment"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        obj = context.object
+        if obj and obj.pbraudio.environment:
+            # Get boundary empties
+            if "pbraudio_boundary_empties" in obj:
+                boundary_names = obj["pbraudio_boundary_empties"]
+                boundary_empties = []
+                
+                for name in boundary_names:
+                    boundary_obj = bpy.data.objects.get(name)
+                    if boundary_obj:
+                        boundary_empties.append(boundary_obj)
+                
+                if boundary_empties:
+                    # Import and use the update function
+                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+                    op = PBRAUDIO_OT_add_world_environment
+                    radius = obj.pbraudio.environment_size
+                    op.update_boundary_positions(obj, boundary_empties, radius)
+                    
+                    self.report({'INFO'}, f"Updated {len(boundary_empties)} boundaries")
+        
+        return {'FINISHED'}
+
+classes.append(PBRAUDIO_OT_update_environment_boundaries)

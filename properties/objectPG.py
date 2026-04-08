@@ -197,14 +197,14 @@ class PBRAudioObjectProperties(PropertyGroup):
     source_planar_width: FloatProperty(
         name="Planar Width",
         description="Planar Source Width Size",
-        default=0.5
+        default=0.5,
         update=update_plane_size
     )
 
     source_planar_height: FloatProperty(
         name="Planar Height",
         description="Planar Source Height Size",
-        default=1.0
+        default=1.0,
         update=update_plane_size
     )
 

@@ -111,16 +111,16 @@ class PBRAUDIO_PT_data_panel(Panel):
             layout.label(text="Source Settings:", icon='SPEAKER')
             layout.prop(object.pbraudio, "source_type")
             if object.pbraudio.source_type == 'SPHERE':
-                layout.prop(object, "object.pbraudio.source_sphere_size")
-                op = bpy.ops.object.pbraudio_resize_source
-                op.size = object.pbraudio.source_sphere_size
+                layout.prop(object.pbraudio, "source_sphere_size")
+                bpy.ops.object.pbraudio_resize_source(size=object.pbraudio.source_sphere_size)
+#                op.size = object.pbraudio.source_sphere_size
 #                object.empty_display_size = object.pbraudio.source_sphere_size
             elif object.pbraudio.source_type == 'PLANE':
                 layout.prop(object.pbraudio, "source_planar_width")
                 layout.prop(object.pbraudio, "source_planar_height")
-                op = bpy.ops.object.pbraudio_resize_source
-                op.height = object.pbraudio.source_planar_height
-                op.width = object.pbraudio.source_planar_width
+                bpy.ops.object.pbraudio_resize_source(height=object.pbraudio.source_planar_height, width=object.pbraudio.source_planar_width)
+#                op.height = object.pbraudio.source_planar_height
+#                op.width = object.pbraudio.source_planar_width
 #                object.empty_display_size = max(object.pbraudio.source_planar_width, object.pbraudio.source_planar_height) / 2
 #                object.scale = (object.pbraudio.source_planar_width / 2, object.pbraudio.source_planar_height / 2, 0.01)
             layout.template_ID(snode, "source_file", new="sound.open_mono")

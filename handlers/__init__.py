@@ -53,7 +53,9 @@ def select_nodetree_handler(scene):
             nodeTreeName = None
 
             if hasattr(object, 'pbraudio'):
-                if object.pbraudio.source or object.pbraudio.output or object.pbraudio.environment or object.type == 'CAMERA':
+                if object.pbraudio.environment:
+                    return
+                if object.pbraudio.source or object.pbraudio.output or object.type == 'CAMERA':
                     nodeTreeName = object.pbraudio.nodetree.name
                     scene.acoustic_node_editor_props.acoustic_shader_type = 'SOUND'
 

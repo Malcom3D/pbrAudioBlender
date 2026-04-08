@@ -313,22 +313,34 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             x = math.cos(theta) * r
             z = math.sin(theta) * r
             
-            # Calculate desired position
-            desired_position = center_obj.location + mathutils.Vector((x, y, z)) * radius
+#            # Calculate desired position
+#            desired_position = center_obj.location + mathutils.Vector((x, y, z)) * radius
+            # Calculate LOCAL position (relative to parent)
+            local_position = mathutils.Vector((x, y, z)) * radius
+
+            # Update boundary's local position
+            boundary.location = local_position
             
-            # Constrain to domain if domain exists
+#            # Constrain to domain if domain exists
+            # If we need to constrain to domain, we should update the world position
+            # and then convert back to local
             if min_co is not None and max_co is not None:
-                # Clamp position to domain bounds
-                clamped_position = mathutils.Vector((
-                    max(min_co.x, min(max_co.x, desired_position.x)),
-                    max(min_co.y, min(max_co.y, desired_position.y)),
-                    max(min_co.z, min(max_co.z, desired_position.z))
-                ))
-                
-                # If clamped, adjust radius to keep spherical distribution
-                if clamped_position != desired_position:
+                # Calculate world position
+                world_position = center_obj.matrix_world @ local_position
+#                # Clamp position to domain bounds
+#                clamped_position = mathutils.Vector((
+#                    max(min_co.x, min(max_co.x, desired_position.x)),
+#                    max(min_co.y, min(max_co.y, desired_position.y)),
+#                    max(min_co.z, min(max_co.z, desired_position.z))
+#                ))
+#                
+#                # If clamped, adjust radius to keep spherical distribution
+#                if clamped_position != desired_position:
+                # Check if inside domain
+                if not PBRAUDIO_OT_add_world_environment.is_point_inside_domain(world_position):
                     # Find intersection with domain along the radial direction
-                    direction = (desired_position - center_obj.location).normalized()
+#                    direction = (desired_position - center_obj.location).normalized()
+                    direction = (world_position - center_obj.location).normalized()
                     
                     # Test multiple distances to find maximum allowed
                     max_allowed_radius = radius
@@ -338,11 +350,14 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
                             max_allowed_radius = test_radius / 100.0
                             break
                     
-                    # Use the maximum allowed radius
-                    desired_position = center_obj.location + direction * max_allowed_radius
+#                    # Use the maximum allowed radius
+#                    desired_position = center_obj.location + direction * max_allowed_radius
+                    # Calculate new local position
+                    new_local_position = direction * max_allowed_radius
+                    boundary.location = new_local_position
             
-            # Update boundary position
-            boundary.location = desired_position
+#            # Update boundary position
+#            boundary.location = desired_position
 
     def execute(self, context):
         # Check if point is inside acoustic domain

@@ -38,7 +38,8 @@ class PBRAUDIO_OT_world_material_add(Operator):
         world = context.world
         if world and world.pbraudio:
             # Create new pbrAudio World node tree
-            nodetree = bpy.data.node_groups.new(self.name, 'AcousticWorldNodeTree')
+            nodetree = bpy.data.node_groups.new(self.name, 'AcousticNodeTree')
+            nodetree.pbraudio_type = 'WORLD'
 
             # Set up default nodes
             output_node = nodetree.nodes.new('pbrAudioWorldOutputNode')
@@ -79,7 +80,7 @@ class PBRAUDIO_OT_environment_item_add(Operator):
     
     @classmethod
     def poll(cls, context):
-        return context.space_data.node_tree == 'AcousticWorldNodeTree'
+        return context.space_data.node_tree == 'AcousticNodeTree' and ntree.acoustic_shader_type == 'WORLD'
     
     def execute(self, context):
         node = context.active_node
@@ -100,7 +101,7 @@ class PBRAUDIO_OT_environment_item_remove(Operator):
     
     @classmethod
     def poll(cls, context):
-        return context.space_data.node_tree == 'AcousticWorldNodeTree'
+        return context.space_data.node_tree == 'AcousticNodeTree' and ntree.acoustic_shader_type == 'WORLD'
     
     def execute(self, context):
         node = context.active_node

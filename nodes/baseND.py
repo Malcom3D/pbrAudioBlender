@@ -32,7 +32,7 @@ class ThreeDfrequencyNode(Node):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'AcousticMaterialNodeTree' and (bpy.context.active_object.type == 'EMPTY' or bpy.context.active_object.type == 'CAMERA') and (hasattr(bpy.context.active_object.pbraudio, 'output_type') or hasattr(bpy.context.active_object.pbraudio, 'source_type'))
+        return ntree.bl_idname == 'AcousticNodeTree' and (bpy.context.active_object.type == 'EMPTY' or bpy.context.active_object.type == 'CAMERA') and (bpy.context.active_object.pbraudio.output or bpy.context.active_object.pbraudio.source)
 
 classes.append(ThreeDfrequencyNode)
 
@@ -44,7 +44,7 @@ class AcousticWorldNode(Node):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'AcousticWorldNodeTree'
+        return ntree.bl_idname == 'AcousticNodeTree' and ntree.pbraudio_type == 'WORLD'
 
 classes.append(AcousticWorldNode)
 
@@ -56,19 +56,19 @@ class AcousticMaterialNode(Node):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'AcousticMaterialNodeTree'
+        return ntree.bl_idname == 'AcousticNodeTree' and ntree.pbraudio_type == 'OBJECT'
 
 classes.append(AcousticMaterialNode)
 
 class AcousticBaseNode(Node):
     """Base class for all acoustic world nodes"""
     bl_idname = 'AcousticBaseNode'
-    bl_label = "Acoustic Base Node for Material and World NodeTree"
+    bl_label = "Acoustic Base Node for AcousticNodeTree"
     bl_icon = 'SOUND'
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'AcousticWorldNodeTree' or ntree.bl_idname == 'AcousticMaterialNodeTree'
+        return ntree.bl_idname == 'AcousticNodeTree'
 
 classes.append(AcousticBaseNode)
 

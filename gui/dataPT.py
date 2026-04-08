@@ -110,7 +110,7 @@ class PBRAUDIO_PT_data_panel(Panel):
     )
     @classmethod
     def poll(cls, context):
-        return context.scene.render.engine == 'PBRAUDIO' and context.active_object.type == 'EMPTY' or context.active_object.type == 'CAMERA' and hasattr(context.active_object, 'pbraudio')
+        return context.scene.render.engine == 'PBRAUDIO' and context.active_object.type == 'EMPTY' or context.active_object.type == 'CAMERA' and hasattr(context.active_object, 'pbraudio') and context.active_object.pbraudio.source and context.active_object.pbraudio.output
 
     def draw(self, context):
         layout = self.layout
@@ -122,16 +122,22 @@ class PBRAUDIO_PT_data_panel(Panel):
             layout.prop(object.pbraudio, "source_type")
             # use gizmo shape - text editor -> templates -> gizmo_custom_geometry
             if object.pbraudio.source and object.pbraudio.source_type == 'SPHERE':
-                object.empty_display_type = 'SPHERE'
+                # run operator to switch from PLANE to SPHERE
+#                object.empty_display_type = 'SPHERE'
                 layout.prop(object, "empty_display_size")
             elif object.pbraudio.source and object.pbraudio.source_type == 'PLANE':
-                object.empty_display_type = 'CUBE'
+                # run operator to switch from SPHERE to PLANE
+#                object.empty_display_type = 'CUBE'
                 layout.prop(self, "width")
                 layout.prop(self, "height")
                 object.empty_display_size = max(self.width, self.height) / 2
                 object.scale = (self.width / 2, self.height / 2, 0.01)
             layout.template_ID(snode, "source_file", new="sound.open_mono")
-        else:
+        elif object.pbraudio.environment and object.type == 'EMPTY':
+            layout.prop(object.pbraudio, "environment_size")
+            layout.prop(object.pbraudio, "environment_chanels")
+            layout.prop(object.pbraudio, "environment_file")
+        elif object.pbraudio.output and object.type == 'EMPTY':
             # Object is a Sound Output
             layout.prop(object.pbraudio, "output_type")
             if object.pbraudio.output_type == 'AMBI':

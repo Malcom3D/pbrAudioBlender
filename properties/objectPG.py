@@ -20,7 +20,7 @@ import bpy
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty, EnumProperty, FloatProperty, StringProperty, IntProperty
 
-from ..nodetrees import materialsNT
+from ..nodetrees import acousticNT
 
 classes = []
 
@@ -95,7 +95,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
-        type=materialsNT.AcousticMaterialNodeTree
+        type=materialsNT.AcousticNodeTree
     )
 
     stochastic_variation: BoolProperty(
@@ -179,6 +179,32 @@ class PBRAudioObjectProperties(PropertyGroup):
             ('PLANE', "Plane", "Plane wave sound source"),
         ],
         default='SPHERE'
+    )
+
+    """Environment properties for pbrAudio"""
+    environment: BoolProperty(
+        name="pbraudio_environment",
+        description="Object is enviroment sound",
+        default=False
+    )
+
+    environment_file: StringProperty(
+        name="EnvironmetSource",
+        description="Select the sound for the source"
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default='',
+    )
+
+    environment_chanels: IntProperty(
+        name="Number of Environment Chanels",
+        description="Int value between 0 and 100",
+        default=1,
+    )
+
+    environment_size: FloatProperty(
+        name="Environment Size",
+        description="Environment Sphere Size",
     )
 
     """Output properties for pbrAudio"""

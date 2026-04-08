@@ -38,7 +38,7 @@ class PBRAUDIO_OT_material_add(Operator):
 
     def execute(self, context):
         # Create new pbrAudio node tree
-        nodetree = bpy.data.node_groups.new(self.name, 'AcousticMaterialNodeTree')
+        nodetree = bpy.data.node_groups.new(self.name, 'AcousticNodeTree')
 
         # Set up default nodes
         output_node = nodetree.nodes.new('AcousticMaterialOutputNode')

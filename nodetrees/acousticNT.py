@@ -17,21 +17,18 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.utils import register_class, unregister_class
+from bpy.types import NodeTree
 
 classes = []
 
-#from . import materialsNT, worldNT
-from . import acousticNT
+class AcousticNodeTree(NodeTree):
+    """Nodetree for acoustic-based nodes"""
+    bl_idname = 'AcousticNodeTree'
+    bl_label = "Acoustic Node Editor"
+    bl_icon = 'SOUND'
 
-#for mod in (materialsNT, worldNT):
-for mod in (acousticNT):
-    classes += mod.classes
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == "PBRAUDIO"
 
-def register():
-    for cls in classes:
-        register_class(cls)
-
-def unregister():
-    for cls in reversed(classes):
-        unregister_class(cls)
+classes.append(AcousticNodeTree)

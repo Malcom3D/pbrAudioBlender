@@ -25,6 +25,20 @@ from bpy_extras.object_utils import AddObjectHelper
 
 classes = []
 
+class PBRAUDIO_OT_switch_source_type(Operator):
+    """Switch sound source type"""
+    bl_idname = "object.pbraudio_switch_source_type"
+    bl_label = "Switch Source Type"
+    bl_description = "Switch sound source type"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        pass
+#        empty.empty_display_type = 'SPHERE'
+#        empty.pbraudio.source_type = 'SPHERE'
+
+classes.append(PBRAUDIO_OT_switch_source_type)
+
 class PBRAUDIO_OT_add_spherical_source(Operator, AddObjectHelper):
     """Add a spherical sound source"""
     bl_idname = "object.pbraudio_add_spherical_source"
@@ -202,7 +216,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             return {'CANCELLED'}
         
         # Create central empty
-        center_empty = bpy.data.objects.new("WorldEnvironment_Center", None)
+        center_empty = bpy.data.objects.new("WorldEnvironment", None)
         center_empty.empty_display_type = 'SPHERE'
         center_empty.empty_display_size = 0.1
         center_empty.location = self.location
@@ -216,13 +230,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             bpy.ops.object.pbraudio_add_properties()
         
         # Configure as output
-        center_empty.pbraudio.output = True
-        center_empty.pbraudio.output_type = 'AMBI'
-        
-        # Calculate ambisonic order from number of channels
-        # For ambisonics: number of channels = (order + 1)^2
-        order = int(math.sqrt(self.number_channels)) - 1
-        center_empty.pbraudio.ambisonic_order = str(max(1, min(3, order)))
+        center_empty.pbraudio.environment = True
         
         # Create boundary empties
         for i in range(self.number_channels):
@@ -250,8 +258,8 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
                         break
             
             # Create boundary empty
-            boundary_empty = bpy.data.objects.new(f"WorldEnvironment_Boundary_{i:02d}", None)
-            boundary_empty.empty_display_type = 'SPHERE'
+            boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)
+            boundary_empty.empty_display_type = 'PLAIN_AXES'
             boundary_empty.empty_display_size = 0.05
             boundary_empty.location = position
             

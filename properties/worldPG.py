@@ -21,7 +21,7 @@ import math
 from bpy.types import PropertyGroup
 from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty, PointerProperty
 
-from ..nodetrees.worldNT import AcousticWorldNodeTree
+from ..nodetrees import acousticNT
 
 classes = []
 
@@ -74,7 +74,7 @@ class PBRAudioWorldProperties(PropertyGroup):
     """World Material Node properties for pbrAudio"""
     nodetree: PointerProperty(
         name="NodeTree",
-        type=AcousticWorldNodeTree
+        type=AcousticNodeTree
     )
 
 #    type: EnumProperty(

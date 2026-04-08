@@ -27,13 +27,23 @@ from . import worldND, baseND, materialND, propertyND, outputND, plotND, audioND
 for mod in (worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND):
     classes += mod.classes
 
-class WorldNodeCategory(NodeCategory):
+class WorldAcousticNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'AcousticWorldNodeTree'
+        return context.space_data.tree_type == 'AcousticNodeTree' and context.space_data.pbraudio_type == 'WORLD'
+
+class ObjectAcousticNodeCategory(NodeCategory):
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'AcousticNodeTree' and context.space_data.pbraudio_type == 'OBJECT'
+
+class SoundAcousticNodeCategory(NodeCategory):
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'AcousticNodeTree' and context.space_data.pbraudio_type == 'SOUND'
 
 world_node_categories = [
-    WorldNodeCategory("WORLD_NODES", "World", items=[
+    WorldAcousticNodeCategory("WORLD_NODES", "World", items=[
         NodeItem("pbrAudioWorldOutputNode"),
         NodeItem("pbrAudioWorldShaderNode"),
         NodeItem("pbrAudioImpedenceNode"),
@@ -43,19 +53,14 @@ world_node_categories = [
     ]),
 ]
 
-class MaterialNodeCategory(NodeCategory):
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'AcousticMaterialNodeTree'
-
 property_node_categories = [
-    MaterialNodeCategory("PROPERTY_NODE", "Property", items=[
+    ObjectAcousticNodeCategory("PROPERTY_NODE", "Property", items=[
         NodeItem("AcousticPropertiesNode"),
     ]),
 ]
 
 input_node_categories = [
-    MaterialNodeCategory("INPUT_NODES", "Input", items=[
+    ObjectAcousticNodeCategory("INPUT_NODES", "Input", items=[
         NodeItem("FrequencyResponseFilesNode"),
         NodeItem("FrequencyResponseChartNode"),
         NodeItem("SpatialFrequencyResponseNode"),
@@ -63,7 +68,7 @@ input_node_categories = [
 ]
 
 output_node_categories = [
-    MaterialNodeCategory("OUTPUT_NODES", "Output", items=[
+    ObjectAcousticNodeCategory("OUTPUT_NODES", "Output", items=[
         NodeItem("AcousticMaterialOutputNode"),
         NodeItem("AcousticMaterialPreviewNode"),
         NodeItem("ResponsePreviewNode"),
@@ -71,7 +76,7 @@ output_node_categories = [
 ]
 
 material_node_categories = [
-    MaterialNodeCategory("MATERIAL_NODES", "Material", items=[
+    ObjectAcousticNodeCategory("MATERIAL_NODES", "Material", items=[
         NodeItem("AcousticShaderNode"),
         NodeItem("AcrylicShaderNode"),
         NodeItem("AluminumShaderNode"),

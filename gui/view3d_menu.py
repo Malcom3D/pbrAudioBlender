@@ -38,9 +38,9 @@ class VIEW3D_MT_pbraudio_add(Menu):
         # Separator
         layout.separator()
         
-        # Utilities
-        layout.operator("object.pbraudio_add_properties", text="Add Properties", icon='PROPERTIES')
-
+#        # Utilities
+#        layout.operator("object.pbraudio_add_properties", text="Add Properties", icon='PROPERTIES')
+#
 classes.append(VIEW3D_MT_pbraudio_add)
 
 class VIEW3D_MT_pbraudio_sources(Menu):

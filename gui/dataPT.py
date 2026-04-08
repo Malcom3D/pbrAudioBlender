@@ -44,7 +44,7 @@ class PBRAUDIO_PT_empty(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None and context.active_object.type == 'EMPTY' and not hasattr(context.active_object, 'pbraudio')
+        return context.active_object is not None and context.active_object.type == 'EMPTY' and not context.active_object.pbraudio.source and not context.active_object.pbraudio.output
 
     def draw(self, context):
         layout = self.layout
@@ -117,10 +117,9 @@ class PBRAUDIO_PT_data_panel(Panel):
         object = context.object
         snode = object.pbraudio
 
-        if not object.pbraudio.output and object.type == 'EMPTY':
+        if object.pbraudio.source and object.type == 'EMPTY':
             # Object is a Sound Source
             layout.prop(object.pbraudio, "source_type")
-#            layout.label(text=object.pbraudio.source_type)
             # use gizmo shape - text editor -> templates -> gizmo_custom_geometry
             if object.pbraudio.source and object.pbraudio.source_type == 'SPHERE':
                 object.empty_display_type = 'SPHERE'
@@ -131,7 +130,7 @@ class PBRAUDIO_PT_data_panel(Panel):
                 layout.prop(self, "height")
                 object.empty_display_size = max(self.width, self.height) / 2
                 object.scale = (self.width / 2, self.height / 2, 0.01)
-            layout.template_ID(snode, "source", new="sound.open_mono")
+            layout.template_ID(snode, "source_file", new="sound.open_mono")
         else:
             # Object is a Sound Output
             layout.prop(object.pbraudio, "output_type")

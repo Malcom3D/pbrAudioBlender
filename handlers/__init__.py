@@ -119,7 +119,7 @@ def save_environment_on_property_update(scene):
     for obj in bpy.data.objects:
         if hasattr(obj, 'pbraudio') and obj.pbraudio.environment:
             # Check if properties have changed
-            if "pbraudio_last_environment_data" not in in obj:
+            if "pbraudio_last_environment_data" not in obj:
                 obj["pbraudio_last_environment_data"] = {}
             
             current_data = {

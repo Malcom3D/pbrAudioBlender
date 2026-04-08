@@ -18,19 +18,25 @@ class AcousticNodeEditorProperties(bpy.types.PropertyGroup):
         default="OBJECT",
     )
 
+
 def draw_acoustic_shader_type(self, context):
     layout = self.layout
-    
-    # Create a dropdown menu directly
-    row = layout.row(align=True)
-    row.prop(context.scene.acoustic_node_editor_props, "acoustic_shader_type", text="")
 
-    if context.scene.acoustic_node_editor_props.acoustic_shader_type == 'OBJECT':
-        row.label(icon='OBJECT_DATA')
-    elif context.scene.acoustic_node_editor_props.acoustic_shader_type == 'WORLD':
-        row.label(icon='WORLD')
-    elif context.scene.acoustic_node_editor_props.acoustic_shader_type == 'SOUND':
-        row.label(icon='SPEAKER')
+    if context.scene.render.engine == 'PBRAUDIO': 
+        for area in bpy.context.screen.areas:
+            if area.type == "NODE_EDITOR":
+                for space in area.spaces:
+                    if space.type == "NODE_EDITOR" and not space.pin:
+                        # Create a dropdown menu directly
+                        row = layout.row(align=True)
+                        row.prop(context.scene.acoustic_node_editor_props, "acoustic_shader_type", text="")
+
+                        if context.scene.acoustic_node_editor_props.acoustic_shader_type == 'OBJECT':
+                            row.label(icon='OBJECT_DATA')
+                        elif context.scene.acoustic_node_editor_props.acoustic_shader_type == 'WORLD':
+                            row.label(icon='WORLD')
+                        elif context.scene.acoustic_node_editor_props.acoustic_shader_type == 'SOUND':
+                            row.label(icon='SPEAKER')
     
 # Register and add to NODE_MT_editor_menus
 def register():

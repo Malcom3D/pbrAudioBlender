@@ -171,7 +171,9 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         max=64
     )
 
-    def get_acoustic_domain_bounds(self):
+    @staticmethod
+    def get_acoustic_domain_bounds():
+#    def get_acoustic_domain_bounds(self):
         """Get the bounding box of the acoustic domain"""
         for world in bpy.data.worlds:
             if hasattr(world, 'pbraudio') and hasattr(world.pbraudio, 'acoustic_domain'):
@@ -201,7 +203,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
 
     def is_point_inside_domain(self, point):
         """Check if a point is inside the acoustic domain"""
-        min_co, max_co = self.get_acoustic_domain_bounds()
+        min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
         if min_co is None or max_co is None:
             return True  # No domain defined, allow placement anywhere
         
@@ -246,9 +248,11 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         
         return boundary_empties
 
-    def update_boundary_positions(self, center_obj, boundary_empties, radius):
+#    def update_boundary_positions(self, center_obj, boundary_empties, radius):
+    @staticmethod
+    def update_boundary_positions(center_obj, boundary_empties, radius):
         """Update boundary positions based on center object location and domain constraints"""
-        min_co, max_co = self.get_acoustic_domain_bounds()
+        min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
         
         for i, boundary in enumerate(boundary_empties):
             # Calculate original relative position

@@ -47,16 +47,16 @@ class PBRAudioSceneProperties(PropertyGroup):
         if 'ULTRA' in self.preview_audio_quality:
             self.preview_sample_rate = 192000
 
-    """Scene properties for pbrAudio NodeTree"""
-    acoustic_shader_type = EnumProperty(
-        name="AcousticShaderType",
-        items=[
-            ('OBJECT', "Object", "Edit Shader Node from Object"),
-            ('WORLD', "World", "Edit Shader Node from World"),
-            ('SOUND', "Sound", "Edit Shader Node from Sound"),
-        ],
-        default='OBJECT'
-    )
+#    """Scene properties for pbrAudio NodeTree"""
+#    acoustic_shader_type = EnumProperty(
+#        name="AcousticShaderType",
+#        items=[
+#            ('OBJECT', "Object", "Edit Shader Node from Object"),
+#            ('WORLD', "World", "Edit Shader Node from World"),
+#            ('SOUND', "Sound", "Edit Shader Node from Sound"),
+#        ],
+#        default='OBJECT'
+#    )
 
     """Scene properties for pbrAudio"""
     device: EnumProperty(

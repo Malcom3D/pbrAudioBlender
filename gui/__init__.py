@@ -22,7 +22,7 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu
+from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu, nodetree_switch
 
 for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu):
     classes += mod.classes
@@ -37,8 +37,14 @@ def register():
     # Add menu to 3D Viewport Add menu
     bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
 
+    # Add acoustic shader type menu to nodetree menu
+    nodetree_switch.register()
+
 def unregister():
     """Unregister all classes and properties"""
+    # Remove acoustic shader type menu to nodetree menu
+    nodetree_switch.unregister()
+
     # Remove menu from 3D Viewport Add menu
     bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
     for cls in reversed(classes):

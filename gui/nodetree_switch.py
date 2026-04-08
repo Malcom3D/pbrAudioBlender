@@ -1,50 +1,50 @@
-#import bpy
-#from bpy.types import Header
-#from bpy.props import EnumProperty
-
-#def draw_shader_type(self, context):
-#    """Draw the shader type selector in the node editor header"""
-#    if context.space_data.tree_type == 'AcousticNodeTree':
-#        layout = self.layout
-#        row = layout.row(align=True)
-#        row.prop(context.scene.pbraudio, "acoustic_shader_type", text="")
-#        
-#        if context.scene.pbraudio.acoustic_shader_type == 'OBJECT':
-#            row.label(icon='OBJECT_DATA')
-#        elif context.scene.pbraudio.acoustic_shader_type == 'WORLD':
-#            row.label(icon='WORLD')
-#        elif context.scene.pbraudio.acoustic_shader_type == 'SOUND':
-#            row.label(icon='SPEAKER')
-#
-#def register():
-#    # Register to draw in the node editor header
-#    bpy.types.NODE_HT_header.append(draw_shader_type)
-#    bpy.types.NODE_MT_editor_menus.prepend(draw_shader_type)
-#
-#def unregister():
-#    # Remove from node editor header
-#    bpy.types.NODE_HT_header.remove(draw_shader_type)
-#    bpy.types.NODE_MT_editor_menus.remove(draw_shader_type)
-
 import bpy
+from bpy.types import Menu
+from bpy.props import EnumProperty
 
-class NODE_MT_acoustic_shader_type(bpy.types.Menu):
-    bl_label = "Shader Type"
-    bl_idname = "NODE_MT_acoustic_shader_type"
+# Define the enum items
+acoustic_shader_type_items = [
+    ('OBJECT', "Object", "Edit Shader Node from Object"),
+    ('WORLD', "World", "Edit Shader Node from World"),
+    ('SOUND', "Sound", "Edit Shader Node from Sound"),
+]
+
+# Property group to store the enum value
+class AcousticNodeEditorProperties(bpy.types.PropertyGroup):
+    acoustic_shader_type: EnumProperty(
+        name="Acoustic Shader Node Editor Type",
+        description="Select an option",
+        items=acoustic_shader_type_items,
+        default="OBJECT",
+    )
+
+def draw_acoustic_shader_type(self, context):
+    layout = self.layout
     
-    def draw(self, context):
-        layout = self.layout
-        layout.prop(context.scene.pbraudio, "acoustic_shader_type", expand=True)
+    # Create a dropdown menu directly
+    row = layout.row(align=True)
+    row.prop(context.scene.acoustic_node_editor_props, "acoustic_shader_type", text="")
 
-def draw_header_menu(self, context):
-    if context.space_data.tree_type == 'AcousticNodeTree':
-        layout = self.layout
-        layout.menu("NODE_MT_acoustic_shader_type", text="", icon='SHADING_TEXTURE')
-
+    if context.scene.pbraudio.acoustic_shader_type == 'OBJECT':
+        row.label(icon='OBJECT_DATA')
+    elif context.scene.pbraudio.acoustic_shader_type == 'WORLD':
+        row.label(icon='WORLD')
+    elif context.scene.pbraudio.acoustic_shader_type == 'SOUND':
+        row.label(icon='SPEAKER')
+    
+# Register and add to NODE_MT_editor_menus
 def register():
-    bpy.utils.register_class(NODE_MT_acoustic_shader_type)
-    bpy.types.NODE_HT_header.append(draw_header_menu)
+    bpy.utils.register_class(AcousticNodeEditorProperties)
+    
+    # Add the property to the scene
+    bpy.types.Scene.acoustic_node_editor_props = bpy.props.PointerProperty(type=AcousticNodeEditorProperties)
+    
+    bpy.types.NODE_MT_editor_menus.prepend(draw_acoustic_shader_type)
 
 def unregister():
-    bpy.types.NODE_HT_header.remove(draw_header_menu)
-    bpy.utils.unregister_class(NODE_MT_acoustic_shader_type)
+    # Remove from menu
+    bpy.types.NODE_MT_editor_menus.remove(draw_acoustic_shader_type)
+    # Unregister classes
+    bpy.utils.unregister_class(AcousticNodeEditorProperties)
+    # Remove the property
+    del bpy.types.Scene.acoustic_node_editor_props

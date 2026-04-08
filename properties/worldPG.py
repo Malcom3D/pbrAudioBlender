@@ -74,7 +74,7 @@ class PBRAudioWorldProperties(PropertyGroup):
     """World Material Node properties for pbrAudio"""
     nodetree: PointerProperty(
         name="NodeTree",
-        type=AcousticNodeTree
+        type=acousticNT.AcousticNodeTree
     )
 
 #    type: EnumProperty(

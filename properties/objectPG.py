@@ -161,7 +161,7 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     """Source properties for pbrAudio"""
     source: BoolProperty(
-        name="pbraudio_source"
+        name="pbraudio_source",
         description="Object is sound source",
         default=False
     )

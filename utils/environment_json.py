@@ -34,7 +34,7 @@ def save_environment_json(environment_obj, cache_path):
         environment_obj: The WorldEnvironment object
         cache_path: Base cache path from scene.pbraudio.cache_path
     """
-    if not environment_obj or not hasattr(environment_obj, ' 'pbraudio'):
+    if not environment_obj or not hasattr(environment_obj, 'pbraudio'):
         return None
     
     # Get environment properties

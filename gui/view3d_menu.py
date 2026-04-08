@@ -70,5 +70,3 @@ def menu_func(self, context):
     """Add pbrAudio menu to Add menu"""
     if context.scene.render.engine == 'PBRAUDIO':
         self.layout.menu("VIEW3D_MT_pbraudio_add", icon='SOUND')
-
-classes.append(menu_func)

@@ -25,7 +25,7 @@ classes = []
 from . import acousticNT
 
 #for mod in (materialsNT, worldNT):
-for mod in (acousticNT):
+for mod in (acousticNT,):
     classes += mod.classes
 
 def register():

@@ -131,7 +131,7 @@ def update_world_environment_boundaries(scene):
                 
                 if boundary_empties:
                     # Update boundary positions
-                    from .operators.soundOT import PBRAUDIO_OT_add_world_environment
+                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
                     op = PBRAUDIO_OT_add_world_environment
                     
                     # Get current radius from object property

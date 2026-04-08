@@ -8,9 +8,11 @@ def draw_shader_type(self, context):
     layout.prop(context.scene, "acoustic_shader_type", text="")
 
 def register():
-    bpy.types.NODEODE_HT_header.prepend(draw_shader_type)
+#    bpy.types.NODE_HT_header.prepend(draw_shader_type)
+    bpy.types.NODE_MT_editor_menus.prepend(draw_shader_type)
 
 def unregister():
-    bpy.types.NODE_HT_header.remove(draw_shader_type)
+#    bpy.types.NODE_HT_header.remove(draw_shader_type)
+    bpy.types.NODE_MT_editor_menus.remove(draw_shader_type)
 
 

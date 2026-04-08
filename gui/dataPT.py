@@ -108,44 +108,49 @@ class PBRAUDIO_PT_data_panel(Panel):
 
         if object.pbraudio.source:
             # Object is a Sound Source
+            layout.label(text="Source Settings:", icon='SPEAKER')
             layout.prop(object.pbraudio, "source_type")
             if object.pbraudio.source_type == 'SPHERE':
-                layout.prop(object, "object.source_sphere_size")
+                layout.prop(object, "object.pbraudio.source_sphere_size")
                 object.empty_display_size = object.source_sphere_size
             elif object.pbraudio.source_type == 'PLANE':
-                layout.prop(object, "source_planar_width")
-                layout.prop(object, "source_planar_height")
-                object.empty_display_size = max(object.source_planar_width, object.source_planar_height) / 2
-                object.scale = (object.source_planar_width / 2, object.source_planar_height / 2, 0.01)
+                layout.prop(object.pbraudio, "source_planar_width")
+                layout.prop(object.pbraudio, "source_planar_height")
+                object.empty_display_size = max(object.pbraudio.source_planar_width, object.pbraudio.source_planar_height) / 2
+                object.scale = (object.pbraudio.source_planar_width / 2, object.pbraudio.source_planar_height / 2, 0.01)
             layout.template_ID(snode, "source_file", new="sound.open_mono")
             
         elif object.pbraudio.environment:
             # Object is a World Environment
-            box = layout.box()
-            box.label(text="Environment Settings:", icon='WORLD')
+#            box = layout.box()
+#            box.label(text="Environment Settings:", icon='WORLD')
+            layout.label(text="Environment Settings:", icon='ORIENTATION_GIMBAL')
             
-            # Environment properties
-            row = box.row()
-            row.prop(snode, "environment_size", text="Radius")
-            row.prop(snode, "environment_chanels", text="Channels")
+#            # Environment properties
+#            row = box.row()
+#            row.prop(snode, "environment_size", text="Radius")
+#            row.prop(snode, "environment_chanels", text="Channels")
+            layout.prop(snode, "environment_size", text="Radius")
+            layout.prop(snode, "environment_chanels", text="Channels")
             
             # File path
-            box.prop(snode, "environment_file", text="Sound File")
+#            box.prop(snode, "environment_file", text="Sound File")
+            layout.prop(snode, "environment_file", text="Sound File")
             
-            # Boundary management
-            box.separator()
-            box.label(text="Boundary Management:", icon='ORIENTATION_GIMBAL')
+#            # Boundary management
+#            box.separator()
+#            box.label(text="Boundary Management:", icon='ORIENTATION_GIMBAL')
             
-            # Show boundary count
-            if "pbraudio_boundary_empties" in object:
-                boundary_count = len(object["pbraudio_boundary_empties"])
-                box.label(text=f"Boundaries: {boundary_count}")
+#            # Show boundary count
+#            if "pbraudio_boundary_empties" in object:
+#                boundary_count = len(object["pbraudio_boundary_empties"])
+#                box.label(text=f"Boundaries: {boundary_count}")
             
-            # Update button
-            row = box.row()
-            row.operator("object.pbraudio_update_environment_boundaries", 
-                        text="Update Boundaries", 
-                        icon='FILE_REFRESH')
+#            # Update button
+#            row = box.row()
+#            row.operator("object.pbraudio_update_environment_boundaries", 
+#                        text="Update Boundaries", 
+#                        icon='FILE_REFRESH')
             
             # Show warning if boundaries might be outside domain
             from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
@@ -159,11 +164,13 @@ class PBRAUDIO_PT_data_panel(Panel):
                     for name in boundary_names:
                         boundary_obj = bpy.data.objects.get(name)
                         if boundary_obj and not op.is_point_inside_domain(boundary_obj.location):
-                            box.label(text="Some boundaries outside domain!", icon='ERROR')
+#                            box.label(text="Some boundaries outside domain!", icon='ERROR')
+                            layout.label(text="Some boundaries outside domain!", icon='ERROR')
                             break
             
         elif object.pbraudio.output:
             # Object is a Sound Output
+            layout.label(text="Output Settings:", icon='LIGHT_SPOT')
             layout.prop(object.pbraudio, "output_type")
             if object.pbraudio.output_type == 'AMBI':
                 layout.prop(object.pbraudio, "ambisonic_order")

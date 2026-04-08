@@ -20,6 +20,8 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.utils import register_class, unregister_class
 
+from ..utils import environment_json
+
 classes = []
 
 #from . import playback 
@@ -30,88 +32,52 @@ classes = []
 # Global to store the the pbraudio handlers reference
 pbraudio_handler = []
 
-#    # Add handler to set shader in 3D View to SOLID
-#    for area in context.screen.areas: 
-#        if area.type == 'VIEW_3D':
-#            space = area.spaces.active
-#            if space.type == 'VIEW_3D':
-#                space.shading.type = 'SOLID'
+# handler to set shader in 3D View to SOLID
+@persistent
+def material_shader_only_handler(context):
+    if scene.render.engine == 'PBRAUDIO':
+        for area in context.screen.areas:
+            if area.type == 'VIEW_3D':
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    space.shading.type = 'SOLID'
 
-#    # Add handler for playback events
-#    if not hasattr(bpy.types.Screen, '_play_handler'):
-#        @persistent
-#        def play_handler(scene):
-#            # Update all playback status nodes when playback state change to play
-#            for node_tree in bpy.data.node_groups:
-#                if 'pbrAudio' in node_tree.name:
-#                    if node_tree.nodes.values():
-#                        for node in node_tree.nodes:
-#                            if hasattr(node, 'playback_update'):
-#                                node.playback_update(True)
-#
-#    if not hasattr(bpy.types.Screen, '_stop_handler'):
-#        @persistent
-#        def stop_handler(scene):
-#            # Update all playback status nodes when playback state change to stop
-#            for node_tree in bpy.data.node_groups:
-#                if 'pbrAudio' in node_tree.name:
-#                    if node_tree.nodes.values():
-#                        for node in node_tree.nodes:
-#                            if hasattr(node, 'playback_update'):
-#                                node.playback_update(False)
-#
-#        bpy.types.Screen._play_handler = play_handler
-#        bpy.types.Screen._stop_handler = stop_handler
-#        bpy.app.handlers.animation_playback_post.append(stop_handler)
-#        bpy.app.handlers.animation_playback_pre.append(play_handler)
+#pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
 
-#    # handler to set shader in 3D View to SOLID
-#    @persistent
-#    def material_shader_only_handler(context):
-#        if scene.render.engine == 'PBRAUDIO':
-#            for area in context.screen.areas:
-#                if area.type == 'VIEW_3D':
-#                    space = area.spaces.active
-#                    if space.type == 'VIEW_3D':
-#                        space.shading.type = 'SOLID'
-#
-#    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
-#
-#    @persistent
-#    def item_activate_handler(context):
-#        if scene.render.engine == 'PBRAUDIO':
-#            if hasattr(context, 'active_object'):
-#                object = context.active_object
-#                treeType = None
-#                nodeTreeName = None
-#
-#                if object.type == 'EMPTY' or object.type == 'CAMERA':
-#                    return
-#
-#            for world in bpy.data.worlds:
-#                if hasattr(world.pbraudio, 'acoustic_domain'):
-#                    AcousticDomain = world.pbraudio.acoustic_domain
-#
-#            if object == AcousticDomain:
-#                treeType = 'AcousticWorldNodeTree'
-#                if hasattr(world.pbraudio.nodetree, 'name'):
-#                    nodeTreeName = world.pbraudio.nodetree.name
-#            else:
-#                treeType = 'AcousticMaterialNodeTree'
-#                if hasattr(object.pbraudio.nodetree, 'name'):
-#                    nodeTreeName = object.pbraudio.nodetree.name
-#
-#            if treeType is not None:
-#                for area in context.screen.areas:
-#                    if area.type == "NODE_EDITOR":
-#                        for space in area.spaces:
-#                            if space.type == "NODE_EDITOR" and not space.pin:
-#                                if 'Acoustic' in space.tree_type:
-#                                    space.tree_type = treeType
-#                                    if nodeTreeName is not None:
-#                                        space.node_tree = bpy.data.node_groups[nodeTreeName]
+@persistent
+def select_nodetree_handler(context):
+    if scene.render.engine == 'PBRAUDIO':
+        if hasattr(context, 'active_object'):
+            object = context.active_object
+            treeType = 'AcousticNodeTree'
+            nodeTreeName = None
 
-#    pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(item_activate_handler))
+            if object.type == 'EMPTY' or object.type == 'CAMERA':
+                return
+
+        for world in bpy.data.worlds:
+            if hasattr(world.pbraudio, 'acoustic_domain'):
+                AcousticDomain = world.pbraudio.acoustic_domain
+
+        if object == AcousticDomain:
+            if hasattr(world.pbraudio.nodetree, 'name'):
+                nodeTreeName = world.pbraudio.nodetree.name
+        else:
+            if hasattr(object.pbraudio.nodetree, 'name'):
+                nodeTreeName = object.pbraudio.nodetree.name
+
+        if treeType is not None:
+            for area in context.screen.areas:
+                if area.type == "NODE_EDITOR":
+                    for space in area.spaces:
+                        if space.type == "NODE_EDITOR" and not space.pin:
+                             if 'Acoustic' in space.tree_type:
+                            space.tree_type = treeType
+                            if nodeTreeName is not None:
+                                space.node_tree = bpy.data.node_groups[nodeTreeName]
+
+#pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler))
+
 
 @persistent
 def update_world_environment_boundaries(scene):
@@ -131,7 +97,7 @@ def update_world_environment_boundaries(scene):
                 
                 if boundary_empties:
                     # Update boundary positions
-                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+                    from .operators.soundOT import PBRAUDIO_OT_add_world_environment
                     op = PBRAUDIO_OT_add_world_environment
                     
                     # Get current radius from object property
@@ -139,20 +105,80 @@ def update_world_environment_boundaries(scene):
                     
                     # Update positions
                     op.update_boundary_positions(obj, boundary_empties, radius)
+            
+            # Save environment data to JSON
+            if hasattr(scene, 'pbraudio') and scene.pbraudio.cache_path:
+                cache_path = scene.pbraudio.cache_path
+                if cache_path.startswith('//'):
+                    cache_path = bpy.path.abspath(cache_path)
+                environment_json.save_environment_json(obj, cache_path)
+
+@persistent
+def save_environment_on_property_update(scene):
+    """Save environment JSON when environment properties change"""
+    for obj in bpy.data.objects:
+        if hasattr(obj, 'pbraudio') and obj.pbraudio.environment:
+            # Check if properties have changed
+            if "pbraudio_last_environment_data" not in in obj:
+                obj["pbraudio_last_environment_data"] = {}
+            
+            current_data = {
+                "file": obj.pbraudio.environment_file,
+                "channels": obj.pbraudio.environment_chanels,
+                "radius": obj.pbraudio.environment_size,
+                "location": tuple(obj.location),
+                "boundary_count": len(obj["pbraudio_boundary_empties"]) if "pbraudio_boundary_empties" in obj else 0
+            }
+            
+            last_data = obj["pbraudio_last_environment_data"]
+            
+            # Check if any property has changed
+            if current_data != last_data:
+                # Save JSON
+                if hasattr(scene, 'pbraudio') and scene.pbraudio.cache_path:
+                    cache_path = scene.pbraudio.cache_path
+                    if cache_path.startswith('//'):
+                        cache_path = bpy.path.abspath(cache_path)
+                    environment_json.save_environment_json(obj, cache_path)
+                
+                # Update last data
+                obj["pbraudio_last__environment_data"] = current_data
 
 def register():
     global pbraudio_handler
     for cls in classes:
         register_class(cls)
 
+    # Register handlers
+    bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
+    bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler)
     bpy.app.handlers.depsgraph_update_post.append(update_world_environment_boundaries)
     bpy.app.handlers.frame_change_post.append(update_world_environment_boundaries)
+    bpy.app.handlers.depsgraph_update_post.append(save_environment_on_property_update)
 
 def unregister():
+    # Remove handlers
+    if material_shader_only_handler in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(material_shader_only_handler)
+    if select_nodetree_handler in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(select_nodetree_handler)
     if update_world_environment_boundaries in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(update_world_environment_boundaries)
     if update_world_environment_boundaries in bpy.app.handlers.frame_change_post:
-        bpypy.app.handlers.frame_change_post.remove(update_world_environment_boundaries)
+        bpy.app.handlerslers.frame_change_post.remove(update_world_environment_boundaries)
+    if save_environment_on_property_update in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(save_environment_on_property_update)
+
+    global pbraudio_handler
+    for cls in reversed(classes):
+        unregister_class(cls)
+
+
+
+
+
+
+
 
 #    # Remove handler
 #    if not len(pbraudio_handler) == 0:
@@ -160,13 +186,6 @@ def unregister():
 #            if activate_handler is not None:
 #                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
 
-#    if hasattr(bpy.types.Screen, '_playback_handler'):
-#        if bpy.types.Screen._play_handler in bpy.app.handlers.animation_playback_pre:
-#            bpy.app.handlers.animation_playback_pre.remove(bpy.types.Screen._play_handler)
-#        if bpy.types.Screen._stop_handler in bpy.app.handlers.animation_playback_post:
-#            bpy.app.handlers.animation_playback_post.remove(bpy.types.Screen._stop_handler)
-#        delattr(bpy.types.Screen, '_play_handler')
-#        delattr(bpy.types.Screen, '_stop_handler')
     global pbraudio_handler
     for cls in reversed(classes):
         unregister_class(cls)

@@ -190,7 +190,7 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     environment_file: StringProperty(
         name="EnvironmetSource",
-        description="Select the sound for the source"
+        description="Select the sound for the source",
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',

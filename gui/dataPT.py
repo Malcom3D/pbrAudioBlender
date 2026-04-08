@@ -158,10 +158,11 @@ class PBRAUDIO_PT_data_panel(Panel):
 #                        icon='FILE_REFRESH')
             
             # Show warning if boundaries might be outside domain
-#            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
 #            op = PBRAUDIO_OT_add_world_environment()
-            op = bpy.ops.object.pbraudio_add_world_environment
-            min_co, max_co = op.get_acoustic_domain_bounds()
+#            op = bpy.ops.object.pbraudio_add_world_environment
+#            min_co, max_co = op.get_acoustic_domain_bounds()
+            min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
             
             if min_co is not None and max_co is not None:
                 # Check if any boundary might be outside
@@ -169,7 +170,8 @@ class PBRAUDIO_PT_data_panel(Panel):
                     boundary_names = object["pbraudio_boundary_empties"]
                     for name in boundary_names:
                         boundary_obj = bpy.data.objects.get(name)
-                        if boundary_obj and not op.is_point_inside_domain(boundary_obj.location):
+#                        if boundary_obj and not op.is_point_inside_domain(boundary_obj.location):
+                        if boundary_obj and not PBRAUDIO_OT_add_world_environment.is_point_inside_domain(boundary_obj.location):
 #                            box.label(text="Some boundaries outside domain!", icon='ERROR')
                             layout.label(text="Some boundaries outside domain!", icon='ERROR')
                             break
@@ -267,11 +269,12 @@ class PBRAUDIO_OT_update_environment_boundaries(Operator):
                 
                 if boundary_empties:
                     # Import and use the update function
-#                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
 #                    op = PBRAUDIO_OT_add_world_environment
-                    op = bpy.ops.object.pbraudio_add_world_environment
+#                    op = bpy.ops.object.pbraudio_add_world_environment
                     radius = obj.pbraudio.environment_size
-                    op.update_boundary_positions(obj, boundary_empties, radius)
+#                    op.update_boundary_positions(obj, boundary_empties, radius)
+                    PBRAUDIO_OT_add_world_environment.update_boundary_positions(obj, boundary_empties, radius)
                     
                     self.report({'INFO'}, f"Updated {len(boundary_empties)} boundaries")
         

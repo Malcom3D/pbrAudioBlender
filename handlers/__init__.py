@@ -55,7 +55,7 @@ def select_nodetree_handler(scene):
             if hasattr(object, 'pbraudio'):
                 if object.pbraudio.source or object.pbraudio.output or object.pbraudio.environment or object.type == 'CAMERA':
                     nodeTreeName = object.pbraudio.nodetree.name
-                    scene.acoustic_node_editor_props.acoustic_shader_type = 2
+                    scene.acoustic_node_editor_props.acoustic_shader_type = 'SOUND'
 
             for world in bpy.data.worlds:
                 if hasattr(world.pbraudio, 'acoustic_domain'):
@@ -64,11 +64,11 @@ def select_nodetree_handler(scene):
             if object == AcousticDomain:
                 if hasattr(world.pbraudio.nodetree, 'name'):
                     nodeTreeName = world.pbraudio.nodetree.name
-                    scene.acoustic_node_editor_props.acoustic_shader_type = 1
+                    scene.acoustic_node_editor_props.acoustic_shader_type = 'WORLD'
             else:
                 if hasattr(object.pbraudio.nodetree, 'name'):
                     nodeTreeName = object.pbraudio.nodetree.name
-                    scene.acoustic_node_editor_props.acoustic_shader_type = 0
+                    scene.acoustic_node_editor_props.acoustic_shader_type = 'OBJECT'
 
             if treeType is not None:
                 for area in bpy.context.screen.areas:

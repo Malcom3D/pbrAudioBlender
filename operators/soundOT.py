@@ -297,6 +297,64 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         
         return boundary_empties
 
+    @staticmethod
+    def update_boundary_count(center_obj, new_channel_count):
+        """Update the number of boundary empties based on channel count"""
+        # Get current boundaries
+        current_boundaries = []
+        if "pbraudio_boundary_empties" in center_obj:
+            boundary_names = center_obj["pbraudio_boundary_empties"]
+            for name in boundary_names:
+                boundary_obj = bpy.data.objects.get(name)
+                if boundary_obj:
+                    current_boundaries.append(boundary_obj)
+        
+        current_count = len(current_boundaries)
+        
+        if new_channel_count == current_count:
+            return  # No change needed
+        
+        # Remove excess boundaries
+        if new_channel_count < current_count:
+            for i in range(new_channel_count, current_count):
+                if i < len(current_boundaries):
+                    bpy.data.objects.remove(current_boundaries[i], do_unlink=True)
+        
+        # Add new boundaries if needed
+        elif new_channel_count > current_count:
+            radius = center_obj.pbraudio.environment_size
+            for i in range(current_count, new_channel_count):
+                # Calculate position for new boundary
+                golden_angle = math.pi * (3 - math.sqrt(5))
+                y = 1 - (i / (new_channel_count - 1)) * 2 if new_channel_count > 1 else 0
+                r = math.sqrt(1 - y * y)
+                theta = golden_angle * i
+                
+                x = math.cos(theta) * r
+                z = math.sin(theta) * r
+                
+                # Calculate position relative to center
+                position = center_obj.location + mathutils.Vector((x, y, z)) * radius
+                
+                # Create new boundary empty
+                boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)
+                boundary_empty.empty_display_type = 'PLAIN_AXES'
+                boundary_empty.empty_display_size = 0.05
+                boundary_empty.location = position
+                boundary_empty.hide_select = True
+                boundary_empty.parent = center_obj
+                
+                # Link to collection
+                bpy.context.collection.objects.link(boundary_empty)
+                
+                current_boundaries.append(boundary_empty)
+        
+        # Update the stored boundary names
+        center_obj["pbraudio_boundary_empties"] = [obj.name for obj in current_boundaries[:new_channel_count]]
+        
+        # Update Update positions for all boundaries
+        PBRAUDIO_OT_add_world_environment.update_boundary_positions(center_obj, current_boundaries[:new_channel_count], radius)
+
 #    def update_boundary_positions(self, center_obj, boundary_empties, radius):
     @staticmethod
     def update_boundary_positions(center_obj, boundary_empties, radius):
@@ -427,6 +485,42 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             layout.label(text="Warning: Outside Acoustic Domain", icon='ERROR')
 
 classes.append(PBRAUDIO_OT_add_world_environment)
+
+class PBRAUDIO_OT_remove_world_environment(Operator):
+    """Remove a world environment and its boundary empties"""
+    bl_idname = "object.pbraudio_remove_world_environment"
+    bl_label = "Remove World Environment"
+    bl_description = "Remove world environment and its boundary empties"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    @classmethod
+    def poll(cls, context):
+        return (context.active_object and 
+                hasattr(context.active_object, 'pbraudio') and 
+                context.active_object.pbraudio.environment)
+    
+    def execute(self, context):
+        obj = context.active_object
+        
+        # Clean up boundary empties
+        if "pbraudio_boundary_empties" in obj:
+            boundary_names = obj["pbraudio_boundary_empties"]
+            
+            for name in boundary_names:
+                boundary_obj = bpy.data.objects.get(name)
+                if boundary_obj:
+                    bpy.data.objects.remove(boundary_obj, do_unlink=True)
+            
+            # Remove the custom property
+            del obj["pbraudio_boundary_empties"]
+        
+        # Remove the environment object
+        bpy.data.objects.remove(obj, do_unlink=True)
+        
+        self.report({'INFO'}, "Removed world environment and its boundaries")
+        return {'FINISHED'}
+
+classes.append(PBRAUDIO_OT_remove_world_environment)
 
 class PBRAUDIO_OT_add_properties(Operator):
     """Add pbrAudio properties to selected object"""

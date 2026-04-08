@@ -81,7 +81,6 @@ def select_nodetree_handler(scene):
 
 #pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler))
 
-
 @persistent
 def update_world_environment_boundaries(scene):
     """Update boundary empties when world environment moves"""
@@ -160,6 +159,7 @@ def register():
     bpy.app.handlers.depsgraph_update_post.append(save_environment_on_property_update)
 
 def unregister():
+    global pbraudio_handler
     # Remove handlers
     if material_shader_only_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(material_shader_only_handler)
@@ -172,23 +172,5 @@ def unregister():
     if save_environment_on_property_update in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(save_environment_on_property_update)
 
-    global pbraudio_handler
-    for cls in reversed(classes):
-        unregister_class(cls)
-
-
-
-
-
-
-
-
-#    # Remove handler
-#    if not len(pbraudio_handler) == 0:
-#        for activate_handler in pbraudio_handler:
-#            if activate_handler is not None:
-#                bpy.app.handlers.depsgraph_update_pre.remove(activate_handler)
-
-    global pbraudio_handler
     for cls in reversed(classes):
         unregister_class(cls)

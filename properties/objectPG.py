@@ -95,7 +95,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
-        type=materialsNT.AcousticNodeTree
+        type=acousticNT.AcousticNodeTree
     )
 
     stochastic_variation: BoolProperty(

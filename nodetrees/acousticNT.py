@@ -27,6 +27,8 @@ class AcousticNodeTree(NodeTree):
     bl_label = "Acoustic Node Editor"
     bl_icon = 'SOUND'
 
+    pbraudio_type: StringProperty(default='OBJECT')
+
     @classmethod
     def poll(cls, context):
         return context.scene.render.engine == "PBRAUDIO"

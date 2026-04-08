@@ -91,24 +91,6 @@ class PBRAUDIO_PT_data_panel(Panel):
     bl_region_type = 'WINDOW'
     bl_context = 'data'
 
-    width: FloatProperty(
-        name="Width",
-        description="Width of the planar source",
-        default=0.5,
-        min=0.01,
-        max=100.0,
-        unit='LENGTH'
-    )
-
-    height: FloatProperty(
-        name="Height",
-        description="Height of the planar source",
-        default=0.5,
-        min=0.01,
-        max=100.0,
-        unit='LENGTH'
-    )
-    
     @classmethod
     def poll(cls, context):
         return (context.scene.render.engine == 'PBRAUDIO' and 
@@ -128,12 +110,13 @@ class PBRAUDIO_PT_data_panel(Panel):
             # Object is a Sound Source
             layout.prop(object.pbraudio, "source_type")
             if object.pbraudio.source_type == 'SPHERE':
-                layout.prop(object, "empty_display_size")
+                layout.prop(object, "object.source_sphere_size")
+                object.empty_display_size = object.source_sphere_size
             elif object.pbraudio.source_type == 'PLANE':
-                layout.prop(self, "width")
-                layout.prop(self, "height")
-                object.empty_display_size = max(self.width, self.height) / 2
-                object.scale = (self.width / 2, self.height / 2, 0.01)
+                layout.prop(object, "source_planar_width")
+                layout.prop(object, "source_planar_height")
+                object.empty_display_size = max(object.source_planar_width, object.source_planar_height) / 2
+                object.scale = (object.source_planar_width / 2, object.source_planar_height / 2, 0.01)
             layout.template_ID(snode, "source_file", new="sound.open_mono")
             
         elif object.pbraudio.environment:

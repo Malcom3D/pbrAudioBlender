@@ -181,6 +181,24 @@ class PBRAudioObjectProperties(PropertyGroup):
         default='SPHERE'
     )
 
+    source_sphere_size: FloatProperty(
+        name="Sphere Size",
+        description="Sphere Source Size",
+        default=0.5
+    )
+
+    source_planar_width: FloatProperty(
+        name="Planar Width",
+        description="Planar Source Width Size",
+        default=0.5
+    )
+
+    source_planar_height: FloatProperty(
+        name="Planar Height",
+        description="Planar Source Height Size",
+        default=1.0
+    )
+
     """Environment properties for pbrAudio"""
     environment: BoolProperty(
         name="pbraudio_environment",

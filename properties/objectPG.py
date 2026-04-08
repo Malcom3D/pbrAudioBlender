@@ -92,6 +92,12 @@ class PBRAudioObjectProperties(PropertyGroup):
         else:
             return False
 
+    def update_sphere_size(self, object):
+        bpy.ops.object.pbraudio_resize_source(size=self.source_sphere_size)
+
+    def update_plane_size(self, object):
+        bpy.ops.object.pbraudio_resize_source(height=self.source_planar_height, width=self.source_planar_width)
+
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
@@ -184,19 +190,22 @@ class PBRAudioObjectProperties(PropertyGroup):
     source_sphere_size: FloatProperty(
         name="Sphere Size",
         description="Sphere Source Size",
-        default=0.5
+        default=0.5,
+        update=update_sphere_size
     )
 
     source_planar_width: FloatProperty(
         name="Planar Width",
         description="Planar Source Width Size",
         default=0.5
+        update=update_plane_size
     )
 
     source_planar_height: FloatProperty(
         name="Planar Height",
         description="Planar Source Height Size",
         default=1.0
+        update=update_plane_size
     )
 
     """Environment properties for pbrAudio"""

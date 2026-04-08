@@ -52,34 +52,32 @@ def select_nodetree_handler(scene):
             treeType = 'AcousticNodeTree'
             nodeTreeName = None
 
-            if hasattr(object, 'pbraudio'):
-                if object.pbraudio.environment:
-                    return
+            if (not object == None or not object.pbraudio.environment) and hasattr(object, 'pbraudio'):
                 if object.pbraudio.source or object.pbraudio.output or object.type == 'CAMERA':
                     nodeTreeName = object.pbraudio.nodetree.name
                     scene.acoustic_node_editor_props.acoustic_shader_type = 'SOUND'
 
-            for world in bpy.data.worlds:
-                if hasattr(world.pbraudio, 'acoustic_domain'):
-                    AcousticDomain = world.pbraudio.acoustic_domain
+                for world in bpy.data.worlds:
+                    if hasattr(world.pbraudio, 'acoustic_domain'):
+                        AcousticDomain = world.pbraudio.acoustic_domain
 
-            if object == AcousticDomain:
-                if hasattr(world.pbraudio.nodetree, 'name'):
-                    nodeTreeName = world.pbraudio.nodetree.name
-                    scene.acoustic_node_editor_props.acoustic_shader_type = 'WORLD'
-            else:
-                if hasattr(object.pbraudio.nodetree, 'name'):
-                    nodeTreeName = object.pbraudio.nodetree.name
-                    scene.acoustic_node_editor_props.acoustic_shader_type = 'OBJECT'
+                if object == AcousticDomain:
+                    if hasattr(world.pbraudio.nodetree, 'name'):
+                        nodeTreeName = world.pbraudio.nodetree.name
+                        scene.acoustic_node_editor_props.acoustic_shader_type = 'WORLD'
+                else:
+                    if hasattr(object.pbraudio.nodetree, 'name'):
+                        nodeTreeName = object.pbraudio.nodetree.name
+                        scene.acoustic_node_editor_props.acoustic_shader_type = 'OBJECT'
 
-            if treeType is not None:
-                for area in bpy.context.screen.areas:
-                    if area.type == "NODE_EDITOR":
-                        for space in area.spaces:
-                            if space.type == "NODE_EDITOR" and not space.pin:
-                                space.tree_type = treeType
-                                if nodeTreeName is not None:
-                                    space.node_tree = bpy.data.node_groups[nodeTreeName]
+                if treeType is not None:
+                    for area in bpy.context.screen.areas:
+                        if area.type == "NODE_EDITOR":
+                            for space in area.spaces:
+                                if space.type == "NODE_EDITOR" and not space.pin:
+                                    space.tree_type = treeType
+                                    if nodeTreeName is not None:
+                                        space.node_tree = bpy.data.node_groups[nodeTreeName]
 
 #pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler))
 

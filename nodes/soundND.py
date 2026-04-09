@@ -28,9 +28,9 @@ from .baseND import AcousticSoundNode
 classes = []
 
 class SoundOutputNode(AcousticSoundNode):
-    """Node to combine multiple frequency responses into a spatial response"""
+    """Node for sound output from acoustic world"""
     bl_idname = 'SoundOutputNode'
-    bl_label = 'Recorder Input Node'
+    bl_label = 'Sound Input Node'
     bl_icon = 'SOUND'
 
     pbraudio_type: StringProperty(default='SoundOutputNode')
@@ -38,9 +38,9 @@ class SoundOutputNode(AcousticSoundNode):
 classes.append(SoundOutputNode)
 
 class SoundInputNode(AcousticSoundNode):
-    """Node to combine multiple frequency responses into a spatial response"""
+    """Node for sound input from acoustic world"""
     bl_idname = 'SoundInputNode'
-    bl_label = 'Recorder Input Node'
+    bl_label = 'Sound Input Node'
     bl_icon = 'SOUND'
 
     pbraudio_type: StringProperty(default='SoundInputNode')

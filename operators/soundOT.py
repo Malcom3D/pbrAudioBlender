@@ -79,7 +79,32 @@ class PBRAUDIO_OT_add_spherical_source(Operator, AddObjectHelper):
         empty.pbraudio.source = True
         empty.pbraudio.source_type = 'SPHERE'
         empty.show_axis = True
+
+        # Create new pbrAudio node tree
+        nodetree = bpy.data.node_groups.new(self.name, 'AcousticNodeTree')
+        nodetree.pbraudio_type = 'SOUND'
+
+        # Set up default nodes
+        output_node = nodetree.nodes.new('SoundOutputNode')
+        output_node.location = (300, 0)
+
+#        shader_node = nodetree.nodes.new('AcousticShaderNode')
+#        shader_node.location = (0, 0)
+    
+#        # Connect nodes
+#        nodetree.links.new(shader_node.outputs[0], output_node.inputs[0])
         
+        # Link to active object if available
+        if context.active_object and context.active_object.pbraudio:
+            context.active_object.pbraudio.nodetree = nodetree
+
+        # Set the node tree as active in the node editor
+        for area in context.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                for space in area.spaces:
+                    if space.type == 'NODE_EDITOR':
+                        space.node_tree = nodetree
+                        break
         self.report({'INFO'}, f"Added spherical source with radius {self.radius}")
         return {'FINISHED'}
 
@@ -139,7 +164,32 @@ class PBRAUDIO_OT_add_planar_source(Operator, AddObjectHelper):
         empty.pbraudio.source = True
         empty.pbraudio.source_type = 'PLANE'
         empty.show_axis = True
-        
+
+        # Create new pbrAudio node tree
+        nodetree = bpy.data.node_groups.new(self.name, 'AcousticNodeTree')
+        nodetree.pbraudio_type = 'SOUND'
+
+        # Set up default nodes
+        output_node = nodetree.nodes.new('SoundOutputNode')
+        output_node.location = (300, 0)
+
+#        shader_node = nodetree.nodes.new('AcousticShaderNode')
+#        shader_node.location = (0, 0)
+
+#        # Connect nodes
+#        nodetree.links.new(shader_node.outputs[0], output_node.inputs[0])
+
+        # Link to active object if available
+        if context.active_object and context.active_object.pbraudio:
+            context.active_object.pbraudio.nodetree = nodetree
+
+        # Set the node tree as active in the node editor
+        for area in context.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                for space in area.spaces:
+                    if space.type == 'NODE_EDITOR':
+                        space.node_tree = nodetree
+                        break
         self.report({'INFO'}, f"Added planar source with size {self.width}x{self.height}")
         return {'FINISHED'}
 

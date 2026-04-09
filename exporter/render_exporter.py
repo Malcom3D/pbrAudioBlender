@@ -401,10 +401,6 @@ class RenderExporter:
         Returns:
             bool: True if point is inside the parallelepiped
         """
-        # Convert point to Vector if it's not already
-        if not isinstance(point, Vector):
-            point = Vector(point)
-
         # Create basis vectors from the parallelepiped edges
         u = vertices[1] - vertices[0]  # edge from v0 to v1
         v = vertices[3] - vertices[0]  # edge from v0 to v3

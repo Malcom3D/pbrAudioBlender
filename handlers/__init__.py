@@ -50,7 +50,7 @@ def select_nodetree_handler(scene):
         if area.type == "NODE_EDITOR":
             for space in area.spaces:
                 if space.type == "NODE_EDITOR" and not space.pin:
-                    space.tree_type = None
+                    space.node_tree = None
 
     if scene.render.engine == 'PBRAUDIO':
         if not bpy.context.active_object == None and hasattr(bpy.context, 'active_object'):

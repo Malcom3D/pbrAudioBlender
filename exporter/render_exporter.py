@@ -407,7 +407,10 @@ class RenderExporter:
             object_types = ['MESH', 'EMPTY', 'CAMERA']
         mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type in object_types]
 
+        print('object_types: ', object_types)
+
         for obj in mesh_objects:
+            print('mesh_objects: ', obj)
             if not obj == None:
                 # Get world coordinates of object vertices
                 mesh = obj.data

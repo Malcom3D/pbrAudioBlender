@@ -23,8 +23,8 @@ from bpy.props import IntProperty, StringProperty, BoolProperty, EnumProperty, F
 from bpy.types import PropertyGroup, UIList
 from bpy_extras.io_utils import ImportHelper
 
-from .baseND import AcousticBaseNode
-from ..utils import frd_io 
+from .baseND import AcousticSoundNode
+from ..utils import frd_io
 
 classes = []
 

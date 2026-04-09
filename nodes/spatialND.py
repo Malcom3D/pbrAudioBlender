@@ -21,7 +21,7 @@ from bpy.types import Node
 from bpy.props import IntProperty, FloatProperty, StringProperty, BoolProperty, EnumProperty, CollectionProperty
 from bpy.types import PropertyGroup, UIList
 
-from .baseND import AcousticBaseNode
+from .baseND import AcousticSoundNode
 from ..utils import frd_io
 
 classes = []

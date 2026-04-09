@@ -71,14 +71,13 @@ def select_nodetree_handler(scene):
                         nodeTreeName = object.pbraudio.nodetree.name
                         scene.acoustic_node_editor_props.acoustic_shader_type = 'OBJECT'
 
-                if treeType is not None:
-                    for area in bpy.context.screen.areas:
-                        if area.type == "NODE_EDITOR":
-                            for space in area.spaces:
-                                if space.type == "NODE_EDITOR" and not space.pin:
-                                    space.tree_type = treeType
-                                    if nodeTreeName is not None:
-                                        space.node_tree = bpy.data.node_groups[nodeTreeName]
+                for area in bpy.context.screen.areas:
+                    if area.type == "NODE_EDITOR":
+                        for space in area.spaces:
+                            if space.type == "NODE_EDITOR" and not space.pin:
+                                space.tree_type = treeType
+                                if nodeTreeName is not None:
+                                    space.node_tree = bpy.data.node_groups[nodeTreeName]
 
 #pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler))
 

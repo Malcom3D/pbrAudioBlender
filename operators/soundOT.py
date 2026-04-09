@@ -246,6 +246,125 @@ class PBRAUDIO_OT_resize_source(Operator, AddObjectHelper):
 
 classes.append(PBRAUDIO_OT_resize_source)
 
+class PBRAUDIO_OT_add_sound_output(Operator, AddObjectHelper):
+    """Add a sound output (microphone/listener)"""
+    bl_idname = "object.pbraudio_add_sound_output"
+    bl_label = "Sound Output"
+    bl_description = "Add a sound output (microphone/listener)"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    output_type: EnumProperty(
+        name="Type",
+        items=[
+            ('MONO', "Mono", "Mono sound output"),
+            ('AMBI', "Ambisonic", "Ambisonic sound output"),
+        ],
+        default='MONO'
+    )
+    
+    ambisonic_order: EnumProperty(
+        name="Order",
+        description="Ambisonic order (only for ambisonic type)",
+        items=[
+            ('0', "Zero", "Zero order"),
+            ('1', "First", "First order"),
+            ('2', "Second", "Second order"),
+            ('3', "Third", "Third order"),
+        ],
+        default='1'
+    )
+    
+    mono_mic_type: EnumProperty(
+        name="Microphone Type",
+        description="Microphone type (only for mono type)",
+        items=[
+            ('OMNIDIRECTIONAL', "Omnidirectional", "Omnidirectional Microphone"),
+            ('CARDIOID', "Cardioid", "Cardioid Microphone"),
+            ('HYPERCARDIOID', "Hypercardioid", "Hypercardioid Microphone"),
+            ('FIGURE_8', "Figure 8", "Figure 8 Microphone"),
+        ],
+        default='OMNIDIRECTIONAL'
+    )
+    
+    size: FloatProperty(
+        name="Size",
+        description="Display size of the output",
+        default=0.25,
+        min=0.01,
+        max=10.0,
+        unit='LENGTH'
+    )
+
+    def execute(self, context):
+        # Create empty object
+        empty = bpy.data.objects.new("SoundOutput", None)
+        empty.empty_display_type = 'SPHERE'
+        empty.empty_display_size = self.size
+        empty.location = self.location
+        
+        # Link to collection
+        context.collection.objects.link(empty)
+        
+        # Set as active object
+        context.view_layer.objects.active = empty
+        empty.select_set(True)
+        
+        # Add pbrAudio properties
+        if not hasattr(empty, 'pbraudio'):
+            bpy.ops.object.pbraudio_add_properties()
+        
+        # Configure as output
+        empty.pbraudio.output = True
+        empty.pbraudio.output_type = self.output_type
+        
+        # Set specific properties based on type
+        if self.output_type == 'AMBI':
+            empty.pbraudio.ambisonic_order = self.ambisonic_order
+        else:  # MONO
+            empty.pbraudio.mono_mic_type = self.mono_mic_type
+        
+        empty.show_axis = True
+
+        # Create new pbrAudio node tree
+        nodetree = bpy.data.node_groups.new("SoundOutput", 'AcousticNodeTree')
+        nodetree.pbraudio_type = 'SOUND'
+
+        # Set up default nodes
+        input_node = nodetree.nodes.new('SoundInputNode')
+        input_node.location = (300, 0)
+        
+        # Link to active object if available
+        if context.active_object and context.active_object.pbraudio:
+            context.active_object.pbraudio.nodetree = nodetree
+
+        # Set the node tree as active in the node editor
+        for area in context.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                for space in area.spaces:
+                    if space.type == 'NODE_EDITOR':
+                        space.node_tree = nodetree
+                        break
+        
+        self.report({'INFO'}, f"Added sound output ({self.output_type})")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.location = context.scene.cursor.location
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "output_type")
+        
+        if self.output_type == 'AMBI':
+            layout.prop(self, "ambisonic_order")
+        else:  # MONO
+            layout.prop(self, "mono_mic_type")
+        
+        layout.prop(self, "size")
+
+classes.append(PBRAUDIO_OT_add_sound_output)
+
 class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
     """Add a world environment sphere with boundary empties"""
     bl_idname = "object.pbraudio_add_world_environment"

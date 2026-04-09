@@ -33,7 +33,7 @@ class VIEW3D_MT_pbraudio_add(Menu):
         layout.menu("VIEW3D_MT_pbraudio_sources", text="Sources", icon='SPEAKER')
         
         # Outputs
-        layout.menu("VIEW3D_MT_pbraudio_outputs", text="Outputs", icon='LIGHT_SPOT')
+        layout.menu("VIEW3D_MT_pbraudio_outputs", text="Outputs", icon='ORIENTATION_GIMBAL')
         
         # Separator
         layout.separator()
@@ -62,6 +62,7 @@ class VIEW3D_MT_pbraudio_outputs(Menu):
 
     def draw(self, context):
         layout = self.layout
+        layout.operator("object.pbraudio_add_sound_output", text="Sound Output", icon='LIGHT_SPOT')
         layout.operator("object.pbraudio_add_world_environment", text="World Environment", icon='WORLD')
 
 classes.append(VIEW3D_MT_pbraudio_outputs)

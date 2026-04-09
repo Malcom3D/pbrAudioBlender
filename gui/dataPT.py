@@ -44,7 +44,7 @@ class PBRAUDIO_PT_empty(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None and context.active_object.type == 'EMPTY' and not context.active_object.pbraudio.source and not context.active_object.pbraudio.output
+        return context.active_object is not None and context.active_object.type == 'EMPTY' and not context.active_object.type == 'CAMERA' and not context.active_object.pbraudio.source and not context.active_object.pbraudio.output
 
     def draw(self, context):
         layout = self.layout
@@ -95,8 +95,8 @@ class PBRAUDIO_PT_data_panel(Panel):
     def poll(cls, context):
         return (context.scene.render.engine == 'PBRAUDIO' and 
                 context.active_object is not None and
-                context.active_object.type == 'EMPTY' and
-                context.active_object.type == 'CAMERA' and
+                (context.active_object.type == 'EMPTY' or
+                context.active_object.type == 'CAMERA') and
                 hasattr(context.active_object, 'pbraudio') and
                 (context.active_object.pbraudio.source or 
                  context.active_object.pbraudio.output or
@@ -107,8 +107,6 @@ class PBRAUDIO_PT_data_panel(Panel):
         object = context.object
         snode = object.pbraudio
 
-        if object.type == 'CAMERA':
-            layout.prop(object.pbraudio, "output")
         if object.pbraudio.source:
             # Object is a Sound Source
             layout.label(text="Source Settings:", icon='SPEAKER')
@@ -185,6 +183,11 @@ class PBRAUDIO_PT_data_panel(Panel):
             layout.prop(object.pbraudio, "output_type")
             if object.pbraudio.output_type == 'AMBI':
                 layout.prop(object.pbraudio, "ambisonic_order")
+            if object.pbraudio.output_type == 'MONO':
+                layout.prop(object.pbraudio, "mono_mic_type")
+
+        elif not object.pbraudio.output and object.type == 'CAMERA':
+            layout.prop(object.pbraudio, "output")
 
 classes.append(PBRAUDIO_PT_data_panel)
 

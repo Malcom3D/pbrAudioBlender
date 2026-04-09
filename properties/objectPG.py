@@ -264,11 +264,23 @@ class PBRAudioObjectProperties(PropertyGroup):
     ambisonic_order: EnumProperty(
         name="Order",
         items=[
+            ('0', "Zero", "Zero order"),
             ('1', "First", "First order"),
             ('2', "Second", "Second order"),
             ('3', "Third", "Third order"),
         ],
         default='1'
+    )
+
+    mono_mic_type: EnumProperty(
+        name="Microphone Type",
+        items=[
+            ('OMNIDIRECTIONAL', "Omnidirectional", "Omnidirectional Microphone"),
+            ('CARDIOID', "Cardioid", "Cardioid Micrphone"),
+            ('HYPERCARDIOID', "Hypercardioid", "Hypercardioid Micrphone"),
+            ('FIGURE_8', "Figure 8", "Figure 8 Micrphone"),
+        ],
+        default='OMNIDIRECTIONAL'
     )
 
 classes.append(PBRAudioObjectProperties)

@@ -22,9 +22,9 @@ from nodeitems_utils import NodeCategory, NodeItem, register_node_categories, un
 
 classes = []
 
-from . import worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND
+from . import worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND, soundND
 
-for mod in (worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND):
+for mod in (worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND, soundND):
     classes += mod.classes
 
 class WorldAcousticNodeCategory(NodeCategory):
@@ -116,8 +116,12 @@ def register():
     register_node_categories("OUTPUT", output_node_categories)
     register_node_categories("MATERIAL", material_node_categories)
     register_node_categories("PROPERTY", property_node_categories)
+    register_node_categories("SOUND_OUTPUT_NODES", property_node_categories)
+    register_node_categories("SOUND_PROPERTY_NODES", property_node_categories)
 
 def unregister():
+    unregister_node_categories("SOUND_PROPERTY_NODES")
+    unregister_node_categories("SOUND_OUTPUT_NODES")
     unregister_node_categories("PROPERTY")
     unregister_node_categories("MATERIAL")
     unregister_node_categories("OUTPUT")

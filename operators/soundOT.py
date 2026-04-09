@@ -20,7 +20,7 @@ import bpy
 import math
 import mathutils
 from bpy.types import Operator
-from bpy.props import FloatProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, IntProperty, StringProperty, EnumProperty
 from bpy_extras.object_utils import AddObjectHelper
 
 from ..utils import environment_json

@@ -85,6 +85,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         row_bake = layout.row()
         row_bake.operator('scene.pbraudio_bake')
         row_bake.enabled = True if not scene.pbraudio.bake else False
+        row_fracture = layout.row()
         row_fracture.operator('scene.pbraudio_fracture')
         row_fracture.enabled = fracture_enabled
 

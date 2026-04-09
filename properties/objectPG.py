@@ -94,7 +94,7 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     def add_camera_nodetree(self, context):
         object = context.object
-        if object.type == 'CAMERA' and not object.pbraudio.nodetree == None and self.output == True: 
+        if object.type == 'CAMERA' and object.pbraudio.nodetree == None and self.output == True: 
             bpy.ops.object.pbraudio_add_camera_nodetree()
 
     def update_sphere_size(self, context):

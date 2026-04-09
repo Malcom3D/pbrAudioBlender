@@ -74,16 +74,16 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 #        op_fracture.enabled = fracture_enabled
 
         row = layout.row()
-        op_clear_cache = row.operator('scene.pbraudio_clear_cache')
-        op_clear_cache.enabled = True if scene.pbraudio.cache_status else False
-        op_physics = row.operator('scene.pbraudio_physics')
-        op_physics.enabled = True if not scene.pbraudio.physics else False
-        op_prebake = row.operator('scene.pbraudio_prebake')
-        op_prebake.enabled = True if not scene.pbraudio.prebake else False
-        op_bake = row.operator('scene.pbraudio_bake')
-        op_bake.enabled = True if not scene.pbraudio.bake else False
-        op_fracture = row.operator('scene.pbraudio_fracture')
-        op_fracture.enabled = fracture_enabled
+        row.operator('scene.pbraudio_clear_cache')
+        row.enabled = True if scene.pbraudio.cache_status else False
+        row.operator('scene.pbraudio_physics')
+        row.enabled = True if not scene.pbraudio.physics else False
+        row.operator('scene.pbraudio_prebake')
+        row.enabled = True if not scene.pbraudio.prebake else False
+        row.operator('scene.pbraudio_bake')
+        row.enabled = True if not scene.pbraudio.bake else False
+        row.operator('scene.pbraudio_fracture')
+        row.enabled = fracture_enabled
 
 #        layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
 #        layout.operator('scene.pbraudio_physics', emboss=True if not scene.pbraudio.physics else False)

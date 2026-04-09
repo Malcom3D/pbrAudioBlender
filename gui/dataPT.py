@@ -93,14 +93,9 @@ class PBRAUDIO_PT_data_panel(Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.scene.render.engine == 'PBRAUDIO' and 
-                context.active_object is not None and
-                (context.active_object.type == 'EMPTY' or
-                context.active_object.type == 'CAMERA') and
-                hasattr(context.active_object, 'pbraudio') and
-                (context.active_object.pbraudio.source or 
-                 context.active_object.pbraudio.output or
-                 context.active_object.pbraudio.environment))
+        return (context.scene.render.engine == 'PBRAUDIO' and context.active_object is not None and
+               (context.active_object.type == 'EMPTY' or context.active_object.type == 'CAMERA') and
+                hasattr(context.active_object, 'pbraudio') and (context.active_object.pbraudio.source or context.active_object.pbraudio.output or context.active_object.pbraudio.environment or context.active_object.type == 'CAMERA'))
 
     def draw(self, context):
         layout = self.layout

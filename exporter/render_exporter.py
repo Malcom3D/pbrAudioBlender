@@ -781,6 +781,7 @@ class RenderExporter:
         self.domain_config()
         domain_vertices = self.config["acoustic_domain"]['geometry']
         domain_vectors = [Vector(v) for v in domain_vertices]
+        print('domain_vectors: ', domain_vectors)
         objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
         for obj in objects:
             self.export_animation_obj(obj, start_frame, end_frame)

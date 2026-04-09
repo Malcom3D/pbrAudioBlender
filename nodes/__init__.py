@@ -116,8 +116,8 @@ def register():
     register_node_categories("OUTPUT", output_node_categories)
     register_node_categories("MATERIAL", material_node_categories)
     register_node_categories("PROPERTY", property_node_categories)
-    register_node_categories("SOUND_OUTPUT_NODES", property_node_categories)
-    register_node_categories("SOUND_PROPERTY_NODES", property_node_categories)
+    register_node_categories("SOUND_OUTPUT_NODES", sound_output_node_categories)
+    register_node_categories("SOUND_PROPERTY_NODES", sound_property_node_categories)
 
 def unregister():
     unregister_node_categories("SOUND_PROPERTY_NODES")

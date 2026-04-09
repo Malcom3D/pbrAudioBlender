@@ -18,7 +18,6 @@ class AcousticNodeEditorProperties(bpy.types.PropertyGroup):
         default="OBJECT",
     )
 
-
 def draw_acoustic_shader_type(self, context):
     layout = self.layout
 

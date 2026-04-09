@@ -57,22 +57,6 @@ class PBRAUDIO_PT_Collision_panel(Panel):
                     fracture_enabled = True
 
         # operator button
-#        op_clear_cache = layout.operator('scene.pbraudio_clear_cache')
-#        op_clear_cache.active = True if scene.pbraudio.cache_status else False
-#        op_clear_cache.enabled = True if scene.pbraudio.cache_status else False
-#        op_physics = layout.operator('scene.pbraudio_physics')
-#        op_physics.active = True if not scene.pbraudio.physics else False
-#        op_physics.enabled = True if not scene.pbraudio.physics else False
-#        op_prebake = layout.operator('scene.pbraudio_prebake')
-#        op_prebake.active = True if not scene.pbraudio.prebake else False
-#        op_prebake.enabled = True if not scene.pbraudio.prebake else False
-#        op_bake = layout.operator('scene.pbraudio_bake')
-#        op_bake.active = True if not scene.pbraudio.bake else False
-#        op_bake.enabled = True if not scene.pbraudio.bake else False
-#        op_fracture = layout.operator('scene.pbraudio_fracture')
-#        op_fracture.active = fracture_enabled
-#        op_fracture.enabled = fracture_enabled
-
         row_clear_cache = layout.row()
         row_clear_cache.operator('scene.pbraudio_clear_cache')
         row_clear_cache.enabled = True if scene.pbraudio.cache_status else False
@@ -88,12 +72,6 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         row_fracture = layout.row()
         row_fracture.operator('scene.pbraudio_fracture')
         row_fracture.enabled = fracture_enabled
-
-#        layout.operator('scene.pbraudio_clear_cache', emboss=True if not scene.pbraudio.cache_status else False)
-#        layout.operator('scene.pbraudio_physics', emboss=True if not scene.pbraudio.physics else False)
-#        layout.operator('scene.pbraudio_prebake', emboss=True if not scene.pbraudio.prebake else False)
-#        layout.operator('scene.pbraudio_bake', emboss=True if not scene.pbraudio.bake else False)
-#        layout.operator('scene.pbraudio_fracture', emboss=fracture_emboss)
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 

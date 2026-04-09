@@ -166,7 +166,57 @@ class PBRAUDIO_OT_bake(Operator):
     bl_label = "Bake"
     bl_description = "Bake of prebaked data for sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
-                
+
+    def update_progress(self, scene, status_file):
+        """Update progress from status file"""
+        if os.path.exists(status_file):
+            try:
+                with open(status_file, 'r') as f:
+                    progress = f.read().strip()
+                    if progress:
+                        scene.pbraudio.status_progress = float(progress) / 100
+                return True
+            except:
+                pass
+        return False
+
+    def check_completion(self, scene, process, status_file):
+        """Update UI"""
+        for area in bpy.context.screen.areas:
+            area.tag_redraw()
+        """Check if the process has completed"""
+        if not process.is_alive():
+            # Process finished
+            scene.pbraudio.shader_processing = False
+            scene.pbraudio.bake = True
+            scene.pbraudio.status_progress = 1.0
+#            self.report({'INFO'}, "Baking of prebaked data for sound synthesis completed")
+            return None
+        else:
+            # Update progress
+            self.update_progress(scene, status_file)
+            # Continue timer
+            return 1.0
+
+    def execute(self, context):
+        scene = context.scene
+        if hasattr(scene.pbraudio, 'bake') and not scene.pbraudio.bake:
+            if not scene.pbraudio.prebake:
+                bpy.ops.scene.pbraudio_prebake('EXEC_DEFAULT')
+            # Start async processing
+            scene.pbraudio.shader_processing = True
+            scene.pbraudio.status_progress = 0.0
+            export_path = f"{scene.pbraudio.cache_path}"
+            if scene.pbraudio.cache_path.startswith('//'):
+                export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
+            config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
+            status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/bake"
+            process = pbrAudio_bake(config_file, status_file)
+            # Monitor completion
+            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
+            self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
+        return {'FINISHED'}
+
 classes.append(PBRAUDIO_OT_bake)
 
 class PBRAUDIO_OT_prebake(Operator):

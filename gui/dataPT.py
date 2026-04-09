@@ -107,6 +107,8 @@ class PBRAUDIO_PT_data_panel(Panel):
         object = context.object
         snode = object.pbraudio
 
+        if object.type == 'CAMERA':
+            layout.prop(object.pbraudio, "output")
         if object.pbraudio.source:
             # Object is a Sound Source
             layout.label(text="Source Settings:", icon='SPEAKER')

@@ -254,7 +254,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     output: BoolProperty(
         name="SoundOutput",
         description="Select the sound for the source",
-        default=False
+        default=False,
         update=add_camera_nodetree
     )
 

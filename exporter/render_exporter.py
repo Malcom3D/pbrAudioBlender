@@ -432,7 +432,7 @@ class RenderExporter:
             # Check if source.location are inside
             if self.is_point_inside_domain(world_location, domain_vertices):
                 sources_inside.append(source)
-        return source_inside
+        return sources_inside
 
     def find_outputs_in_domain(self, domain_vertices):
         """
@@ -456,8 +456,8 @@ class RenderExporter:
 
             # Check if output.location are inside
             if self.is_point_inside_domain(world_location, domain_vertices):
-                output_inside.append(source)
-        return output_inside
+                outputs_inside.append(source)
+        return outputs_inside
 
     def find_cameras_in_domain(self, domain_vertices):
         """
@@ -481,8 +481,8 @@ class RenderExporter:
 
             # Check if camera.location are inside
             if self.is_point_inside_domain(world_location, domain_vertices):
-                camera_inside.append(camera)
-        return camera_inside
+                cameras_inside.append(camera)
+        return cameras_inside
 
     def find_objs_in_domain(self, domain_vertices, check_partial=True):
         """

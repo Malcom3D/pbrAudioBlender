@@ -58,6 +58,8 @@ class PBRAUDIO_OT_add_spherical_source(Operator, AddObjectHelper):
     )
 
     def execute(self, context):
+        # Deselect All
+        bpy.ops.object.select_all(action='DESELECT')
         # Create empty object
         empty = bpy.data.objects.new("SphericalSource", None)
         empty.empty_display_type = 'SPHERE'
@@ -140,6 +142,8 @@ class PBRAUDIO_OT_add_planar_source(Operator, AddObjectHelper):
     )
 
     def execute(self, context):
+        # Deselect All
+        bpy.ops.object.select_all(action='DESELECT')
         # Create empty object
         empty = bpy.data.objects.new("PlanarSource", None)
         empty.empty_display_type = 'CUBE'
@@ -296,6 +300,8 @@ class PBRAUDIO_OT_add_sound_output(Operator, AddObjectHelper):
     )
 
     def execute(self, context):
+        # Deselect All
+        bpy.ops.object.select_all(action='DESELECT')
         # Create empty object
         empty = bpy.data.objects.new("SoundOutput", None)
         empty.empty_display_type = 'SPHERE'

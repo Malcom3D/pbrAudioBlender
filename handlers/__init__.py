@@ -46,6 +46,12 @@ def material_shader_only_handler(scene):
 
 @persistent
 def select_nodetree_handler(scene):
+    for area in bpy.context.screen.areas:
+        if area.type == "NODE_EDITOR":
+            for space in area.spaces:
+                if space.type == "NODE_EDITOR" and not space.pin:
+                    space.tree_type = None
+
     if scene.render.engine == 'PBRAUDIO':
         if not bpy.context.active_object == None and hasattr(bpy.context, 'active_object'):
             object = bpy.context.active_object

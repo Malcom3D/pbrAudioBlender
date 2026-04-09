@@ -84,7 +84,7 @@ class RenderExporter:
                     domain_config['geometry'] = []
                     vertexs = acoustic_domain.bound_box
                     for idx in range(8):
-                        domain_config['geometry'] += world_matrix @ Vector((vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]))
+                        domain_config['geometry'] += [world_matrix @ Vector((vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]))]
 #                    # 1 5 7 3
 #                    for idx in range(8):
 #                        if not idx % 2 == 0:

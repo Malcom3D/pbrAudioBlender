@@ -407,32 +407,30 @@ class RenderExporter:
             object_types = ['MESH', 'EMPTY', 'CAMERA']
         mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type in object_types]
 
-        if len(mesh_objects) == 0:
-            return []
-    
         for obj in mesh_objects:
-            # Get world coordinates of object vertices
-            mesh = obj.data
-            world_matrix = obj.matrix_world
+            if not obj == None:
+                # Get world coordinates of object vertices
+                mesh = obj.data
+                world_matrix = obj.matrix_world
         
-            # Get all vertices in world space
-            world_vertices = [world_matrix @ vert.co for vert in mesh.vertices]
+                # Get all vertices in world space
+                world_vertices = [world_matrix @ vert.co for vert in mesh.vertices]
         
-            if check_partial:
-                # Check if ANY vertex is inside (partial inclusion)
-                for vert in world_vertices:
-                    if self.is_point_inside_domain(vert, domain_vertices):
+                if check_partial:
+                    # Check if ANY vertex is inside (partial inclusion)
+                    for vert in world_vertices:
+                        if self.is_point_inside_domain(vert, domain_vertices):
+                            objects_inside.append(obj)
+                            break
+                else:
+                    # Check if ALL vertices are inside (full inclusion)
+                    all_inside = True
+                    for vert in world_vertices:
+                        if not self.is_point_inside_domain(vert, domain_vertices):
+                            all_inside = False
+                            break
+                    if all_inside:
                         objects_inside.append(obj)
-                        break
-            else:
-                # Check if ALL vertices are inside (full inclusion)
-                all_inside = True
-                for vert in world_vertices:
-                    if not self.is_point_inside_domain(vert, domain_vertices):
-                        all_inside = False
-                        break
-                if all_inside:
-                    objects_inside.append(obj)
     
         return objects_inside
         

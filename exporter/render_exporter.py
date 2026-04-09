@@ -77,18 +77,32 @@ class RenderExporter:
                     acoustic_domain = world.pbraudio.acoustic_domain
                     domain_config['name'] = acoustic_domain.name
 
-                    # find corner vertex of domain bounding box
-                    domain_config['geometry'] = []
-                    vertexs = acoustic_domain.bound_box
-                    # 1 5 7 3
-                    for idx in range(8):
-                        if not idx % 2 == 0:
-                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
-                    # 0 4 6 2
-                    for idx in range(8):
-                        if idx % 2 == 0:
-                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
-
+#                    # find corner vertex of domain bounding box
+#                    domain_config['geometry'] = []
+#                    vertexs = acoustic_domain.bound_box
+#                    # 1 5 7 3
+#                    for idx in range(8):
+#                        if not idx % 2 == 0:
+#                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
+#                    # 0 4 6 2
+#                    for idx in range(8):
+#                        if idx % 2 == 0:
+#                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
+#
+                # Get world matrix of the domain object
+                world_matrix = acoustic_domain.matrix_world
+                
+                # Get all 8 vertices in world space
+                domain_config['geometry'] = []
+                for corner in acoustic_domain.bound_box:
+                    # Transform local corner to world space
+                    world_corner = world_matrix @ mathutils.Vector(corner)
+                    domain_config['geometry'].append([
+                        world_corner.x, 
+                        world_corner.y, 
+                        world_corner.z
+                    ])
+                
                     # Get acoustic properties from material
                     domain_config['acoustic_shader'] = self.get_acoustic_properties_from_world()
                     break
@@ -372,7 +386,7 @@ class RenderExporter:
 
     def is_point_inside_domain(self, point, vertices):
         """
-        Check if a point is inside a parallelepiped using barycentric coordinates.
+        Check if a point is inside the acoustic domain using barycentric coordinates.
     
         Args:
             point: Vector - The point to test
@@ -385,6 +399,10 @@ class RenderExporter:
         Returns:
             bool: True if point is inside the parallelepiped
         """
+        # Convert point to Vector if it's not already
+        if not isinstance(point, mathutils.Vector):
+            point = mathutils.Vector(point)
+
         # Create basis vectors from the parallelepiped edges
         u = vertices[1] - vertices[0]  # edge from v0 to v1
         v = vertices[3] - vertices[0]  # edge from v0 to v3
@@ -424,7 +442,7 @@ class RenderExporter:
 
         for source in sources_objects:
             # Get world coordinates of empty object location
-            world_matrix = source.matrix_world
+            world_matrix = source.matrix_world.translation
 
             # Get all vertices in world space
             world_location = world_matrix @ source.location
@@ -449,7 +467,7 @@ class RenderExporter:
 
         for output in outputs_objects:
             # Get world coordinates of empty object location
-            world_matrix = output.matrix_world
+            world_matrix = output.matrix_world.translation
 
             # Get all vertices in world space
             world_location = world_matrix @ output.location
@@ -474,7 +492,7 @@ class RenderExporter:
 
         for camera in cameras_objects:
             # Get world coordinates of empty object location
-            world_matrix = camera.matrix_world
+            world_matrix = camera.matrix_world.translation
 
             # Get all vertices in world space
             world_location = world_matrix @ camera.location
@@ -502,6 +520,9 @@ class RenderExporter:
         mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
 
         for obj in mesh_objects:
+            # Skip the domain object itself
+            if obj.name == self.config["acoustic_domain"]["name"]:
+                continue
             # Get world coordinates of object vertices
             mesh = obj.data
             world_matrix = obj.matrix_world
@@ -759,9 +780,7 @@ class RenderExporter:
 
         self.domain_config()
         domain_vertices = self.config["acoustic_domain"]['geometry']
-        domain_vectors = []
-        for vertex in domain_vertices:
-            domain_vectors.append(Vector((vertex)))
+        domain_vectors = [Vector(v) for v in domain_vertices]
         objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
         for obj in objects:
             self.export_animation_obj(obj, start_frame, end_frame)
@@ -770,21 +789,21 @@ class RenderExporter:
         for source in sources:
             if source.pbraudio.source:
                 self.source_idx += 1
-                self.sources += self.export_animation_source(source, self.source_idx, start_frame, end_frame)
+                self.sources += self.export_animation_empty(source, self.source_idx, start_frame, end_frame)
         self.config["sources"] = self.sources
 
         outputs = self.find_outputs_in_domain(domain_vertices=domain_vectors)
         for output in outputs:
             if output.pbraudio.output:
                 self.output_idx += 1
-                self.outputs += self.export_animation_output(output, self.output_idx, start_frame, end_frame)
+                self.outputs += self.export_animation_empty(output, self.output_idx, start_frame, end_frame)
         self.config["outputs"] = self.outputs
 
         cameras = self.find_cameras_in_domain(domain_vertices=domain_vectors)
         for camera in cameras:
             if camera.pbraudio.output:
                 self.camera_idx += 1
-                self.cameras += self.export_animation_camera(camera, self.camera_idx, start_frame, end_frame)
+                self.cameras += self.export_animation_empty(camera, self.camera_idx, start_frame, end_frame)
         self.config["cameras"] = self.cameras
 
         self.wave_propagation()

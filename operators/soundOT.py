@@ -250,6 +250,36 @@ class PBRAUDIO_OT_resize_source(Operator, AddObjectHelper):
 
 classes.append(PBRAUDIO_OT_resize_source)
 
+class PBRAUDIO_OT_add_camera_nodetree(Operator, AddObjectHelper):
+    """Add a sound output (microphone/listener)"""
+    bl_idname = "object.pbraudio_add_camera_nodetree"
+    bl_label = "Add Camera Output NodeTree"
+    bl_description = "Add a sound output nodetree for camera"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # Create new pbrAudio node tree
+        nodetree = bpy.data.node_groups.new("CameraSoundOutput", 'AcousticNodeTree')
+        nodetree.pbraudio_type = 'SOUND'
+
+        # Set up default nodes
+        input_node = nodetree.nodes.new('SoundInputNode')
+        input_node.location = (300, 0)
+
+        # Link to active object if available
+        if context.active_object and context.active_object.pbraudio:
+            context.active_object.pbraudio.nodetree = nodetree
+
+        # Set the node tree as active in the node editor
+        for area in context.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                for space in area.spaces:
+                    if space.type == 'NODE_EDITOR':
+                        space.node_tree = nodetree
+                        break
+
+classes.append(PBRAUDIO_OT_add_camera_nodetree)
+
 class PBRAUDIO_OT_add_sound_output(Operator, AddObjectHelper):
     """Add a sound output (microphone/listener)"""
     bl_idname = "object.pbraudio_add_sound_output"

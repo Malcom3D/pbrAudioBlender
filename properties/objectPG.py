@@ -92,6 +92,11 @@ class PBRAudioObjectProperties(PropertyGroup):
         else:
             return False
 
+    def add_camera_nodetre(self, context):
+        object = context.object
+        if object.type == 'CAMERA' and not object.pbraudio.nodetree == None and self.output == True: 
+            bpy.ops.object.pbraudio_add_camera_nodetree()
+
     def update_sphere_size(self, context):
         bpy.ops.object.pbraudio_resize_source(size=self.source_sphere_size)
 
@@ -250,6 +255,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="SoundOutput",
         description="Select the sound for the source",
         default=False
+        update=add_camera_nodetree
     )
 
     output_type: EnumProperty(

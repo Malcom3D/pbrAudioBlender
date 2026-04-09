@@ -56,13 +56,17 @@ class RenderExporter:
             system['freq_min'] = 5
 
         self.objects = []
+        self.sources = []
+        self.outputs = []
+        self.cameras = []
         self.config = {}
         self.config["system"] = system
 
         self.not_valid = []
         self.obj_idx = 0
-        self.src_idx = 0
+        self.source_idx = 0
         self.output_idx = 0
+        self.camera_idx = 0
 
     def domain_config(self):
         domain_config = {}
@@ -302,6 +306,24 @@ class RenderExporter:
         """Get world matrix including rotation and location"""
         return obj.matrix_world
 
+    def export_pose_empty(self, empty, frame_number):
+        """Export source, output and camera empty data for a single frame"""
+        # Set current frame
+        bpy.context.scene.frame_set(frame_number)
+
+        world_matrix = self.get_world_matrix(empty)
+
+        # Get center position and rotation
+        location = list([world_matrix.translation.x * self.scale_factor, world_matrix.translation.y * self.scale_factor, world_matrix.translation.z * self.scale_factor])
+
+        # Extract rotation matrix (3x3)
+        rotation = list([empty.rotation_euler.x, empty.rotation_euler.y, empty.rotation_euler.z])
+
+        return {
+            'location': location,
+            'rotation': rotation
+        }
+
     def export_pose(self, obj, frame_number):
         """Export mesh data for a single frame"""
         # Set current frame
@@ -387,9 +409,84 @@ class RenderExporter:
                 0 <= p_local.y <= 1 and 
                 0 <= p_local.z <= 1)
 
-    def find_objs_in_domain(self, domain_vertices, object_types=None, check_partial=True):
+    def find_sources_in_domain(self, domain_vertices):
         """
-        Find all mesh objects inside or intersecting a parallelepiped.
+        Find all empty objects inside the acoustic domain with pbraudio.source == True.
+        Args:
+            domain_vertices: list of 8 Vectors - vertices of the acoustic domain
+        Returns:
+            list: Source objects inside/intersecting the acoustic domain
+        """
+        sources_inside = []
+
+        # Get all sources objects in the scene
+        sources_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
+
+        for source in sources_objects:
+            # Get world coordinates of empty object location
+            world_matrix = source.matrix_world
+
+            # Get all vertices in world space
+            world_location = world_matrix @ source.location
+
+            # Check if source.location are inside
+            if self.is_point_inside_domain(world_location, domain_vertices):
+                sources_inside.append(source)
+        return source_inside
+
+    def find_outputs_in_domain(self, domain_vertices):
+        """
+        Find all empty objects inside the acoustic domain with pbraudio.output == True.
+        Args:
+            domain_vertices: list of 8 Vectors - vertices of the acoustic domain
+        Returns:
+            list: Output objects inside/intersecting the acoustic domain
+        """
+        outputs_inside = []
+
+        # Get all mesh objects in the scene
+        outputs_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.output]
+
+        for output in outputs_objects:
+            # Get world coordinates of empty object location
+            world_matrix = output.matrix_world
+
+            # Get all vertices in world space
+            world_location = world_matrix @ output.location
+
+            # Check if output.location are inside
+            if self.is_point_inside_domain(world_location, domain_vertices):
+                output_inside.append(source)
+        return output_inside
+
+    def find_cameras_in_domain(self, domain_vertices):
+        """
+        Find all camera objects inside the acoustic domain with pbraudio.output == True.
+        Args:
+            domain_vertices: list of 8 Vectors - vertices of the acoustic domain
+        Returns:
+            list: Camera objects inside/intersecting the acoustic domain
+        """
+        cameras_inside = []
+
+        # Get all mesh objects in the scene
+        cameras_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'CAMERA' and obj.pbraudio.output]
+
+        for camera in cameras_objects:
+            # Get world coordinates of empty object location
+            world_matrix = camera.matrix_world
+
+            # Get all vertices in world space
+            world_location = world_matrix @ camera.location
+
+            # Check if camera.location are inside
+            if self.is_point_inside_domain(world_location, domain_vertices):
+                camera_inside.append(camera)
+        return camera_inside
+
+    def find_objs_in_domain(self, domain_vertices, check_partial=True):
+        """
+        Find all mesh objects inside or intersecting the acoustic domain.
     
         Args:
             domain_vertices: list of 8 Vectors - vertices of the parallelepiped
@@ -402,47 +499,34 @@ class RenderExporter:
         objects_inside = []
     
         # Get all mesh objects in the scene
-        # Default object types if not specified
-        if object_types is None:
-            object_types = ['MESH', 'EMPTY', 'CAMERA']
-        mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type in object_types]
-
-        print('object_types: ', object_types)
+        mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
 
         for obj in mesh_objects:
-            print('mesh_objects: ', obj)
-            if not obj == None:
-                # Get world coordinates of object vertices
-                mesh = obj.data
-                world_matrix = obj.matrix_world
-        
-                # Get all vertices in world space
-                world_vertices = [world_matrix @ vert.co for vert in mesh.vertices]
-        
-                if check_partial:
-                    # Check if ANY vertex is inside (partial inclusion)
-                    for vert in world_vertices:
-                        if self.is_point_inside_domain(vert, domain_vertices):
-                            objects_inside.append(obj)
-                            break
-                else:
-                    # Check if ALL vertices are inside (full inclusion)
-                    all_inside = True
-                    for vert in world_vertices:
-                        if not self.is_point_inside_domain(vert, domain_vertices):
-                            all_inside = False
-                            break
-                    if all_inside:
-                        objects_inside.append(obj)
+            # Get world coordinates of object vertices
+            mesh = obj.data
+            world_matrix = obj.matrix_world
     
+            # Get all vertices in world space
+            world_vertices = [world_matrix @ vert.co for vert in mesh.vertices]
+    
+            if check_partial:
+                # Check if ANY vertex is inside (partial inclusion)
+                for vert in world_vertices:
+                    if self.is_point_inside_domain(vert, domain_vertices):
+                        objects_inside.append(obj)
+                        break
+            else:
+                # Check if ALL vertices are inside (full inclusion)
+                all_inside = True
+                for vert in world_vertices:
+                    if not self.is_point_inside_domain(vert, domain_vertices):
+                        all_inside = False
+                        break
+                if all_inside:
+                    objects_inside.append(obj)
+
         return objects_inside
         
-    def export_frame_source(self, source, frame_number):
-        pass
-
-    def export_frame_output(self, output, frame_number):
-        pass
-
     def export_frame_obj(self, obj, frame_number):
         """Export mesh data for a single frame"""
         # Set current frame
@@ -524,7 +608,40 @@ class RenderExporter:
             if name == self.not_valid[nv_idx]:
                 to_be_added = False
         return to_be_added
+
+    def export_animation_empty(self, empty, empty_idx, start_frame=None, end_frame=None):
+        """Export animation sequence"""
+
+        empty.select_set(True)
+        name = empty.name_full.replace('.', '_')
     
+        os.makedirs(f"{self.render_path}/data/pose", exist_ok=True)
+        os.makedirs(f"{self.render_path}/data/{name}", exist_ok=True)
+        scene = bpy.context.scene
+
+        frame_data = {}
+        location, rotation = ([] for _ in range(2))
+        total_frames = 0
+        for frame in range(start_frame, end_frame + 1):
+            scene.frame_float = frame
+            bpy.context.view_layer.update()
+            frame_result = self.export_pose_empty(empty, frame)
+            location.append(frame_result['location'])
+            rotation.append(frame_result['rotation'])
+
+        location = np.round(np.array(location), self.decimals)
+        rotation = np.round(np.array(rotation), self.decimals)
+        output_pose = os.path.join(self.render_path, f"data/pose/{name}.npz")
+
+        empty_config = {}
+        empty_config["name"] = name
+        empty["idx"] = empty_idx
+        empty_config["pose_path"] = f"{self.render_path}/data/pose"
+
+        empty.select_set(False)
+
+        return empty_config
+
     def export_animation_obj(self, obj, start_frame=None, end_frame=None):
         """Export animation sequence"""
 
@@ -645,16 +762,30 @@ class RenderExporter:
         domain_vectors = []
         for vertex in domain_vertices:
             domain_vectors.append(Vector((vertex)))
-        objects = self.find_objs_in_domain(domain_vertices=domain_vectors, object_types='MESH')
+        objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
         for obj in objects:
             self.export_animation_obj(obj, start_frame, end_frame)
 
-        empty = self.find_objs_in_domain(domain_vertices=domain_vectors, object_types='EMPTY')
-        for sound_io in empty:
-            if sound_io.pbraudio.output:
-                self.export_frame_output(sound_io, frame_number)
-            elif sound_io.pbraudio.source:
-                self.export_frame_source(sound_io, frame_number)
+        sources = self.find_sources_in_domain(domain_vertices=domain_vectors)
+        for source in sources:
+            if source.pbraudio.source:
+                self.source_idx += 1
+                self.sources += self.export_animation_source(source, self.source_idx, start_frame, end_frame)
+        self.config["sources"] = self.sources
+
+        outputs = self.find_outputs_in_domain(domain_vertices=domain_vectors)
+        for output in outputs:
+            if output.pbraudio.output:
+                self.output_idx += 1
+                self.outputs += self.export_animation_output(output, self.output_idx, start_frame, end_frame)
+        self.config["outputs"] = self.outputs
+
+        cameras = self.find_cameras_in_domain(domain_vertices=domain_vectors)
+        for camera in cameras:
+            if camera.pbraudio.output:
+                self.camera_idx += 1
+                self.cameras += self.export_animation_camera(camera, self.camera_idx, start_frame, end_frame)
+        self.config["cameras"] = self.cameras
 
         self.wave_propagation()
         self.interface_config()

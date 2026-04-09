@@ -92,7 +92,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         else:
             return False
 
-    def add_camera_nodetre(self, context):
+    def add_camera_nodetree(self, context):
         object = context.object
         if object.type == 'CAMERA' and not object.pbraudio.nodetree == None and self.output == True: 
             bpy.ops.object.pbraudio_add_camera_nodetree()

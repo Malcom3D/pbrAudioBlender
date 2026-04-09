@@ -47,16 +47,20 @@ def material_shader_only_handler(scene):
 @persistent
 def select_nodetree_handler(scene):
     if scene.render.engine == 'PBRAUDIO':
-        if hasattr(bpy.context, 'active_object'):
+        # Get the active object
+        if bpy.context.active_object == None:
+            return
+        else:
+#        if hasattr(bpy.context, 'active_object'):
             object = bpy.context.active_object
             treeType = 'AcousticNodeTree'
             nodeTreeName = None
 
             if hasattr(object, 'pbraudio') and (not object == None or not object.pbraudio.environment):
                 if object.pbraudio.source or object.pbraudio.output or object.type == 'CAMERA':
+                    scene.acoustic_node_editor_props.acoustic_shader_type = 'SOUND'
                     if hasattr(object.pbraudio.nodetree, 'name'):
                         nodeTreeName = object.pbraudio.nodetree.name
-                        scene.acoustic_node_editor_props.acoustic_shader_type = 'SOUND'
 
                 for world in bpy.data.worlds:
                     if hasattr(world.pbraudio, 'acoustic_domain'):
@@ -66,7 +70,7 @@ def select_nodetree_handler(scene):
                     if hasattr(world.pbraudio.nodetree, 'name'):
                         nodeTreeName = world.pbraudio.nodetree.name
                         scene.acoustic_node_editor_props.acoustic_shader_type = 'WORLD'
-                else:
+                elif object.type in ['MESH', 'CURVE', 'SURFACE']:
                     if hasattr(object.pbraudio.nodetree, 'name'):
                         nodeTreeName = object.pbraudio.nodetree.name
                         scene.acoustic_node_editor_props.acoustic_shader_type = 'OBJECT'

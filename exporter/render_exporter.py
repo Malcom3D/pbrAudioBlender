@@ -442,9 +442,6 @@ class RenderExporter:
             # Get world coordinates of empty object location
             world_matrix = source.matrix_world.translation
 
-            # Get all vertices in world space
-            world_location = world_matrix @ source.location
-
             # Check if source.location are inside
             if self.is_point_inside_domain(world_location, domain_vertices):
                 sources_inside.append(source)
@@ -467,9 +464,6 @@ class RenderExporter:
             # Get world coordinates of empty object location
             world_matrix = output.matrix_world.translation
 
-            # Get all vertices in world space
-            world_location = world_matrix @ output.location
-
             # Check if output.location are inside
             if self.is_point_inside_domain(world_location, domain_vertices):
                 outputs_inside.append(source)
@@ -491,9 +485,6 @@ class RenderExporter:
         for camera in cameras_objects:
             # Get world coordinates of empty object location
             world_matrix = camera.matrix_world.translation
-
-            # Get all vertices in world space
-            world_location = world_matrix @ camera.location
 
             # Check if camera.location are inside
             if self.is_point_inside_domain(world_location, domain_vertices):

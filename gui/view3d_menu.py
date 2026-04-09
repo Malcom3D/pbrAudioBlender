@@ -52,6 +52,7 @@ class VIEW3D_MT_pbraudio_sources(Menu):
         layout = self.layout
         layout.operator("object.pbraudio_add_spherical_source", text="Spherical Source", icon='MESH_UVSPHERE')
         layout.operator("object.pbraudio_add_planar_source", text="Planar Source", icon='MESH_PLANE')
+        layout.operator("object.pbraudio_add_world_environment", text="World Environment", icon='WORLD')
 
 classes.append(VIEW3D_MT_pbraudio_sources)
 
@@ -63,7 +64,6 @@ class VIEW3D_MT_pbraudio_outputs(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator("object.pbraudio_add_sound_output", text="Sound Output", icon='LIGHT_SPOT')
-        layout.operator("object.pbraudio_add_world_environment", text="World Environment", icon='WORLD')
 
 classes.append(VIEW3D_MT_pbraudio_outputs)
 

@@ -77,9 +77,14 @@ class RenderExporter:
                     acoustic_domain = world.pbraudio.acoustic_domain
                     domain_config['name'] = acoustic_domain.name
 
-#                    # find corner vertex of domain bounding box
-#                    domain_config['geometry'] = []
-#                    vertexs = acoustic_domain.bound_box
+                    # Get world matrix of the domain object
+                    world_matrix = acoustic_domain.matrix_world
+                
+                    # find corner vertex of domain bounding box
+                    domain_config['geometry'] = []
+                    vertexs = acoustic_domain.bound_box
+                    for idx in range(8):
+                        domain_config['geometry'] += world_matrix @ Vector((vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]))
 #                    # 1 5 7 3
 #                    for idx in range(8):
 #                        if not idx % 2 == 0:
@@ -89,23 +94,20 @@ class RenderExporter:
 #                        if idx % 2 == 0:
 #                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
 #
-                # Get world matrix of the domain object
-                world_matrix = acoustic_domain.matrix_world
+#                # Get all 8 vertices in world space
+#                domain_config['geometry'] = []
+#                for corner in acoustic_domain.bound_box:
+#                    # Transform local corner to world space
+#                    world_corner = world_matrix @ Vector(corner)
+#                    domain_config['geometry'].append([
+#                        world_corner.x, 
+#                        world_corner.y, 
+#                        world_corner.z
+#                    ])
                 
-                # Get all 8 vertices in world space
-                domain_config['geometry'] = []
-                for corner in acoustic_domain.bound_box:
-                    # Transform local corner to world space
-                    world_corner = world_matrix @ Vector(corner)
-                    domain_config['geometry'].append([
-                        world_corner.x, 
-                        world_corner.y, 
-                        world_corner.z
-                    ])
-                
-                    # Get acoustic properties from material
-                    domain_config['acoustic_shader'] = self.get_acoustic_properties_from_world()
-                    break
+                # Get acoustic properties from material
+                domain_config['acoustic_shader'] = self.get_acoustic_properties_from_world()
+                break
 
         self.config["acoustic_domain"] = domain_config
 

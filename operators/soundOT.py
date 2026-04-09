@@ -334,7 +334,7 @@ class PBRAUDIO_OT_add_sound_output(Operator, AddObjectHelper):
         bpy.ops.object.select_all(action='DESELECT')
         # Create empty object
         empty = bpy.data.objects.new("SoundOutput", None)
-        empty.empty_display_type = 'SPHERE'
+        empty.empty_display_type = 'CONE'
         empty.empty_display_size = self.size
         empty.location = self.location
         

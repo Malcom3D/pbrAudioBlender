@@ -96,6 +96,7 @@ class PBRAUDIO_PT_data_panel(Panel):
         return (context.scene.render.engine == 'PBRAUDIO' and 
                 context.active_object is not None and
                 context.active_object.type == 'EMPTY' and
+                context.active_object.type == 'CAMERA' and
                 hasattr(context.active_object, 'pbraudio') and
                 (context.active_object.pbraudio.source or 
                  context.active_object.pbraudio.output or

@@ -79,7 +79,7 @@ class SPATIALRESPONSE_UL_Points(UIList):
             row.label(text="No response", icon='ERROR')
 classes.append(SPATIALRESPONSE_UL_Points)
 
-class SpatialFrequencyResponseNode(AcousticBaseNode):
+class SpatialFrequencyResponseNode(AcousticSoundNode):
     """Node to combine multiple frequency responses into a spatial response"""
     bl_idname = 'SpatialFrequencyResponseNode'
     bl_label = 'Spatial Frequency Response'

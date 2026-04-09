@@ -28,7 +28,7 @@ from ..utils import frd_io
 
 classes = []
 
-class FrequencyResponseFilesNode(AcousticBaseNode):
+class FrequencyResponseFilesNode(AcousticSoundNode):
     """Node to load frequency response data from a file (.frd or .cal)"""
     bl_idname = 'FrequencyResponseFilesNode'
     bl_label = 'Frequency Response Files'
@@ -107,7 +107,7 @@ class FRDDATA_UL_Points(UIList):
         row.prop(item, "phase", text="Phase")
 classes.append(FRDDATA_UL_Points)
 
-class FrequencyResponseChartNode(AcousticBaseNode):
+class FrequencyResponseChartNode(AcousticSoundNode):
     bl_idname = 'FrequencyResponseChartNode'
     bl_label = "Frequency Response Chart"
     bl_icon = 'GRAPH'

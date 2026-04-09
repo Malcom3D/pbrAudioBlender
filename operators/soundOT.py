@@ -192,6 +192,8 @@ class PBRAUDIO_OT_resize_source(Operator, AddObjectHelper):
             # Scale to match width and height (cube is 2x2x2 units)
             empty.scale = (self.width / 2, self.height / 2, 0.01)
 
+        return {'FINISHED'}
+
 classes.append(PBRAUDIO_OT_resize_source)
 
 class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):

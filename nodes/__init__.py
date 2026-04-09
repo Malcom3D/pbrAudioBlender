@@ -62,6 +62,21 @@ property_node_categories = [
     ]),
 ]
 
+sound_output_node_categories = [
+    SoundAcousticNodeCategory("SOUND_OUTPUT_NODES", "Sound Output", items=[
+        NodeItem("SoundOutputNode"),
+        NodeItem("SoundInputNode"),
+    ]),
+]
+
+sound_property_node_categories = [
+    SoundAcousticNodeCategory("SOUND_PROPERTY_NODES", "Sound Property", items=[
+        NodeItem("FrequencyResponseFilesNode"),
+        NodeItem("FrequencyResponseChartNode"),
+        NodeItem("SpatialFrequencyResponseNode"),
+    ]),
+]
+
 input_node_categories = [
     ObjectAcousticNodeCategory("INPUT_NODES", "Input", items=[
         NodeItem("FrequencyResponseFilesNode"),

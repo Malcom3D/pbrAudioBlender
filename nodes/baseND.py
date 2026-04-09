@@ -60,6 +60,18 @@ class AcousticMaterialNode(Node):
 
 classes.append(AcousticMaterialNode)
 
+class AcousticSoundNode(Node):
+    """Base class for all acoustic material nodes"""
+    bl_idname = 'AcousticSoundNode'
+    bl_label = "Acoustic Sound Node"
+    bl_icon = 'SOUND'
+
+    @classmethod
+    def poll(cls, ntree):
+        return ntree.bl_idname == 'AcousticNodeTree' and ntree.pbraudio_type == 'SOUND' and and (bpy.context.active_object.type == 'EMPTY' or bpy.context.active_object.type == 'CAMERA') and (bpy.context.active_object.pbraudio.output or bpy.context.active_object.pbraudio.source)
+
+classes.append(AcousticSoundNode)
+
 class AcousticBaseNode(Node):
     """Base class for all acoustic world nodes"""
     bl_idname = 'AcousticBaseNode'

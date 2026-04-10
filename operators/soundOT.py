@@ -203,6 +203,29 @@ class PBRAUDIO_OT_add_planar_source(Operator, AddObjectHelper):
 
 classes.append(PBRAUDIO_OT_add_planar_source)
 
+class PBRAUDIO_OT_resize_output(Operator, AddObjectHelper):
+    """Resize a sound output"""
+    bl_idname = "object.pbraudio_resize_output"
+    bl_label = "Resize Output"
+    bl_description = "Resize a sound output"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    size: FloatProperty(
+        name="Size",
+        description="Size of spherical output",
+        default=0.5,
+        min=0.01,
+        max=100.0,
+        unit='LENGTH'
+    )
+
+    def execute(self, context):
+        empty = context.object
+        empty.empty_display_size = self.size
+
+        return {'FINISHED'}
+classes.append(PBRAUDIO_OT_resize_output)
+
 class PBRAUDIO_OT_resize_source(Operator, AddObjectHelper):
     """Resize a sound source"""
     bl_idname = "object.pbraudio_resize_source"
@@ -211,7 +234,7 @@ class PBRAUDIO_OT_resize_source(Operator, AddObjectHelper):
     bl_options = {'REGISTER', 'UNDO'}
 
     size: FloatProperty(
-        name="Width",
+        name="Size",
         description="Size of spherical source",
         default=0.5,
         min=0.01,
@@ -470,6 +493,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
 
     def create_boundary_empties(self, center_obj, num_channels, radius):
         """Create boundary empties around the center object"""
+        bpy.ops.object.select_all(action='DESELECT')
         boundary_empties = []
         
         for i in range(num_channels):

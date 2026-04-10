@@ -615,24 +615,25 @@ class RenderExporter:
         empty_config["pose_path"] = f"{self.render_path}/data/pose"
 
         # Find pbraudio empty type
-        if empty.type == 'EMPTY':
-            if empty.pbraudio.output:
-                if empty.pbraudio.output_type == 'AMBI':
-                    empty_config['type'] = empty.pbraudio.output_type
-                    empty_config['order'] = empty.pbraudio.ambisonic_order
-                elif empty.pbraudio.output_type == 'MONO':
-                    empty_config['type'] = empty.pbraudio.output_type
-                    empty_config['micophone_type'] = empty.pbraudio.mono_mic_type
-            elif empty.pbraudio.source:
-                if empty.pbraudio.source_type == 'PLANE':
-                    empty_config['type'] = empty.pbraudio.source_type
-                    empty_config['size'] = [empty.pbraudio.source_planar_height, empty.pbraudio.source_planar_width]
-                if empty.pbraudio.source_type == 'SPHERE':
-                    empty_config['type'] = empty.pbraudio.source_type
-                    empty_config['size'] = empty.pbraudio.source_sphere_size
-                empty_config['audio_file'] = empty.pbraudio.source_file
-                if empty.pbraudio.source_file.startswith('//'):
-                    empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
+        if empty.pbraudio.output:
+            if empty.pbraudio.output_type == 'AMBI':
+                empty_config['type'] = empty.pbraudio.output_type
+                empty_config['order'] = empty.pbraudio.ambisonic_order
+                empty_config['spatial_arrangement_file'] = empty.pbraudio.spatial_arrangement_file
+            elif empty.pbraudio.output_type == 'MONO':
+                empty_config['type'] = empty.pbraudio.output_type
+                empty_config['micophone_type'] = empty.pbraudio.mono_mic_type
+                empty_config['calibration_file'] = empty.pbraudio.output_cal_file
+        elif empty.pbraudio.source:
+            if empty.pbraudio.source_type == 'PLANE':
+                empty_config['type'] = empty.pbraudio.source_type
+                empty_config['size'] = [empty.pbraudio.source_planar_height, empty.pbraudio.source_planar_width]
+            if empty.pbraudio.source_type == 'SPHERE':
+                empty_config['type'] = empty.pbraudio.source_type
+                empty_config['size'] = empty.pbraudio.source_sphere_size
+            empty_config['audio_file'] = empty.pbraudio.source_file
+            if empty.pbraudio.source_file.startswith('//'):
+                empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
         empty.select_set(False)
 

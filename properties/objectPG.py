@@ -97,6 +97,9 @@ class PBRAudioObjectProperties(PropertyGroup):
         if object.type == 'CAMERA' and object.pbraudio.nodetree == None and self.output == True: 
             bpy.ops.object.pbraudio_add_camera_nodetree()
 
+    def update_output_size(self, context):
+        bpy.ops.object.pbraudio_resize_output(size=self.output_size)
+
     def update_sphere_size(self, context):
         bpy.ops.object.pbraudio_resize_source(size=self.source_sphere_size)
 
@@ -266,6 +269,13 @@ class PBRAudioObjectProperties(PropertyGroup):
         update=add_camera_nodetree
     )
 
+    output_size: FloatProperty(
+        name="Sphere Size",
+        description="Output Sphere Size",
+        default=0.5,
+        update=update_output_size
+    )
+
     output_type: EnumProperty(
         name="Type",
         items=[
@@ -286,6 +296,14 @@ class PBRAudioObjectProperties(PropertyGroup):
         default='1'
     )
 
+    spatial_arrangement_file: StringProperty(
+        name="SoundOutputSpatialArrangement",
+        description="Select the microphone spatial arrangement file for the ambisonic output",
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default='',
+    )
+
     mono_mic_type: EnumProperty(
         name="Microphone Type",
         items=[
@@ -295,6 +313,14 @@ class PBRAudioObjectProperties(PropertyGroup):
             ('FIGURE_8', "Figure 8", "Figure 8 Micrphone"),
         ],
         default='OMNIDIRECTIONAL'
+    )
+
+    output_cal_file: StringProperty(
+        name="SoundOutputCal",
+        description="Select the calibration file for the output",
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default='',
     )
 
 classes.append(PBRAudioObjectProperties)

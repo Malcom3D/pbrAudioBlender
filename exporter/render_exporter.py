@@ -267,6 +267,7 @@ class RenderExporter:
         for link in links:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous_empty(node.inputs[link].links[0].from_node)
+                print('previous_acoustic_dict: ', previous_acoustic_dict)
                 if previous_acoustic_dict['type'] == 'SpatialFrequencyResponse':
                     # ToDo add azimuth and elevation
                     pass
@@ -286,7 +287,6 @@ class RenderExporter:
                     phases = []
                     acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs, quantity_type: mags, 'phases': phases}
 
-            print('node.pbraudio_type: ', node.pbraudio_type)
             acoustic_dict['type'] = node.pbraudio_type
 
 #        for property in node.bl_rna.properties.keys():

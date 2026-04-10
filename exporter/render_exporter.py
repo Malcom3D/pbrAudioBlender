@@ -617,13 +617,17 @@ class RenderExporter:
         # Find pbraudio empty type
         if empty.type == 'EMPTY':
             if empty.pbraudio.output:
+                empty_config['type'] = empty.pbraudio.output_type
             elif empty.pbraudio.source:
-                empty_config['type'] = empty.pbraudio.source_type
                 if empty.pbraudio.source_type == 'PLANE':
+                    empty_config['type'] = empty.pbraudio.source_type
                     empty_config['size'] = [empty.pbraudio.source_planar_height, empty.pbraudio.source_planar_width]
                 if empty.pbraudio.source_type == 'SPHERE':
+                    empty_config['type'] = empty.pbraudio.source_type
                     empty_config['size'] = empty.pbraudio.source_planar_size
-                empty_config['audio_file'] = empty.pbraudio.source_type
+                empty_config['audio_file'] = empty.pbraudio.source_file
+                if empty.pbraudio.source_file.startswith('//'):
+                    empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
         empty.select_set(False)
 

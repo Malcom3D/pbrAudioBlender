@@ -157,7 +157,8 @@ class pbrAudioWorldShaderNode(AcousticWorldNode):
     )
 
     pbraudio_sound_speed: FloatProperty(
-        name="Medium sound speed in m/s",
+        name="sound_speed",
+        description="Medium sound speed in m/s",
         default=343.21,
         update=compute_impedence
     )
@@ -174,7 +175,8 @@ class pbrAudioWorldShaderNode(AcousticWorldNode):
     )
 
     temperature: FloatProperty(
-        name="Temperature in °C",
+        name="Temperature",
+        description="Temperature in °C",
         default=20,
         min=-273.15,
         update=compute_speed_imp
@@ -251,6 +253,7 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
     pbraudio_type: StringProperty(default='WorldImpedence')
 
     pbraudio_impedence: FloatProperty(
+        name="impedence",
         name="Medium impedence in Pa⋅s/m",
         default=413.3
     )
@@ -297,7 +300,8 @@ class pbrAudioDensityNode(AcousticWorldNode):
     pbraudio_type: StringProperty(default='WorldDensity')
 
     pbraudio_density: FloatProperty(
-        name="Medium Density in kg/m³",
+        name="density",
+        density="Medium Density in kg/m³",
         default=1.2041,
     )
 
@@ -340,7 +344,8 @@ class pbrAudioTemperatureNode(AcousticWorldNode):
     pbraudio_type: StringProperty(default='WorldTemperature')
 
     pbraudio_temperature: FloatProperty(
-        name="Temperature in °C",
+        name="temperature",
+        description="Temperature in °C",
         default=20,
         min=-273.15,
     )

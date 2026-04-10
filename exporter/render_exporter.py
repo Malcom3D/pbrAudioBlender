@@ -852,6 +852,7 @@ class RenderExporter:
                 boundaries_empties += boundary_empties
                 print('boundaries_empties: ', boundaries_empties)
             sources += boundaries_empties
+            print('sources: ', sources)
         for source in sources:
             if source.pbraudio.source:
                 self.source_idx += 1

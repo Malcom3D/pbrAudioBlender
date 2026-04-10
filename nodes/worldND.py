@@ -301,7 +301,7 @@ class pbrAudioDensityNode(AcousticWorldNode):
 
     pbraudio_density: FloatProperty(
         name="density",
-        density="Medium Density in kg/m³",
+        description="Medium Density in kg/m³",
         default=1.2041,
     )
 

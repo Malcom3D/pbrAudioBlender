@@ -334,7 +334,7 @@ class RenderExporter:
         """Get acoustic properties from the acoustic world node chain"""
 
         # ADD DEFAULT VALUE IF DOMAIN HAVE NO MATERIAL
-        acoustic_shader = []
+        acoustic_shader = {}
         for world in bpy.data.worlds.values():
             if hasattr(world, 'pbraudio'):
                 if hasattr(world.pbraudio, 'nodetree'):
@@ -350,6 +350,7 @@ class RenderExporter:
         """Get acoustic properties from the acoustic material node chain"""
 
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
+        acoustic_shader = {}
         nodetree = obj.pbraudio.nodetree
         for key in nodetree.nodes.keys():
             if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
@@ -362,6 +363,7 @@ class RenderExporter:
         """Get audio properties from the acoustic node chain"""
 
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
+        acoustic_shader = {}
         nodetree = empty.pbraudio.nodetree
         for key in nodetree.nodes.keys():
             if nodetree.nodes[key].pbraudio_type == 'SoundOutput':
@@ -701,7 +703,7 @@ class RenderExporter:
                 empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
         acoustic_shader = self.get_acoustic_properties_from_empty(empty)
-        if hasattr(acoustic_shader, 'spatial_freq_response'):
+        if not len(acoustic_shader) == 0 and hasattr(acoustic_shader, 'spatial_freq_response'):
             empty_config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
 
         empty.select_set(False)

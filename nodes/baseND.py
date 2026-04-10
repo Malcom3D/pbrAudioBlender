@@ -68,7 +68,7 @@ class AcousticSoundNode(Node):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'AcousticNodeTree' and ntree.pbraudio_type == 'SOUND' and not bpy.context.active_object == None and (bpy.context.active_object.type == 'EMPTY' or bpy.context.active_object.type == 'CAMERA') and (bpy.context.active_object.pbraudio.output or bpy.context.active_object.pbraudio.source)
+        return ntree.bl_idname == 'AcousticNodeTree' and (ntree.pbraudio_type == 'SOUND' and bpy.context.active_object.type in ['EMPTY', 'CAMERA'] and (bpy.context.active_object.pbraudio.output or bpy.context.active_object.pbraudio.source)) or ntree.pbraudio_type == 'OBJECT' and bpy.context.active_object.type == 'MESH'
 
 classes.append(AcousticSoundNode)
 

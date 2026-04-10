@@ -268,7 +268,7 @@ class RenderExporter:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous_empty(node.inputs[link].links[0].from_node)
                 print('previous_acoustic_dict: ', previous_acoustic_dict)
-                if previous_acoustic_dict['type'] == 'SpatialFrequencyResponse':
+                if not len(previous_acoustic_dict) == 0 and previous_acoustic_dict['type'] == 'SpatialFrequencyResponse':
                     # ToDo add azimuth and elevation
                     pass
                 elif previous_acoustic_dict['type'] == 'FrequencyResponse':

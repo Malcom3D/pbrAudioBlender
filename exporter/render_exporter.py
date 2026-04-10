@@ -522,10 +522,8 @@ class RenderExporter:
             world_location = empty.matrix_world.translation
 
             # Check if empty.location are inside
-            print('empty_objects: ', empty)
             if self.is_point_inside_domain(world_location, domain_vertices):
                 print('empty_inside: ', empty)
-                empty_inside.append(empty)
         return empty_inside
 
     def find_objs_in_domain(self, domain_vertices, check_partial=True):
@@ -863,6 +861,7 @@ class RenderExporter:
             if source.pbraudio.source:
                 self.source_idx += 1
 #                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
+                print('exported_source: ', source)
                 exported_source = self.export_animation_empty(source, self.source_idx, start_frame, end_frame)
                 print('exported_source: ', source, exported_source)
                 self.sources += [exported_source]

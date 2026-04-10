@@ -850,6 +850,7 @@ class RenderExporter:
                 for boundary_empty in boundary_empties:
                     boundary_empty.hide_select = False
                 boundaries_empties += boundary_empties
+                print('boundaries_empties: ', boundaries_empties)
             sources += boundaries_empties
         for source in sources:
             if source.pbraudio.source:

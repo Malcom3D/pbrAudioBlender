@@ -262,6 +262,7 @@ class RenderExporter:
             freq_min = 5
 
         acoustic_dict = {}
+        acoustic_dict['type'] = node.pbraudio_type
         # get inputs
         links = node.inputs.keys()
         for link in links:
@@ -288,7 +289,6 @@ class RenderExporter:
                     phases = []
                     acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs, quantity_type: mags, 'phases': phases}
 
-            acoustic_dict['type'] = node.pbraudio_type
 
 #        for property in node.bl_rna.properties.keys():
 #            if property.startswith('pbraudio_'):
@@ -829,7 +829,7 @@ class RenderExporter:
         for world in bpy.data.worlds.values():
             acoustic_domain = world.pbraudio.acoustic_domain
             world_matrix = acoustic_domain.matrix_world
-        domain_vertices = self.config["acoustic_domain"]['geometry']
+        domain_vertices = self.config["acoustic_domain"].get('geometry', [])
         domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
         objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
         for obj in objects:

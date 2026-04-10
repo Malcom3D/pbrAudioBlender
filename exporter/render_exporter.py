@@ -84,7 +84,8 @@ class RenderExporter:
                     domain_config['geometry'] = []
                     vertexs = acoustic_domain.bound_box
                     for idx in range(8):
-                        domain_config['geometry'] += [world_matrix @ Vector((vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]))]
+                            domain_config['geometry'] += [[vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]]]
+#                        domain_config['geometry'] += [world_matrix @ Vector((vertexs[idx][0], vertexs[idx][1], vertexs[idx][2]))]
 #                    # 1 5 7 3
 #                    for idx in range(8):
 #                        if not idx % 2 == 0:
@@ -768,8 +769,11 @@ class RenderExporter:
             end_frame = start_frame
 
         self.domain_config()
+        for world in bpy.data.worlds.values():
+            acoustic_domain = world.pbraudio.acoustic_domain
+                world_matrix = acoustic_domain.matrix_world
         domain_vertices = self.config["acoustic_domain"]['geometry']
-        domain_vectors = [Vector(v) for v in domain_vertices]
+        domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
         print('domain_vectors: ', domain_vectors)
         objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
         for obj in objects:

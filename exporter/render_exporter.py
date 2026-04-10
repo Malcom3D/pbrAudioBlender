@@ -771,7 +771,7 @@ class RenderExporter:
         self.domain_config()
         for world in bpy.data.worlds.values():
             acoustic_domain = world.pbraudio.acoustic_domain
-                world_matrix = acoustic_domain.matrix_world
+            world_matrix = acoustic_domain.matrix_world
         domain_vertices = self.config["acoustic_domain"]['geometry']
         domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
         print('domain_vectors: ', domain_vectors)

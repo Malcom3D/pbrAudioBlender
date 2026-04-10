@@ -268,14 +268,15 @@ class RenderExporter:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous_empty(node.inputs[link].links[0].from_node)
                 print('previous_acoustic_dict: ', previous_acoustic_dict)
-                if not len(previous_acoustic_dict) == 0 and previous_acoustic_dict['type'] == 'SpatialFrequencyResponse':
-                    # ToDo add azimuth and elevation
-                    pass
-                elif previous_acoustic_dict['type'] == 'FrequencyResponse':
-                    freq_resp_file = previous_acoustic_dict['response_filepath']
-                    if os.path.exists(freq_resp_file):
-                        freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
-                        acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs.tolist(), 'magnitude': mags.tolist(), 'phases': phases.tolist()}
+                if not len(previous_acoustic_dict) == 0:
+                    if previous_acoustic_dict['type'] == 'SpatialFrequencyResponse':
+                        # ToDo add azimuth and elevation
+                        pass
+                    elif previous_acoustic_dict['type'] == 'FrequencyResponse':
+                        freq_resp_file = previous_acoustic_dict['response_filepath']
+                        if os.path.exists(freq_resp_file):
+                            freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
+                            acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs.tolist(), 'magnitude': mags.tolist(), 'phases': phases.tolist()}
 
             elif not node.inputs[link].is_linked:
                 if node.pbraudio_type == 'SoundOutput':

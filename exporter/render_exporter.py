@@ -453,7 +453,7 @@ class RenderExporter:
             # Check if empty.location are inside
             print('empty_objects: ', empty)
             if self.is_point_inside_domain(world_location, domain_vertices):
-                empty_inside.append(source)
+                empty_inside.append(empty)
         print('empty_inside: ', empty_inside)
         return empty_inside
 

@@ -438,6 +438,7 @@ class RenderExporter:
 
         # Get all sources objects in the scene
         sources_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
+        print('sources_objects: ', sources_objects)
 
         for source in sources_objects:
             # Get world coordinates of empty object location
@@ -460,6 +461,7 @@ class RenderExporter:
 
         # Get all mesh objects in the scene
         outputs_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.output]
+        print('outputs_objects: ', outputs_objects)
 
         for output in outputs_objects:
             # Get world coordinates of empty object location
@@ -482,6 +484,7 @@ class RenderExporter:
 
         # Get all mesh objects in the scene
         cameras_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'CAMERA' and obj.pbraudio.output]
+        print('cameras_objects: ', cameras_objects)
 
         for camera in cameras_objects:
             # Get world coordinates of empty object location

@@ -277,6 +277,7 @@ class PBRAUDIO_OT_add_camera_nodetree(Operator, AddObjectHelper):
                     if space.type == 'NODE_EDITOR':
                         space.node_tree = nodetree
                         break
+        return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_add_camera_nodetree)
 

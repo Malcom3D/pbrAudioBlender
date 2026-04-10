@@ -848,8 +848,7 @@ class RenderExporter:
             for environment in environments:
                 if not environment.pbraudio.environment_file == "":
                     # Save environment data as json
-                    env_path = f"{self.render_path}/Environments"
-                    environment_json.save_environment_json(environment, env_path)
+                    environment_json.save_environment_json(environment, self.render_path)
                     # Decode boundary empty audio chanel from saved json
                     pass
                 # find all children boundary empty

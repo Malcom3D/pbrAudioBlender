@@ -314,9 +314,9 @@ class RenderExporter:
                 elif previous_acoustic_dict['type'] == 'WorldDensity':
                     acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
                 elif previous_acoustic_dict['type'] == 'WorldTemperature':
-                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
+                    acoustic_dict[link] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldEnvironment':
-                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
+                    acoustic_dict[link] = previous_acoustic_dict
 #                #TBD: freq_response, calibration_file, spatial_freq_response, spatial_freq_response_file, spatial_arrangement_file
 
         for property in node.bl_rna.properties.keys():

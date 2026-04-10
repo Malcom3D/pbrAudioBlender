@@ -286,6 +286,7 @@ class RenderExporter:
                     phases = []
                     acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs, quantity_type: mags, 'phases': phases}
 
+            print('node.pbraudio_type: ', node.pbraudio_type)
             acoustic_dict['type'] = node.pbraudio_type
 
 #        for property in node.bl_rna.properties.keys():

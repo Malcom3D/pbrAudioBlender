@@ -617,7 +617,12 @@ class RenderExporter:
         # Find pbraudio empty type
         if empty.type == 'EMPTY':
             if empty.pbraudio.output:
-                empty_config['type'] = empty.pbraudio.output_type
+                if empty.pbraudio.output_type == 'AMBI':
+                    empty_config['type'] = empty.pbraudio.output_type
+                    empty_config['order'] = empty.pbraudio.ambisonic_order
+                elif empty.pbraudio.output_type == 'MONO':
+                    empty_config['type'] = empty.pbraudio.output_type
+                    empty_config['micophone_type'] = empty.pbraudio.mono_mic_type
             elif empty.pbraudio.source:
                 if empty.pbraudio.source_type == 'PLANE':
                     empty_config['type'] = empty.pbraudio.source_type

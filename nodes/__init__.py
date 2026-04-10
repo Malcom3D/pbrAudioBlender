@@ -65,7 +65,7 @@ property_node_categories = [
 sound_output_node_categories = [
     SoundAcousticNodeCategory("SOUND_OUTPUT_NODES", "Sound Output", items=[
         NodeItem("SoundOutputNode"),
-        NodeItem("SoundInputNode"),
+        NodeItem("ResponsePreviewNode"),
     ]),
 ]
 

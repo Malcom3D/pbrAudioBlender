@@ -354,10 +354,11 @@ class RenderExporter:
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         acoustic_shader = {}
         nodetree = obj.pbraudio.nodetree
-        for key in nodetree.nodes.keys():
-            if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
-                output_node = nodetree.nodes[key]
-                acoustic_shader = self.get_from_previous_material(output_node)
+        if hasattr(nodetree, 'nodes'):
+            for key in nodetree.nodes.keys():
+                if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
+                    output_node = nodetree.nodes[key]
+                    acoustic_shader = self.get_from_previous_material(output_node)
                     
         return acoustic_shader
 
@@ -367,10 +368,11 @@ class RenderExporter:
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         acoustic_shader = {}
         nodetree = empty.pbraudio.nodetree
-        for key in nodetree.nodes.keys():
-            if nodetree.nodes[key].pbraudio_type == 'SoundOutput':
-                output_node = nodetree.nodes[key]
-                acoustic_shader = self.get_from_previous_empty(output_node)
+        if hasattr(nodetree, 'nodes'):
+            for key in nodetree.nodes.keys():
+                if nodetree.nodes[key].pbraudio_type == 'SoundOutput':
+                    output_node = nodetree.nodes[key]
+                    acoustic_shader = self.get_from_previous_empty(output_node)
 
         return acoustic_shader
 

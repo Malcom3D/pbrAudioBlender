@@ -185,7 +185,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         default=False
     )
 
-    source_file: PointerProperty(
+    source_file: StringProperty(
         name="SoundSource",
         description="Select the sound for the source",
         subtype='FILE_PATH',

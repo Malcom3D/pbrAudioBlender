@@ -523,7 +523,7 @@ class RenderExporter:
 
             # Check if empty.location are inside
             if self.is_point_inside_domain(world_location, domain_vertices):
-                print('empty_inside: ', empty)
+                empty_inside += empty
         return empty_inside
 
     def find_objs_in_domain(self, domain_vertices, check_partial=True):
@@ -858,6 +858,7 @@ class RenderExporter:
                 boundaries_empties += boundary_empties
             sources += boundaries_empties
         for source in sources:
+            print('exported_source: ', source)
             if source.pbraudio.source:
                 self.source_idx += 1
 #                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]

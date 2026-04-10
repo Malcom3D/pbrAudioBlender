@@ -514,8 +514,9 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             boundary_empty.location = position
 
             # Add pbraudio properties
-            if hasattr(context.scene, 'pbraudio') and context.scene.pbraudio.cache_path:
-                cache_path = context.scene.pbraudio.cache_path
+            scene = bpy.context.scene
+            if hasattr(scene, 'pbraudio') and scene.pbraudio.cache_path:
+                cache_path = scene.pbraudio.cache_path
                 if cache_path.startswith('//'):
                     cache_path = bpy.path.abspath(cache_path)
                     boundary_empty.pbraudio.source = True

@@ -122,7 +122,7 @@ class PBRAUDIO_PT_data_panel(Panel):
 #                op.width = object.pbraudio.source_planar_width
 #                object.empty_display_size = max(object.pbraudio.source_planar_width, object.pbraudio.source_planar_height) / 2
 #                object.scale = (object.pbraudio.source_planar_width / 2, object.pbraudio.source_planar_height / 2, 0.01)
-            layout.template_ID(snode, "source_file", new="sound.open_mono")
+            layout.prop(snode, "source_file", text="Sound File")
             
         elif object.pbraudio.environment:
             # Object is a World Environment
@@ -139,7 +139,7 @@ class PBRAUDIO_PT_data_panel(Panel):
             
             # File path
 #            box.prop(snode, "environment_file", text="Sound File")
-            layout.prop(snode, "environment_file", text="Sound File")
+            layout.prop(snode, "environment_file", text="Ambisonic File")
             
 #            # Boundary management
 #            box.separator()
@@ -155,6 +155,11 @@ class PBRAUDIO_PT_data_panel(Panel):
 #            row.operator("object.pbraudio_update_environment_boundaries", 
 #                        text="Update Boundaries", 
 #                        icon='FILE_REFRESH')
+            layout.prop(snode, "environment_dynamic_boundaries_update", text="Dynamic Boundaries Update")
+            row_update = layout.row
+            row_update.operator("object.pbraudio_update_environment_boundaries", text="Update Boundaries", icon='FILE_REFRESH')
+            if not snode.environment_dynamic_update_view:
+                row_update.enabled = False
             
             # Show warning if boundaries might be outside domain
             from ..operators.soundOT import PBRAUDIO_OT_add_world_environment

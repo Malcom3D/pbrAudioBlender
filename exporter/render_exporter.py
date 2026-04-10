@@ -611,8 +611,19 @@ class RenderExporter:
 
         empty_config = {}
         empty_config["name"] = name
-        empty["idx"] = empty_idx
+        empty_config["idx"] = empty_idx
         empty_config["pose_path"] = f"{self.render_path}/data/pose"
+
+        # Find pbraudio empty type
+        if empty.type == 'EMPTY':
+            if empty.pbraudio.output:
+            elif empty.pbraudio.source:
+                empty_config['type'] = empty.pbraudio.source_type
+                if empty.pbraudio.source_type == 'PLANE':
+                    empty_config['size'] = [empty.pbraudio.source_planar_height, empty.pbraudio.source_planar_width]
+                if empty.pbraudio.source_type == 'SPHERE':
+                    empty_config['size'] = empty.pbraudio.source_planar_size
+                empty_config['audio_file'] = empty.pbraudio.source_type
 
         empty.select_set(False)
 

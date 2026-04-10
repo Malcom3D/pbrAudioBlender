@@ -187,8 +187,10 @@ class PBRAudioObjectProperties(PropertyGroup):
 
     source_file: PointerProperty(
         name="SoundSource",
-        type=bpy.types.Sound,
-        description="Select the sound for the source"
+        description="Select the sound for the source",
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default='',
     )
 
     source_type: EnumProperty(
@@ -248,6 +250,12 @@ class PBRAudioObjectProperties(PropertyGroup):
     environment_size: FloatProperty(
         name="Environment Size",
         description="Environment Sphere Size",
+    )
+
+    environment_dynamic_boundaries_update: BoolProperty(
+        name="environment_dynamic_boundaries_update",
+        description="Dynamic Boundaries Update",
+        default=False
     )
 
     """Output properties for pbrAudio"""

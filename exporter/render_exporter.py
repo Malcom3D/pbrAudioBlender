@@ -274,7 +274,7 @@ class RenderExporter:
                     freq_resp_file = previous_acoustic_dict['response_filepath']
                     if os.path.exists(freq_resp_file):
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
-                        spatial_freq_response = {"azimuth": [0], "elevation": [0], "frequencies": freqs.tolist(), 'magnitude': mags.tolist(), 'phases': phases.tolist()}
+                        acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs.tolist(), 'magnitude': mags.tolist(), 'phases': phases.tolist()}
 
             elif not node.inputs[link].is_linked:
                 if node.pbraudio_type == 'SoundOutput':
@@ -284,16 +284,15 @@ class RenderExporter:
                     mag = node.inputs[link].default_value
                     mags = [mag for _ in range(5)]
                     phases = []
-                    spatial_freq_response = {"azimuth": [0], "elevation": [0], "frequencies": freqs, quantity_type: mags, 'phases': phases}
+                    acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs, quantity_type: mags, 'phases': phases}
 
 #        for property in node.bl_rna.properties.keys():
 #            if property.startswith('pbraudio_'):
 #                node_property = "node." + property
 #                acoustic_value = eval(node_property)
 #                acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
-#        return acoustic_dict
 
-        return spatial_freq_response
+        return acoustic_dict
 
     def get_from_previous_world(self, node):
         acoustic_dict = {}
@@ -363,10 +362,9 @@ class RenderExporter:
         for key in nodetree.nodes.keys():
             if nodetree.nodes[key].pbraudio_type == 'SoundOutput':
                 output_node = nodetree.nodes[key]
-                spatial_freq_response = self.get_from_previous_empty(output_node)
+                acoustic_shader = self.get_from_previous_empty(output_node)
 
-        return spatial_freq_response
-
+        return acoustic_shader
 
     def triangulate_mesh(self, mesh):
         """Triangulate the mesh using bmesh"""
@@ -698,9 +696,9 @@ class RenderExporter:
             if empty.pbraudio.source_file.startswith('//'):
                 empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
-        spatial_freq_response = self.get_acoustic_properties_from_empty(empty)
-        if not spatial_freq_response == None:
-            empty_config["spatial_freq_response"] = spatial_freq_response
+        acoustic_shader = self.get_acoustic_properties_from_empty(empty)
+        if not acoustic_shader['spatial_freq_response'] == None:
+            empty_config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
 
         empty.select_set(False)
 

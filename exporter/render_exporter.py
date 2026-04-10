@@ -624,7 +624,7 @@ class RenderExporter:
                     empty_config['size'] = [empty.pbraudio.source_planar_height, empty.pbraudio.source_planar_width]
                 if empty.pbraudio.source_type == 'SPHERE':
                     empty_config['type'] = empty.pbraudio.source_type
-                    empty_config['size'] = empty.pbraudio.source_planar_size
+                    empty_config['size'] = empty.pbraudio.source_sphere_size
                 empty_config['audio_file'] = empty.pbraudio.source_file
                 if empty.pbraudio.source_file.startswith('//'):
                     empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)

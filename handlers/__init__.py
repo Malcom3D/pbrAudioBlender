@@ -164,7 +164,7 @@ def register():
     # Register handlers
     bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
     bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler)
-#    bpy.app.handlers.depsgraph_update_post.append(update_world_environment_boundaries)
+    bpy.app.handlers.depsgraph_update_post.append(update_world_environment_boundaries)
 #    bpy.app.handlers.frame_change_post.append(update_world_environment_boundaries)
 #    bpy.app.handlers.depsgraph_update_post.append(save_environment_on_property_update)
 
@@ -175,8 +175,8 @@ def unregister():
         bpy.app.handlers.depsgraph_update_post.remove(material_shader_only_handler)
     if select_nodetree_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(select_nodetree_handler)
-#    if update_world_environment_boundaries in bpy.app.handlers.depsgraph_update_post:
-#        bpy.app.handlers.depsgraph_update_post.remove(update_world_environment_boundaries)
+    if update_world_environment_boundaries in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(update_world_environment_boundaries)
 #    if update_world_environment_boundaries in bpy.app.handlers.frame_change_post:
 #        bpy.app.handlerslers.frame_change_post.remove(update_world_environment_boundaries)
 #    if save_environment_on_property_update in bpy.app.handlers.depsgraph_update_post:

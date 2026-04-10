@@ -28,21 +28,27 @@ from .baseND import AcousticSoundNode
 classes = []
 
 class SoundOutputNode(AcousticSoundNode):
-    """Node for sound output from acoustic world"""
+    """Node for sound output from acoustic world (microphone/listener)"""
     bl_idname = 'SoundOutputNode'
-    bl_label = 'Sound Input Node'
+    bl_label = 'Sound Output Node'
     bl_icon = 'SOUND'
 
     pbraudio_type: StringProperty(default='SoundOutputNode')
 
+    def init(self, context):
+        self.inputs.new('AcousticValueNodeSocket', "World Output")
+
 classes.append(SoundOutputNode)
 
 class SoundInputNode(AcousticSoundNode):
-    """Node for sound input from acoustic world"""
+    """Node for sound input to acoustic world (sources/speaker)"""
     bl_idname = 'SoundInputNode'
     bl_label = 'Sound Input Node'
     bl_icon = 'SOUND'
 
     pbraudio_type: StringProperty(default='SoundInputNode')
+
+    def init(self, context):
+        self.inputs.new('AcousticValueNodeSocket', "World Input")
 
 classes.append(SoundInputNode)

@@ -77,7 +77,7 @@ def save_environment_json(environment_obj, cache_path):
                         "x": boundary_obj.location.x - environment_obj.location.x,
                         "y": boundary_obj.location.y - environment_obj.location.y,
                         "z": boundary_obj.location.z - environment_obj.location.z
-                    }
+                    },
                     "audio_file": f"{bpy.path.abspath(env_dir)}/{environment_obj.name}/{boundary_obj.name}.raw"
                 }
                 environment_data["boundaries"].append(boundary_data)

@@ -24,7 +24,7 @@ import sys, os, json
 from mathutils import Matrix, Vector
 from bpy_extras.io_utils import axis_conversion
 
-from ..utils import frd_io
+from ..utils import frd_io, environment_json
 
 class RenderExporter:
     def __init__(self, scene: bpy.types.Scene, decimals: int = 18):
@@ -827,7 +827,6 @@ class RenderExporter:
             world_matrix = acoustic_domain.matrix_world
         domain_vertices = self.config["acoustic_domain"]['geometry']
         domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
-        print('domain_vectors: ', domain_vectors)
         objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
         for obj in objects:
             self.export_animation_obj(obj, start_frame, end_frame)

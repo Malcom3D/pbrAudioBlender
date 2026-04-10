@@ -222,6 +222,8 @@ class RenderExporter:
                         quantity_type = 'coefficients'
                     desired_points, _ = frd_io.generate_bands(freq_min, freq_max, bands_per_octave)
                     freq_resp_file = previous_acoustic_dict['response_filepath']
+                    if freq_resp_file.startswith('//'):
+                        freq_resp_file = bpy.path.abspath(freq_resp_file)
                     if os.path.exists(freq_resp_file):
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
                         acoustic_dict[in_idx] = {"frequencies": freqs.tolist(), quantity_type: mags.tolist(), 'phases': phases.tolist()}

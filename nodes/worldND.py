@@ -254,7 +254,7 @@ class pbrAudioImpedenceNode(AcousticWorldNode):
 
     pbraudio_impedence: FloatProperty(
         name="impedence",
-        name="Medium impedence in Pa⋅s/m",
+        description="Medium impedence in Pa⋅s/m",
         default=413.3
     )
 

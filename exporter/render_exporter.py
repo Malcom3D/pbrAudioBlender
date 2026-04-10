@@ -59,6 +59,7 @@ class RenderExporter:
         self.sources = []
         self.outputs = []
         self.cameras = []
+        self.environments = []
         self.config = {}
         self.config["system"] = system
 
@@ -67,6 +68,7 @@ class RenderExporter:
         self.source_idx = 0
         self.output_idx = 0
         self.camera_idx = 0
+        self.environment_idx = 0
 
     def domain_config(self):
         domain_config = {}
@@ -249,25 +251,49 @@ class RenderExporter:
         return acoustic_dict
 
     def get_from_previous_empty(self, node):
+        scene = bpy.context.scene
+        pbraudiorender = bpy.context.scene.pbraudiorender
+        bands_per_octave = pbraudiorender.bands_per_octave
+        if pbraudiorender.enable_frequencies_range_set:
+            freq_max = pbraudiorender.higher_frequency
+            freq_min = pbraudiorender.lowest_frequency
+        else:
+            freq_max = scene.pbraudio.sample_rate / 2
+            freq_min = 5
+
         acoustic_dict = {}
         # get inputs
         links = node.inputs.keys()
         for link in links:
             if node.inputs[link].is_linked:
-                previous_acoustic_dict = self.get_from_previous_world(node.inputs[link].links[0].from_node)
-                if previous_acoustic_dict['type'] == 'FrequencyResponse':
+                previous_acoustic_dict = self.get_from_previous_empty(node.inputs[link].links[0].from_node)
+                if previous_acoustic_dict['type'] == 'SpatialFrequencyResponse':
+                    # ToDo add azimuth and elevation
+                    pass
+                elif previous_acoustic_dict['type'] == 'FrequencyResponse':
                     freq_resp_file = previous_acoustic_dict['response_filepath']
                     if os.path.exists(freq_resp_file):
                         freqs, mags, phases = frd_io.parse_frd_file(freq_resp_file)
-                        acoustic_dict[link] = {"frequencies": freqs.tolist(), 'magnitude': mags.tolist(), 'phases': phases.tolist()}
+                        spatial_freq_response = {"azimuth": [0], "elevation": [0], "frequencies": freqs.tolist(), 'magnitude': mags.tolist(), 'phases': phases.tolist()}
 
-        for property in node.bl_rna.properties.keys():
-            if property.startswith('pbraudio_'):
-                node_property = "node." + property
-                acoustic_value = eval(node_property)
-                acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
+            elif not node.inputs[link].is_linked:
+                if node.pbraudio_type == 'SoundOutput':
+                    quantity_type = 'magnitude'
+                    delta_f = (freq_max - freq_min)/4
+                    freqs = [freq_min, freq_min + delta_f, freq_min + 2*delta_f, freq_max - delta_f, freq_max]
+                    mag = node.inputs[link].default_value
+                    mags = [mag for _ in range(5)]
+                    phases = []
+                    spatial_freq_response = {"azimuth": [0], "elevation": [0], "frequencies": freqs, quantity_type: mags, 'phases': phases}
 
-        return acoustic_dict
+#        for property in node.bl_rna.properties.keys():
+#            if property.startswith('pbraudio_'):
+#                node_property = "node." + property
+#                acoustic_value = eval(node_property)
+#                acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
+#        return acoustic_dict
+
+        return spatial_freq_response
 
     def get_from_previous_world(self, node):
         acoustic_dict = {}
@@ -330,16 +356,16 @@ class RenderExporter:
         return acoustic_shader
 
     def get_acoustic_properties_from_empty(self, empty):
-        """Get audio properties from the acoustic material node chain"""
+        """Get audio properties from the acoustic node chain"""
 
         # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         nodetree = empty.pbraudio.nodetree
         for key in nodetree.nodes.keys():
             if nodetree.nodes[key].pbraudio_type == 'SoundOutput':
                 output_node = nodetree.nodes[key]
-                acoustic_shader = self.get_from_previous_empty(output_node)
+                spatial_freq_response = self.get_from_previous_empty(output_node)
 
-        return acoustic_shader
+        return spatial_freq_response
 
 
     def triangulate_mesh(self, mesh):
@@ -477,6 +503,9 @@ class RenderExporter:
         elif empty_type == 'camera':
             # Get all sources objects in the scene
             empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'CAMERA' and obj.pbraudio.output]
+        elif empty_type == 'environment':
+            # Get all environment objects in the scene
+            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
 
         empty_inside = []
 
@@ -669,8 +698,9 @@ class RenderExporter:
             if empty.pbraudio.source_file.startswith('//'):
                 empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
-        acoustic_shader = self.get_acoustic_properties_from_empty(empty)
-        empty_config["acoustic_shader"] = acoustic_shader
+        spatial_freq_response = self.get_acoustic_properties_from_empty(empty)
+        if not spatial_freq_response == None:
+            empty_config["spatial_freq_response"] = spatial_freq_response
 
         empty.select_set(False)
 
@@ -802,12 +832,29 @@ class RenderExporter:
         for obj in objects:
             self.export_animation_obj(obj, start_frame, end_frame)
 
+        # Get sources and environment
         sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
+        environments = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment')
+        if not len(environments) == 0:
+            boundaries_empties = []
+            for environment in environments:
+                if not environment.pbraudio.environment_file == "":
+                    # Save environment data as json
+                    # Decode boundary empty audio chanel from saved json
+                    pass
+                # find all children boundary empty
+                boundary_empties = environment.children
+                for boundary_empty in boundary_empties:
+                    boundary_empty.hide_select = False
+                boundaries_empties += boundary_empties
+            sources += boundaries_empties
         for source in sources:
             if source.pbraudio.source:
                 self.source_idx += 1
                 self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
         self.config["sources"] = self.sources
+        for boundary_empty in boundaries_empties:
+            boundary_empty.hide_select = True
 
         outputs = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output')
         for output in outputs:

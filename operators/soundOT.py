@@ -451,7 +451,6 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
 
     @staticmethod
     def get_acoustic_domain_bounds():
-#    def get_acoustic_domain_bounds(self):
         """Get the bounding box of the acoustic domain"""
         for world in bpy.data.worlds:
             if hasattr(world, 'pbraudio') and hasattr(world.pbraudio, 'acoustic_domain'):
@@ -481,7 +480,6 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
 
     @staticmethod
     def is_point_inside_domain(point):
-#    def is_point_inside_domain(self, point):
         """Check if a point is inside the acoustic domain"""
         min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
         if min_co is None or max_co is None:
@@ -514,7 +512,16 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             boundary_empty.empty_display_type = 'PLAIN_AXES'
             boundary_empty.empty_display_size = 0.05
             boundary_empty.location = position
-            
+
+            # Add pbraudio properties
+            if hasattr(context.scene, 'pbraudio') and context.scene.pbraudio.cache_path:
+                cache_path = context.scene.pbraudio.cache_path
+                if cache_path.startswith('//'):
+                    cache_path = bpy.path.abspath(cache_path)
+                    boundary_empty.pbraudio.source = True
+                    boundary_empty.pbraudio.source_type = 'SPHERE'
+                    boundary_empty.pbraudio.source_file = f"{cache_path}/Environments/{center_obj.name}/{boundary_empty.name}.raw"
+
             # Make non-selectable
             boundary_empty.hide_select = True
             

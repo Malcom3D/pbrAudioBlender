@@ -55,6 +55,10 @@ def save_environment_json(environment_obj, cache_path):
         "boundaries": []
     }
     
+    # Create directories if they don't exist
+    env_dir = os.path.join(cache_path, "Environments")
+    os.makedirs(env_dir, exist_ok=True)
+    
     # Get boundary empties
     if "pbraudio_boundary_empties" in environment_obj:
         boundary_names = environment_obj["pbraudio_boundary_empties"]
@@ -74,15 +78,12 @@ def save_environment_json(environment_obj, cache_path):
                         "y": boundary_obj.location.y - environment_obj.location.y,
                         "z": boundary_obj.location.z - environment_obj.location.z
                     }
+                    "audio_file": f"{bpy.path.abspath(env_dir)}/{environment_obj.name}/{boundary_obj.name}.raw"
                 }
                 environment_data["boundaries"].append(boundary_data)
     
-    # Create directories if they don't exist
-    env_dir = os.path.join(cache_path, "AcousticDomain", "Environments")
-    os.makedirs(env_dir, exist_ok=True)
-    
     # Save to JSON file
-    json_filename = f"environment_{environment_data['id']}.json"
+    json_filename = f"{environment_obj.name}.json"
     json_path = os.path.join(env_dir, json_filename)
     
     with open(json_path, 'w') as f:

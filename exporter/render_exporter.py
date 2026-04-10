@@ -522,8 +522,8 @@ class RenderExporter:
             # Check if empty.location are inside
             print('empty_objects: ', empty)
             if self.is_point_inside_domain(world_location, domain_vertices):
+                print('empty_inside: ', empty)
                 empty_inside.append(empty)
-        print('empty_inside: ', empty_inside)
         return empty_inside
 
     def find_objs_in_domain(self, domain_vertices, check_partial=True):
@@ -689,10 +689,14 @@ class RenderExporter:
                 empty_config['type'] = empty.pbraudio.output_type
                 empty_config['order'] = empty.pbraudio.ambisonic_order
                 empty_config['spatial_arrangement_file'] = empty.pbraudio.spatial_arrangement_file
+                if empty.pbraudio.spatial_arrangement_file.startswith('//'):
+                    empty_config['spatial_arrangement_file'] = bpy.path.abspath((empty.pbraudio.spatial_arrangement_file)
             elif empty.pbraudio.output_type == 'MONO':
                 empty_config['type'] = empty.pbraudio.output_type
                 empty_config['micophone_type'] = empty.pbraudio.mono_mic_type
                 empty_config['calibration_file'] = empty.pbraudio.output_cal_file
+                if empty.pbraudio.output_cal_file.startswith('//'):
+                    empty_config['calibration_file'] = bpy.path.abspath(empty.pbraudio.output_cal_file)
         elif empty.pbraudio.source:
             if empty.pbraudio.source_type == 'PLANE':
                 empty_config['type'] = empty.pbraudio.source_type
@@ -852,13 +856,14 @@ class RenderExporter:
                 for boundary_empty in boundary_empties:
                     boundary_empty.hide_select = False
                 boundaries_empties += boundary_empties
-                print('boundaries_empties: ', boundaries_empties)
             sources += boundaries_empties
-            print('sources: ', sources)
         for source in sources:
             if source.pbraudio.source:
                 self.source_idx += 1
-                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
+#                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
+                exported_source = self.export_animation_empty(source, self.source_idx, start_frame, end_frame)
+                print('exported_source: ', source, exported_source)
+                self.sources += [exported_source]
         self.config["sources"] = self.sources
         for boundary_empty in boundaries_empties:
             boundary_empty.hide_select = True

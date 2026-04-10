@@ -156,7 +156,7 @@ class PBRAUDIO_PT_data_panel(Panel):
 #                        text="Update Boundaries", 
 #                        icon='FILE_REFRESH')
             layout.prop(snode, "environment_dynamic_boundaries_update", text="Dynamic Boundaries Update")
-            row_update = layout.row
+            row_update = layout.row()
             row_update.operator("object.pbraudio_update_environment_boundaries", text="Update Boundaries", icon='FILE_REFRESH')
             if not snode.environment_dynamic_update_view:
                 row_update.enabled = False

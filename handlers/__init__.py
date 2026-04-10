@@ -91,40 +91,40 @@ def select_nodetree_handler(scene):
 
 #pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler))
 
-#@persistent
-#def update_world_environment_boundaries(scene):
-#    """Update boundary empties when world environment moves"""
-#    for obj in bpy.data.objects:
-#        if hasattr(obj, 'pbraudio') and obj.pbraudio.environment:
-#            # Check if we have boundary empties stored
-#            if "pbraudio_boundary_empties" in obj:
-#                boundary_names = obj["pbraudio_boundary_empties"]
-#                boundary_empties = []
-#                
-#                # Get actual boundary objects
-#                for name in boundary_names:
-#                    boundary_obj = bpy.data.objects.get(name)
-#                    if boundary_obj:
-#                        boundary_empties.append(boundary_obj)
-#                
-#                if boundary_empties:
-#                    # Update boundary positions
-#                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
-#                    op = PBRAUDIO_OT_add_world_environment
-#                    
-#                    # Get current radius from object property
-#                    radius = obj.pbraudio.environment_size
-#                    
-#                    # Update positions
-#                    op.update_boundary_positions(obj, boundary_empties, radius)
-#            
-#            # Save environment data to JSON
-#            if hasattr(scene, 'pbraudio') and scene.pbraudio.cache_path:
-#                cache_path = scene.pbraudio.cache_path
-#                if cache_path.startswith('//'):
-#                    cache_path = bpy.path.abspath(cache_path)
-#                environment_json.save_environment_json(obj, cache_path)
-#
+@persistent
+def update_world_environment_boundaries(scene):
+    """Update boundary empties when world environment moves"""
+    for obj in bpy.data.objects:
+        if hasattr(obj, 'pbraudio') and obj.pbraudio.environment and obj.pbraudio.environment_dynamic_boundaries_update:
+            # Check if we have boundary empties stored
+            if "pbraudio_boundary_empties" in obj:
+                boundary_names = obj["pbraudio_boundary_empties"]
+                boundary_empties = []
+                
+                # Get actual boundary objects
+                for name in boundary_names:
+                    boundary_obj = bpy.data.objects.get(name)
+                    if boundary_obj:
+                        boundary_empties.append(boundary_obj)
+                
+                if boundary_empties:
+                    # Update boundary positions
+                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+                    op = PBRAUDIO_OT_add_world_environment
+                    
+                    # Get current radius from object property
+                    radius = obj.pbraudio.environment_size
+                    
+                    # Update positions
+                    op.update_boundary_positions(obj, boundary_empties, radius)
+            
+            # Save environment data to JSON
+            if hasattr(scene, 'pbraudio') and scene.pbraudio.cache_path:
+                cache_path = scene.pbraudio.cache_path
+                if cache_path.startswith('//'):
+                    cache_path = bpy.path.abspath(cache_path)
+                environment_json.save_environment_json(obj, cache_path)
+
 #@persistent
 #def save_environment_on_property_update(scene):
 #    """Save environment JSON when environment properties change"""

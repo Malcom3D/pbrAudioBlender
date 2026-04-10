@@ -690,7 +690,7 @@ class RenderExporter:
                 empty_config['order'] = empty.pbraudio.ambisonic_order
                 empty_config['spatial_arrangement_file'] = empty.pbraudio.spatial_arrangement_file
                 if empty.pbraudio.spatial_arrangement_file.startswith('//'):
-                    empty_config['spatial_arrangement_file'] = bpy.path.abspath((empty.pbraudio.spatial_arrangement_file)
+                    empty_config['spatial_arrangement_file'] = bpy.path.abspath(empty.pbraudio.spatial_arrangement_file)
             elif empty.pbraudio.output_type == 'MONO':
                 empty_config['type'] = empty.pbraudio.output_type
                 empty_config['micophone_type'] = empty.pbraudio.mono_mic_type

@@ -308,11 +308,11 @@ class RenderExporter:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous_world(node.inputs[link].links[0].from_node)
                 if previous_acoustic_dict['type'] == 'WorldShader':
-                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict['acoustic_shader']
+                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldImpedence':
-                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
+                    acoustic_dict[link] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldDensity':
-                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
+                    acoustic_dict[link] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldTemperature':
                     acoustic_dict[link] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldEnvironment':

@@ -308,15 +308,15 @@ class RenderExporter:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous_world(node.inputs[link].links[0].from_node)
                 if previous_acoustic_dict['type'] == 'WorldShader':
-                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict
+                    acoustic_dict['acoustic_shader'] = previous_acoustic_dict['acoustic_shader']
                 elif previous_acoustic_dict['type'] == 'WorldImpedence':
-                    acoustic_dict[link] = previous_acoustic_dict
+                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
                 elif previous_acoustic_dict['type'] == 'WorldDensity':
-                    acoustic_dict[link] = previous_acoustic_dict
+                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
                 elif previous_acoustic_dict['type'] == 'WorldTemperature':
-                    acoustic_dict[link] = previous_acoustic_dict
+                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
                 elif previous_acoustic_dict['type'] == 'WorldEnvironment':
-                    acoustic_dict[link] = previous_acoustic_dict
+                    acoustic_dict[link] = previous_acoustic_dict['acoustic_shader']
 #                #TBD: freq_response, calibration_file, spatial_freq_response, spatial_freq_response_file, spatial_arrangement_file
 
         for property in node.bl_rna.properties.keys():
@@ -857,15 +857,11 @@ class RenderExporter:
                     boundary_empty.hide_select = False
                 boundaries_empties += boundary_empties
             sources += boundaries_empties
+        print('sources: ', sources)
         for source in sources:
-            print('exported_source: ', source)
             if source.pbraudio.source:
                 self.source_idx += 1
-#                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
-                print('exported_source: ', source)
-                exported_source = self.export_animation_empty(source, self.source_idx, start_frame, end_frame)
-                print('exported_source: ', source, exported_source)
-                self.sources += [exported_source]
+                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
         self.config["sources"] = self.sources
         for boundary_empty in boundaries_empties:
             boundary_empty.hide_select = True

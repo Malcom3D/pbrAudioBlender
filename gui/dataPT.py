@@ -186,7 +186,7 @@ class PBRAUDIO_PT_data_panel(Panel):
             layout.prop(object.pbraudio, "output_type")
             if object.pbraudio.output_type == 'AMBI':
                 layout.prop(object.pbraudio, "ambisonic_order")
-                layout.prop(object.pbraudio, "spatial_arrangement_file", text="Microphone Spatial Arrangement File")
+                layout.prop(object.pbraudio, "spatial_arrangement_file", text="Mics Spatial Arrangement File")
             if object.pbraudio.output_type == 'MONO':
                 layout.prop(object.pbraudio, "mono_mic_type")
                 layout.prop(object.pbraudio, "output_cal_file", text="Microphone Calibration File")

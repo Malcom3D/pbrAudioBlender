@@ -33,7 +33,7 @@ class SoundOutputNode(AcousticSoundNode):
     bl_label = 'Sound Output Node'
     bl_icon = 'SOUND'
 
-    pbraudio_type: StringProperty(default='SoundOutputNode')
+    pbraudio_type: StringProperty(default='SoundOutput')
 
     def init(self, context):
         self.inputs.new('AcousticValueNodeSocket', "NodeTree Output")

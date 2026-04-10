@@ -85,39 +85,40 @@ class NODE_OT_export_frd_response(Operator):
     def execute(self, context):
         if not self.node_name == "":
             nodetree = bpy.data.node_groups.get(self.node_tree)
-            node = nodetree.nodes[self.node_name]
-            # Gather data points
-            frequencies = []
-            magnitudes = []
-            phases = []
+            if hasattr(nodetree, 'nodes'):
+                node = nodetree.nodes[self.node_name]
+                # Gather data points
+                frequencies = []
+                magnitudes = []
+                phases = []
 
-            for point in node.frd_points:
-                frequencies.append(point.frequency)
-                magnitudes.append(point.magnitude)
-                if node.has_phase:
-                    phases.append(point.phase)
+                for point in node.frd_points:
+                    frequencies.append(point.frequency)
+                    magnitudes.append(point.magnitude)
+                    if node.has_phase:
+                        phases.append(point.phase)
 
-            # Convert to numpy arrays
-            import numpy as np
-            freq_array = np.array(frequencies)
-            mag_array = np.array(magnitudes)
-            phase_array = np.array(phases) if node.has_phase else None
+                # Convert to numpy arrays
+                import numpy as np
+                freq_array = np.array(frequencies)
+                mag_array = np.array(magnitudes)
+                phase_array = np.array(phases) if node.has_phase else None
 
-            # Call your frd_io utility
-            filename = bpy.path.abspath(self.filepath)
-            if not filename.endswith('.frd'):
-                filename += '.frd'
-            try:
-                frd_io.write_frd_file(filename, freq_array, mag_array, phase_array)
-#                if node.has_phase:
-#                    frd_io.write_frd_file(filename, freq_array, mag_array, phase_array)
-#                else:
-#                    frd_io.write_frd_file(filename, freq_array, mag_array)
-                self.report({'INFO'}, f"FRD file exported: {filename}")
-            except Exception as e:
-                self.report({'ERROR'}, str(e))
-                return {'CANCELLED'}
+                # Call your frd_io utility
+                filename = bpy.path.abspath(self.filepath)
+                if not filename.endswith('.frd'):
+                    filename += '.frd'
+                try:
+                    frd_io.write_frd_file(filename, freq_array, mag_array, phase_array)
+#                    if node.has_phase:
+#                        frd_io.write_frd_file(filename, freq_array, mag_array, phase_array)
+#                    else:
+#                        frd_io.write_frd_file(filename, freq_array, mag_array)
+                    self.report({'INFO'}, f"FRD file exported: {filename}")
+                except Exception as e:
+                    self.report({'ERROR'}, str(e))
+                    return {'CANCELLED'}
+                return {'FINISHED'}
             return {'FINISHED'}
-        return {'FINISHED'}
 
 classes.append(NODE_OT_export_frd_response)

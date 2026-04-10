@@ -263,7 +263,7 @@ class PBRAUDIO_OT_add_camera_nodetree(Operator, AddObjectHelper):
         nodetree.pbraudio_type = 'SOUND'
 
         # Set up default nodes
-        input_node = nodetree.nodes.new('SoundInputNode')
+        input_node = nodetree.nodes.new('SoundOutputNode')
         input_node.location = (300, 0)
 
         # Link to active object if available
@@ -366,7 +366,7 @@ class PBRAUDIO_OT_add_sound_output(Operator, AddObjectHelper):
         nodetree.pbraudio_type = 'SOUND'
 
         # Set up default nodes
-        input_node = nodetree.nodes.new('SoundInputNode')
+        input_node = nodetree.nodes.new('SoundOutputNode')
         input_node.location = (300, 0)
         
         # Link to active object if available

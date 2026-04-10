@@ -842,30 +842,29 @@ class RenderExporter:
             self.export_animation_obj(obj, start_frame, end_frame)
 
         # Get sources and environment
-        sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
         environments = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment')
         if not len(environments) == 0:
             boundaries_empties = []
             for environment in environments:
                 if not environment.pbraudio.environment_file == "":
                     # Save environment data as json
-                    # env_path = f"{self.render_path}/Environments"
-                    # environment_json.save_environment_json(environment, env_path)
+                    env_path = f"{self.render_path}/Environments"
+                    environment_json.save_environment_json(environment, env_path)
                     # Decode boundary empty audio chanel from saved json
                     pass
                 # find all children boundary empty
                 boundary_empties = environment.children
                 for boundary_empty in boundary_empties:
                     boundary_empty.hide_select = False
-                boundaries_empties += boundary_empties
-            sources += boundaries_empties
+
+        sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
         print('sources: ', sources)
         for source in sources:
             if source.pbraudio.source:
-                self.source_idx += 1
 #                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
                 exported_source = [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
                 self.sources += exported_source
+                self.source_idx += 1
         self.config["sources"] = self.sources
         for boundary_empty in boundaries_empties:
             boundary_empty.hide_select = True

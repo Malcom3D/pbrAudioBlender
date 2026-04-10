@@ -290,11 +290,11 @@ class RenderExporter:
                     acoustic_dict['spatial_freq_response'] = {"azimuth": [0], "elevation": [0], "frequencies": freqs, quantity_type: mags, 'phases': phases}
 
 
-#        for property in node.bl_rna.properties.keys():
-#            if property.startswith('pbraudio_'):
-#                node_property = "node." + property
-#                acoustic_value = eval(node_property)
-#                acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
+        for property in node.bl_rna.properties.keys():
+            if property.startswith('pbraudio_'):
+                node_property = "node." + property
+                acoustic_value = eval(node_property)
+                acoustic_dict[property.replace('pbraudio_', '')] = acoustic_value
 
         return acoustic_dict
 

@@ -25,6 +25,7 @@ from mathutils import Matrix, Vector
 from bpy_extras.io_utils import axis_conversion
 
 from ..utils import frd_io, environment_json
+from ..utils.ambisonic_decoder import AmbisonicDecoder
 
 class RenderExporter:
     def __init__(self, scene: bpy.types.Scene, decimals: int = 18):
@@ -678,6 +679,7 @@ class RenderExporter:
 
         location = np.round(np.array(location), self.decimals)
         rotation = np.round(np.array(rotation), self.decimals)
+        print('name: ', name, 'location: ', location, 'rotation: ', rotation)
         output_pose = os.path.join(self.render_path, f"data/pose/{name}.npz")
 
         empty_config = {}
@@ -852,9 +854,10 @@ class RenderExporter:
             for environment in environments:
                 if not environment.pbraudio.environment_file == "":
                     # Save environment data as json
-                    environment_json.save_environment_json(environment, self.render_path)
+                    json_config_path = environment_json.save_environment_json(environment, self.render_path)
                     # Decode boundary empty audio chanel from saved json
-                    pass
+                    ambisonic_decoder = AmbisonicDecoder(json_config_path=json_config_path)
+                    ambisonic_decoder.save_decoded_files()
                 # find all children boundary empty
 #                boundary_empties = environment.children
 #                for boundary_empty in boundary_empties:

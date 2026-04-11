@@ -697,7 +697,7 @@ class RenderExporter:
                 empty_config['calibration_file'] = empty.pbraudio.output_cal_file
                 if empty.pbraudio.output_cal_file.startswith('//'):
                     empty_config['calibration_file'] = bpy.path.abspath(empty.pbraudio.output_cal_file)
-            empty_config['size'] = empty.pbraudio.output_sphere_size
+            empty_config['size'] = empty.pbraudio.output_size
         elif empty.pbraudio.source:
             if empty.pbraudio.source_type == 'PLANE':
                 empty_config['type'] = empty.pbraudio.source_type

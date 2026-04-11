@@ -21,6 +21,7 @@ from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty, EnumProperty, FloatProperty, StringProperty, IntProperty
 
 from ..nodetrees import acousticNT
+from ..operators.soundOT import update_boundary_count
 
 classes = []
 
@@ -111,8 +112,9 @@ class PBRAudioObjectProperties(PropertyGroup):
         obj = context.object
         if obj and obj.pbraudio.environment:
             # Import the update function
-            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
-            PBRAUDIO_OT_add_world_environment.update_boundary_count(obj, obj.pbraudio.environment_chanels)
+#            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+#            PBRAUDIO_OT_add_world_environment.update_boundary_count(obj, obj.pbraudio.environment_chanels)
+            update_boundary_count(obj, obj.pbraudio.environment_chanels)
             
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
@@ -261,11 +263,11 @@ class PBRAudioObjectProperties(PropertyGroup):
         description="Environment Sphere Size",
     )
 
-    environment_dynamic_boundaries_update: BoolProperty(
-        name="environment_dynamic_boundaries_update",
-        description="Dynamic Boundaries Update",
-        default=False
-    )
+#    environment_dynamic_boundaries_update: BoolProperty(
+#        name="environment_dynamic_boundaries_update",
+#        description="Dynamic Boundaries Update",
+#        default=False
+#    )
 
     """Output properties for pbrAudio"""
     output: BoolProperty(

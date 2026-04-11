@@ -21,6 +21,8 @@ from bpy.types import Panel, Operator
 from bpy.app.translations import contexts as i18n_contexts
 from bpy.props import FloatProperty
 
+from ..operator.soundOT import update_boundary_positions
+
 classes = []
 
 #class DataButtonsPanel:
@@ -155,18 +157,19 @@ class PBRAUDIO_PT_data_panel(Panel):
 #            row.operator("object.pbraudio_update_environment_boundaries", 
 #                        text="Update Boundaries", 
 #                        icon='FILE_REFRESH')
-            layout.prop(snode, "environment_dynamic_boundaries_update", text="Dynamic Boundaries Update")
+#            layout.prop(snode, "environment_dynamic_boundaries_update", text="Dynamic Boundaries Update")
             row_update = layout.row()
             row_update.operator("object.pbraudio_update_environment_boundaries", text="Update Boundaries", icon='FILE_REFRESH')
-            if snode.environment_dynamic_boundaries_update:
-                row_update.enabled = False
+#            if snode.environment_dynamic_boundaries_update:
+#                row_update.enabled = False
             
             # Show warning if boundaries might be outside domain
-            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+#            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
 #            op = PBRAUDIO_OT_add_world_environment()
 #            op = bpy.ops.object.pbraudio_add_world_environment
 #            min_co, max_co = op.get_acoustic_domain_bounds()
-            min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
+#            min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
+            min_co, max_co = get_acoustic_domain_bounds()
             
             if min_co is not None and max_co is not None:
                 # Check if any boundary might be outside
@@ -179,7 +182,7 @@ class PBRAUDIO_PT_data_panel(Panel):
 #                            box.label(text="Some boundaries outside domain!", icon='ERROR')
                             layout.label(text="Some boundaries outside domain!", icon='ERROR')
                             break
-            
+           
         elif object.pbraudio.output:
             # Object is a Sound Output
             layout.label(text="Output Settings:", icon='LIGHT_SPOT')
@@ -283,7 +286,8 @@ class PBRAUDIO_OT_update_environment_boundaries(Operator):
 #                    op = bpy.ops.object.pbraudio_add_world_environment
                     radius = obj.pbraudio.environment_size
 #                    op.update_boundary_positions(obj, boundary_empties, radius)
-                    PBRAUDIO_OT_add_world_environment.update_boundary_positions(obj, boundary_empties, radius)
+#                    PBRAUDIO_OT_add_world_environment.update_boundary_positions(obj, boundary_empties, radius)
+                    update_boundary_positions(obj, boundary_empties, radius)
                     
                     self.report({'INFO'}, f"Updated {len(boundary_empties)} boundaries")
         

@@ -581,8 +581,8 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
                 boundary_empty.empty_display_type = 'PLAIN_AXES'
                 boundary_empty.empty_display_size = 0.05
                 boundary_empty.location = position
-                boundary_empty.hide_select = True
                 boundary_empty.parent = center_obj
+                boundary_empty.hide_select = True
                 
                 # Link to collection
                 bpy.context.collection.objects.link(boundary_empty)
@@ -592,10 +592,9 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         # Update the stored boundary names
         center_obj["pbraudio_boundary_empties"] = [obj.name for obj in current_boundaries[:new_channel_count]]
         
-        # Update Update positions for all boundaries
+        # Update positions for all boundaries
         PBRAUDIO_OT_add_world_environment.update_boundary_positions(center_obj, current_boundaries[:new_channel_count], radius)
 
-#    def update_boundary_positions(self, center_obj, boundary_empties, radius):
     @staticmethod
     def update_boundary_positions(center_obj, boundary_empties, radius):
         """Update boundary positions based on center object location and domain constraints"""

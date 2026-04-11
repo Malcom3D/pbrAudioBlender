@@ -856,10 +856,10 @@ class RenderExporter:
                     # Decode boundary empty audio chanel from saved json
                     pass
                 # find all children boundary empty
-                boundary_empties = environment.children
-                for boundary_empty in boundary_empties:
-                    boundary_empty.hide_select = False
-            boundaries_empties += boundary_empties
+#                boundary_empties = environment.children
+#                for boundary_empty in boundary_empties:
+#                    boundary_empty.hide_select = False
+#            boundaries_empties += boundary_empties
         sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
         print('sources: ', sources)
         for source in sources:
@@ -869,9 +869,9 @@ class RenderExporter:
                 self.sources += exported_source
                 self.source_idx += 1
         self.config["sources"] = self.sources
-        if not len(boundaries_empties) == 0:
-            for boundary_empty in boundaries_empties:
-                boundary_empty.hide_select = True
+#        if not len(boundaries_empties) == 0:
+#            for boundary_empty in boundaries_empties:
+#                boundary_empty.hide_select = True
 
         outputs = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output')
         for output in outputs:

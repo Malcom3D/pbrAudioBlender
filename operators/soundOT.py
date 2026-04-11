@@ -65,7 +65,7 @@ def is_point_inside_domain(point):
             min_co.y <= point.y <= max_co.y and
             min_co.z <= point.z <= max_co.z)
 
-def create_boundary_empties(self, center_obj, num_channels, radius):
+def create_boundary_empties(center_obj, num_channels, radius):
     """Create boundary empties around the center object"""
     bpy.ops.object.select_all(action='DESELECT')
     boundary_empties = []
@@ -646,7 +646,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         center_empty.pbraudio.environment_chanels = self.number_channels
 
         # Create boundary empties
-        boundary_empties = self.create_boundary_empties(
+        boundary_empties = create_boundary_empties(
             center_empty,
             self.number_channels,
             self.sphere_radius

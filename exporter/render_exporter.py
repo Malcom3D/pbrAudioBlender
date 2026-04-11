@@ -878,7 +878,7 @@ class RenderExporter:
 #            boundaries_empties += boundary_empties
         sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
 
-        to_be_hided == False
+        to_be_hided = False
         for source in sources:
             if source.pbraudio.source:
                 if source.hide_select == True:
@@ -889,7 +889,7 @@ class RenderExporter:
 #                self.sources += exported_source
                 self.source_idx += 1
                 if to_be_hided == True:
-                    to_be_hided == False
+                    to_be_hided = False
                     source.hide_select = True
         self.config["sources"] = self.sources
 #        if not len(boundaries_empties) == 0:

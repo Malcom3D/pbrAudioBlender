@@ -112,7 +112,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         obj = context.object
         if obj and obj.pbraudio.environment:
             # Import the update function
-            update_boundary_positions(obj, obj.childern, self.environment_size)
+            update_boundary_positions(obj, obj.children, self.environment_size)
 
     def update_environment_channels(self, context):
         """Update boundary empties when channel count changes"""

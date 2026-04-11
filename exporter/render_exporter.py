@@ -271,7 +271,7 @@ class RenderExporter:
         for link in links:
             if node.inputs[link].is_linked:
                 previous_acoustic_dict = self.get_from_previous_empty(node.inputs[link].links[0].from_node)
-                print('previous_acoustic_dict: ', previous_acoustic_dict)
+#                print('previous_acoustic_dict: ', previous_acoustic_dict)
                 if not len(previous_acoustic_dict) == 0:
                     if previous_acoustic_dict['type'] == 'SpatialFrequencyResponse':
                         # ToDo add azimuth and elevation
@@ -679,13 +679,26 @@ class RenderExporter:
 
         location = np.round(np.array(location), self.decimals)
         rotation = np.round(np.array(rotation), self.decimals)
-        print('name: ', name, 'location: ', location, 'rotation: ', rotation)
+#        print('name: ', name, 'location: ', location, 'rotation: ', rotation)
         output_pose = os.path.join(self.render_path, f"data/pose/{name}.npz")
 
         empty_config = {}
         empty_config["name"] = name
         empty_config["idx"] = empty_idx
         empty_config["pose_path"] = f"{self.render_path}/data/pose"
+
+        # verify is not static
+        if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
+            empty_config["static"] = False
+            print(f"{empty.name} is not static...")
+            print(f"Exporting pose for {empty.name} to {output_pose}...")
+            np.savez_compressed(output_pose, location=location, rotation=rotation)
+        else:
+            empty_config["static"] = True
+            print(f"{empty.name} is static...")
+            print(f"Exporting pose for {empty.name} to {output_pose}...")
+            np.savez_compressed(output_pose, location=location[0], rotation=rotation[0])
+            print(f"Exporting {empty.name} in {self.render_path}/data/{name}...")
 
         # Find pbraudio empty type
         if empty.pbraudio.output:
@@ -864,13 +877,20 @@ class RenderExporter:
 #                    boundary_empty.hide_select = False
 #            boundaries_empties += boundary_empties
         sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
-        print('sources: ', sources)
+
+        to_be_hided == False
         for source in sources:
             if source.pbraudio.source:
-#                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
-                exported_source = [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
-                self.sources += exported_source
+                if source.hide_select == True:
+                    to_be_hided = True
+                    source.hide_select = False
+                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
+#                exported_source = [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
+#                self.sources += exported_source
                 self.source_idx += 1
+                if to_be_hided == True:
+                    to_be_hided == False
+                    source.hide_select = True
         self.config["sources"] = self.sources
 #        if not len(boundaries_empties) == 0:
 #            for boundary_empty in boundaries_empties:

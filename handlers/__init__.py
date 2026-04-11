@@ -156,10 +156,10 @@
 ##                # Update last data
 ##                obj["pbraudio_last__environment_data"] = current_data
 ##
-#def register():
+def register():
 #    global pbraudio_handler
-#    for cls in classes:
-#        register_class(cls)
+    for cls in classes:
+        register_class(cls)
 #
 #    # Register handlers
 ##    bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
@@ -168,7 +168,7 @@
 ##    bpy.app.handlers.frame_change_post.append(update_world_environment_boundaries)
 ##    bpy.app.handlers.depsgraph_update_post.append(save_environment_on_property_update)
 #
-#def unregister():
+def unregister():
 #    global pbraudio_handler
 #    # Remove handlers
 ##    if material_shader_only_handler in bpy.app.handlers.depsgraph_update_post:
@@ -182,5 +182,5 @@
 ##    if save_environment_on_property_update in bpy.app.handlers.depsgraph_update_post:
 ##        bpy.app.handlers.depsgraph_update_post.remove(save_environment_on_property_update)
 #
-#    for cls in reversed(classes):
-#        unregister_class(cls)
+    for cls in reversed(classes):
+        unregister_class(cls)

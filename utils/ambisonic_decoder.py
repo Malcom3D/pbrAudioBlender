@@ -68,22 +68,22 @@ class AmbisonicDecoder:
                 if (order + 1) ** 2 != num_channels:
                     warnings.warn(f"Channel count {num_channels} doesn't match standard ambisonic layout")
                 
-                # Check if it matches config channels
-                if num_channels != self.config['channels']:
-                    warnings.warn(f"File has {num_channels} channels, config expects {self.config['channels']}")
+#                # Check if it matches config channels
+#                if num_channels != self.config['channels']:
+#                    warnings.warn(f"File has {num_channels} channels, config expects {self.config['channels']}")
                 
                 return order
             except Exception as e:
                 warnings.warn(f"Could not detect order from file: {e}")
         
-        # Fallback: infer from boundaries count
-        num_boundaries = len(self.config['boundaries'])
-        order = int(np.sqrt(num_boundaries)) - 1
-        
-        if (order + 1) ** 2 != num_boundaries:
-            warnings.warn(f"Boundaries count {num_boundaries} doesn't match standard ambisonic layout")
-        
-        return order
+#        # Fallback: infer from boundaries count
+#        num_boundaries = len(self.config['boundaries'])
+#        order = int(np.sqrt(num_boundaries)) - 1
+#        
+#        if (order + 1) ** 2 != num_boundaries:
+#            warnings.warn(f"Boundaries count {num_boundaries} doesn't match standard ambisonic layout")
+#        
+#        return order
     
     def load_ambisonic_file(self):
         """Load the ambisonic audio file."""
@@ -305,128 +305,6 @@ class AmbisonicDecoder:
             
             print(f"Saved: {output_path}")
     
-    def create_virtual_speaker_setup(self, num_speakers: int = 8) -> List[Tuple[float, float]]:
-        """
-        Create a virtual speaker setup for decoding.
-        
-        Args:
-            num_speakers: Number of virtual speakers
-        
-        Returns:
-            List of (azimuth, elevation) tuples in degrees
-        """
-        # Create a basic speaker layout (e.g., ring at ear level)
-        positions = []
-        
-        for i in range(num_speakers):
-            azimuth = 360 * i / num_speakers
-            elevation = 0  # Ear level
-            
-            positions.append((azimuth, elevation))
-        
-        return positions
-    
-    def decode_to_virtual_speakers(self, speaker_positions: List[Tuple[float, float]], 
-                                  normalize: bool = True) -> Dict[Tuple[float, float], np.ndarray]:
-        """
-        Decode to a custom virtual speaker setup.
-        
-        Args:
-            speaker_positions: List of (azimuth, elevation) tuples in degrees
-            normalize: Whether to normalize output
-        
-        Returns:
-            Dictionary mapping positions to decoded audio
-        """
-        results = {}
-        
-        for azimuth, elevation in speaker_positions:
-            audio = self.decode_to_position(azimuth, elevation)
-            
-            if normalize and len(audio) > 0:
-                max_val = np.max(np.abs(audio))
-                if max_val > 0:
-                    audio = audio / max_val * 0.95
-            
-            results[(azimuth, elevation)] = audio
-        
-        return results
-
-
-# Example usage function
-def decode_environment_from_json(json_path: str, output_dir: str = None):
-    """
-    Convenience function to decode an environment from JSON config.
-    
-    Args:
-        json_path: Path to JSON configuration file
-        output_dir: Optional custom output directory
-    """
-    decoder = AmbisonicDecoder(json_config_path=json_path)
-    
-    print(f"Decoding ambisonic file: {decoder.config['file_path']}")
-    print(f"Ambisonic order: {decoder.order}")
-    print(f"Number of channels: {decoder.num_channels}")
-    print(f"Number of boundaries: {len(decoder.config['boundaries'])}")
-    
-    # Decode and save files
-    decoder.save_decoded_files(output_dir=output_dir)
-    
-    print("Decoding complete!")
-
-
-# Batch processing function
-def batch_decode_environments(json_files: List[str], output_base_dir: str = None):
-    """
-    Batch decode multiple environment configurations.
-    
-    Args:
-        json_files: List of JSON configuration file paths
-        output_base_dir: Base directory for outputs
-    """
-    for json_file in json_files:
-        print(f"\nProcessing: {json_file}")
-        
-        try:
-            if output_base_dir:
-                env_name = Path(json_file).stem
-                output_dir = os.path.join(output_base_dir, env_name)
-                decode_environment_from_json(json_file, output_dir)
-            else:
-                decode_environment_from_json(json_file)
-        except Exception as e:
-            print(f"Error processing {json_file}: {e}")
-            continue
-
-
-if __name__ == "__main__":
-    # Example usage
-    json_path = "WorldEnvironment.001.json"
-    
-    if os.path.exists(json_path):
-        decode_environment_from_json(json_path)
-    else:
-        print(f"JSON file not found: {json_path}")
-        print("Creating example usage...")
-        
-        # Example with direct configuration
-        example_config = {
-            "file_path": "/path/to/ambambisonic/file.wav",
-            "channels": 16,  # 3rd order ambisonics (4^2 = 16 channels)
-            "center_location": {"x": 0, "y": 0, "z": 0},
-            "boundaries": [
-                {
-                    "name": "Speaker_00",
-                    "relative_position": {"x": 1, "y": 0, "z": 0},
-                    "audio_file": "/output/path/Speaker_00.wav"
-                },
-                # ... more boundaries
-            ]
-        }
-        
-        decoder = AmbisonicDecoder(config_data=example_config)
-        print(f"Created decoder for order {decoder.order}")
-
 """
 decoder = AmbisonicDecoder(json_config_path="WorldEnvironment.001.json")
 decoder.save_decoded_files()

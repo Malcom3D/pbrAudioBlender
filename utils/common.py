@@ -161,7 +161,7 @@ def update_boundary_count(center_obj, new_channel_count):
             x, y, z = sphere_points[i]
             
             # Calculate position relative to center
-            position = center_obj.location + mathutils.Vector((x, y,, z)) * radius
+            position = center_obj.location + mathutils.Vector((x, y, z)) * radius
 
             # Create new boundary empty
             boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)

@@ -112,8 +112,6 @@ class PBRAudioObjectProperties(PropertyGroup):
         obj = context.object
         if obj and obj.pbraudio.environment:
             # Import the update function
-#            from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
-#            PBRAUDIO_OT_add_world_environment.update_boundary_count(obj, obj.pbraudio.environment_chanels)
             update_boundary_count(obj, obj.pbraudio.environment_chanels)
             
     """pbrAudio Material nodetree"""
@@ -261,6 +259,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     environment_size: FloatProperty(
         name="Environment Size",
         description="Environment Sphere Size",
+        update=update_environment_channels
     )
 
 #    environment_dynamic_boundaries_update: BoolProperty(

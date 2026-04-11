@@ -65,21 +65,36 @@ def is_point_inside_domain(point):
             min_co.y <= point.y <= max_co.y and
             min_co.z <= point.z <= max_co.z)
 
+def fibonacci_sphere(num_points):
+    """
+    Generate uniformly distributed points on a sphere using Fibonacci spiral.
+    Returns list of (x, y, z) coordinates on unit sphere.
+    """
+    points = []
+    phi = math.pi * (3.0 - math.sqrt(5.0))  # golden angle in radians
+    
+    for i in range(num_points):
+        y = 1 - (i / float(num_points - 1)) * 2  # y goes from 1 to -1
+        radius = math.sqrt(1 - y * y)  # radius at y
+        
+        theta = phi * i  # golden angle increment
+        
+        x = math.cos(theta) * radius
+        z = math.sin(theta) * radius
+        
+        points.append((x, y, z))
+    
+    return points
+
 def create_boundary_empties(center_obj, num_channels, radius):
     """Create boundary empties around the center object"""
     bpy.ops.object.select_all(action='DESELECT')
     boundary_empties = []
 
-    for i in range(num_channels):
-        # Calculate spherical coordinates using Fibonacci spiral
-        golden_angle = math.pi * (3 - math.sqrt(5))
-        y = 1 - (i / (num_channels - 1)) * 2 if num_channels > 1 else 0
-        r = math.sqrt(1 - y * y)
-        theta = golden_angle * i
-
-        x = math.cos(theta) * r
-        z = math.sin(theta) * r
-
+    # Generate uniformly distributed points on sphere
+    sphere_points = fibonacci_sphere(num_channels)
+    
+    for i, (x, y, z) in enumerate(sphere_points):
         # Calculate position relative to center
         position = center_obj.location + mathutils.Vector((x, y, z)) * radius
 
@@ -139,18 +154,14 @@ def update_boundary_count(center_obj, new_channel_count):
 
     # Add new boundaries if needed
     elif new_channel_count > current_count:
+        # Generate new sphere points for all channels
+        sphere_points = fibonacci_sphere(new_channel_count)
+        
         for i in range(current_count, new_channel_count):
-            # Calculate position for new boundary
-            golden_angle = math.pi * (3 - math.sqrt(5))
-            y = 1 - (i / (new_channel_count - 1)) * 2 if new_channel_count > 1 else 0
-            r = math.sqrt(1 - y * y)
-            theta = golden_angle * i
-
-            x = math.cos(theta) * r
-            z = math.sin(theta) * r
-
+            x, y, z = sphere_points[i]
+            
             # Calculate position relative to center
-            position = center_obj.location + mathutils.Vector((x, y, z)) * radius
+            position = center_obj.location + mathutils.Vector((x, y,, z)) * radius
 
             # Create new boundary empty
             boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)
@@ -175,15 +186,11 @@ def update_boundary_positions(center_obj, boundary_empties, radius):
     """Update boundary positions based on center object location and domain constraints"""
     min_co, max_co = get_acoustic_domain_bounds()
 
+    # Generate sphere points for all boundaries
+    sphere_points = fibonacci_sphere(len(boundary_empties))
+    
     for i, boundary in enumerate(boundary_empties):
-        # Calculate original relative position
-        golden_angle = math.pi * (3 - math.sqrt(5))
-        y = 1 - (i / (len(boundary_empties) - 1)) * 2 if len(boundary_empties) > 1 else 0
-        r = math.sqrt(1 - y * y)
-        theta = golden_angle * i
-
-        x = math.cos(theta) * r
-        z = math.sin(theta) * r
+        x, y, z = sphere_points[i]
 
         # Calculate LOCAL position (relative to parent)
         local_position = mathutils.Vector((x, y, z)) * radius

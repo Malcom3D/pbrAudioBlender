@@ -726,7 +726,7 @@ class RenderExporter:
             if empty.pbraudio.source_file.startswith('//'):
                 empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
-        if not source.pbraudio.environment_boundary:
+        if not empty.pbraudio.environment_boundary:
             acoustic_shader = self.get_acoustic_properties_from_empty(empty)
             if not len(acoustic_shader) == 0 and hasattr(acoustic_shader, 'spatial_freq_response'):
                 empty_config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']

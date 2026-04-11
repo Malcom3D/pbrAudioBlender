@@ -312,9 +312,9 @@ class RenderExporter:
                 elif previous_acoustic_dict['type'] == 'WorldImpedence':
                     acoustic_dict['impedence'] = previous_acoustic_dict['impedence']
                 elif previous_acoustic_dict['type'] == 'WorldDensity':
-                    acoustic_dict['density'] = previous_acoustic_dict['density']
+                    acoustic_dict['density'] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldTemperature':
-                    acoustic_dict['temperature'] = previous_acoustic_dict['temperature']
+                    acoustic_dict['temperature'] = previous_acoustic_dict
                 elif previous_acoustic_dict['type'] == 'WorldEnvironment':
                     acoustic_dict[link] = previous_acoustic_dict
 #                #TBD: freq_response, calibration_file, spatial_freq_response, spatial_freq_response_file, spatial_arrangement_file

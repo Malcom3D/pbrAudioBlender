@@ -53,7 +53,7 @@ version_string = f'{bl_info["version"][0]}.{bl_info["version"][1]}.{bl_info["ver
 if 'warning' in bl_info:
     version_string = version_string + f'-{bl_info["warning"]}'
 
-from . import engine, gui, handlers, nodes, nodetrees, operators, sockets, properties, utils
+from . import engine, nodetrees, sockets, nodes, properties, operators, handlers, gui, utils
 
 def register():
     print("Register", __package__)

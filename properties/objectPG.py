@@ -107,12 +107,19 @@ class PBRAudioObjectProperties(PropertyGroup):
     def update_plane_size(self, context):
         bpy.ops.object.pbraudio_resize_source(height=self.source_planar_height, width=self.source_planar_width)
 
+    def update_environment_size(self, context):
+        """Update boundary empties when size change"""
+        obj = context.object
+        if obj and obj.pbraudio.environment:
+            # Import the update function
+            update_boundary_positions(obj, obj.childern, self.environment_size)
+
     def update_environment_channels(self, context):
         """Update boundary empties when channel count changes"""
         obj = context.object
         if obj and obj.pbraudio.environment:
             # Import the update function
-            update_boundary_count(obj, obj.pbraudio.environment_chanels)
+            update_boundary_count(obj, obj.pbraudio.environment_channels)
             
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
@@ -247,7 +254,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         default='',
     )
 
-    environment_chanels: IntProperty(
+    environment_channels: IntProperty(
         name="Number of Environment Chanels",
         description="Int value between 0 and 64",
         default=4,

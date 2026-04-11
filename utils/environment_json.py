@@ -45,7 +45,7 @@ def save_environment_json(environment_obj, cache_path):
         "id": generate_environment_id(),
         "name": environment_obj.name,
         "file_path": bpy.path.abspath(env_props.environment_file) if env_props.environment_file else "",
-        "channels": env_props.environment_chanels,
+        "channels": env_props.environment_channels,
         "radius": env_props.environment_size,
         "center_location": {
             "x": environment_obj.location.x,

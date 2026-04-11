@@ -869,7 +869,7 @@ class RenderExporter:
                 if not environment.pbraudio.environment_file == "":
                     # Save environment data as json
                     json_config_path = environment_json.save_environment_json(environment, self.render_path)
-                    # Decode boundary empty audio chanel from saved json
+                    # Decode boundary empty audio channel from saved json
                     ambisonic_decoder = AmbisonicDecoder(json_config_path=json_config_path)
                     ambisonic_decoder.save_decoded_files()
                 # find all children boundary empty

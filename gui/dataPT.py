@@ -135,9 +135,9 @@ class PBRAUDIO_PT_data_panel(Panel):
 #            # Environment properties
 #            row = box.row()
 #            row.prop(snode, "environment_size", text="Radius")
-#            row.prop(snode, "environment_chanels", text="Channels")
+#            row.prop(snode, "environment_channels", text="Channels")
             layout.prop(snode, "environment_size", text="Radius")
-            layout.prop(snode, "environment_chanels", text="Channels")
+            layout.prop(snode, "environment_channels", text="Channels")
             
             # File path
 #            box.prop(snode, "environment_file", text="Sound File")
@@ -250,7 +250,7 @@ classes.append(PBRAUDIO_PT_data_panel)
 #            layout.template_ID(snode, "source_file", new="sound.open_mono")
 #        elif object.pbraudio.environment and object.type == 'EMPTY':
 #            layout.prop(object.pbraudio, "environment_size")
-#            layout.prop(object.pbraudio, "environment_chanels")
+#            layout.prop(object.pbraudio, "environment_channels")
 #            layout.prop(object.pbraudio, "environment_file")
 #        elif object.pbraudio.output and object.type == 'EMPTY':
 #            # Object is a Sound Output

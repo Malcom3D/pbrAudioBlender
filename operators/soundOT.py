@@ -459,7 +459,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         # Configure as environment
         center_empty.pbraudio.environment = True
         center_empty.pbraudio.environment_size = self.sphere_radius
-        center_empty.pbraudio.environment_chanels = self.number_channels
+        center_empty.pbraudio.environment_channels = self.number_channels
 
         # Create boundary empties
         boundary_empties = create_boundary_empties(

@@ -136,7 +136,7 @@ classes = []
 ##            
 ##            current_data = {
 ##                "file": obj.pbraudio.environment_file,
-##                "channels": obj.pbraudio.environment_chanels,
+##                "channels": obj.pbraudio.environment_channels,
 ##                "radius": obj.pbraudio.environment_size,
 ##                "location": tuple(obj.location),
 ##                "boundary_count": len(obj["pbraudio_boundary_empties"]) if "pbraudio_boundary_empties" in obj else 0

@@ -24,7 +24,7 @@ from bpy.props import FloatProperty, IntProperty, StringProperty, EnumProperty
 from bpy_extras.object_utils import AddObjectHelper
 
 from ..utils import environment_json
-from ..utils.common import update_boundary_positions, get_acoustic_domain_bounds, is_point_inside_domain
+from ..utils.common import update_boundary_positions, get_acoustic_domain_bounds, is_point_inside_domain, create_boundary_empties
 
 classes = []
 

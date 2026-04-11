@@ -281,7 +281,7 @@ class PBRAUDIO_OT_update_environment_boundaries(Operator):
                 
                 if boundary_empties:
                     # Import and use the update function
-                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
+#                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
 #                    op = PBRAUDIO_OT_add_world_environment
 #                    op = bpy.ops.object.pbraudio_add_world_environment
                     radius = obj.pbraudio.environment_size

@@ -116,6 +116,7 @@ def create_boundary_empties(center_obj, num_channels, radius):
 
 def update_boundary_count(center_obj, new_channel_count):
     """Update the number of boundary empties based on channel count"""
+    radius = center_obj.pbraudio.environment_size
     # Get current boundaries
     current_boundaries = []
     if "pbraudio_boundary_empties" in center_obj:
@@ -138,7 +139,6 @@ def update_boundary_count(center_obj, new_channel_count):
 
     # Add new boundaries if needed
     elif new_channel_count > current_count:
-        radius = center_obj.pbraudio.environment_size
         for i in range(current_count, new_channel_count):
             # Calculate position for new boundary
             golden_angle = math.pi * (3 - math.sqrt(5))

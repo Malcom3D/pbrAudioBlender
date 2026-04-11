@@ -57,7 +57,7 @@ def get_acoustic_domain_bounds():
 
 def is_point_inside_domain(point):
     """Check if a point is inside the acoustic domain"""
-    min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
+    min_co, max_co = get_acoustic_domain_bounds()
     if min_co is None or max_co is None:
         return True  # No domain defined, allow placement anywhere
 
@@ -173,7 +173,7 @@ def update_boundary_count(center_obj, new_channel_count):
 
 def update_boundary_positions(center_obj, boundary_empties, radius):
     """Update boundary positions based on center object location and domain constraints"""
-    min_co, max_co = PBRAUDIO_OT_add_world_environment.get_acoustic_domain_bounds()
+    min_co, max_co = get_acoustic_domain_bounds()
 
     for i, boundary in enumerate(boundary_empties):
         # Calculate original relative position
@@ -195,7 +195,7 @@ def update_boundary_positions(center_obj, boundary_empties, radius):
             world_position = center_obj.matrix_world @ local_position
 
             # Check if inside domain
-            if not PBRAUDIO_OT_add_world_environment.is_point_inside_domain(world_position):
+            if not is_point_inside_domain(world_position):
                 # Find intersection with domain along the radial direction
 
                 direction = (world_position - center_obj.location).normalized()
@@ -204,7 +204,7 @@ def update_boundary_positions(center_obj, boundary_empties, radius):
                 max_allowed_radius = radius
                 for test_radius in range(int(radius * 100), 0, -1):
                     test_position = center_obj.location + direction * (test_radius / 100.0)
-                    if PBRAUDIO_OT_add_world_environment.is_point_inside_domain(test_position):
+                    if is_point_inside_domain(test_position):
                         max_allowed_radius = test_radius / 100.0
                         break
 

@@ -190,7 +190,7 @@ class PBRAUDIO_PT_data_panel(Panel):
             elif object.pbraudio.output_type == 'MONO':
                 layout.prop(object.pbraudio, "mono_mic_type")
                 layout.prop(object.pbraudio, "output_cal_file", text="Microphone Calibration File")
-            layout.prop(object.pbraudio, "output_sphere_size")
+            layout.prop(object.pbraudio, "output_size")
 
 classes.append(PBRAUDIO_PT_data_panel)
 

@@ -18,11 +18,11 @@
 #
 #import bpy
 #from bpy.app.handlers import persistent
-#from bpy.utils import register_class, unregister_class
+from bpy.utils import register_class, unregister_class
 #
 #from ..utils import environment_json
 #
-#classes = []
+classes = []
 #
 ##from . import playback 
 #

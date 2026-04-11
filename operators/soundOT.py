@@ -622,7 +622,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
 
     def execute(self, context):
         # Check if point is inside acoustic domain
-        if not self.is_point_inside_domain(self.location):
+        if not is_point_inside_domain(self.location):
             self.report({'ERROR'}, "World Environment must be placed inside the Acoustic Domain")
             return {'CANCELLED'}
 
@@ -684,7 +684,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         layout.prop(self, "number_channels")
 
         # Show warning if outside domain
-        if not self.is_point_inside_domain(self.location):
+        if not is_point_inside_domain(self.location):
             layout.label(text="Warning: Outside Acoustic Domain", icon='ERROR')
 
 classes.append(PBRAUDIO_OT_add_world_environment)

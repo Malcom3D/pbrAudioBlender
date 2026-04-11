@@ -33,16 +33,16 @@ classes = []
 pbraudio_handler = []
 
 # handler to set shader in 3D View to SOLID
-@persistent
-def material_shader_only_handler(scene):
-    if scene.render.engine == 'PBRAUDIO':
-        if not bpy.context.screen == None and hasattr(bpy.context.screen, 'areas'):
-            for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    space = area.spaces.active
-                    if space.type == 'VIEW_3D':
-                        space.shading.type = 'SOLID'
-
+#@persistent
+#def material_shader_only_handler(scene):
+#    if scene.render.engine == 'PBRAUDIO':
+#        if not bpy.context.screen == None and hasattr(bpy.context.screen, 'areas'):
+#            for area in bpy.context.screen.areas:
+#                if area.type == 'VIEW_3D':
+#                    space = area.spaces.active
+#                    if space.type == 'VIEW_3D':
+#                        space.shading.type = 'SOLID'
+#
 #pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
 
 @persistent
@@ -162,7 +162,7 @@ def register():
         register_class(cls)
 
     # Register handlers
-    bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
+#    bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
     bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler)
     bpy.app.handlers.depsgraph_update_post.append(update_world_environment_boundaries)
 #    bpy.app.handlers.frame_change_post.append(update_world_environment_boundaries)
@@ -171,8 +171,8 @@ def register():
 def unregister():
     global pbraudio_handler
     # Remove handlers
-    if material_shader_only_handler in bpy.app.handlers.depsgraph_update_post:
-        bpy.app.handlers.depsgraph_update_post.remove(material_shader_only_handler)
+#    if material_shader_only_handler in bpy.app.handlers.depsgraph_update_post:
+#        bpy.app.handlers.depsgraph_update_post.remove(material_shader_only_handler)
     if select_nodetree_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(select_nodetree_handler)
     if update_world_environment_boundaries in bpy.app.handlers.depsgraph_update_post:

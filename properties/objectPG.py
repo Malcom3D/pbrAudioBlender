@@ -266,7 +266,7 @@ class PBRAudioObjectProperties(PropertyGroup):
     environment_size: FloatProperty(
         name="Environment Size",
         description="Environment Sphere Size",
-        update=update_environment_channels
+        update=update_environment_size
     )
 
 #    environment_dynamic_boundaries_update: BoolProperty(

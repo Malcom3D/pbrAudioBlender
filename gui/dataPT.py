@@ -21,7 +21,7 @@ from bpy.types import Panel, Operator
 from bpy.app.translations import contexts as i18n_contexts
 from bpy.props import FloatProperty
 
-from ..operator.soundOT import update_boundary_positions
+from ..operator.soundOT import update_boundary_positions, get_acoustic_domain_bounds, is_point_inside_domain
 
 classes = []
 
@@ -178,7 +178,8 @@ class PBRAUDIO_PT_data_panel(Panel):
                     for name in boundary_names:
                         boundary_obj = bpy.data.objects.get(name)
 #                        if boundary_obj and not op.is_point_inside_domain(boundary_obj.location):
-                        if boundary_obj and not PBRAUDIO_OT_add_world_environment.is_point_inside_domain(boundary_obj.location):
+#                        if boundary_obj and not PBRAUDIO_OT_add_world_environment.is_point_inside_domain(boundary_obj.location):
+                        if boundary_obj and not is_point_inside_domain(boundary_obj.location):
 #                            box.label(text="Some boundaries outside domain!", icon='ERROR')
                             layout.label(text="Some boundaries outside domain!", icon='ERROR')
                             break

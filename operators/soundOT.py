@@ -509,6 +509,7 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             
             # Create boundary empty
             boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)
+            boundary_empty.environment_boundary = True
             boundary_empty.empty_display_type = 'PLAIN_AXES'
             boundary_empty.empty_display_size = 0.05
             boundary_empty.location = position

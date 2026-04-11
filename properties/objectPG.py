@@ -233,6 +233,12 @@ class PBRAudioObjectProperties(PropertyGroup):
         default=False
     )
 
+    environment_boundary: BoolProperty(
+        name="pbraudio_environment_boundary",
+        description="Object is enviroment sound",
+        default=False
+    )
+
     environment_file: StringProperty(
         name="EnvironmetSource",
         description="Select the sound for the source",

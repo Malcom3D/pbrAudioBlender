@@ -664,7 +664,7 @@ class RenderExporter:
         name = empty.name_full.replace('.', '_')
     
         os.makedirs(f"{self.render_path}/data/pose", exist_ok=True)
-        os.makedirs(f"{self.render_path}/data/{name}", exist_ok=True)
+#        os.makedirs(f"{self.render_path}/data/{name}", exist_ok=True)
         scene = bpy.context.scene
 
         frame_data = {}
@@ -726,9 +726,10 @@ class RenderExporter:
             if empty.pbraudio.source_file.startswith('//'):
                 empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
-        acoustic_shader = self.get_acoustic_properties_from_empty(empty)
-        if not len(acoustic_shader) == 0 and hasattr(acoustic_shader, 'spatial_freq_response'):
-            empty_config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
+        if not source.pbraudio.environment_boundary:
+            acoustic_shader = self.get_acoustic_properties_from_empty(empty)
+            if not len(acoustic_shader) == 0 and hasattr(acoustic_shader, 'spatial_freq_response'):
+                empty_config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
 
         empty.select_set(False)
 

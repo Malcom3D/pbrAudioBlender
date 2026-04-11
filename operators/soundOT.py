@@ -509,7 +509,6 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
             
             # Create boundary empty
             boundary_empty = bpy.data.objects.new(f"WorldEnvironment_{i:02d}", None)
-            boundary_empty.environment_boundary = True
             boundary_empty.empty_display_type = 'PLAIN_AXES'
             boundary_empty.empty_display_size = 0.05
             boundary_empty.location = position
@@ -520,9 +519,10 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
                 cache_path = scene.pbraudio.cache_path
                 if cache_path.startswith('//'):
                     cache_path = bpy.path.abspath(cache_path)
-                    boundary_empty.pbraudio.source = True
-                    boundary_empty.pbraudio.source_type = 'SPHERE'
-                    boundary_empty.pbraudio.source_file = f"{cache_path}/Environments/{center_obj.name}/{boundary_empty.name}.raw"
+                boundary_empty.pbraudio.source = True
+                boundary_empty.pbraudio.source_type = 'SPHERE'
+                boundary_empty.pbraudio.environment_boundary = True
+                boundary_empty.pbraudio.source_file = f"{cache_path}/Environments/{center_obj.name}/{boundary_empty.name}.raw"
 
             # Make non-selectable
             boundary_empty.hide_select = True

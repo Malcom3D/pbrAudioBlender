@@ -319,7 +319,7 @@ class AmbisonicDecoder:
         positions = []
         
         for i in range(num_speakers):
-            azimuth = = 360 * i / num_speakers
+            azimuth = 360 * i / num_speakers
             elevation = 0  # Ear level
             
             positions.append((azimuth, elevation))

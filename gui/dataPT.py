@@ -21,7 +21,7 @@ from bpy.types import Panel, Operator
 from bpy.app.translations import contexts as i18n_contexts
 from bpy.props import FloatProperty
 
-from ..operator.soundOT import update_boundary_positions, get_acoustic_domain_bounds, is_point_inside_domain
+from ..utils.common import update_boundary_positions, get_acoustic_domain_bounds, is_point_inside_domain
 
 classes = []
 

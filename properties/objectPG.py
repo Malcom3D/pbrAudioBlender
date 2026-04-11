@@ -21,7 +21,7 @@ from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, PointerProperty, EnumProperty, FloatProperty, StringProperty, IntProperty
 
 from ..nodetrees import acousticNT
-from ..operators.soundOT import update_boundary_count
+from ..utils.common import update_boundary_count
 
 classes = []
 

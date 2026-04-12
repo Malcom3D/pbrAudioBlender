@@ -22,10 +22,6 @@ import numpy as np
 import trimesh
 import sys, os, json
 from mathutils import Matrix, Vector
-from bpy_extras.io_utils import axis_conversion
-
-from ..utils import frd_io, environment_json
-from ..utils.ambisonic_decoder import AmbisonicDecoder
 
 class RenderExporter:
     def __init__(self, scene: bpy.types.Scene, decimals: int = 18):

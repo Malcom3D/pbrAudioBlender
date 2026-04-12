@@ -17,6 +17,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
+import os
 from bpy.types import RenderEngine
 from mathutils import Matrix, Vector
 

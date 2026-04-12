@@ -55,7 +55,8 @@ class PBRAudioRenderEngine(RenderEngine):
     # render engine data here, for example stopping running render threads.
     def __del__(self):
         # Own delete code...
-        super().__del__()
+#        super().__del__()
+        pass
 
 #    # Render methods
 #    def update(self, data, depsgraph):

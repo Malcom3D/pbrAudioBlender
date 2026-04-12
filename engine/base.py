@@ -62,11 +62,9 @@ class PBRAudioRenderEngine(RenderEngine):
         """Update render data"""
         scene = depsgraph.scene
         if self.is_animation:
-            self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
+            self.report({'INFO'}, f"pbrAudio: update animation rendering in progress...")
         else:
-            self.report({'INFO'}, f"pbrAudio: rendering in progress...")
-
-        self.report({'INFO'}, f" pbrAudio rendering updated...")
+            self.report({'INFO'}, f"pbrAudio: update rendering in progress...")
 
     def render(self, depsgraph):
         """Main render method"""
@@ -87,7 +85,7 @@ class PBRAudioRenderEngine(RenderEngine):
             end_frame = scene.frame_end
         else:
             self.report({'INFO'}, f"pbrAudio: rendering in progress...")
-            start_frame = self.scene.frame_current
+            start_frame = scene.frame_current
             end_frame = start_frame
 
         # Find Domain Vector
@@ -99,12 +97,12 @@ class PBRAudioRenderEngine(RenderEngine):
 
         objects = exporter.find_objs_in_domain(domain_vertices=domain_vectors)
         for object in objects: 
-            self.export_animation_obj(object, start_frame, end_frame)
+            exporter.export_animation_obj(object, start_frame, end_frame)
 
         sources = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
         for source in sources:
             if source.pbraudio.source:
-                self.export_animation_empty(source, start_frame, end_frame)
+                exporter.export_animation_empty(source, start_frame, end_frame)
 
         outputs = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output')
         for output in outputs:

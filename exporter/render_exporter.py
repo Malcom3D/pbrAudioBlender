@@ -39,7 +39,7 @@ class RenderExporter:
         os.makedirs(self.render_path, exist_ok=True)
 
 #        self.depsgraph = bpy.context.evaluated_depsgraph_get()
-        self.depsgraph = depsgraph
+#        self.depsgraph = depsgraph
 
         self.config = {}
         system = {}
@@ -403,13 +403,13 @@ class RenderExporter:
         """Get world matrix including rotation and location"""
         return obj.matrix_world
 
-    def export_pose_empty(self, empty, frame_number):
+    def export_pose_empty(self, empty, frame_number, depsgraph):
         """Export source, output and camera empty data for a single frame"""
         # Set current frame
         bpy.context.scene.frame_set(frame_number)
 
 #        depsgraph = bpy.context.evaluated_depsgraph_get()
-        depsgraph = self.depsgraph
+#        depsgraph = self.depsgraph
         eval_empty = empty.evaluated_get(depsgraph)
 
         world_matrix = self.get_world_matrix(eval_empty)
@@ -425,14 +425,14 @@ class RenderExporter:
             'rotation': rotation
         }
 
-    def export_pose(self, obj, frame_number):
+    def export_pose(self, obj, frame_number, depsgraph):
         """Export mesh data for a single frame"""
         # Set current frame
         bpy.context.scene.frame_set(frame_number)
         
         # Get evaluated object (for modifiers and animation)
 #        depsgraph = bpy.context.evaluated_depsgraph_get()
-        depsgraph = self.depsgraph
+#        depsgraph = self.depsgraph
         eval_obj = obj.evaluated_get(depsgraph)
         mesh = eval_obj.to_mesh()
 #        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
@@ -511,7 +511,7 @@ class RenderExporter:
                 0 <= p_local.y <= 1 and 
                 0 <= p_local.z <= 1)
 
-    def find_empty_in_domain(self, domain_vertices, empty_type):
+    def find_empty_in_domain(self, domain_vertices, empty_type, depsgraph):
         """
         Find all output, source or camera empty objects inside the acoustic domain.
         Args:
@@ -521,16 +521,19 @@ class RenderExporter:
         """ 
         if empty_type == 'output':
             # Get all sources objects in the scene
-            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type in ['EMPTY', 'CAMERRA'] and obj.pbraudio.output]
+#            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type in ['EMPTY', 'CAMERRA'] and obj.pbraudio.output]
+            empty_objects = [obj for obj in depsgraph.objects if obj.type in ['EMPTY', 'CAMERRA'] and obj.pbraudio.output]
         elif empty_type == 'source':
             # Get all sources objects in the scene
-            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
+#            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
+            empty_objects = [obj for obj in depsgraph.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
 #        elif empty_type == 'camera':
 #            # Get all sources objects in the scene
 #            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'CAMERA' and obj.pbraudio.output]
         elif empty_type == 'environment':
             # Get all environment objects in the scene
-            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
+#            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
+            empty_objects = [obj for obj in depsgraph.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
 
         empty_inside = []
 
@@ -543,7 +546,7 @@ class RenderExporter:
                 empty_inside += [empty]
         return empty_inside
 
-    def find_objs_in_domain(self, domain_vertices, check_partial=True):
+    def find_objs_in_domain(self, domain_vertices, depsgraph, check_partial=True):
         """
         Find all mesh objects inside or intersecting the acoustic domain.
     
@@ -558,7 +561,8 @@ class RenderExporter:
         objects_inside = []
     
         # Get all mesh objects in the scene
-        mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
+#        mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
+        mesh_objects = [obj for obj in depsgraph.objects if obj.type == 'MESH']
 
         for obj in mesh_objects:
             # Skip the domain object itself
@@ -589,14 +593,14 @@ class RenderExporter:
 
         return objects_inside
         
-    def export_frame_obj(self, obj, frame_number):
+    def export_frame_obj(self, obj, frame_number, depsgraph):
         """Export mesh data for a single frame"""
         # Set current frame
         bpy.context.scene.frame_set(frame_number)
         
         # Get evaluated object (for modifiers and animation)
 #        depsgraph = bpy.context.evaluated_depsgraph_get()
-        depsgraph = self.depsgraph
+#        depsgraph = self.depsgraph
         eval_obj = obj.evaluated_get(depsgraph)
         mesh = eval_obj.to_mesh()
 #        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
@@ -675,7 +679,7 @@ class RenderExporter:
     def export_animation_empty(self, empty, start_frame, end_frame):
         """Export animation sequence"""
 
-        empty.select_set(True)
+#        empty.select_set(True)
         name = empty.name_full.replace('.', '_')
     
         os.makedirs(f"{self.render_path}/data/pose", exist_ok=True)
@@ -688,7 +692,8 @@ class RenderExporter:
         for frame in range(start_frame, end_frame + 1):
             scene.frame_float = frame
 #            bpy.context.view_layer.update()
-            frame_result = self.export_pose_empty(empty, frame)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            frame_result = self.export_pose_empty(empty, frame, depsgraph)
             location.append(frame_result['location'])
             rotation.append(frame_result['rotation'])
 
@@ -748,7 +753,7 @@ class RenderExporter:
             if not len(acoustic_shader) == 0 and hasattr(acoustic_shader, 'spatial_freq_response'):
                 empty_config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
 
-        empty.select_set(False)
+#        empty.select_set(False)
 
         if empty.pbraudio.source:
             self.sources.append(empty_config)
@@ -762,7 +767,7 @@ class RenderExporter:
     def export_animation_obj(self, obj, start_frame=None, end_frame=None):
         """Export animation sequence"""
 
-        obj.select_set(True)
+#        obj.select_set(True)
         name = obj.name_full.replace('.', '_')
         
         os.makedirs(f"{self.render_path}/data/pose", exist_ok=True)
@@ -776,7 +781,8 @@ class RenderExporter:
         for frame in range(start_frame, end_frame + 1):
             scene.frame_float = frame
 #            bpy.context.view_layer.update()
-            frame_result = self.export_pose(obj, frame)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            frame_result = self.export_pose(obj, frame, depsgraph)
             location.append(frame_result['location'])
             rotation.append(frame_result['rotation'])
 
@@ -803,8 +809,9 @@ class RenderExporter:
             for frame in range(start_frame, end_frame + 1):
                 scene.frame_float = frame
 #                bpy.context.view_layer.update()
+                depsgraph = bpy.context.evaluated_depsgraph_get()
                 print(f"Exporting {obj.name} frame {frame} in {self.render_path}/data/{name}...")
-                frame_result = self.export_frame_obj(obj, frame)
+                frame_result = self.export_frame_obj(obj, frame, depsgraph)
             
                 # Store each component separately for easy access
                 frame_data['vertices'] = frame_result['vertices']
@@ -819,8 +826,9 @@ class RenderExporter:
             print(f"{obj.name} is static...")
             print(f"Exporting pose for {obj.name} to {output_pose}...")
             np.savez_compressed(output_pose, location=location[0], rotation=rotation[0])            
+            depsgraph = bpy.context.evaluated_depsgraph_get()
             print(f"Exporting {obj.name} in {self.render_path}/data/{name}...")
-            frame_result = self.export_frame_obj(obj, start_frame)
+            frame_result = self.export_frame_obj(obj, start_frame, depsgraph)
 
             # Store each component separately for easy access
             frame_data[f'vertices'] = frame_result['vertices']
@@ -866,7 +874,7 @@ class RenderExporter:
             if self.to_add(name):
                 self.objects.append(object)
                 self.obj_idx += 1
-            obj.select_set(False)            
+#            obj.select_set(False)            
 
 #    def export_animation(self, start_frame, end_frame):
 #

@@ -43,8 +43,8 @@ class PBRAudioRenderEngine(RenderEngine):
     # `RenderEngine` data.
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-#        self.scene_data = None
-#        self.draw_data = None
+        self.scene_data = None
+        self.draw_data = None
 #        self.id_render = id(self)
         if self.is_animation:
             self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
@@ -53,21 +53,24 @@ class PBRAudioRenderEngine(RenderEngine):
 
     # When the render engine instance is destroy, this is called. Clean up any
     # render engine data here, for example stopping running render threads.
-#    def __del__(self):
+    def __del__(self):
         # Own delete code...
-#        super().__del__()
+        super().__del__()
 
-    # Render methods
-    def update(self, data, depsgraph):
-        """Update render data"""
-        scene = depsgraph.scene
-        if self.is_animation:
-            self.report({'INFO'}, f"pbrAudio: update animation rendering in progress...")
-        else:
-            self.report({'INFO'}, f"pbrAudio: update rendering in progress...")
+#    # Render methods
+#    def update(self, data, depsgraph):
+#        """Update render data"""
+#        scene = depsgraph.scene
+#        if self.is_animation:
+#            self.report({'INFO'}, f"pbrAudio: update animation rendering in progress...")
+#        else:
+#            self.report({'INFO'}, f"pbrAudio: update rendering in progress...")
 
     def render(self, depsgraph):
         """Main render method"""
+        it self.is_preview:
+            pass
+
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
 #        update_progress(progress_step)
         scene = depsgraph.scene

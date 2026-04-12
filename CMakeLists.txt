@@ -114,19 +114,19 @@ ExternalProject_Add(
 #    INSTALL_COMMAND cmake -E echo "Skipping install step."
 #    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 #)
-#ExternalProject_Add(
-#    resampy
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/4d/b9/3b00ac340a1aab3389ebcc52c779914a44aadf7b0cb7a3bf053195735607/resampy-0.4.3-py3-none-any.whl
-#    URL_HASH SHA256=ad2ed64516b140a122d96704e32bc0f92b23f45419e8b8f478e5a05f83edcebd
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    resampy
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/4d/b9/3b00ac340a1aab3389ebcc52c779914a44aadf7b0cb7a3bf053195735607/resampy-0.4.3-py3-none-any.whl
+    URL_HASH SHA256=ad2ed64516b140a122d96704e32bc0f92b23f45419e8b8f478e5a05f83edcebd
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 ExternalProject_Add(
     trimesh
     PREFIX "blender"
@@ -595,7 +595,7 @@ if (NOT WIN32)
     DEPENDS python_fcl
 #    DEPENDS networkx
 #    DEPENDS pympler
-#    DEPENDS resampy
+    DEPENDS resampy
     DEPENDS trimesh
     DEPENDS MarkupSafe
     DEPENDS tblib
@@ -695,7 +695,7 @@ if (NOT WIN32)
   add_dependencies(blender python_fcl)
 #  add_dependencies(blender networkx)
 #  add_dependencies(blender pympler)
-#  add_dependencies(blender resampy)
+  add_dependencies(blender resampy)
   add_dependencies(blender trimesh)
   add_dependencies(blender MarkupSafe)
   add_dependencies(blender tblib)

@@ -23,6 +23,8 @@ import trimesh
 import sys, os, json
 from mathutils import Matrix, Vector
 
+from ..utils import frd_io
+
 class RenderExporter:
     def __init__(self, scene: bpy.types.Scene, decimals: int = 18):
         np.set_printoptions(precision=decimals, floatmode='fixed', threshold=np.inf)

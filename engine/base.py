@@ -45,6 +45,7 @@ class PBRAudioRenderEngine(RenderEngine):
 #        self.scene_data = None
 #        self.draw_data = None
 #        self.id_render = id(self)
+        scene = depsgraph.scene
         render_path = scene.pbraudio.cache_path
         if render_path.startswith('//'):
             render_path = f"{bpy.path.abspath(render_path)}"

@@ -107,23 +107,23 @@ class PBRAudioRenderEngine(RenderEngine):
         domain_vertices = exporter.config["acoustic_domain"].get('geometry', [])
         domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
 
-        objects = exporter.find_objs_in_domain(domain_vertices=domain_vectors, depsgraph)
+        objects = exporter.find_objs_in_domain(domain_vertices=domain_vectors, depsgraph=depsgraph)
         for object in objects: 
             exporter.export_animation_obj(object, start_frame, end_frame)
 
-        sources = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source', depsgraph)
+        sources = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source', depsgraph=depsgraph)
         for source in sources:
             if source.pbraudio.source:
                 exporter.export_animation_empty(source, start_frame, end_frame)
 
-        outputs = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output', depsgraph)
+        outputs = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output', depsgraph=depsgraph)
         for output in outputs:
             if output.pbraudio.output:
                 exporter.export_animation_empty(output, start_frame, end_frame)
 
         exporter.save_config()
 
-        environments = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment', depsgraph)
+        environments = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment', depsgraph=depsgraph)
         if not len(environments) == 0:
             for environment in environments:
                 if not environment.pbraudio.environment_file == "":

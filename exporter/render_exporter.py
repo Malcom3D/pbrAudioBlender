@@ -406,13 +406,15 @@ class RenderExporter:
         bpy.context.scene.frame_set(frame_number)
 
         depsgraph = bpy.context.evaluated_depsgraph_get()
-        world_matrix = self.get_world_matrix(empty)
+        eval_empty = empty.evaluated_get(depsgraph)
+
+        world_matrix = self.get_world_matrix(eval_empty)
 
         # Get center position and rotation
         location = list([world_matrix.translation.x * self.scale_factor, world_matrix.translation.y * self.scale_factor, world_matrix.translation.z * self.scale_factor])
 
         # Extract rotation matrix (3x3)
-        rotation = list([empty.rotation_euler.x, empty.rotation_euler.y, empty.rotation_euler.z])
+        rotation = list([eval_empty.rotation_euler.x, eval_empty.rotation_euler.y, eval_empty.rotation_euler.z])
 
         return {
             'location': location,

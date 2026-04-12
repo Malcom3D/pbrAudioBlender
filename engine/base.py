@@ -70,19 +70,24 @@ class PBRAudioRenderEngine(RenderEngine):
     def render(self, depsgraph):
         """Main render method"""
         if self.is_preview:
-            pass
+            return
+
+        for world in bpy.data.worlds.values():
+            if not hasattr(world.pbraudio, 'acoustic_domain'):
+                self.report({'ERROR'}, f"pbrAudio: AcousticDomain needed")
+                    return
 
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
 #        update_progress(progress_step)
         scene = depsgraph.scene
-        render_path = scene.pbraudio.cache_path
-        if render_path.startswith('//'):
-            render_path = f"{bpy.path.abspath(render_path)}"
+        cache_path = scene.pbraudio.cache_path
+        if cache_path.startswith('//'):
+            cache_path = f"{bpy.path.abspath(cache_path)}"
         os.makedirs(render_path, exist_ok=True)
-        self.render_path = f"{render_path}/AcousticDomain"
+        render_path = f"{cache_path}/AcousticDomain"
         os.makedirs(self.render_path, exist_ok=True)
         decimals = 18
-        exporter = RenderExporter(scene=scene, decimals=decimals)
+
         if self.is_animation:
             self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
             start_frame = scene.frame_start
@@ -91,6 +96,9 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, f"pbrAudio: rendering in progress...")
             start_frame = scene.frame_current
             end_frame = start_frame
+
+        # Init RenderExporter
+        exporter = RenderExporter(scene=scene, decimals=decimals)
 
         # Find Domain Vector
         for world in bpy.data.worlds.values():
@@ -118,7 +126,7 @@ class PBRAudioRenderEngine(RenderEngine):
             for environment in environments:
                 if not environment.pbraudio.environment_file == "":
                     # Save environment data as json
-                    json_config_path = environment_json.save_environment_json(environment, self.render_path)
+                    json_config_path = environment_json.save_environment_json(environment, render_path)
                     # Decode boundary empty audio channel from saved json
                     ambisonic_decoder = AmbisonicDecoder(json_config_path=json_config_path)
                     ambisonic_decoder.save_decoded_files()
@@ -129,17 +137,17 @@ class PBRAudioRenderEngine(RenderEngine):
         # whenever the scene or 3D viewport changes. This method is where data
         # should be read from Blender in the same thread. Typically a render
         # thread will be started to do the work while keeping Blender responsive.
-#        def view_update(self, context, depsgraph):
-#            """Update viewport"""
-#            pass
+        def view_update(self, context, depsgraph):
+            """Update viewport"""
+            pass
 
         # For viewport renders, this method is called whenever Blender redraws
         # the 3D viewport. The renderer is expected to quickly draw the render
         # with OpenGL, and not perform other expensive work.
         # Blender will draw overlays for selection and editing on top of the
         # rendered image automatically.
-#        def view_draw(self, context, depsgraph):
-#            """Draw viewport"""
-#            pass
+        def view_draw(self, context, depsgraph):
+            """Draw viewport"""
+            pass
 
 classes.append(PBRAudioRenderEngine)

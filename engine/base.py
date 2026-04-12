@@ -45,13 +45,6 @@ class PBRAudioRenderEngine(RenderEngine):
 #        self.scene_data = None
 #        self.draw_data = None
 #        self.id_render = id(self)
-        scene = depsgraph.scene
-        render_path = scene.pbraudio.cache_path
-        if render_path.startswith('//'):
-            render_path = f"{bpy.path.abspath(render_path)}"
-        os.makedirs(render_path, exist_ok=True)
-        self.render_path = f"{render_path}/AcousticDomain"
-        os.makedirs(self.render_path, exist_ok=True)
         if self.is_animation:
             self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
         else:
@@ -79,6 +72,12 @@ class PBRAudioRenderEngine(RenderEngine):
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
 #        update_progress(progress_step)
         scene = depsgraph.scene
+        render_path = scene.pbraudio.cache_path
+        if render_path.startswith('//'):
+            render_path = f"{bpy.path.abspath(render_path)}"
+        os.makedirs(render_path, exist_ok=True)
+        self.render_path = f"{render_path}/AcousticDomain"
+        os.makedirs(self.render_path, exist_ok=True)
         decimals = 18
         exporter = RenderExporter(scene=scene, decimals=decimals)
         if self.is_animation:

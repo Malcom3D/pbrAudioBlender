@@ -98,7 +98,7 @@ class PBRAudioRenderEngine(RenderEngine):
             end_frame = start_frame
 
         # Init RenderExporter
-        exporter = RenderExporter(scene=scene, decimals=decimals)
+        exporter = RenderExporter(depsgraph=depsgraph, scene=scene, decimals=decimals)
 
         # Find Domain Vector
         for world in bpy.data.worlds.values():

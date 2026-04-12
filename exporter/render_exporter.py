@@ -26,7 +26,7 @@ from mathutils import Matrix, Vector
 from ..utils import frd_io
 
 class RenderExporter:
-    def __init__(self, scene: bpy.types.Scene, decimals: int = 18):
+    def __init__(self, depsgraph: bpy.types.Depsgraph, scene: bpy.types.Scene, decimals: int = 18):
         np.set_printoptions(precision=decimals, floatmode='fixed', threshold=np.inf)
         self.decimals = decimals
         self.scene = bpy.context.scene
@@ -38,7 +38,8 @@ class RenderExporter:
         self.render_path = f"{render_path}/AcousticDomain"
         os.makedirs(self.render_path, exist_ok=True)
 
-        self.depsgraph = bpy.context.evaluated_depsgraph_get()
+#        self.depsgraph = bpy.context.evaluated_depsgraph_get()
+        self.depsgraph = depsgraph
 
         self.config = {}
         system = {}

@@ -185,6 +185,7 @@ def update_boundary_count(center_obj, new_channel_count):
 def update_boundary_positions(center_obj, boundary_empties, radius):
     """Update boundary positions based on center object location and domain constraints"""
     min_co, max_co = get_acoustic_domain_bounds()
+    print('get_acoustic_domain_bounds: ', min_co, max_co)
 
     # Generate sphere points for all boundaries
     sphere_points = fibonacci_sphere(len(boundary_empties))
@@ -203,6 +204,7 @@ def update_boundary_positions(center_obj, boundary_empties, radius):
 
             # Check if inside domain
             if not is_point_inside_domain(world_position):
+                print('is_point_inside_domain')
                 # Find intersection with domain along the radial direction
 
                 direction = (world_position - center_obj.location).normalized()

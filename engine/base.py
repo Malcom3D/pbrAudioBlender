@@ -68,7 +68,7 @@ class PBRAudioRenderEngine(RenderEngine):
 
     def render(self, depsgraph):
         """Main render method"""
-        it self.is_preview:
+        if self.is_preview:
             pass
 
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())

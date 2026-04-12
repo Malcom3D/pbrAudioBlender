@@ -40,6 +40,7 @@ class RenderExporter:
         self.render_path = f"{render_path}/AcousticDomain"
         os.makedirs(self.render_path, exist_ok=True)
 
+        self.config = {}
         system = {}
         system["sample_rate"] = self.scene.pbraudio.sample_rate
         system["bit_depth"] = self.scene.pbraudio.bit_depth.replace('BIT', '')
@@ -56,20 +57,27 @@ class RenderExporter:
             system['freq_max'] = self.scene.pbraudio.sample_rate / 2
             system['freq_min'] = 5
 
+        self.config["system"] = system
+
         self.objects = []
         self.sources = []
         self.outputs = []
-        self.cameras = []
         self.environments = []
-        self.config = {}
-        self.config["system"] = system
 
         self.not_valid = []
         self.obj_idx = 0
         self.source_idx = 0
         self.output_idx = 0
-        self.camera_idx = 0
         self.environment_idx = 0
+
+        # Acoustic Domain config
+        self.domain_config()
+
+        # Render config
+        self.wave_propagation()
+        self.interface_config()
+        self.resonance_config()
+        self.termination_config()
 
     def domain_config(self):
         domain_config = {}
@@ -508,13 +516,13 @@ class RenderExporter:
         """ 
         if empty_type == 'output':
             # Get all sources objects in the scene
-            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.output]
+            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type in ['EMPTY', 'CAMERRA'] and obj.pbraudio.output]
         elif empty_type == 'source':
             # Get all sources objects in the scene
             empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
-        elif empty_type == 'camera':
-            # Get all sources objects in the scene
-            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'CAMERA' and obj.pbraudio.output]
+#        elif empty_type == 'camera':
+#            # Get all sources objects in the scene
+#            empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'CAMERA' and obj.pbraudio.output]
         elif empty_type == 'environment':
             # Get all environment objects in the scene
             empty_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
@@ -658,7 +666,7 @@ class RenderExporter:
                 to_be_added = False
         return to_be_added
 
-    def export_animation_empty(self, empty, empty_idx, start_frame=None, end_frame=None):
+    def export_animation_empty(self, empty, start_frame, end_frame):
         """Export animation sequence"""
 
         empty.select_set(True)
@@ -673,19 +681,21 @@ class RenderExporter:
         total_frames = 0
         for frame in range(start_frame, end_frame + 1):
             scene.frame_float = frame
-#            bpy.context.view_layer.update()
+            bpy.context.view_layer.update()
             frame_result = self.export_pose_empty(empty, frame)
             location.append(frame_result['location'])
             rotation.append(frame_result['rotation'])
 
         location = np.round(np.array(location), self.decimals)
         rotation = np.round(np.array(rotation), self.decimals)
-#        print('name: ', name, 'location: ', location, 'rotation: ', rotation)
         output_pose = os.path.join(self.render_path, f"data/pose/{name}.npz")
 
         empty_config = {}
         empty_config["name"] = name
-        empty_config["idx"] = empty_idx
+        if empty.pbraudio.source:
+            empty_config["idx"] = self.source_idx
+        elif empty.pbraudio.output:
+            empty_config["idx"] = self.output_idx
         empty_config["pose_path"] = f"{self.render_path}/data/pose"
 
         # verify is not static
@@ -727,14 +737,21 @@ class RenderExporter:
             if empty.pbraudio.source_file.startswith('//'):
                 empty_config['audio_file'] = bpy.path.abspath(empty.pbraudio.source_file)
 
-        if not empty.pbraudio.environment_boundary:
+        if not empty.pbraudio.environment_boundary and not empty.pbraudio.environment:
             acoustic_shader = self.get_acoustic_properties_from_empty(empty)
             if not len(acoustic_shader) == 0 and hasattr(acoustic_shader, 'spatial_freq_response'):
                 empty_config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
 
         empty.select_set(False)
 
-        return empty_config
+        if empty.pbraudio.source:
+            self.sources.append(empty_config)
+            self.source_idx += 1
+        elif empty.pbraudio.output:
+            self.output.append(empty_config)
+            self.output_idx += 1
+
+#        return empty_config
 
     def export_animation_obj(self, obj, start_frame=None, end_frame=None):
         """Export animation sequence"""
@@ -752,7 +769,7 @@ class RenderExporter:
         total_frames = 0
         for frame in range(start_frame, end_frame + 1):
             scene.frame_float = frame
-#            bpy.context.view_layer.update()
+            bpy.context.view_layer.update()
             frame_result = self.export_pose(obj, frame)
             location.append(frame_result['location'])
             rotation.append(frame_result['rotation'])
@@ -774,12 +791,12 @@ class RenderExporter:
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
             object["static"] = False
             print(f"{obj.name} is not static...")
-#            print(f"Exporting pose for {obj.name} to {output_pose}...")
+            print(f"Exporting pose for {obj.name} to {output_pose}...")
             np.savez_compressed(output_pose, location=location, rotation=rotation)
 
             for frame in range(start_frame, end_frame + 1):
                 scene.frame_float = frame
-#                bpy.context.view_layer.update()
+                bpy.context.view_layer.update()
                 print(f"Exporting {obj.name} frame {frame} in {self.render_path}/data/{name}...")
                 frame_result = self.export_frame_obj(obj, frame)
             
@@ -845,78 +862,75 @@ class RenderExporter:
                 self.obj_idx += 1
             obj.select_set(False)            
 
-    def export_animation(self, start_frame=None, end_frame=None):
-        if start_frame is None:
-            start_frame = self.scene.frame_current
-        if end_frame is None:
-            end_frame = start_frame
-
-        self.domain_config()
-        for world in bpy.data.worlds.values():
-            acoustic_domain = world.pbraudio.acoustic_domain
-            world_matrix = acoustic_domain.matrix_world
-        domain_vertices = self.config["acoustic_domain"].get('geometry', [])
-        domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
-        objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
-        for obj in objects:
-            self.export_animation_obj(obj, start_frame, end_frame)
-
-        # Get sources and environment
-        environments = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment')
-        boundaries_empties = []
-        if not len(environments) == 0:
-            boundaries_empties = []
-            for environment in environments:
-                if not environment.pbraudio.environment_file == "":
-                    # Save environment data as json
-                    json_config_path = environment_json.save_environment_json(environment, self.render_path)
-                    # Decode boundary empty audio channel from saved json
-                    ambisonic_decoder = AmbisonicDecoder(json_config_path=json_config_path)
-                    ambisonic_decoder.save_decoded_files()
-                # find all children boundary empty
+#    def export_animation(self, start_frame, end_frame):
+#
+#        for world in bpy.data.worlds.values():
+#            acoustic_domain = world.pbraudio.acoustic_domain
+#            world_matrix = acoustic_domain.matrix_world
+#        domain_vertices = self.config["acoustic_domain"].get('geometry', [])
+#        domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
+#        objects = self.find_objs_in_domain(domain_vertices=domain_vectors)
+#        for obj in objects:
+#            self.export_animation_obj(obj, start_frame, end_frame)
+#
+#        # Get sources and environment
+##############
+#        environments = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment')
+#        boundaries_empties = []
+#        if not len(environments) == 0:
+#            boundaries_empties = []
+#            for environment in environments:
+#                if not environment.pbraudio.environment_file == "":
+#                    # Save environment data as json
+#                    json_config_path = environment_json.save_environment_json(environment, self.render_path)
+#                    # Decode boundary empty audio channel from saved json
+#                    ambisonic_decoder = AmbisonicDecoder(json_config_path=json_config_path)
+#                    ambisonic_decoder.save_decoded_files()
+################
+#                # find all children boundary empty
 #                boundary_empties = environment.children
 #                for boundary_empty in boundary_empties:
 #                    boundary_empty.hide_select = False
 #            boundaries_empties += boundary_empties
-        sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
+#        sources = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source')
 
-        to_be_hided = False
-        for source in sources:
-            if source.pbraudio.source:
-                if source.hide_select == True:
-                    to_be_hided = True
-                    source.hide_select = False
-                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
+#        to_be_hided = False
+#        for source in sources:
+#            if source.pbraudio.source:
+#                if source.hide_select == True:
+#                    to_be_hided = True
+#                    source.hide_select = False
+#                self.sources += [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
 #                exported_source = [self.export_animation_empty(source, self.source_idx, start_frame, end_frame)]
 #                self.sources += exported_source
-                self.source_idx += 1
-                if to_be_hided == True:
-                    to_be_hided = False
-                    source.hide_select = True
-        self.config["sources"] = self.sources
+#                self.source_idx += 1
+#                if to_be_hided == True:
+#                    to_be_hided = False
+#                    source.hide_select = True
+#        self.config["sources"] = self.sources
 #        if not len(boundaries_empties) == 0:
 #            for boundary_empty in boundaries_empties:
 #                boundary_empty.hide_select = True
 
-        outputs = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output')
-        for output in outputs:
-            if output.pbraudio.output:
-                self.output_idx += 1
-                self.outputs += [self.export_animation_empty(output, self.output_idx, start_frame, end_frame)]
-        self.config["outputs"] = self.outputs
+#        outputs = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output')
+#        for output in outputs:
+#            if output.pbraudio.output:
+#                self.output_idx += 1
+#                self.outputs += [self.export_animation_empty(output, self.output_idx, start_frame, end_frame)]
+#        self.config["outputs"] = self.outputs
 
-        cameras = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='camera')
-        for camera in cameras:
-            if camera.pbraudio.output:
-                self.camera_idx += 1
-                self.cameras += [self.export_animation_empty(camera, self.camera_idx, start_frame, end_frame)]
-        self.config["cameras"] = self.cameras
+#        cameras = self.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='camera')
+#        for camera in cameras:
+#            if camera.pbraudio.output:
+#                self.camera_idx += 1
+#                self.cameras += [self.export_animation_empty(camera, self.camera_idx, start_frame, end_frame)]
+#        self.config["cameras"] = self.cameras
 
-        self.wave_propagation()
-        self.interface_config()
-        self.resonance_config()
-        self.termination_config()
-        self.save_config()
+#        self.wave_propagation()
+#        self.interface_config()
+#        self.resonance_config()
+#        self.termination_config()
+#        self.save_config()
 
     def save_config(self):
         # remove invalid objects and replace object name with idx in connected
@@ -953,6 +967,8 @@ class RenderExporter:
 
         # add objects to config
         self.config["objects"] = self.objects
+        self.config["sources"] = self.sources
+        self.config["outputs"] = self.outputs
 
         # create config file
         config_file = f"{self.render_path}/config.json"

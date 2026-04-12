@@ -23,7 +23,6 @@ from bpy.types import Operator
 from bpy.props import FloatProperty, IntProperty, StringProperty, EnumProperty
 from bpy_extras.object_utils import AddObjectHelper
 
-from ..utils import environment_json
 from ..utils.common import update_boundary_positions, get_acoustic_domain_bounds, is_point_inside_domain, create_boundary_empties
 
 classes = []
@@ -474,14 +473,14 @@ class PBRAUDIO_OT_add_world_environment(Operator, AddObjectHelper):
         # Add handler for location updates
         center_empty.pbraudio.environment_size = self.sphere_radius
 
-        # Save environment data to JSON
-        if hasattr(context.scene, 'pbraudio') and context.scene.pbraudio.cache_path:
-            cache_path = context.scene.pbraudio.cache_path
-            if cache_path.startswith('//'):
-                cache_path = bpy.path.abspath(cache_path)
-            json_path = environment_json.save_environment_json(center_empty, cache_path)
-            if json_path:
-                self.report({'INFO'}, f"Environment JSON saved: {json_path}")
+#        # Save environment data to JSON
+#        if hasattr(context.scene, 'pbraudio') and context.scene.pbraudio.cache_path:
+#            cache_path = context.scene.pbraudio.cache_path
+#            if cache_path.startswith('//'):
+#                cache_path = bpy.path.abspath(cache_path)
+#            json_path = environment_json.save_environment_json(center_empty, cache_path)
+#            if json_path:
+#                self.report({'INFO'}, f"Environment JSON saved: {json_path}")
 
         # Set center empty as active
         context.view_layer.objects.active = center_empty

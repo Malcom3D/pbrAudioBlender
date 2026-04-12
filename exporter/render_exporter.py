@@ -679,7 +679,7 @@ class RenderExporter:
         total_frames = 0
         for frame in range(start_frame, end_frame + 1):
             scene.frame_float = frame
-            bpy.context.view_layer.update()
+#            bpy.context.view_layer.update()
             frame_result = self.export_pose_empty(empty, frame)
             location.append(frame_result['location'])
             rotation.append(frame_result['rotation'])
@@ -767,7 +767,7 @@ class RenderExporter:
         total_frames = 0
         for frame in range(start_frame, end_frame + 1):
             scene.frame_float = frame
-            bpy.context.view_layer.update()
+#            bpy.context.view_layer.update()
             frame_result = self.export_pose(obj, frame)
             location.append(frame_result['location'])
             rotation.append(frame_result['rotation'])
@@ -794,7 +794,7 @@ class RenderExporter:
 
             for frame in range(start_frame, end_frame + 1):
                 scene.frame_float = frame
-                bpy.context.view_layer.update()
+#                bpy.context.view_layer.update()
                 print(f"Exporting {obj.name} frame {frame} in {self.render_path}/data/{name}...")
                 frame_result = self.export_frame_obj(obj, frame)
             

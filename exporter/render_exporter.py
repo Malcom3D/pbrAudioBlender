@@ -746,7 +746,7 @@ class RenderExporter:
             self.sources.append(empty_config)
             self.source_idx += 1
         elif empty.pbraudio.output:
-            self.output.append(empty_config)
+            self.outputs.append(empty_config)
             self.output_idx += 1
 
 #        return empty_config

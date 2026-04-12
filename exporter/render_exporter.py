@@ -399,6 +399,7 @@ class RenderExporter:
         # Set current frame
         bpy.context.scene.frame_set(frame_number)
 
+        depsgraph = bpy.context.evaluated_depsgraph_get()
         world_matrix = self.get_world_matrix(empty)
 
         # Get center position and rotation
@@ -689,6 +690,7 @@ class RenderExporter:
 
         # verify is not static
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
+            print(f"{empty.name} is not static...")
             empty_config["static"] = False
             print(f"{empty.name} is not static...")
             print(f"Exporting pose for {empty.name} to {output_pose}...")
@@ -698,7 +700,6 @@ class RenderExporter:
             print(f"{empty.name} is static...")
             print(f"Exporting pose for {empty.name} to {output_pose}...")
             np.savez_compressed(output_pose, location=location[0], rotation=rotation[0])
-            print(f"Exporting {empty.name} in {self.render_path}/data/{name}...")
 
         # Find pbraudio empty type
         if empty.pbraudio.output:

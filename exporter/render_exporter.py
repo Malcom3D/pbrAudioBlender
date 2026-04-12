@@ -38,6 +38,8 @@ class RenderExporter:
         self.render_path = f"{render_path}/AcousticDomain"
         os.makedirs(self.render_path, exist_ok=True)
 
+        self.depsgraph = bpy.context.evaluated_depsgraph_get()
+
         self.config = {}
         system = {}
         system["sample_rate"] = self.scene.pbraudio.sample_rate
@@ -405,7 +407,8 @@ class RenderExporter:
         # Set current frame
         bpy.context.scene.frame_set(frame_number)
 
-        depsgraph = bpy.context.evaluated_depsgraph_get()
+#        depsgraph = bpy.context.evaluated_depsgraph_get()
+        depsgraph = self.depsgraph
         eval_empty = empty.evaluated_get(depsgraph)
 
         world_matrix = self.get_world_matrix(eval_empty)
@@ -427,7 +430,8 @@ class RenderExporter:
         bpy.context.scene.frame_set(frame_number)
         
         # Get evaluated object (for modifiers and animation)
-        depsgraph = bpy.context.evaluated_depsgraph_get()
+#        depsgraph = bpy.context.evaluated_depsgraph_get()
+        depsgraph = self.depsgraph
         eval_obj = obj.evaluated_get(depsgraph)
         mesh = eval_obj.to_mesh()
 #        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
@@ -590,7 +594,8 @@ class RenderExporter:
         bpy.context.scene.frame_set(frame_number)
         
         # Get evaluated object (for modifiers and animation)
-        depsgraph = bpy.context.evaluated_depsgraph_get()
+#        depsgraph = bpy.context.evaluated_depsgraph_get()
+        depsgraph = self.depsgraph
         eval_obj = obj.evaluated_get(depsgraph)
         mesh = eval_obj.to_mesh()
 #        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)

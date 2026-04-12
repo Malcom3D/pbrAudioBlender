@@ -83,9 +83,9 @@ class PBRAudioRenderEngine(RenderEngine):
         cache_path = scene.pbraudio.cache_path
         if cache_path.startswith('//'):
             cache_path = f"{bpy.path.abspath(cache_path)}"
-        os.makedirs(render_path, exist_ok=True)
+        os.makedirs(cache_path, exist_ok=True)
         render_path = f"{cache_path}/AcousticDomain"
-        os.makedirs(self.render_path, exist_ok=True)
+        os.makedirs(render_path, exist_ok=True)
         decimals = 18
 
         if self.is_animation:

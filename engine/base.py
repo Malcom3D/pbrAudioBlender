@@ -75,7 +75,7 @@ class PBRAudioRenderEngine(RenderEngine):
         for world in bpy.data.worlds.values():
             if not hasattr(world.pbraudio, 'acoustic_domain'):
                 self.report({'ERROR'}, f"pbrAudio: AcousticDomain needed")
-                    return
+                return
 
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
 #        update_progress(progress_step)

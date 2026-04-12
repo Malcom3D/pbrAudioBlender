@@ -79,7 +79,7 @@ wheels = [
    "./downloads/markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/trimesh-4.8.3-py3-none-any.whl",
    "./downloads/fast_simplification-0.1.13-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
-#   "./downloads/resampy-0.4.3-py3-none-any.whl",
+   "./downloads/resampy-0.4.3-py3-none-any.whl",
 #   "./downloads/Pympler-1.1-py3-none-any.whl",
 #   "./downloads/networkx-3.6-py3-none-any.whl",
    "./downloads/python_fcl-0.7.0.10-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",

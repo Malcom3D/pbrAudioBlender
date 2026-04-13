@@ -428,6 +428,8 @@ class RenderExporter:
             objects = [obj for obj in self.depsgraph.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
         else:
             return objects_inside
+
+        print('all objects: ', obj_type, objects)
         
         domain_name = self.config["acoustic_domain"].get("name", "")
         

@@ -268,7 +268,7 @@ class PBRAudioRenderEngine(RenderEngine):
         
         # In a real implementation, you'd use proper async rendering
         # For now, we'll wait for completion (not ideal for UI)
-        self self._render_thread.join()
+        self._render_thread.join()
         
         self.report({'INFO'}, "pbrAudio: Render completed")
     

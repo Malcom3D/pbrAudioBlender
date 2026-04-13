@@ -148,7 +148,7 @@ class PBRAudioRenderEngine(RenderEngine):
                     self.report({'INFO'}, f"Decoding ambisonic file for {obj.name}")
 
                     # Create decoder
-                    decoder = AmbisonicDecoder(config_data=json_config_path)
+                    decoder = AmbisonicDecoder(json_config_path=json_config_path)
 
                     # Decode to boundary positions
                     decoder.save_decoded_files()

@@ -33,8 +33,8 @@ class PBRAudioRenderEngine(RenderEngine):
     bl_label = "pbrAudio"
     bl_use_preview = False
     bl_use_material = False
-    bl_use_eevee_viewport = False
-    bl_use_shading_nodes_custom = False
+    bl_use_eevee_viewport = True
+    bl_use_shading_nodes_custom = True
 
     # Init is called whenever a new render engine instance is created. Multiple
     # instances may exist at the same time, for example for a viewport and final
@@ -77,7 +77,7 @@ class PBRAudioRenderEngine(RenderEngine):
 #
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
 #        update_progress(progress_step)
-#        scene = depsgraph.scene
+        scene = depsgraph.scene
 #        cache_path = scene.pbraudio.cache_path
 #        if cache_path.startswith('//'):
 #            cache_path = f"{bpy.path.abspath(cache_path)}"

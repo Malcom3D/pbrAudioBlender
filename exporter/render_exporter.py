@@ -351,7 +351,7 @@ class RenderExporter:
                 prop_value = getattr(node, prop_name)
                 
                 # Apply unit conversions
-                if 'young_modulus' in prop prop_name:
+                if 'young_modulus' in prop_name:
                     prop_value *= 1e9
                 elif 'damping' in prop_name:
                     prop_value *= 0.01

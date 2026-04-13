@@ -318,14 +318,17 @@ class RenderExporter:
             target_dict['acoustic_properties'] = source_dict
         elif source_dict['type'] == 'FrequencyResponse':
             self.add_frequency_response(target_dict, source_dict, socket_name)
+        elif source_dict['type'] == 'SpatialFrequencyResponse':
+            # TODO: Add azimuth and elevation handling
+            pass
     
     def merge_empty_properties(self, target_dict, source_dict, socket_name):
         """Merge empty node properties"""
-        if source_dict['type'] == 'SpatialFrequencyResponse':
+        if source_dict['type'] == 'FrequencyResponse':
+            self.add_frequency_response(target_dict, source_dict, socket_name)
+        elif source_dict['type'] == 'SpatialFrequencyResponse':
             # TODO: Add azimuth and elevation handling
             pass
-        elif source_dict['type'] == 'FrequencyResponse':
-            self.add_frequency_response(target_dict, source_dict, socket_name)
     
     def add_frequency_response(self, target_dict, source_dict, socket_name):
         """Add frequency response data"""
@@ -504,6 +507,7 @@ class RenderExporter:
     def export_outputs(self, domain_vertices, start_frame, end_frame):
         """Export output objects"""
         output_objects = self.find_objects_in_domain(domain_vertices, 'output')
+        print('export_outputs: ', output_objects)
         
         for output in output_objects:
             self.export_empty_animation(output, start_frame, end_frame, 'output')
@@ -867,8 +871,8 @@ class RenderExporter:
         # Add acoustic properties if not a boundary
         if not empty.pbraudio.environment_boundary and not empty.pbraudio.environment:
             acoustic_shader = self.get_acoustic_properties_from_empty(empty)
-            if 'spatial_freq_response' in acoustic_shader:
-                config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
+#            if 'spatial_freq_response' in acoustic_shader:
+#                config["spatial_freq_response"] = acoustic_shader['spatial_freq_response']
         
         return config
     

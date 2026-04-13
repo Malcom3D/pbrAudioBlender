@@ -126,14 +126,46 @@ class PBRAudioRenderEngine(RenderEngine):
                 self.report({'ERROR'}, "Scene export failed")
                 self._is_rendering = False
                 return
-            
-            # Step 2: Run external acoustic engine
+
+            # Step 2: Decode Ambisonic Environment sound track
+            cache_path = scene.pbraudio.cache_path
+
+            if cache_path.startswith('//'):
+                cache_path = bpy.path.abspath(cache_path)
+
+            # Create cache_path directory if it doesn't exist
+            os.makedirs(cache_path, exist_ok=True)
+
+            for obj in bpy.data.objects:
+                if hasattr(obj, 'pbraudio') and obj.pbraudio.environment not obj.environment.pbraudio.environment_file == "":
+                    # Save environment data
+                    json_config_path = environment_json.save_environment_json(obj, cache_path)
+#                    env_data = environment_json.load_environment_json(json_path)
+
+#                    # Check if we have ambisonic file to decode
+#                    if env_data.get("file_path") and os.path.exists(env_data["file_path"]):
+#                        self.report({'INFO'}, f"Decoding ambisonic file for {obj.name}")
+                    self.report({'INFO'}, f"Decoding ambisonic file for {obj.name}")
+
+                    # Create decoder
+                    decoder = AmbisonicDecoder(config_data=env_data)
+
+                    # Decode to boundary positions
+                    decoder.save_decoded_files()
+#                    decoder.save_decoded_files(
+#                        cache_path=os.path.join(output_dir, "Decoded"),
+#                        normalize=True
+#                    )
+
+
+            # Step 3: Run external acoustic engine
             config_path = os.path.join(self.exporter.render_path, "config.json")
+
             output_dir = scene.pbraudio.output_path
-            
+
             if output_dir.startswith('//'):
                 output_dir = bpy.path.abspath(output_dir)
-            
+
             # Create output directory if it doesn't exist
             os.makedirs(output_dir, exist_ok=True)
             

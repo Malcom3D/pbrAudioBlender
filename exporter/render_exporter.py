@@ -979,6 +979,8 @@ class RenderExporter:
                 return int(obj)
             elif isinstance(obj, np.floating):
                 return float(obj)
+            elif isinstance(obj, np.bool_):
+                return bool(obj)
             elif isinstance(obj, dict):
                 return {key: convert_for_json(value) for key, value in obj.items()}
             elif isinstance(obj, list):
@@ -987,7 +989,8 @@ class RenderExporter:
                 return obj
         
         config_json = convert_for_json(self.config)
-        
+
+        print(config_json)
         with open(config_file, 'w') as f:
             json.dump(config_json, f, indent=2, separators=(',', ': '))
         

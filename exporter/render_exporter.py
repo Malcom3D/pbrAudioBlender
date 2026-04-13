@@ -424,6 +424,7 @@ class RenderExporter:
             objects = [obj for obj in self.depsgraph.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
         elif obj_type == 'output':
             objects = [obj for obj in self.depsgraph.objects if obj.type in ['EMPTY', 'CAMERA'] and obj.pbraudio.output]
+            print('objects_inside output: ', objects)
         elif obj_type == 'environment':
             objects = [obj for obj in self.depsgraph.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
         else:

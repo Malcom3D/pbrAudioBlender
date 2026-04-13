@@ -51,4 +51,4 @@ def unregister():
         unregister_class(cls)
 
     # Register blender DATA_PT_empty
-    bpy.utils.register_class(bpy.types.DATA_PT_empty)
+#    bpy.utils.register_class(bpy.types.DATA_PT_empty)

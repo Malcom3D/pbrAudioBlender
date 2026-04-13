@@ -244,22 +244,15 @@ class PBRAudioRenderEngine(RenderEngine):
         if not outputs:
             self.report({'WARNING'}, "No sound outputs defined in scene")
     
-    def render(self, depsgraph):
+    def render(self, depsgraph, frame):
         """Main render method"""
-        if self.is_animation:
-            start_frame = scene.frame_start
-            end_frame = scene.frame_end
-        else:
-            start_frame = scene.frame_current
-            end_frame = start_frame
-
         scene = depsgraph.scene
         
         # Cancel any existing render
         self.cancel_render()
         
         # Start new render in background thread
-        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame), daemon=True)
+        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, frame, frame), daemon=True)
         
         self._render_thread.start()
         

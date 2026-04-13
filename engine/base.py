@@ -140,11 +140,8 @@ class PBRAudioRenderEngine(RenderEngine):
                 if hasattr(obj, 'pbraudio') and obj.pbraudio.environment and not obj.pbraudio.environment_file == "":
                     # Save environment data
                     json_config_path = environment_json.save_environment_json(obj, cache_path)
-#                    env_data = environment_json.load_environment_json(json_path)
 
-#                    # Check if we have ambisonic file to decode
-#                    if env_data.get("file_path") and os.path.exists(env_data["file_path"]):
-#                        self.report({'INFO'}, f"Decoding ambisonic file for {obj.name}")
+                    # Decode enviroment ambisonic file
                     self.report({'INFO'}, f"Decoding ambisonic file for {obj.name}")
 
                     # Create decoder
@@ -152,11 +149,6 @@ class PBRAudioRenderEngine(RenderEngine):
 
                     # Decode to boundary positions
                     decoder.save_decoded_files()
-#                    decoder.save_decoded_files(
-#                        cache_path=os.path.join(output_dir, "Decoded"),
-#                        normalize=True
-#                    )
-
 
             # Step 3: Run external acoustic engine
             config_path = os.path.join(self.exporter.render_path, "config.json")
@@ -193,31 +185,6 @@ class PBRAudioRenderEngine(RenderEngine):
     
     def _post_process_results(self, output_dir, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
-        try:
-            # Check for environment files that need decoding
-            for obj in bpy.data.objects:
-                if hasattr(obj, 'pbraudio') and obj.pbraudio.environment:
-                    # Check if this environment has boundary files that need processing
-                    if "pbraudio_environment_json" in obj:
-                        json_path = obj["pbraudio_environment_json"]
-                        
-                        if os.path.exists(json_path):
-                            # Load environment data
-                            env_data = environment_json.load_environment_json(json_path)
-                            
-                            # Check if we have ambisonic file to decode
-                            if env_data.get("file_path") and os.path.exists(env_data["file_path"]):
-                                self.report({'INFO'}, f"Decoding ambisonic file for {obj.name}")
-                                
-                                # Create decoder
-                                decoder = AmbisonicDecoder(config_data=env_data)
-                                
-                                # Decode to boundary positions
-                                decoder.save_decoded_files(
-                                    output_dir=os.path.join(output_dir, "Decoded"),
-                                    normalize=True
-                                )
-            
             self.report({'INFO'}, "Post-processing completed")
             
         except Exception as e:

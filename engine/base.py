@@ -244,9 +244,10 @@ class PBRAudioRenderEngine(RenderEngine):
         if not outputs:
             self.report({'WARNING'}, "No sound outputs defined in scene")
     
-    def render(self, depsgraph, frame):
+    def render(self, depsgraph):
         """Main render method"""
         scene = depsgraph.scene
+        frame = scene.frame_current
         
         # Cancel any existing render
         self.cancel_render()

@@ -965,8 +965,8 @@ class RenderExporter:
                 obj_config["shard"] = shard if shard else False
         
         # Remove invalid objects from main list
-        self.objects = [obj for obj in self.objects if obj["name"] not in in self.not_valid]
-    
+        self.objects = [obj for obj in self.objects if obj["name"] not in self.not_valid]
+
     def save_config(self):
         """Save configuration to JSON file"""
         config_file = os.path.join(self.render_path, "config.json")

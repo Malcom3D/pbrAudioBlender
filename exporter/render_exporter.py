@@ -657,8 +657,8 @@ class RenderExporter:
         # Update configuration with exported objects
         self.update_config_with_objects()
         
-        # Save configuration
-        self.save_config()
+#        # Save configuration
+#        self.save_config()
     
     def export_meshes(self, domain_vertices, start_frame, end_frame):
         """Export mesh objects"""
@@ -1180,12 +1180,12 @@ class RenderExporter:
             # Save configuration
             config_path = self.save_config()
             
-            print(f"Export completed successfully!")
+#            print(f"Export completed successfully!")
             print(f"Exported {len(self.objects)} mesh objects")
             print(f"Exported {len(self.sources)} sound sources")
             print(f"Exported {len(self.outputs)} sound outputs")
             print(f"Exported {len(self.environments)} environments")
-            print(f"Configuration saved to: {config_path}")
+#            print(f"Configuration saved to: {config_path}")
             
             return True
             

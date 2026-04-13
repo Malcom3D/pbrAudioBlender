@@ -185,6 +185,7 @@ class PBRAudioRenderEngine(RenderEngine):
     
     def _post_process_results(self, output_dir, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
+        try:
             self.report({'INFO'}, "Post-processing completed")
             
         except Exception as e:

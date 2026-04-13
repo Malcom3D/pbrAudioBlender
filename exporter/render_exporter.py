@@ -335,7 +335,7 @@ class RenderExporter:
             
             # Determine quantity type based on socket name
             quantity_type = 'magnitude'
-            if socket_name in ['absorption', ' 'refraction', 'reflection', 'scattering']:
+            if socket_name in ['absorption', 'refraction', 'reflection', 'scattering']:
                 quantity_type = 'coefficients'
             
             target_dict[socket_name] = {

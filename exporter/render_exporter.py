@@ -510,7 +510,7 @@ class RenderExporter:
     
     def export_environments(self, domain_vertices, start_frame, end_frame):
         """Export environment objects"""
-        env_objects = self.find_objects_in_domain((domain_vertices, 'environment')
+        env_objects = self.find_objects_in_domain(domain_vertices, 'environment')
         
         for env in env_objects:
             self.export_empty_animation(env, start_frame, end_frame, 'environment')

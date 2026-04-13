@@ -424,7 +424,6 @@ class RenderExporter:
             objects = [obj for obj in self.depsgraph.objects if obj.type == 'EMPTY' and obj.pbraudio.source]
         elif obj_type == 'output':
             objects = [obj for obj in self.depsgraph.objects if obj.type in ['EMPTY', 'CAMERA'] and obj.pbraudio.output]
-            print('objects_inside output: ', objects)
         elif obj_type == 'environment':
             objects = [obj for obj in self.depsgraph.objects if obj.type == 'EMPTY' and obj.pbraudio.environment]
         else:
@@ -446,6 +445,7 @@ class RenderExporter:
                 if self.is_point_inside_domain(world_location, domain_vertices):
                     objects_inside.append(obj)
         
+        print('objects_inside: ', obj_type, objects_inside)
         return objects_inside
     
     def is_mesh_inside_domain(self, obj, domain_vertices, check_partial):

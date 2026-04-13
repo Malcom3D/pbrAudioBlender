@@ -31,7 +31,7 @@ class PBRAudioRenderEngine(RenderEngine):
     """pbrAudio render engine implementation"""
     bl_idname = 'PBRAUDIO'
     bl_label = "pbrAudio"
-    bl_use_preview = False
+    bl_use_preview = True
     bl_use_material = False
     bl_use_eevee_viewport = True
     bl_use_shading_nodes_custom = True

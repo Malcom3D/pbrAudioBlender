@@ -559,7 +559,7 @@ class RenderExporter:
     
     def export_mesh_pose(self, obj, start_frame, end_frame):
         """Export mesh pose data for animation range"""
-        locations locations = []
+        locations = []
         rotations = []
         fractured_frame = False
         

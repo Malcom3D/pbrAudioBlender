@@ -116,14 +116,11 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Exporting scene data...")
             
             # Create exporter
-            self.exporter = RenderExporter(
-                depsgraph=depsgraph,
-                scene=scene,
-                decimals=18
-            )
+            self.exporter = RenderExporter(depsgraph=depsgraph, scene=scene, decimals=18)
             
             # Export scene
-            export_success = self.exporter.export_scene(frame_start, frame_end)
+            #export_success = self.exporter.export_scene(frame_start, frame_end)
+            export_success = self.exporter.export(frame_start, frame_end)
             
             if not export_success:
                 self.report({'ERROR'}, "Scene export failed")
@@ -143,12 +140,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Starting acoustic rendering...")
             
             # Run external engine
-            engine_success = self._run_external_engine(
-                config_path, 
-                output_dir,
-                frame_start or scene.frame_start,
-                frame_end or scene.frame_end
-            )
+            engine_success = self._run_external_engine(config_path, output_dir, frame_start or scene.frame_start, frame_end or scene.frame_end)
             
             if engine_success:
                 self.report({'INFO'}, "Acoustic rendering completed successfully!")

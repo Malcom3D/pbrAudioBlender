@@ -429,8 +429,6 @@ class RenderExporter:
         else:
             return objects_inside
 
-        print('all objects: ', obj_type, objects)
-        
         domain_name = self.config["acoustic_domain"].get("name", "")
         
         for obj in objects:
@@ -447,9 +445,177 @@ class RenderExporter:
                 if self.is_point_inside_domain(world_location, domain_vertices):
                     objects_inside.append(obj)
         
-        print('objects_inside: ', obj_type, objects_inside)
         return objects_inside
+
+    def is_mesh_intersecting_domain(self, obj, domain_vertices):
+        """
+        Check if mesh intersects the acoustic domain using triangle-AABB intersection.
+        This handles cases where no vertices are inside but triangles intersect the domain.
+        
+        Args:
+            obj: bpy.types.Object - Mesh object to check
+            domain_vertices: list of 8 Vectors - vertices of the acoustic domain
+        
+        Returns:
+            bool: True if mesh intersects the domain
+        """
+        if len(domain_vertices) != 8:
+            return False
     
+        # Get domain bounding box in world coordinates
+        domain_verts_world = [Vector(v) for v in domain_vertices]
+    
+        # Calculate domain AABB (Axis-Aligned Bounding Box)
+        domain_min = Vector((
+            min(v.x for v in domain_verts_world),
+            min(v.y for v in domain_verts_world),
+            min(v.z for v in domain_verts_world)
+        ))
+        domain_max = Vector((
+            max(v.x for v in domain_verts_world),
+            max(v.y for v in domain_verts_world),
+            max(v.z for v in domain_verts_world)
+        ))
+    
+        # Get evaluated mesh
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        eval_obj = obj.evaluated_get(depsgraph)
+        mesh = eval_obj.to_mesh()
+    
+        # Triangulate if needed
+        self.triangulate_mesh(mesh)
+    
+        world_matrix = eval_obj.matrix_world
+    
+        # Check each triangle for intersection with domain AABB
+        for poly in mesh.polygons:
+            if len(poly.vertices) != 3:
+                continue
+            
+            # Get triangle vertices in world space
+            tri_verts = []
+            for vert_idx in poly.vertices:
+                vert = mesh.vertices[vert_idx]
+                world_co = world_matrix @ vert.co
+                tri_verts.append(world_co)
+        
+            # Check triangle-AABB intersection
+            if self.triangle_aabb_intersection(tri_verts, domain_min, domain_max):
+                eval_obj.to_mesh_clear()
+                return True
+    
+        eval_obj.to_mesh_clear()
+        return False
+
+    def triangle_aabb_intersection(self, triangle, aabb_min, aabb_max):
+        """
+        Check if triangle intersects with Axis-Aligned Bounding Box.
+        Using separating axis theorem (SAT) for triangle-AABB intersection.
+    
+        Args:
+            triangle: list of 3 Vectors - triangle vertices
+            aabb_min: Vector - AABB minimum point
+            aabb_max: Vector - AABB maximum point
+        
+        Returns:
+            bool: True if triangle intersects AABB
+        """
+        # Convert to numpy arrays for easier calculations
+        import numpy as np
+    
+        # Triangle vertices
+        v0 = np.array(triangle[0])
+        v1 = np.array(triangle[1])
+        v2 = np.array(triangle[2])
+    
+        # AABB center and half extents
+        aabb_center = (aabb_min + aabb_max) * 0.5
+        aabb_half_extents = (aabb_max - aabb_min) * 0.5
+        center = np.array(aabb_center)
+        half_extents = np.array(aabb_half_extents)
+    
+        # Translate triangle to AABB's coordinate system
+        v0 = v0 - center
+        v1 = v1 - center
+        v2 = v2 - center
+    
+        # Triangle edges
+        f0 = v1 - v0
+        f1 = v2 - v1
+        f2 = v0 - v2
+    
+        # Test axes: a00, a01, a02 (x, y, z axes)
+        axes = [
+            np.array([1, 0, 0]),
+            np.array([0, 1, 0]),
+            np.array([0, 0, 1])
+        ]
+    
+        # Test against AABB axes (x, y, z)
+        for axis in axes:
+            # Project triangle vertices onto axis
+            p0 = np.dot(v0, axis)
+            p1 = np.dot(v1, axis)
+            p2 = np.dot(v2, axis)
+        
+            # Find min and max of triangle projection
+            r = half_extents[abs(axis).argmax()]  # Half extent along this axis
+            triangle_min = min(p0, p1, p2)
+            triangle_max = max(p0, p1, p2)
+        
+            # Check for separation
+            if triangle_max < -r or triangle_min > r:
+                return False
+    
+        # Test against triangle normal axis
+        triangle_normal = np.cross(f0, f1)
+        axis = triangle_normal
+    
+        # Project AABB onto triangle normal
+        aabb_projection = np.abs(np.dot(half_extents, np.abs(axis)))
+    
+        # Project triangle onto triangle normal
+        p0 = np.dot(v0, axis)
+        p1 = np.dot(v1, axis)
+        p2 = np.dot(v2, axis)
+    
+        triangle_min = min(p0, p1, p2)
+        triangle_max = max(p0, p1, p2)
+    
+        # Check for separation
+        if triangle_max < -aabb_projection or triangle_min > aabb_projection:
+            return False
+    
+        # Test against edge cross product axes (9 axes)
+        edges = [f0, f1, f2]
+        aabb_axes = [np.array([1, 0, 0]), np.array([0, 1, 0]), np.array([0, 0, 1])]
+    
+        for edge in edges:
+            for aabb_axis in aabb_axes:
+                axis = np.cross(edge, aabb_axis)
+                if np.linalg.norm(axis) < 1e-6:
+                    continue  # Parallel, already tested
+            
+                # Normalize axis
+                axis = axis / np.linalg.norm(axis)
+            
+                # Project AABB onto axis
+                aabb_projection = np.abs(np.dot(half_extents, np.abs(axis)))
+            
+                # Project triangle onto axis
+                p0 = np.dot(v0, axis)
+                p1 = np.dot(v1, axis)
+                p2 = np.dot(v2, axis)
+            
+                triangle_min = min(p0, p1, p2)
+                triangle_max = max(p0, p1, p2)
+            
+                # Check for separation
+                if triangle_max < -aabb_projection or triangle_min > aabb_projection:
+                    return False
+    
+        return True
+
     def is_mesh_inside_domain(self, obj, domain_vertices, check_partial):
         """Check if mesh is inside domain"""
         mesh = obj.data
@@ -463,7 +629,8 @@ class RenderExporter:
             for vert in world_vertices:
                 if self.is_point_inside_domain(vert, domain_vertices):
                     return True
-            return False
+            # If no vertices inside, check for triangle intersections
+            return self.is_mesh_intersecting_domain(obj, domain_vertices)
         else:
             # Check if ALL vertices are inside (full inclusion)
             for vert in world_vertices:
@@ -510,7 +677,6 @@ class RenderExporter:
     def export_outputs(self, domain_vertices, start_frame, end_frame):
         """Export output objects"""
         output_objects = self.find_objects_in_domain(domain_vertices, 'output')
-        print('export_outputs: ', output_objects)
         
         for output in output_objects:
             self.export_empty_animation(output, start_frame, end_frame, 'output')

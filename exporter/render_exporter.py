@@ -990,7 +990,6 @@ class RenderExporter:
         
         config_json = convert_for_json(self.config)
 
-        print(config_json)
         with open(config_file, 'w') as f:
             json.dump(config_json, f, indent=2, separators=(',', ': '))
         

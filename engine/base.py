@@ -116,7 +116,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Exporting scene data...")
             
             # Create exporter
-            self.exporter = RenderExporterporter(
+            self.exporter = RenderExporter(
                 depsgraph=depsgraph,
                 scene=scene,
                 decimals=18

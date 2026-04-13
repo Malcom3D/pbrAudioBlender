@@ -246,6 +246,7 @@ class PBRAudioRenderEngine(RenderEngine):
     
     def render(self, depsgraph):
         """Main render method"""
+        self.report({'INFO'}, "pbrAudio: Render begin...")
         scene = depsgraph.scene
         frame = scene.frame_current
         
@@ -335,6 +336,7 @@ class PBRAudioRenderEngine(RenderEngine):
     # Animation rendering support
     def animation_render(self, depsgraph):
         """Render animation sequence"""
+        self.report({'INFO'}, "pbrAudio: Animation Render begin...")
         if self.is_animation:
             start_frame = scene.frame_start
             end_frame = scene.frame_end

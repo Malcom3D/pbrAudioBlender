@@ -88,11 +88,11 @@ class RenderExporter:
         
         # Frequency range
         if self.scene.pbraudiorender.enable_frequencies_range_set:
-            system['freq_max'] = self.scene.pbraudiorender.higher_frequency
-            system['freq_min'] = self.scene.pbraudiorender.lowest_frequency
+            system['higher_frequency'] = self.scene.pbraudiorender.higher_frequency
+            system['lowest_frequency'] = self.scene.pbraudiorender.lowest_frequency
         else:
-            system['freq_max'] = self.scene.pbraudio.sample_rate / 2
-            system['freq_min'] = 5
+            system['higher_frequency'] = self.scene.pbraudio.sample_rate / 2
+            system['lowest_frequency'] = 5
             
         return system
     

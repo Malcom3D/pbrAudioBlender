@@ -126,7 +126,7 @@ class RenderExporter:
         wave_config = {
             'max_interactions': self.scene.pbraudiorender.max_interactions,
             'bands_per_octave': self.scene.pbraudiorender.bands_per_octave,
-            'enable_interface': self.scene.pbraudioreorender.enable_interface,
+            'enable_interface': self.scene.pbraudiorender.enable_interface,
             'enable_resonance': self.scene.pbraudiorender.enable_resonance,
             'enable_termination': self.scene.pbraudiorender.enable_termination,
             'use_dispersion_correction': self.scene.pbraudiorender.use_dispersion_correction,

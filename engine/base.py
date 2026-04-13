@@ -137,7 +137,7 @@ class PBRAudioRenderEngine(RenderEngine):
             os.makedirs(cache_path, exist_ok=True)
 
             for obj in bpy.data.objects:
-                if hasattr(obj, 'pbraudio') and obj.pbraudio.environment not obj.environment.pbraudio.environment_file == "":
+                if hasattr(obj, 'pbraudio') and obj.pbraudio.environment and not obj.pbraudio.environment_file == "":
                     # Save environment data
                     json_config_path = environment_json.save_environment_json(obj, cache_path)
 #                    env_data = environment_json.load_environment_json(json_path)

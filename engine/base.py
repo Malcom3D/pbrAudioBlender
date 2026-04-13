@@ -31,8 +31,9 @@ class PBRAudioRenderEngine(RenderEngine):
     """pbrAudio render engine implementation"""
     bl_idname = 'PBRAUDIO'
     bl_label = "pbrAudio"
-    bl_use_preview = True
-    bl_use_eevee_viewport = True
+    bl_use_preview = False
+    bl_use_material = False
+    bl_use_eevee_viewport = False
     bl_use_shading_nodes_custom = False
 
     # Init is called whenever a new render engine instance is created. Multiple
@@ -46,10 +47,7 @@ class PBRAudioRenderEngine(RenderEngine):
         self.scene_data = None
         self.draw_data = None
 #        self.id_render = id(self)
-        if self.is_animation:
-            self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
-        else:
-            self.report({'INFO'}, f"pbrAudio: rendering in progress...")
+        self.report({'INFO'}, f"pbrAudio: RenderEngine init...")
 
     # When the render engine instance is destroy, this is called. Clean up any
     # render engine data here, for example stopping running render threads.
@@ -58,98 +56,98 @@ class PBRAudioRenderEngine(RenderEngine):
 #        super().__del__()
         pass
 
-#    # Render methods
-#    def update(self, data, depsgraph):
-#        """Update render data"""
-#        scene = depsgraph.scene
-#        if self.is_animation:
-#            self.report({'INFO'}, f"pbrAudio: update animation rendering in progress...")
-#        else:
-#            self.report({'INFO'}, f"pbrAudio: update rendering in progress...")
+    # Render methods
+    def update(self, data, depsgraph):
+        """Update render data"""
+        scene = depsgraph.scene
+        if self.is_animation:
+            self.report({'INFO'}, f"pbrAudio: update animation rendering in progress...")
+        else:
+            self.report({'INFO'}, f"pbrAudio: update rendering in progress...")
 
     def render(self, depsgraph):
         """Main render method"""
-        if self.is_preview:
-            return
-
-        for world in bpy.data.worlds.values():
-            if not hasattr(world.pbraudio, 'acoustic_domain'):
-                self.report({'ERROR'}, f"pbrAudio: AcousticDomain needed")
-                return
-
+#        if self.is_preview:
+#            return
+#
+#        for world in bpy.data.worlds.values():
+#            if not hasattr(world.pbraudio, 'acoustic_domain'):
+#                self.report({'ERROR'}, f"pbrAudio: AcousticDomain needed")
+#                return
+#
 #        progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
 #        update_progress(progress_step)
-        scene = depsgraph.scene
-        cache_path = scene.pbraudio.cache_path
-        if cache_path.startswith('//'):
-            cache_path = f"{bpy.path.abspath(cache_path)}"
-        os.makedirs(cache_path, exist_ok=True)
-        render_path = f"{cache_path}/AcousticDomain"
-        os.makedirs(render_path, exist_ok=True)
-        decimals = 18
-
+#        scene = depsgraph.scene
+#        cache_path = scene.pbraudio.cache_path
+#        if cache_path.startswith('//'):
+#            cache_path = f"{bpy.path.abspath(cache_path)}"
+#        os.makedirs(cache_path, exist_ok=True)
+#        render_path = f"{cache_path}/AcousticDomain"
+#        os.makedirs(render_path, exist_ok=True)
+#        decimals = 18
+#
         if self.is_animation:
             self.report({'INFO'}, f"pbrAudio: animation rendering in progress...")
-            start_frame = scene.frame_start
-            end_frame = scene.frame_end
+#            start_frame = scene.frame_start
+#            end_frame = scene.frame_end
         else:
             self.report({'INFO'}, f"pbrAudio: rendering in progress...")
-            start_frame = scene.frame_current
-            end_frame = start_frame
+#            start_frame = scene.frame_current
+#            end_frame = start_frame
 
-        # Init RenderExporter
-        exporter = RenderExporter(depsgraph=depsgraph, scene=scene, decimals=decimals)
-
-        # Find Domain Vector
-        for world in bpy.data.worlds.values():
-            acoustic_domain = world.pbraudio.acoustic_domain
-            world_matrix = acoustic_domain.matrix_world
-        domain_vertices = exporter.config["acoustic_domain"].get('geometry', [])
-        domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
-
-        objects = exporter.find_objs_in_domain(domain_vertices=domain_vectors, depsgraph=depsgraph)
-        for object in objects: 
-            exporter.export_animation_obj(object, start_frame, end_frame)
-
-        sources = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source', depsgraph=depsgraph)
-        for source in sources:
-            if source.pbraudio.source:
-                exporter.export_animation_empty(source, start_frame, end_frame)
-
-        outputs = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output', depsgraph=depsgraph)
-        for output in outputs:
-            if output.pbraudio.output:
-                exporter.export_animation_empty(output, start_frame, end_frame)
-
-        exporter.save_config()
-
-        environments = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment', depsgraph=depsgraph)
-        if not len(environments) == 0:
-            for environment in environments:
-                if not environment.pbraudio.environment_file == "":
-                    # Save environment data as json
-                    json_config_path = environment_json.save_environment_json(environment, render_path)
-                    # Decode boundary empty audio channel from saved json
-                    ambisonic_decoder = AmbisonicDecoder(json_config_path=json_config_path)
-                    ambisonic_decoder.save_decoded_files()
-
-        self.report({'INFO'}, "pbrAudio rendering end...")
-
-        # For viewport renders, this method gets called once at the start and
-        # whenever the scene or 3D viewport changes. This method is where data
-        # should be read from Blender in the same thread. Typically a render
-        # thread will be started to do the work while keeping Blender responsive.
-        def view_update(self, context, depsgraph):
-            """Update viewport"""
-            pass
-
-        # For viewport renders, this method is called whenever Blender redraws
-        # the 3D viewport. The renderer is expected to quickly draw the render
-        # with OpenGL, and not perform other expensive work.
-        # Blender will draw overlays for selection and editing on top of the
-        # rendered image automatically.
-        def view_draw(self, context, depsgraph):
-            """Draw viewport"""
-            pass
-
-classes.append(PBRAudioRenderEngine)
+#        # Init RenderExporter
+#        exporter = RenderExporter(depsgraph=depsgraph, scene=scene, decimals=decimals)
+#
+#        # Find Domain Vector
+#        for world in bpy.data.worlds.values():
+#            acoustic_domain = world.pbraudio.acoustic_domain
+#            world_matrix = acoustic_domain.matrix_world
+#        domain_vertices = exporter.config["acoustic_domain"].get('geometry', [])
+#        domain_vectors = [world_matrix @ Vector(v) for v in domain_vertices]
+#
+#        objects = exporter.find_objs_in_domain(domain_vertices=domain_vectors, depsgraph=depsgraph)
+#        for object in objects: 
+#            exporter.export_animation_obj(object, start_frame, end_frame)
+#
+#        sources = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='source', depsgraph=depsgraph)
+#        for source in sources:
+#            if source.pbraudio.source:
+#                exporter.export_animation_empty(source, start_frame, end_frame)
+#
+#        outputs = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='output', depsgraph=depsgraph)
+#        for output in outputs:
+#            if output.pbraudio.output:
+#                exporter.export_animation_empty(output, start_frame, end_frame)
+#
+#        exporter.save_config()
+#
+#        environments = exporter.find_empty_in_domain(domain_vertices=domain_vectors, empty_type='environment', depsgraph=depsgraph)
+#        if not len(environments) == 0:
+#            for environment in environments:
+#                if not environment.pbraudio.environment_file == "":
+#                    # Save environment data as json
+#                    json_config_path = environment_json.save_environment_json(environment, render_path)
+#                    # Decode boundary empty audio channel from saved json
+#                    ambisonic_decoder = AmbisonicDecoder(json_config_path=json_config_path)
+#                    ambisonic_decoder.save_decoded_files()
+#
+#        self.report({'INFO'}, "pbrAudio rendering end...")
+#
+#        # For viewport renders, this method gets called once at the start and
+#        # whenever the scene or 3D viewport changes. This method is where data
+#        # should be read from Blender in the same thread. Typically a render
+#        # thread will be started to do the work while keeping Blender responsive.
+#        def view_update(self, context, depsgraph):
+#            """Update viewport"""
+#            pass
+#
+#        # For viewport renders, this method is called whenever Blender redraws
+#        # the 3D viewport. The renderer is expected to quickly draw the render
+#        # with OpenGL, and not perform other expensive work.
+#        # Blender will draw overlays for selection and editing on top of the
+#        # rendered image automatically.
+#        def view_draw(self, context, depsgraph):
+#            """Draw viewport"""
+#            pass
+#
+#classes.append(PBRAudioRenderEngine)

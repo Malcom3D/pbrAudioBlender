@@ -31,10 +31,10 @@ class PBRAudioRenderEngine(RenderEngine):
     """pbrAudio render engine implementation"""
     bl_idname = 'PBRAUDIO'
     bl_label = "pbrAudio"
-    bl_use_preview = True
+    bl_use_preview = False
     bl_use_material = False
-    bl_use_eevee_viewport = True
-    bl_use_shading_nodes_custom = True
+    bl_use_eevee_viewport = False
+    bl_use_shading_nodes_custom = False
 
     # Init is called whenever a new render engine instance is created. Multiple
     # instances may exist at the same time, for example for a viewport and final
@@ -150,4 +150,4 @@ class PBRAudioRenderEngine(RenderEngine):
 #            """Draw viewport"""
 #            pass
 #
-#classes.append(PBRAudioRenderEngine)
+classes.append(PBRAudioRenderEngine)

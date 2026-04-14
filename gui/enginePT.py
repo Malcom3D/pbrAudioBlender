@@ -136,9 +136,13 @@ class PBRAUDIO_PT_acoustic_preview_panel(Panel):
         scene = context.scene
 
         if scene.pbraudio.enable_acoustic_preview:
-            layout.prop(scene.pbraudio, "preview_audio_quality")
-            layout.prop(scene.pbraudio, "preview_sample_rate", text="Sample Rate")
-            layout.prop(scene.pbraudio, "preview_bit_depth", text="Bit Depth")
+            layout.enabled = True
+        else:
+            layout.enabled = False
+
+        layout.prop(scene.pbraudio, "preview_audio_quality")
+        layout.prop(scene.pbraudio, "preview_sample_rate", text="Sample Rate")
+        layout.prop(scene.pbraudio, "preview_bit_depth", text="Bit Depth")
     
 classes.append(PBRAUDIO_PT_acoustic_preview_panel)
 
@@ -203,21 +207,25 @@ class PBRAUDIO_PT_interface_panel(Panel):
         scene = context.scene
     
         if scene.pbraudiorender.enable_interface:
-            layout.prop(scene.pbraudiorender, "enable_absorption")
-            layout.prop(scene.pbraudiorender, "enable_reflection")
-            if scene.pbraudiorender.enable_reflection:
-                layout.prop(scene.pbraudiorender, "max_reflection")
-            layout.prop(scene.pbraudiorender, "enable_scattering")
-            if scene.pbraudiorender.enable_scattering:
-                layout.prop(scene.pbraudiorender, "max_scattering")
-            layout.prop(scene.pbraudiorender, "enable_refraction")
-            if scene.pbraudiorender.enable_refraction:
-                layout.prop(scene.pbraudiorender, "max_refraction")
-            layout.prop(scene.pbraudiorender, "enable_diffraction")
-            if scene.pbraudiorender.enable_diffraction:
-                layout.prop(scene.pbraudiorender, "max_diffraction")
-            layout.prop(scene.pbraudiorender, "min_impedance_ratio")
-            layout.prop(scene.pbraudiorender, "max_impedance_ratio")
+            layout.enabled = True
+        else:
+            layout.enabled = False
+
+        layout.prop(scene.pbraudiorender, "enable_absorption")
+        layout.prop(scene.pbraudiorender, "enable_reflection")
+        if scene.pbraudiorender.enable_reflection:
+            layout.prop(scene.pbraudiorender, "max_reflection")
+        layout.prop(scene.pbraudiorender, "enable_scattering")
+        if scene.pbraudiorender.enable_scattering:
+            layout.prop(scene.pbraudiorender, "max_scattering")
+        layout.prop(scene.pbraudiorender, "enable_refraction")
+        if scene.pbraudiorender.enable_refraction:
+            layout.prop(scene.pbraudiorender, "max_refraction")
+        layout.prop(scene.pbraudiorender, "enable_diffraction")
+        if scene.pbraudiorender.enable_diffraction:
+            layout.prop(scene.pbraudiorender, "max_diffraction")
+        layout.prop(scene.pbraudiorender, "min_impedance_ratio")
+        layout.prop(scene.pbraudiorender, "max_impedance_ratio")
 
 classes.append(PBRAUDIO_PT_interface_panel)
 
@@ -248,21 +256,25 @@ class PBRAUDIO_PT_resonances_panel(Panel):
         scene = context.scene
     
         if scene.pbraudiorender.enable_resonance:
-            layout.prop(scene.pbraudiorender, "max_resonance_structure")
-            layout.prop(scene.pbraudiorender, "decay_time_constant")
-            layout.prop(scene.pbraudiorender, "resonance_threshold")
-            layout.prop(scene.pbraudiorender, "enable_helmholtz")
-            if scene.pbraudiorender.enable_helmholtz:
-                layout.prop(scene.pbraudiorender, "min_cavity_volume")
-                layout.prop(scene.pbraudiorender, "max_resonance_room_modes")
-            layout.prop(scene.pbraudiorender, "enable_parallel_wall")
-            if scene.pbraudiorender.enable_parallel_wall:
-                layout.prop(scene.pbraudiorender, "min_wall_distance")
-                layout.prop(scene.pbraudiorender, "max_wall_distance")
-            layout.prop(scene.pbraudiorender, "enable_tube")
-            if scene.pbraudiorender.enable_tube:
-                layout.prop(scene.pbraudiorender, "min_tube_length")
-                layout.prop(scene.pbraudiorender, "min_tube_aspect_ratio")
+            layout.enabled = True
+        else:
+            layout.enabled = False
+
+        layout.prop(scene.pbraudiorender, "max_resonance_structure")
+        layout.prop(scene.pbraudiorender, "decay_time_constant")
+        layout.prop(scene.pbraudiorender, "resonance_threshold")
+        layout.prop(scene.pbraudiorender, "enable_helmholtz")
+        if scene.pbraudiorender.enable_helmholtz:
+            layout.prop(scene.pbraudiorender, "min_cavity_volume")
+            layout.prop(scene.pbraudiorender, "max_resonance_room_modes")
+        layout.prop(scene.pbraudiorender, "enable_parallel_wall")
+        if scene.pbraudiorender.enable_parallel_wall:
+            layout.prop(scene.pbraudiorender, "min_wall_distance")
+            layout.prop(scene.pbraudiorender, "max_wall_distance")
+        layout.prop(scene.pbraudiorender, "enable_tube")
+        if scene.pbraudiorender.enable_tube:
+            layout.prop(scene.pbraudiorender, "min_tube_length")
+            layout.prop(scene.pbraudiorender, "min_tube_aspect_ratio")
 
 classes.append(PBRAUDIO_PT_resonances_panel)
 
@@ -293,15 +305,19 @@ class PBRAUDIO_PT_termination_panel(Panel):
         scene = context.scene
 
         if scene.pbraudiorender.enable_termination:
-            layout.prop(scene.pbraudiorender, "termination_type")
-            if scene.pbraudiorender.termination_type == 'SAMPLE_END':
-                layout.prop(scene.pbraudiorender, "samples_after")
-                layout.prop(scene.pbraudiorender, "min_active_sources")
-            if scene.pbraudiorender.termination_type == 'REVERBERATION_TIME':
-                layout.prop(scene.pbraudiorender, "max_reverberation_time")
-            if scene.pbraudiorender.termination_type == 'ENERGY_THRESHOLD':
-                layout.prop(scene.pbraudiorender, "max_energy_threshold")
-                layout.prop(scene.pbraudiorender, "min_energy_threshold")
+            layout.enabled = True
+        else:
+            layout.enabled = False
+
+        layout.prop(scene.pbraudiorender, "termination_type")
+        if scene.pbraudiorender.termination_type == 'SAMPLE_END':
+            layout.prop(scene.pbraudiorender, "samples_after")
+            layout.prop(scene.pbraudiorender, "min_active_sources")
+        if scene.pbraudiorender.termination_type == 'REVERBERATION_TIME':
+            layout.prop(scene.pbraudiorender, "max_reverberation_time")
+        if scene.pbraudiorender.termination_type == 'ENERGY_THRESHOLD':
+            layout.prop(scene.pbraudiorender, "max_energy_threshold")
+            layout.prop(scene.pbraudiorender, "min_energy_threshold")
 
 classes.append(PBRAUDIO_PT_termination_panel)
 

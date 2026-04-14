@@ -99,8 +99,12 @@ class PBRAUDIO_PT_frequencies_range_panel(Panel):
         scene = context.scene
 
         if scene.pbraudiorender.enable_frequencies_range_set:
-            layout.prop(scene.pbraudiorender, "lowest_frequency", text="Lowest Frequency")
-            layout.prop(scene.pbraudiorender, "higher_frequency", text="Higher Frequency")
+            layout.enabled = True
+        else:
+            layout.enabled = False
+
+        layout.prop(scene.pbraudiorender, "lowest_frequency", text="Lowest Frequency")
+        layout.prop(scene.pbraudiorender, "higher_frequency", text="Higher Frequency")
 
 classes.append(PBRAUDIO_PT_frequencies_range_panel)
 

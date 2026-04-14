@@ -118,7 +118,7 @@ class PBRAudioEngineProperties(PropertyGroup):
         default=False,
     )
 
-    adr_thereshold: FloatProperty(
+    adr_threshold: FloatProperty(
         name="ADR Threshold",
         description="Adaptive mesh refinement distance threshold in meters",
         default=30.0

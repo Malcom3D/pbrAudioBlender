@@ -83,9 +83,11 @@ class RenderExporter:
             "fps": self.scene.render.fps,
             "fps_base": self.scene.render.fps_base,
             "subframes": 1,
+            "start_frame": self.scene.frame_start,
+            "end_frame": self.scene.frame_end,
             "cache_path": self.render_path
         }
-        
+
         system['bands_per_octave'] = self.scene.pbraudiorender.bands_per_octave
 
         # Frequency range

@@ -86,14 +86,16 @@ class RenderExporter:
             "cache_path": self.render_path
         }
         
+        system['bands_per_octave'] = self.scene.pbraudiorender.bands_per_octave,
+
         # Frequency range
         if self.scene.pbraudiorender.enable_frequencies_range_set:
-            system['higher_frequency'] = self.scene.pbraudiorender.higher_frequency
             system['lowest_frequency'] = self.scene.pbraudiorender.lowest_frequency
+            system['higher_frequency'] = self.scene.pbraudiorender.higher_frequency
         else:
-            system['higher_frequency'] = self.scene.pbraudio.sample_rate / 2
             system['lowest_frequency'] = 5
-            
+            system['higher_frequency'] = self.scene.pbraudio.sample_rate / 2
+
         return system
     
     def get_domain_config(self):
@@ -125,7 +127,6 @@ class RenderExporter:
         """Get wave propagation configuration"""
         wave_config = {
             'max_interactions': self.scene.pbraudiorender.max_interactions,
-            'bands_per_octave': self.scene.pbraudiorender.bands_per_octave,
             'enable_interface': self.scene.pbraudiorender.enable_interface,
             'enable_resonance': self.scene.pbraudiorender.enable_resonance,
             'enable_termination': self.scene.pbraudiorender.enable_termination,

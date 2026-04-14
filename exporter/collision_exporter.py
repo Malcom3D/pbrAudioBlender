@@ -61,11 +61,11 @@ class CollisionExporter:
         pbraudiorender = bpy.context.scene.pbraudiorender
         bands_per_octave = pbraudiorender.bands_per_octave 
         if pbraudiorender.enable_frequencies_range_set:
-            freq_max = pbraudiorender.higher_frequency
             freq_min = pbraudiorender.lowest_frequency
+            freq_max = pbraudiorender.higher_frequency
         else:
-            freq_max = scene.pbraudio.sample_rate / 2
             freq_min = 5
+            freq_max = scene.pbraudio.sample_rate / 2
 
         acoustic_dict = {}
         # get inputs

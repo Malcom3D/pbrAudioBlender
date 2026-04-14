@@ -22,7 +22,6 @@ import numpy as np
 import trimesh
 import os
 import json
-import ast
 from mathutils import Matrix, Vector
 from ..utils import frd_io
 
@@ -1172,7 +1171,7 @@ class RenderExporter:
         config_json = convert_for_json(self.config)
 
         with open(config_file, 'w') as f:
-            ast.literal_eval(json.dump(config_json, f, indent=2, separators=(',', ': ')))
+            json.dump(config_json, f, indent=2, separators=(',', ': '))
         
         print(f"Configuration saved to: {config_file}")
         return config_file

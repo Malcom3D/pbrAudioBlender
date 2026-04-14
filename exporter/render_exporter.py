@@ -86,7 +86,7 @@ class RenderExporter:
             "cache_path": self.render_path
         }
         
-        system['bands_per_octave'] = self.scene.pbraudiorender.bands_per_octave,
+        system['bands_per_octave'] = self.scene.pbraudiorender.bands_per_octave
 
         # Frequency range
         if self.scene.pbraudiorender.enable_frequencies_range_set:
@@ -95,6 +95,10 @@ class RenderExporter:
         else:
             system['lowest_frequency'] = 5
             system['higher_frequency'] = self.scene.pbraudio.sample_rate / 2
+
+        # Adaptive mesh refinement
+        if self.scene.pbraudiorender.enable_adr:
+            system['adr_threshold'] = self.scene.pbraudiorender.adr_threshold
 
         return system
     

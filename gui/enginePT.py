@@ -180,6 +180,41 @@ class PBRAUDIO_PT_sampling_panel(Panel):
 
 classes.append(PBRAUDIO_PT_sampling_panel)
 
+class PBRAUDIO_PT_adr_panel(Panel):
+    """ Panel to set the pbrAudio Adaptive mesh refinement """
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_adr_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "render"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudiorender, "enable_adr")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        if scene.pbraudiorender.enable_adr:
+            layout.enabled = True
+        else:
+            layout.enabled = False
+
+        layout.prop(scene.pbraudiorender, "adr_threshold", text="Adaptive mesh refinement threshold")
+
+classes.append(PBRAUDIO_PT_adr_panel)
+
+
 class PBRAUDIO_PT_interface_panel(Panel):
     """Panel to configure pbrAudio interface settings"""
 #    bl_label = "Interfaces Settings"

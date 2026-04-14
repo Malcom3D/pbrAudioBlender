@@ -111,6 +111,19 @@ class PBRAudioEngineProperties(PropertyGroup):
         max=256
     )
 
+    """ Adaptive mesh refinement Panel """
+    enable_adr: BoolProperty(
+        name="ADR",
+        description="Enable adaptive mesh refinement",
+        default=False,
+    )
+
+    adr_thereshold: FloatProperty(
+        name="ADR Threshold",
+        description="Adaptive mesh refinement distance threshold in meters",
+        default=30.0
+    )
+
     """ Interface Panel """
     enable_interface: BoolProperty(
         name="Interface",

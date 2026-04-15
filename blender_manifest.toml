@@ -88,7 +88,7 @@ wheels = [
 #   "./downloads/meshlib-3.0.9.196-py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl",
    "./wheels/embreex-4.4.0rc0-cp311-cp311-linux_x86_64.whl",
 #   "./wheels/pytinybvh-1.2.1-cp311-cp311-linux_x86_64.whl",
-   "./wheels/pbraudiorender-0.1.dev135+gd7d5c63ed-py3-none-any.whl",
+   "./wheels/pbraudiorender-0.1.dev136+g86e0409b0-py3-none-any.whl",
 ]
 
 # # Optional: add-ons can list which resources they will require:

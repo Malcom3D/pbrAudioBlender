@@ -85,9 +85,9 @@ class RenderExporter:
             "subframes": 1,
             "start_frame": self.scene.frame_start,
             "end_frame": self.scene.frame_end,
-            "cache_path": self.render_path
-            "number_of_rays" = self.scene.pbraudiorender.number_of_rays
-            "direction_seed" = self.scene.pbraudiorender.direction_seed
+            "cache_path": self.render_path,
+            "number_of_rays" = self.scene.pbraudiorender.number_of_rays,
+            "direction_seed" = self.scene.pbraudiorender.direction_seed,
             "bands_per_octave" = self.scene.pbraudiorender.bands_per_octave
         }
 

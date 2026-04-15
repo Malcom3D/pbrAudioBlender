@@ -53,6 +53,22 @@ class PBRAudioEngineProperties(PropertyGroup):
     )
 
     """ Sampling Panel """
+    number_of_rays: IntProperty(
+        name="Number of rays",
+        description="Number of rays to be emitted per entity",
+        default=1024,
+        min=1,
+        max=65536
+    )
+
+    direction_seed: IntProperty(
+        name="Direction Seed",
+        description="Rays direction seed",
+        default=1,
+        min=1,
+        max=65536
+    )
+
     max_interactions: IntProperty(
         name="Max Interactions",
         description="Maximum number of rays interactions",

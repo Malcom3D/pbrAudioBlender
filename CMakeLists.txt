@@ -48,6 +48,7 @@ ExternalProject_Add(
     BUILD_COMMAND cmake -E echo "Skipping build step."
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 ExternalProject_Add(
     fast-simplification
     PREFIX "blender"

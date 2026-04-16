@@ -43,6 +43,7 @@ platforms = ["linux-x64"]
 #   "./wheels/jsmin-3.0.1-py3-none-any.whl",
 # ]
 wheels = [
+   "./downloads/numpy-2.3.3-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
 #   "./downloads/typing_extensions-4.15.0-py3-none-any.whl",
 #   "./downloads/donfig-0.8.1.post1-py3-none-any.whl",
@@ -88,7 +89,7 @@ wheels = [
 #   "./downloads/meshlib-3.0.9.196-py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl",
    "./wheels/embreex-4.4.0rc0-cp311-cp311-linux_x86_64.whl",
 #   "./wheels/pytinybvh-1.2.1-cp311-cp311-linux_x86_64.whl",
-   "./wheels/pbraudiorender-0.1.dev168+g82dfcea52-py3-none-any.whl",
+   "./wheels/pbraudiorender-0.1.dev170+g8b1e4a61b-py3-none-any.whl",
 ]
 
 # # Optional: add-ons can list which resources they will require:

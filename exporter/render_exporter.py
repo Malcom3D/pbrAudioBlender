@@ -113,6 +113,7 @@ class RenderExporter:
             if hasattr(world, 'pbraudio') and hasattr(world.pbraudio, 'acoustic_domain'):
                 acoustic_domain = world.pbraudio.acoustic_domain
                 domain_config['name'] = acoustic_domain.name
+                domain_config['type'] = 'world'
                 
                 # Get domain geometry (bounding box vertices)
                 domain_config['geometry'] = self.get_domain_geometry(acoustic_domain)

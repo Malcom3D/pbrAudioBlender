@@ -112,6 +112,7 @@ def create_boundary_empties(center_obj, num_channels, radius):
                 cache_path = bpy.path.abspath(cache_path)
             boundary_empty.pbraudio.source = True
             boundary_empty.pbraudio.source_type = 'SPHERE'
+            boundary_empty.pbraudio.source_sphere_size = 0
             boundary_empty.pbraudio.environment_boundary = True
             boundary_empty.pbraudio.source_file = f"{cache_path}/Environments/{center_obj.name}/{boundary_empty.name}.raw"
 

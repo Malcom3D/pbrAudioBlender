@@ -369,8 +369,9 @@ class RenderExporter:
                 elif 'damping' in prop_name:
                     prop_value *= 0.01
 
-                if not (node.pbraudio_type == 'AcousticProperties' and hasattr(target_dict, prop_name.replace('pbraudio_', '')): 
-                    target_dict[prop_name.replace('pbraudio_', '')] = prop_value
+                prop_attr = prop_name.replace('pbraudio_', '')
+                if not ((node.pbraudio_type == 'AcousticProperties') and (hasattr(target_dict, prop_attr))):
+                    target_dict[prop_attr] = prop_value
     
     def is_point_inside_domain(self, point, domain_vertices):
         """

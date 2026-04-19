@@ -33,14 +33,49 @@ class AcousticPropertiesNode(AcousticMaterialNode):
 
     def sync_data(self, context):
         # input absorption
-        print('AcousticProperties: socket: ', self.inputs[0].default_value, self.pbraudio_absorption)
         if not self.inputs[0].is_linked and not self.pbraudio_absorption == self.inputs[0].default_value:
            # the value of the slider is the input socket, write it's value to self.pbraudio_absorption to be readed from exporter and used for computation
            self.pbraudio_absorption = self.inputs[0].default_value
+        # input reflection
+        if not self.inputs[1].is_linked and not self.pbraudio_reflection == self.inputs[1].default_value:
+           # the value of the slider is the input socket, write it's value to self.pbraudio_reflection to be readed from exporter and used for computation
+           self.pbraudio_reflection = self.inputs[1].default_value
+        # input reflection
+        if not self.inputs[2].is_linked and not self.pbraudio_reflection == self.inputs[2].default_value:
+           # the value of the slider is the input socket, write it's value to self.pbraudio_reflection to be readed from exporter and used for computation
+           self.pbraudio_reflection = self.inputs[2].default_value
+        # input scattering
+        if not self.inputs[3].is_linked and not self.pbraudio_scattering == self.inputs[3].default_value:
+           # the value of the slider is the input socket, write it's value to self.pbraudio_scattering to be readed from exporter and used for computation
+           self.pbraudio_scattering = self.inputs[3].default_value
 
     pbraudio_absorption: FloatProperty(
         name="absorption",
         description="WideBand absorption coeff",
+        default=0.5,
+        min=0.0,
+        max=1.0
+    )
+
+    pbraudio_refraction: FloatProperty(
+        name="reflection",
+        description="WideBand reflection coeff",
+        default=0.5,
+        min=0.0,
+        max=1.0
+    )
+
+    pbraudio_reflection: FloatProperty(
+        name="reflection",
+        description="WideBand reflection coeff",
+        default=0.5,
+        min=0.0,
+        max=1.0
+    )
+
+    pbraudio_scattering: FloatProperty(
+        name="scattering",
+        description="WideBand scattering coeff",
         default=0.5,
         min=0.0,
         max=1.0

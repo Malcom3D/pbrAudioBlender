@@ -24,7 +24,7 @@ from bpy.types import RenderEngine
 from mathutils import Matrix, Vector
 
 from ..utils import frd_io, environment_json
-from ..utils.ambisonic_decoder import AmbisonicDecoder
+#from ..utils.ambisonic_decoder import AmbisonicDecoder
 from ..exporter.render_exporter import RenderExporter
 
 classes = []

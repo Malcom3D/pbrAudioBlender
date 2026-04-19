@@ -372,7 +372,7 @@ class RenderExporter:
                 prop_attr = prop_name.replace('pbraudio_', '')
                 print('extract_node_properties: ', node.pbraudio_type)
 #                if not ((node.pbraudio_type == 'AcousticProperties') and (hasattr(target_dict, prop_attr))):
-                if ((node.pbraudio_type == 'AcousticProperties'):
+                if (node.pbraudio_type == 'AcousticProperties'):
                     print('target_dict: ', target_dict)
                 target_dict[prop_attr] = prop_value
     

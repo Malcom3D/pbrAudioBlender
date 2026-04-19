@@ -296,7 +296,9 @@ class RenderExporter:
                     self.merge_material_properties(acoustic_dict, linked_data, input_socket.name)
                 elif node_type == 'empty':
                     self.merge_empty_properties(acoustic_dict, linked_data, input_socket.name)
-        
+                elif linked_data['type'] == 'AcousticProperties': 
+                    return acoustic_dict
+
         # Extract node properties
         self.extract_node_properties(node, acoustic_dict)
         

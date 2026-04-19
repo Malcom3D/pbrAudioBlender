@@ -370,7 +370,6 @@ class RenderExporter:
                     prop_value *= 0.01
 
                 prop_attr = prop_name.replace('pbraudio_', '')
-#                if node.pbraudio_type == 'AcousticProperties' and prop_attr in target_dict.keys():
                 if not ((node.pbraudio_type == 'AcousticProperties') and (prop_attr in target_dict.keys())):
                     target_dict[prop_attr] = prop_value
     

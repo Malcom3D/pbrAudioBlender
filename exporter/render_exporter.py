@@ -283,6 +283,7 @@ class RenderExporter:
     def traverse_node_tree(self, node, node_type):
         """Traverse node tree to extract properties"""
         acoustic_dict = {'type': node.pbraudio_type}
+        unlinked_data = {}
         
         # Handle inputs
         for input_socket in node.inputs:
@@ -296,9 +297,6 @@ class RenderExporter:
                     self.merge_material_properties(acoustic_dict, linked_data, input_socket.name)
                 elif node_type == 'empty':
                     self.merge_empty_properties(acoustic_dict, linked_data, input_socket.name)
-
-        if linked_node.pbraudio_type == 'FrequencyResponse': 
-            return acoustic_dict
 
         # Extract node properties
         self.extract_node_properties(node, acoustic_dict)
@@ -371,7 +369,8 @@ class RenderExporter:
                 elif 'damping' in prop_name:
                     prop_value *= 0.01
                 
-                target_dict[prop_name.replace('pbraudio_', '')] = prop_value
+                if not (node.pbraudio_type == 'AcousticProperties' and hasattr(target_dict, 'prop_name.replace('pbraudio_', '')')): 
+                    target_dict[prop_name.replace('pbraudio_', '')] = prop_value
     
     def is_point_inside_domain(self, point, domain_vertices):
         """

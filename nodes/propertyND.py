@@ -42,7 +42,6 @@ class AcousticPropertiesNode(AcousticMaterialNode):
         name="absorption",
         description="WideBand absorption coeff",
         default=0.5,
-        update=sync_data,
         min=0.0,
         max=1.0
     )

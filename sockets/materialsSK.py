@@ -51,10 +51,15 @@ class AcousticValueNodeSocket(NodeSocket):
     bl_idname = 'AcousticValueNodeSocket'
     bl_label = "Acoustic Value Socket"
 
+    def default_value_update(self, context):
+        if not self.is_output and not self.is_linked:
+                self.node.sync_data(context)
+
     default_value: FloatProperty(
         default=0.0,
         min=0.0,
-        max=1.0
+        max=1.0,
+        update=default_value_update
     )
 
     default_path: StringProperty(

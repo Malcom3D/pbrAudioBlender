@@ -370,7 +370,9 @@ class RenderExporter:
                     prop_value *= 0.01
 
                 prop_attr = prop_name.replace('pbraudio_', '')
+                print('extract_node_properties: ', node.pbraudio_type)
                 if not ((node.pbraudio_type == 'AcousticProperties') and (hasattr(target_dict, prop_attr))):
+                    print('Value : ', prop_attr, 'changed')
                     target_dict[prop_attr] = prop_value
     
     def is_point_inside_domain(self, point, domain_vertices):

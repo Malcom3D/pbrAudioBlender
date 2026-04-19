@@ -33,6 +33,7 @@ class AcousticPropertiesNode(AcousticMaterialNode):
 
     def sync_data(self, context):
         # input absorption
+        print('AcousticProperties: socket: ', self.inputs[0].default_value, self.pbraudio_absorption)
         if not self.inputs[0].is_linked and not self.pbraudio_absorption == self.inputs[0].default_value:
            # the value of the slider is the input socket, write it's value to self.pbraudio_absorption to be readed from exporter and used for computation
            self.pbraudio_absorption = self.inputs[0].default_value

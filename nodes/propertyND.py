@@ -31,6 +31,21 @@ class AcousticPropertiesNode(AcousticMaterialNode):
     bl_idname = 'AcousticPropertiesNode'
     bl_label = "Acoustic Properties"
 
+    def sync_data(self, context):
+        # input absorption
+        if not self.inputs[0].is_linked and not self.pbraudio_absorption == self.inputs[0].default_value:
+           # the value of the slider is the input socket, write it's value to self.pbraudio_absorption to be readed from exporter and used for computation
+           self.pbraudio_absorption = self.inputs[0].default_value
+
+    pbraudio_absorption: FloatProperty(
+        name="absorption",
+        description="WideBand absorption coeff",
+        default=0.5,
+        update=sync_data
+        min=0.0,
+        max=1.0
+    )
+
     pbraudio_type: StringProperty(default='AcousticProperties')
 
     def init(self, context):
@@ -39,5 +54,8 @@ class AcousticPropertiesNode(AcousticMaterialNode):
         self.inputs.new('AcousticValueNodeSocket', "refraction")
         self.inputs.new('AcousticValueNodeSocket', "reflection")
         self.inputs.new('AcousticValueNodeSocket', "scattering")
+
+    def socket_value_update(context):
+        self.sync_data(context)
 
 classes.append(AcousticPropertiesNode)

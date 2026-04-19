@@ -1,5 +1,6 @@
 import numpy as np
 import soundfile as sf
+from scipy.special import factorial
 from scipy.spatial.transform import Rotation
 import json
 import os
@@ -134,7 +135,7 @@ class AmbisonicDecoder:
                     norm = np.sqrt((2 * n + 1) / (4 * np.pi))
                 else:
                     norm = np.sqrt((2 * n + 1) / (2 * np.pi) * 
-                                  np.math.factorial(n - abs(m)) / np.math.factorial(n + abs(m)))
+                                  factorial(n - abs(m)) / factorial(n + abs(m)))
                 
                 # Associated Legendre polynomial
                 if n == 0:

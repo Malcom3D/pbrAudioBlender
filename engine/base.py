@@ -275,7 +275,7 @@ class PBRAudioRenderEngine(RenderEngine):
         
         # For viewport preview, we might want to show a simplified representation
         # or just show the acoustic domain and sources
-        self.update(depsgraph, context.scene)
+        self.update(context.scene, depsgraph)
     
     def view_draw(self, context, depsgraph):
         """Draw in viewport"""

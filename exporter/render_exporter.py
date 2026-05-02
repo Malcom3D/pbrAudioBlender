@@ -1085,7 +1085,7 @@ class RenderExporter:
         
         if output.pbraudio.output_type == 'AMBI':
             config.update({
-                "order": output.pbraudio.ambisonic_order,
+                "order": int(output.pbraudio.ambisonic_order),
                 "spatial_arrangement_file": bpy.path.abspath(output.pbraudio.spatial_arrangement_file)
                                            if output.pbraudio.spatial_arrangement_file.startswith('//')
                                            else output.pbraudio.spatial_arrangement_file

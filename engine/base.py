@@ -69,7 +69,6 @@ class PBRAudioRenderEngine(RenderEngine):
     def _run_external_engine(self, config_path, output_dir, frame_start, frame_end):
         """
         Run the external acoustic rendering engine.
-        This would call your embreex-based engine executable.
         """
         try:
             # This is where you would call your external engine

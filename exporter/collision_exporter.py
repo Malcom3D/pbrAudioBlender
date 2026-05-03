@@ -75,8 +75,8 @@ class CollisionExporter:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
                 if previous_acoustic_dict['type'] == 'AcousticShader':
                     acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
-                elif previous_acoustic_dict['type'] == 'AcousticProperties':
-                    acoustic_dict['acoustic_properties'] = previous_acoustic_dict
+#                elif previous_acoustic_dict['type'] == 'AcousticProperties':
+#                    acoustic_dict['acoustic_properties'] = previous_acoustic_dict
 #                elif previous_acoustic_dict['type'] == 'FrequencyResponse':
 #                    quantity_type = 'magnitude'
 #                    if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:

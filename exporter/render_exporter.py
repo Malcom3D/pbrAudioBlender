@@ -1185,7 +1185,7 @@ class RenderExporter:
         """Main export method - exports the complete scene"""
         print("Starting scene export...")
         print(f"start_frame from Blender: {start_frame}")
-        print(f"end_frame from Blender: {end_frame}"}
+        print(f"end_frame from Blender: {end_frame}")
         
         try:
             # Export scene data

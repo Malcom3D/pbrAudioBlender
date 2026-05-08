@@ -68,18 +68,18 @@ class PBRAudioRenderEngine(RenderEngine):
             self._render_thread.join(timeout=2.0)
         self._is_rendering = False
     
-    def _run_external_engine(self, config_path, output_dir, frame_start, frame_end, frame_current):
+    def _run_external_engine(self, config_file, output_dir, frame_start, frame_end, frame_current):
         """
         Run the external acoustic rendering engine.
         """
         try:
             # This is where you would call your external engine
-            config_file = config_path
+            print('_run_external_engine: ', config_file)
             entity_manager = EntityManager(config_file)
             acoustic_engine = AcousticEngine(entity_manager)
 
             self.report({'INFO'}, f"Starting acoustic rendering engine...")
-            self.report({'INFO'}, f"Config: {config_path}")
+            self.report({'INFO'}, f"Config: {config_file}")
             self.report({'INFO'}, f"Output: {output_dir}")
             self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
 
@@ -170,7 +170,7 @@ class PBRAudioRenderEngine(RenderEngine):
 
             # Step 3: Run external acoustic engine
 
-            config_path = os.path.join(self.exporter.render_path, "config.json")
+            config_file = os.path.join(self.exporter.render_path, "config.json")
 
             output_dir = scene.pbraudio.output_path
 
@@ -184,7 +184,7 @@ class PBRAudioRenderEngine(RenderEngine):
             
             # Run external engine
             print(f"engine/base.py: current render frame {frame_current}")
-            engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end, frame_current)
+            engine_success = self._run_external_engine(config_file, output_dir, frame_start, frame_end, frame_current)
             
             if engine_success:
                 self.report({'INFO'}, "Acoustic rendering completed successfully!")

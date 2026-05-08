@@ -26,6 +26,8 @@ from mathutils import Matrix, Vector
 from ..utils import frd_io, environment_json
 from ..utils.ambisonic_decoder import AmbisonicDecoder
 from ..exporter.render_exporter import RenderExporter
+from pbrAudioRay.core.entity_manager import EntityManager
+from pbrAudioRay.core.acoustic_engine import AcousticEngine
 
 classes = []
 
@@ -72,32 +74,32 @@ class PBRAudioRenderEngine(RenderEngine):
         """
         try:
             # This is where you would call your external engine
-            # For example:
-            # engine_path = "/path/to/your/acoustic_engine"
-            # cmd = [engine_path, "--config", config_path, "--output", output_dir]
-            
-            # For now, we'll simulate the process
+            config_file = config_path
+            entity_manager = EntityManager(config_file)
+            acoustic_engine = AcousticEngine(em)
             self.report({'INFO'}, f"Starting acoustic rendering engine...")
             self.report({'INFO'}, f"Config: {config_path}")
             self.report({'INFO'}, f"Output: {output_dir}")
             self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
+
+            # acoustic_engine.compute()
             
-            # Simulate rendering progress
-            total_frames = frame_end - frame_start + 1
-            for frame in range(frame_start, frame_end + 1):
-                if self._cancel_render:
-                    self.report({'INFO'}, "Render cancelled")
-                    return False
-                
-                # Update progress
-                progress = (frame - frame_start + 1) / total_frames
-                self.update_progress(progress)
-                
-                # Simulate frame processing
-                time.sleep(0.1)  # Replace with actual engine call
-                
-                # Report frame completion
-                self.report({'INFO'}, f"Rendered frame {frame}")
+#            # Simulate rendering progress
+#            total_frames = frame_end - frame_start + 1
+#            for frame in range(frame_start, frame_end + 1):
+#                if self._cancel_render:
+#                    self.report({'INFO'}, "Render cancelled")
+#                    return False
+#                
+#                # Update progress
+#                progress = (frame - frame_start + 1) / total_frames
+#                self.update_progress(progress)
+#                
+#                # Simulate frame processing
+#                time.sleep(0.1)  # Replace with actual engine call
+#                
+#                # Report frame completion
+#                self.report({'INFO'}, f"Rendered frame {frame}")
             
             return True
             
@@ -169,6 +171,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Starting acoustic rendering...")
             
             # Run external engine
+            print(f"engine/base.py: current render frame {scene.frame_current}")
             engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end)
             
             if engine_success:

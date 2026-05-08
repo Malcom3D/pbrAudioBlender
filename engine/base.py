@@ -82,26 +82,26 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, f"Output: {output_dir}")
             self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
 
-            print(f"acoustic_engine.compute({scene.frame_current})")
+            print(f"acoustic_engine.compute({frame_current})")
             # acoustic_engine.compute()
             
-#            # Simulate rendering progress
-#            total_frames = frame_end - frame_start + 1
-#            for frame in range(frame_start, frame_end + 1):
-#                if self._cancel_render:
-#                    self.report({'INFO'}, "Render cancelled")
-#                    return False
-#                
-#                # Update progress
-#                progress = (frame - frame_start + 1) / total_frames
-#                self.update_progress(progress)
-#                
-#                # Simulate frame processing
-#                time.sleep(0.1)  # Replace with actual engine call
-#                
-#                # Report frame completion
-#                self.report({'INFO'}, f"Rendered frame {frame}")
-            
+            # Simulate rendering progress
+            total_frames = frame_end - frame_start + 1
+            for frame in range(frame_start, frame_end + 1):
+                if self._cancel_render:
+                    self.report({'INFO'}, "Render cancelled")
+                    return False
+                
+                # Update progress
+                progress = (frame - frame_start + 1) / total_frames
+                self.update_progress(progress)
+                
+                # Simulate frame processing
+                time.sleep(0.1)  # Replace with actual engine call
+                
+                # Report frame completion
+                self.report({'INFO'}, f"Rendered frame {frame}")
+           
             return True
             
         except Exception as e:
@@ -172,8 +172,9 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Starting acoustic rendering...")
             
             # Run external engine
-            print(f"engine/base.py: current render frame {scene.frame_current}")
-            engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end, scene.frame_current)
+            current_frame = bpy.context.scene.frame_current
+            print(f"engine/base.py: current render frame {frame_current}")
+            engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end, frame_current)
             
             if engine_success:
                 self.report({'INFO'}, "Acoustic rendering completed successfully!")

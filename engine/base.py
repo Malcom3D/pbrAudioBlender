@@ -68,7 +68,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self._render_thread.join(timeout=2.0)
         self._is_rendering = False
     
-    def _run_external_engine(self, config_path, output_dir, frame_start, frame_end):
+    def _run_external_engine(self, config_path, output_dir, frame_start, frame_end, frame_current):
         """
         Run the external acoustic rendering engine.
         """
@@ -82,6 +82,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, f"Output: {output_dir}")
             self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
 
+            print(f"acoustic_engine.compute({scene.frame_current})")
             # acoustic_engine.compute()
             
 #            # Simulate rendering progress
@@ -172,7 +173,7 @@ class PBRAudioRenderEngine(RenderEngine):
             
             # Run external engine
             print(f"engine/base.py: current render frame {scene.frame_current}")
-            engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end)
+            engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end, scene.frame_current)
             
             if engine_success:
                 self.report({'INFO'}, "Acoustic rendering completed successfully!")

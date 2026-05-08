@@ -108,7 +108,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'ERROR'}, f"Engine error: {str(e)}")
             return False
     
-    def _render_thread_func(self, depsgraph, scene, frame_start=None, frame_end=None):
+    def _render_thread_func(self, depsgraph, scene, frame_start=None, frame_end=None, frame_current=None):
         """Main render thread function"""
         try:
             self._is_rendering = True
@@ -172,7 +172,6 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Starting acoustic rendering...")
             
             # Run external engine
-            frame_current = bpy.context.scene.frame_current
             print(f"engine/base.py: current render frame {frame_current}")
             engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end, frame_current)
             
@@ -258,7 +257,7 @@ class PBRAudioRenderEngine(RenderEngine):
         self.cancel_render()
         
         # Start new render in background thread
-        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, frame, frame), daemon=True)
+        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, frame, frame, frame), daemon=True)
         
         self._render_thread.start()
         
@@ -349,13 +348,14 @@ class PBRAudioRenderEngine(RenderEngine):
             end_frame = start_frame
 
         scene = depsgraph.scene
+        frame_current = scene.frame_current
         
         self.report({'INFO'}, f"pbrAudio: Starting animation render ({start_frame}-{end_frame})")
         
         # Use the same render thread but for animation
         self.cancel_render()
         
-        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame), daemon=True)
+        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame, frame_current), daemon=True)
         
         self._render_thread.start()
         

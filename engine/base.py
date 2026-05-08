@@ -92,7 +92,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.update_progress(progress)
             
             # Report frame completion
-            self.report({'INFO'}, f"Rendered frame {frame}")
+            self.report({'INFO'}, f"Rendered frame {frame_current}")
 
             return True
 

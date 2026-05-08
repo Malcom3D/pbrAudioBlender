@@ -26,8 +26,8 @@ from mathutils import Matrix, Vector
 from ..utils import frd_io, environment_json
 from ..utils.ambisonic_decoder import AmbisonicDecoder
 from ..exporter.render_exporter import RenderExporter
-from pbrAudioRay.core.entity_manager import EntityManager
-from pbrAudioRay.core.acoustic_engine import AcousticEngine
+#from pbrAudioRay.core.entity_manager import EntityManager
+#from pbrAudioRay.core.acoustic_engine import AcousticEngine
 
 classes = []
 
@@ -74,10 +74,10 @@ class PBRAudioRenderEngine(RenderEngine):
         """
         try:
             # This is where you would call your external engine
-            print('_run_external_engine: ', config_file)
-            entity_manager = EntityManager(config_file)
-            acoustic_engine = AcousticEngine(entity_manager)
-
+#            print('_run_external_engine: ', config_file)
+#            entity_manager = EntityManager(config_file)
+#            acoustic_engine = AcousticEngine(entity_manager)
+#
             self.report({'INFO'}, f"Starting acoustic rendering engine...")
             self.report({'INFO'}, f"Config: {config_file}")
             self.report({'INFO'}, f"Output: {output_dir}")
@@ -86,34 +86,34 @@ class PBRAudioRenderEngine(RenderEngine):
             print(f"acoustic_engine.compute({frame_current})")
             #acoustic_engine.compute()
 
-            # Update progress
-            total_frames = frame_end - frame_start + 1
-            progress = (frame_current - frame_start + 1) / total_frames
-            self.update_progress(progress)
-            
-            # Report frame completion
-            self.report({'INFO'}, f"Rendered frame {frame_current}")
-
-            return True
-
-#            # Simulate rendering progress
+#            # Update progress
 #            total_frames = frame_end - frame_start + 1
-#            for frame in range(frame_start, frame_end + 1):
-#                if self._cancel_render:
-#                    self.report({'INFO'}, "Render cancelled")
-#                    return False
-#                
-#                # Update progress
-#                progress = (frame - frame_start + 1) / total_frames
-#                self.update_progress(progress)
-#                
-#                # Simulate frame processing
-#                time.sleep(0.1)  # Replace with actual engine call
-#                
-#                # Report frame completion
-#                self.report({'INFO'}, f"Rendered frame {frame}")
-#           
+#            progress = (frame_current - frame_start + 1) / total_frames
+#            self.update_progress(progress)
+#            
+#            # Report frame completion
+#            self.report({'INFO'}, f"Rendered frame {frame_current}")
+#
 #            return True
+
+            # Simulate rendering progress
+            total_frames = frame_end - frame_start + 1
+            for frame in range(frame_start, frame_end + 1):
+                if self._cancel_render:
+                    self.report({'INFO'}, "Render cancelled")
+                    return False
+                
+                # Update progress
+                progress = (frame - frame_start + 1) / total_frames
+                self.update_progress(progress)
+                
+                # Simulate frame processing
+                time.sleep(0.1)  # Replace with actual engine call
+                
+                # Report frame completion
+                self.report({'INFO'}, f"Rendered frame {frame}")
+           
+            return True
             
         except Exception as e:
             self.report({'ERROR'}, f"Engine error: {str(e)}")

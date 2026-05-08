@@ -172,7 +172,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Starting acoustic rendering...")
             
             # Run external engine
-            current_frame = bpy.context.scene.frame_current
+            frame_current = bpy.context.scene.frame_current
             print(f"engine/base.py: current render frame {frame_current}")
             engine_success = self._run_external_engine(config_path, output_dir, frame_start, frame_end, frame_current)
             

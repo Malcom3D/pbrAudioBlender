@@ -95,6 +95,7 @@ class RenderExporter:
             "number_of_rays": self.scene.pbraudiorender.number_of_rays,
             "direction_seed": self.scene.pbraudiorender.direction_seed,
             "bands_per_octave": self.scene.pbraudiorender.bands_per_octave
+            "view_ray": self.scene.pbraudio.enable_graphical_preview
         }
 
         # Frequency range
@@ -104,10 +105,6 @@ class RenderExporter:
         else:
             system['lowest_frequency'] = 5
             system['higher_frequency'] = self.scene.pbraudio.sample_rate / 2
-
-        # Adaptive mesh refinement
-        if self.scene.pbraudiorender.enable_adr:
-            system['adr_threshold'] = self.scene.pbraudiorender.adr_threshold
 
         return system
     

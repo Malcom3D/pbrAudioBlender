@@ -119,11 +119,11 @@ class PBRAudioSceneProperties(PropertyGroup):
         default='24BIT',
     )
 
-#    enable_graphical_preview: BoolProperty(
-#        name="Enable Graphical Preview",
-#        description="Enable graphical preview",
-#        default=False
-#    )
+    enable_graphical_preview: BoolProperty(
+        name="Enable Graphical Preview",
+        description="Enable graphical preview",
+        default=False
+    )
 
     enable_acoustic_preview: BoolProperty(
         name="Acoustic Preview",

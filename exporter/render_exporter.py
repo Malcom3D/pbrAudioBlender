@@ -57,12 +57,17 @@ class RenderExporter:
     
     def setup_paths(self):
         """Setup export directories"""
-        render_path = self.scene.pbraudio.cache_path
-        if render_path.startswith('//'):
-            render_path = bpy.path.abspath(render_path)
+        cache_path = self.scene.pbraudio.cache_path
+        if cache_path.startswith('//'):
+            cache_path = bpy.path.abspath(cache_path)
         
-        os.makedirs(render_path, exist_ok=True)
-        self.render_path = os.path.join(render_path, "AcousticDomain")
+        os.makedirs(cache_path, exist_ok=True)
+        self.cache_path = os.path.join(cache_path, "AcousticDomain")
+        os.makedirs(self.cache_path, exist_ok=True)
+        """Setup render output directories"""
+        self.render_path = self.scene.render.filepath
+        if render_path.startswith('//'):
+            self.render_path = bpy.path.abspath(render_path)
         os.makedirs(self.render_path, exist_ok=True)
     
     def build_config(self):
@@ -85,7 +90,8 @@ class RenderExporter:
             "subframes": 1,
             "start_frame": self.scene.frame_start,
             "end_frame": self.scene.frame_end,
-            "cache_path": self.render_path,
+            "cache_path": self.cache_path,
+            "output_path": self.render_path,
             "number_of_rays": self.scene.pbraudiorender.number_of_rays,
             "direction_seed": self.scene.pbraudiorender.direction_seed,
             "bands_per_octave": self.scene.pbraudiorender.bands_per_octave
@@ -705,8 +711,8 @@ class RenderExporter:
         name = obj.name_full.replace('.', '_')
         
         # Create directories
-        pose_dir = os.path.join(self.render_path, "data", "pose")
-        obj_dir = os.path.join(self.render_path, "data", name)
+        pose_dir = os.path.join(self.cache_path, "data", "pose")
+        obj_dir = os.path.join(self.cache_path, "data", name)
         os.makedirs(pose_dir, exist_ok=True)
         os.makedirs(obj_dir, exist_ok=True)
         
@@ -921,8 +927,8 @@ class RenderExporter:
         obj_config = {
             "idx": self.obj_idx,
             "name": name,
-            "obj_path": os.path.join(self.render_path, "data", name),
-            "pose_path": os.path.join(self.render_path, "data", "pose"),
+            "obj_path": os.path.join(self.cache_path, "data", name),
+            "pose_path": os.path.join(self.cache_path, "data", "pose"),
             "static": is_static,
             "stochastic_variation": obj.pbraudio.stochastic_variation,
             "ground": obj.pbraudio.ground,
@@ -961,7 +967,7 @@ class RenderExporter:
         name = empty.name_full.replace('.', '_')
         
         # Create pose directory
-        pose_dir = os.path.join(self.render_path, "data", "pose")
+        pose_dir = os.path.join(self.cache_path, "data", "pose")
         os.makedirs(pose_dir, exist_ok=True)
         
         # Export pose data
@@ -1041,7 +1047,7 @@ class RenderExporter:
         config = {
             "name": name,
             "static": is_static,
-            "pose_path": os.path.join(self.render_path, "data", "pose")
+            "pose_path": os.path.join(self.cache_path, "data", "pose")
         }
         
         if empty.pbraudio.source:
@@ -1154,7 +1160,7 @@ class RenderExporter:
 
     def save_config(self):
         """Save configuration to JSON file"""
-        config_file = os.path.join(self.render_path, "config.json")
+        config_file = os.path.join(self.cache_path, "config.json")
         
         # Convert numpy arrays to lists for JSON serialization
         def convert_for_json(obj):

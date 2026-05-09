@@ -44,34 +44,34 @@ class PBRAUDIO_PT_device_panel(Panel):
  
 classes.append(PBRAUDIO_PT_device_panel)
 
-#class PBRAUDIO_PT_graphical_preview_panel(Panel):
-#    """Panel to enable pbrAudio graphical preview and settings"""
-#    bl_label = "Graphical preview"
-#    bl_idname = "PBRAUDIO_PT_graphical_preview_panel"
-#    bl_space_type = 'PROPERTIES'
-#    bl_region_type = 'WINDOW'
-#    bl_context = "render"
-#    bl_options = {'DEFAULT_CLOSED'}
-#
-#    @classmethod
-#    def poll(cls, context):
-#        return context.scene.render.engine == 'PBRAUDIO'
-#
-#    def draw_header(self, context):
-#        scene = context.scene
-#        layout.prop(scene.pbraudio, "enable_graphical_preview")
-#
-#    def draw(self, context):
-#        layout = self.layout
-#        layout.use_property_split = True
-#        layout.use_property_decorate = False  # No animation.
-#
-#        scene = context.scene
-#
-#        if scene.pbraudio.enable_acoustic_preview:
-#           pass
-#
-#classes.append(PBRAUDIO_PT_graphical_preview_panel)
+class PBRAUDIO_PT_graphical_preview_panel(Panel):
+    """Panel to enable pbrAudio graphical preview and settings"""
+    bl_label = "Graphical preview"
+    bl_idname = "PBRAUDIO_PT_graphical_preview_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "render"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout.prop(scene.pbraudio, "enable_graphical_preview")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        if scene.pbraudio.enable_acoustic_preview:
+           pass
+
+classes.append(PBRAUDIO_PT_graphical_preview_panel)
 
 class PBRAUDIO_PT_frequencies_range_panel(Panel):
     """Panel to set the pbrAudio acoustic frequencies range"""

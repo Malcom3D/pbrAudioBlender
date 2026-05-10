@@ -62,7 +62,7 @@ def create_ray_visualization(origins, hit_points, clear_scene=False):
     
     print(f"Created {len(origins)} rays")
 
-def create_ray_visualization_efficient(origins, hit_points, clear_scene=False):
+def create_ray_visualization_efficient(origins, hit_points, material, clear_scene=False):
     """More efficient version using a single mesh with vertex colors"""
 
 #    if clear_scene:
@@ -92,11 +92,8 @@ def create_ray_visualization_efficient(origins, hit_points, clear_scene=False):
     edge_split = obj.modifiers.new(name='EdgeSplit', type='EDGE_SPLIT')
     edge_split.split_angle = 1.32645
     
-    # Create material
-    mat = bpy.data.materials.new(name='Ray_Material')
-    mat.use_nodes = True
-    mat.node_tree.nodes['Principled BSDF'].inputs[0].default_value = (0.8, 0.2, 0.2, 1.0)
-    obj.data.materials.append(mat)
+    # Assign material
+    obj.data.materials.append(material)
     
     # Set display settings
     obj.show_wire = True
@@ -107,7 +104,21 @@ def create_ray_visualization_efficient(origins, hit_points, clear_scene=False):
 def batch_process_json_files(directory):
     """Process multiple JSON files in a directory"""
     import glob
-    
+ 
+    # Create collection for this file
+    collection_name = 'RayView'
+    collection = bpy.data.collections.new(collection_name)
+    bpy.context.scene.collection.children.link(collection)
+        
+    # Set active collection
+    layer_collection = bpy.context.view_layer.layer_collection.children[collection_name]
+    bpy.context.view_layer.active_layer_collection = layer_collection
+
+    # Create material
+    mat = bpy.data.materials.new(name='Ray_Material')
+    mat.use_nodes = True
+    mat.node_tree.nodes['Principled BSDF'].inputs[0].default_value = (0.8, 0.2, 0.2, 1.0)
+
     # Find all JSON files
     json_files = glob.glob(os.path.join(directory, "*.json"))
     
@@ -115,17 +126,8 @@ def batch_process_json_files(directory):
         print(f"Processing {json_file}...")
         origins, hit_points = load_rays_from_json(json_file)
         
-        # Create collection for this file
-        filename = os.path.basename(json_file).replace('.json', '')
-        collection = bpy.data.collections.new(filename)
-        bpy.context.scene.collection.children.link(collection)
-        
-        # Set active collection
-        layer_collection = bpy.context.view_layer.layer_collection.children[filename]
-        bpy.context.view_layer.active_layer_collection = layer_collection
-        
         # Create rays
-        create_ray_visualization_efficient(origins, hit_points, clear_scene=False)
+        create_ray_visualization_efficient(origins, hit_points, mat, clear_scene=False)
 
 # Main execution
 def main():

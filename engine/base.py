@@ -207,6 +207,8 @@ class PBRAudioRenderEngine(RenderEngine):
         """Post-process rendered results (e.g., decode ambisonic files)"""
         try:
             self.report({'INFO'}, "Post-processing completed")
+            if scene.pbraudio.enable_graphical_preview:
+                pass
             
         except Exception as e:
             self.report({'WARNING'}, f"Post-processing error: {str(e)}")

@@ -226,7 +226,7 @@ class RenderExporter:
             props = self.scene.pbraudiorender
             termination_config["termination_type"] = props.termination_type
             
-            elif props.termination_type == 'REVERBERATION_TIME':
+            if props.termination_type == 'REVERBERATION_TIME':
                 termination_config["reverberation_time"] = props.reverberation_time
             elif props.termination_type == 'ENERGY_THRESHOLD':
                 termination_config.update({

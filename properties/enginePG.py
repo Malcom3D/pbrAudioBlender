@@ -323,7 +323,7 @@ class PBRAudioEngineProperties(PropertyGroup):
             ('REVERBERATION_TIME', "Reverberation Time", "Terminate after a number of seconds from the end of last active source"),
             ('ENERGY_THRESHOLD', "Energy Threshold", "Terminate if the pressure goes beyond a energy threshold"),
         ],
-        default='FINAL_FRAME'
+        default='ENERGY_THRESHOLD'
     )
 
     reverberation_time: FloatProperty(

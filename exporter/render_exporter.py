@@ -226,20 +226,14 @@ class RenderExporter:
             props = self.scene.pbraudiorender
             termination_config["termination_type"] = props.termination_type
             
-            if props.termination_type == 'SAMPLE_END':
-                termination_config.update({
-                    "samples_after": props.samples_after,
-                    "min_active_sources": props.min_active_sources
-                })
             elif props.termination_type == 'REVERBERATION_TIME':
-                termination_config["max_reverberation_time"] = props.max_reverberation_time
+                termination_config["reverberation_time"] = props.reverberation_time
             elif props.termination_type == 'ENERGY_THRESHOLD':
                 termination_config.update({
-                    "max_energy_threshold": props.max_energy_threshold,
-                    "min_energy_threshold": props.min_energy_threshold
+                    "energy_threshold": props.energy_threshold,
                 })
         else:
-            termination_config["termination_type"] = 'FINAL_FRAME'
+            termination_config["energy_threshold"] = -120
             
         return termination_config
     

@@ -320,48 +320,24 @@ class PBRAudioEngineProperties(PropertyGroup):
         name="Type",
         description="Termination Type",
         items=[
-            ('FINAL_FRAME', "Final Frame", "Terminate at the Final Frame of the rendering range"),
-            ('SAMPLE_END', "Sample End", "Terminate after a number of samples after end of last (minimum) active sources"),
             ('REVERBERATION_TIME', "Reverberation Time", "Terminate after a number of seconds from the end of last active source"),
-            ('ENERGY_THRESHOLD', "Energy Threshold", "Terminate if the pressure goes beyond a energy range"),
+            ('ENERGY_THRESHOLD', "Energy Threshold", "Terminate if the pressure goes beyond a energy threshold"),
         ],
         default='FINAL_FRAME'
     )
 
-    samples_after: IntProperty(
-        name="Samples After",
-        description="Number of samples after end of last (minimum) active sources",
-        default=100,
-        min=1,
-        max=1024000,
-    )
-
-    min_active_sources: IntProperty(
-        name="Min Sources",
-        description="Minimim number of active sources",
-        default=1,
-        min=1,
-        max=2048,
-    )
-
-    max_reverberation_time: FloatProperty(
-        name="Max Time Limit",
-        description="Maximum time in seconds of reverberation before termination",
+    reverberation_time: FloatProperty(
+        name="Time Limit",
+        description="Time in seconds of reverberation before termination",
         default=2.0,
         min=0.0,
         max=3600,
     )
 
-    max_energy_threshold: FloatProperty(
-        name="Max Threshold",
-        description="Maximum energy value of pressure value beyond which terminate",
-        default=1e6,
-    )
-
-    min_energy_threshold: FloatProperty(
-        name="Min Threshold",
-        description="Minimum energy value of pressure value beyond which terminate",
-        default=1e-6,
+    energy_threshold: FloatProperty(
+        name="Energy Threshold",
+        description="Minimum energy in dB of pressure value beyond which terminate",
+        default=60,
     )
 
 classes.append(PBRAudioEngineProperties)

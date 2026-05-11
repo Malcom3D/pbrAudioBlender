@@ -312,14 +312,10 @@ class PBRAUDIO_PT_termination_panel(Panel):
             layout.enabled = False
 
         layout.prop(scene.pbraudiorender, "termination_type")
-        if scene.pbraudiorender.termination_type == 'SAMPLE_END':
-            layout.prop(scene.pbraudiorender, "samples_after")
-            layout.prop(scene.pbraudiorender, "min_active_sources")
         if scene.pbraudiorender.termination_type == 'REVERBERATION_TIME':
-            layout.prop(scene.pbraudiorender, "max_reverberation_time")
+            layout.prop(scene.pbraudiorender, "reverberation_time")
         if scene.pbraudiorender.termination_type == 'ENERGY_THRESHOLD':
-            layout.prop(scene.pbraudiorender, "max_energy_threshold")
-            layout.prop(scene.pbraudiorender, "min_energy_threshold")
+            layout.prop(scene.pbraudiorender, "energy_threshold")
 
 classes.append(PBRAUDIO_PT_termination_panel)
 

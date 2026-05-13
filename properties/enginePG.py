@@ -168,15 +168,15 @@ class PBRAudioEngineProperties(PropertyGroup):
         max=2048
     )
 
-    enable_refraction: BoolProperty(
-        name="Refraction",
-        description="Handle refraction at boundary",
+    enable_transmission: BoolProperty(
+        name="Transmission",
+        description="Handle transmission at boundary",
         default=False,
     )
 
-    max_refraction: IntProperty(
-        name="Max Refraction",
-        description="Maximum number of recursive rays for refraction",
+    max_transmission: IntProperty(
+        name="Max Transmission",
+        description="Maximum number of recursive rays for transmission",
         default=8,
         min=1,
         max=2048

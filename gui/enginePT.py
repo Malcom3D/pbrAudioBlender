@@ -220,9 +220,9 @@ class PBRAUDIO_PT_interface_panel(Panel):
         layout.prop(scene.pbraudiorender, "enable_scattering")
         if scene.pbraudiorender.enable_scattering:
             layout.prop(scene.pbraudiorender, "max_scattering")
-        layout.prop(scene.pbraudiorender, "enable_refraction")
-        if scene.pbraudiorender.enable_refraction:
-            layout.prop(scene.pbraudiorender, "max_refraction")
+        layout.prop(scene.pbraudiorender, "enable_transmission")
+        if scene.pbraudiorender.enable_transmission:
+            layout.prop(scene.pbraudiorender, "max_transmission")
         layout.prop(scene.pbraudiorender, "enable_diffraction")
         if scene.pbraudiorender.enable_diffraction:
             layout.prop(scene.pbraudiorender, "max_diffraction")

@@ -167,7 +167,7 @@ class RenderExporter:
                 "enable_absorption": props.enable_absorption,
                 "enable_reflection": props.enable_reflection,
                 "enable_scattering": props.enable_scattering,
-                "enable_refraction": props.enable_refraction,
+                "enable_transmission": props.enable_transmission,
                 "enable_diffraction": props.enable_diffraction,
                 "min_impedance_ratio": props.min_impedance_ratio,
                 "max_impedance_ratio": props.max_impedance_ratio
@@ -177,8 +177,8 @@ class RenderExporter:
                 interface_config["max_reflection"] = props.max_reflection
             if props.enable_scattering:
                 interface_config["max_scattering"] = props.max_scattering
-            if props.enable_refraction:
-                interface_config["max_refraction"] = props.max_refraction
+            if props.enable_transmission:
+                interface_config["max_transmission"] = props.max_transmission
             if props.enable_diffraction:
                 interface_config["max_diffraction"] = props.max_diffraction
                 
@@ -345,7 +345,7 @@ class RenderExporter:
             
             # Determine quantity type based on socket name
             quantity_type = 'magnitude'
-            if socket_name in ['absorption', 'refraction', 'reflection', 'scattering']:
+            if socket_name in ['absorption', 'transmission', 'reflection', 'scattering']:
                 quantity_type = 'coefficients'
             
             target_dict[socket_name] = {

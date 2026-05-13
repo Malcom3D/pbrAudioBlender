@@ -79,7 +79,7 @@ class CollisionExporter:
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
 #                elif previous_acoustic_dict['type'] == 'FrequencyResponse':
 #                    quantity_type = 'magnitude'
-#                    if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
+#                    if in_idx in ['absorption', 'transmission', 'reflection', 'scattering']:
 #                        quantity_type = 'coefficients'
 #                    desired_points, _ = frd_io.generate_bands(freq_min, freq_max, bands_per_octave)
 #                    freq_resp_file = previous_acoustic_dict['response_filepath']
@@ -90,7 +90,7 @@ class CollisionExporter:
 #            elif not node.inputs[in_idx].is_linked:
 #                if node.pbraudio_type == 'AcousticProperties':
 #                    quantity_type = 'magnitude'
-#                    if in_idx in ['absorption', 'refraction', 'reflection', 'scattering']:
+#                    if in_idx in ['absorption', 'transmission', 'reflection', 'scattering']:
 #                        quantity_type = 'coefficients'
 #                    delta_f = (freq_max - freq_min)/4
 #                    freqs = [freq_min, freq_min + delta_f, freq_min + 2*delta_f, freq_max - delta_f, freq_max]

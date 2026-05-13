@@ -256,7 +256,7 @@ classes = []
 #        max=1.0
 #    )
 #
-#    refraction: FloatProperty(
+#    transmission: FloatProperty(
 #        name="Refraction",
 #        default=0.0,
 #        min=0.0,

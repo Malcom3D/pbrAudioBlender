@@ -46,7 +46,7 @@ classes.append(PBRAUDIO_PT_device_panel)
 
 class PBRAUDIO_PT_graphical_preview_panel(Panel):
     """Panel to enable pbrAudio graphical preview and settings"""
-    bl_label = "Graphical preview"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_graphical_preview_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -59,6 +59,7 @@ class PBRAUDIO_PT_graphical_preview_panel(Panel):
 
     def draw_header(self, context):
         scene = context.scene
+        layout = self.layout
         layout.prop(scene.pbraudio, "enable_graphical_preview")
 
     def draw(self, context):
@@ -69,7 +70,9 @@ class PBRAUDIO_PT_graphical_preview_panel(Panel):
         scene = context.scene
 
         if scene.pbraudio.enable_acoustic_preview:
-           pass
+            layout.enabled = True
+        else:
+            layout.enabled = False
 
 classes.append(PBRAUDIO_PT_graphical_preview_panel)
 

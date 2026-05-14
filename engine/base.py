@@ -270,12 +270,15 @@ class PBRAudioRenderEngine(RenderEngine):
         self.report({'INFO'}, "pbrAudio: Render begin...")
         scene = depsgraph.scene
         frame = scene.frame_current
+        start_frame = scene.frame_start
+        end_frame = scene.frame_end
         
         # Cancel any existing render
         self.cancel_render()
         
         # Start new render in background thread
-        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, frame, frame, frame), daemon=True)
+        self.report({'INFO'}, "pbrAudio: render() function")
+        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame, frame), daemon=True)
         
         self._render_thread.start()
         
@@ -358,12 +361,14 @@ class PBRAudioRenderEngine(RenderEngine):
     def animation_render(self, depsgraph):
         """Render animation sequence"""
         self.report({'INFO'}, "pbrAudio: Animation Render begin...")
-        if self.is_animation:
-            start_frame = scene.frame_start
-            end_frame = scene.frame_end
-        else:
-            start_frame = scene.frame_current
-            end_frame = start_frame
+#        if self.is_animation:
+#            start_frame = scene.frame_start
+#            end_frame = scene.frame_end
+#        else:
+#            start_frame = scene.frame_current
+#            end_frame = start_frame
+        start_frame = scene.frame_start
+        end_frame = scene.frame_end
 
         scene = depsgraph.scene
         frame_current = scene.frame_current
@@ -373,6 +378,7 @@ class PBRAudioRenderEngine(RenderEngine):
         # Use the same render thread but for animation
         self.cancel_render()
         
+        self.report({'INFO'}, "pbrAudio: animation_render() function")
         self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame, frame_current), daemon=True)
         
         self._render_thread.start()

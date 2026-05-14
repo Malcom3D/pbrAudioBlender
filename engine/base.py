@@ -94,6 +94,10 @@ class PBRAudioRenderEngine(RenderEngine):
             # Report frame completion
             self.report({'INFO'}, f"Rendered frame {frame_current}")
 
+            if frame_current == frame_end:
+                self.report({'INFO'}, f"Rendering ambisonic tracks...")
+                self.acoustic_engine.render()
+
             return True
 
 #            # Simulate rendering progress
@@ -207,7 +211,6 @@ class PBRAudioRenderEngine(RenderEngine):
         """Post-process rendered results (e.g., decode ambisonic files)"""
         try:
             self.report({'INFO'}, "Post-processing rendered audio")
-            self.acoustic_engine.render()
             self.report({'INFO'}, "Post-processing completed")
             if scene.pbraudio.enable_graphical_preview:
                 pass

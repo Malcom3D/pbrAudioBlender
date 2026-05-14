@@ -75,8 +75,8 @@ class PBRAudioRenderEngine(RenderEngine):
         try:
             # This is where you would call your external engine
             print('_run_external_engine: ', config_file)
-            self.entity_manager = EntityManager(config_file)
-            self.acoustic_engine = AcousticEngine(self.entity_manager)
+            entity_manager = EntityManager(config_file)
+            acoustic_engine = AcousticEngine(entity_manager)
 
             self.report({'INFO'}, f"Starting acoustic rendering engine...")
             self.report({'INFO'}, f"Config: {config_file}")
@@ -84,7 +84,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
 
             print(f"acoustic_engine.compute({frame_current})")
-            self.acoustic_engine._compute_frame(frame_current)
+            acoustic_engine._compute_frame(frame_current)
 
             # Update progress
             total_frames = frame_end - frame_start + 1
@@ -94,7 +94,8 @@ class PBRAudioRenderEngine(RenderEngine):
             # Report frame completion
             self.report({'INFO'}, f"Rendered frame {frame_current}")
 
-            if frame_current == frame_end:
+            config = entity_manager.get('config')
+            if frame_current == config.system.end_frame:
                 self.report({'INFO'}, f"Rendering ambisonic tracks...")
                 self.acoustic_engine.render()
 
@@ -270,15 +271,13 @@ class PBRAudioRenderEngine(RenderEngine):
         self.report({'INFO'}, "pbrAudio: Render begin...")
         scene = depsgraph.scene
         frame = scene.frame_current
-        start_frame = scene.frame_start
-        end_frame = scene.frame_end
         
         # Cancel any existing render
         self.cancel_render()
         
         # Start new render in background thread
         self.report({'INFO'}, "pbrAudio: render() function")
-        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame, frame), daemon=True)
+        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, frame, frame, frame), daemon=True)
         
         self._render_thread.start()
         
@@ -361,14 +360,12 @@ class PBRAudioRenderEngine(RenderEngine):
     def animation_render(self, depsgraph):
         """Render animation sequence"""
         self.report({'INFO'}, "pbrAudio: Animation Render begin...")
-#        if self.is_animation:
-#            start_frame = scene.frame_start
-#            end_frame = scene.frame_end
-#        else:
-#            start_frame = scene.frame_current
-#            end_frame = start_frame
-        start_frame = scene.frame_start
-        end_frame = scene.frame_end
+        if self.is_animation:
+            start_frame = scene.frame_start
+            end_frame = scene.frame_end
+        else:
+            start_frame = scene.frame_current
+            end_frame = scene.start_frame
 
         scene = depsgraph.scene
         frame_current = scene.frame_current

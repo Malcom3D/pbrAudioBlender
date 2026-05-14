@@ -106,31 +106,31 @@ class PBRAudioRenderEngine(RenderEngine):
         """
 #        try:
             # This is where you would call your external engine
-            print('_run_external_engine: ', config_file)
+        print('_run_external_engine: ', config_file)
 #            entity_manager = EntityManager(config_file)
 #            acoustic_engine = AcousticEngine(entity_manager)
 #            acoustic_engine._compute_frame(frame_current)
 
-            self.report({'INFO'}, f"Starting acoustic rendering engine...")
-            self.report({'INFO'}, f"Config: {config_file}")
-            self.report({'INFO'}, f"Output: {output_dir}")
-            self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
-            print(f"acoustic_engine.compute({frame_current})")
+        self.report({'INFO'}, f"Starting acoustic rendering engine...")
+        self.report({'INFO'}, f"Config: {config_file}")
+        self.report({'INFO'}, f"Output: {output_dir}")
+        self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
+        print(f"acoustic_engine.compute({frame_current})")
 
-            render_success = acoustic_render(config_file, frame_current)
+        render_success = acoustic_render(config_file, frame_current)
 
-            if render_success:
-                # Update progress
-                total_frames = frame_end - frame_start + 1
-                progress = (frame_current - frame_start + 1) / total_frames
-                self.update_progress(progress)
+        if render_success:
+            # Update progress
+            total_frames = frame_end - frame_start + 1
+            progress = (frame_current - frame_start + 1) / total_frames
+            self.update_progress(progress)
             
-                # Report frame completion
-                self.report({'INFO'}, f"Rendered frame {frame_current}")
-                return True
-            else:
-                self.report({'ERROR'}, f"Engine error: {str(e)}")
-                return False
+            # Report frame completion
+            self.report({'INFO'}, f"Rendered frame {frame_current}")
+            return True
+        else:
+            self.report({'ERROR'}, f"Engine error: {str(e)}")
+            return False
 
 
 #            config = entity_manager.get('config')

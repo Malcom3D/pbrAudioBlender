@@ -91,7 +91,8 @@ class PBRAudioRenderEngine(RenderEngine):
     # When the render engine instance is destroy, this is called. Clean up any
     # render engine data here, for example stopping running render threads.
     def __del__(self):
-        self.cancel_render()
+        pass
+#        self.cancel_render()
     
     def cancel_render(self):
         """Cancel any ongoing render"""

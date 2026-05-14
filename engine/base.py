@@ -26,8 +26,8 @@ from mathutils import Matrix, Vector
 from ..utils import frd_io, environment_json
 from ..utils.ambisonic_decoder import AmbisonicDecoder
 from ..exporter.render_exporter import RenderExporter
-#from pbrAudioRay.core.entity_manager import EntityManager
-#from pbrAudioRay.core.acoustic_engine import AcousticEngine
+from pbrAudioRay.core.entity_manager import EntityManager
+from pbrAudioRay.core.acoustic_engine import AcousticEngine
 
 classes = []
 
@@ -75,8 +75,8 @@ class PBRAudioRenderEngine(RenderEngine):
         try:
             # This is where you would call your external engine
             print('_run_external_engine: ', config_file)
-            entity_manager = EntityManager(config_file)
-            acoustic_engine = AcousticEngine(entity_manager)
+            self.entity_manager = EntityManager(config_file)
+            self.acoustic_engine = AcousticEngine(self.entity_manager)
 
             self.report({'INFO'}, f"Starting acoustic rendering engine...")
             self.report({'INFO'}, f"Config: {config_file}")
@@ -84,7 +84,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
 
             print(f"acoustic_engine.compute({frame_current})")
-            acoustic_engine.compute()
+            self.acoustic_engine._compute_frame(frame_current)
 
             # Update progress
             total_frames = frame_end - frame_start + 1
@@ -170,7 +170,7 @@ class PBRAudioRenderEngine(RenderEngine):
 
             # Step 3: Run external acoustic engine
 
-            config_file = os.path.join(self.exporter.render_path, "config.json")
+            config_file = os.path.join(cache_path, "AcousticDomain/config.json")
 
             output_dir = scene.pbraudio.output_path
 
@@ -206,6 +206,8 @@ class PBRAudioRenderEngine(RenderEngine):
     def _post_process_results(self, output_dir, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
         try:
+            self.report({'INFO'}, "Post-processing rendered audio")
+            self.acoustic_engine.render()
             self.report({'INFO'}, "Post-processing completed")
             if scene.pbraudio.enable_graphical_preview:
                 pass

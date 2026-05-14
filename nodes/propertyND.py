@@ -57,9 +57,9 @@ class AcousticPropertiesNode(AcousticMaterialNode):
         max=1.0
     )
 
-    pbraudio_refraction: FloatProperty(
-        name="reflection",
-        description="WideBand reflection coeff",
+    pbraudio_transmission: FloatProperty(
+        name="transmission",
+        description="WideBand transmission coeff",
         default=0.5,
         min=0.0,
         max=1.0
@@ -86,7 +86,7 @@ class AcousticPropertiesNode(AcousticMaterialNode):
     def init(self, context):
         self.outputs.new('AcousticMaterialNodeSocket', "AcousticProperties")
         self.inputs.new('AcousticValueNodeSocket', "absorption")
-        self.inputs.new('AcousticValueNodeSocket', "refraction")
+        self.inputs.new('AcousticValueNodeSocket', "transmission")
         self.inputs.new('AcousticValueNodeSocket', "reflection")
         self.inputs.new('AcousticValueNodeSocket', "scattering")
 

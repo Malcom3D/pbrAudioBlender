@@ -65,9 +65,9 @@ class RenderExporter:
         self.cache_path = os.path.join(cache_path, "AcousticDomain")
         os.makedirs(self.cache_path, exist_ok=True)
         """Setup render output directories"""
-        self.render_path = self.scene.render.filepath
-        if render_path.startswith('//'):
-            self.render_path = bpy.path.abspath(render_path)
+        self.render_path = self.scene.pbraudio.output_path
+        if self.render_path.startswith('//'):
+            self.render_path = bpy.path.abspath(self.render_path)
         os.makedirs(self.render_path, exist_ok=True)
     
     def build_config(self):
@@ -91,7 +91,7 @@ class RenderExporter:
             "start_frame": self.scene.frame_start,
             "end_frame": self.scene.frame_end,
             "cache_path": self.cache_path,
-            "output_path": self.render_path,
+            "render_path": self.render_path,
             "number_of_rays": self.scene.pbraudiorender.number_of_rays,
             "direction_seed": self.scene.pbraudiorender.direction_seed,
             "bands_per_octave": self.scene.pbraudiorender.bands_per_octave,

@@ -118,15 +118,11 @@ class PBRAudioRenderEngine(RenderEngine):
         print(f"acoustic_engine.compute({frame_current})")
 
         render_success = acoustic_render(config_file, frame_current)
+        status_file = f"{output_dir}/render_progress" # change to cache_path
+        bpy.app.timers.register(lambda: self.check_completion(process, status_file, frame_start, frame_end, frame_current), first_interval=1.0)
 
         if render_success:
-            # Update progress
-            total_frames = frame_end - frame_start + 1
-            progress = (frame_current - frame_start + 1) / total_frames
-            self.update_progress(progress)
             
-            # Report frame completion
-            self.report({'INFO'}, f"Rendered frame {frame_current}")
             return True
         else:
             self.report({'ERROR'}, f"Engine error: {str(e)}")
@@ -161,6 +157,23 @@ class PBRAudioRenderEngine(RenderEngine):
 #        except Exception as e:
 #            self.report({'ERROR'}, f"Engine error: {str(e)}")
 #            return False
+
+    def check_completion(self, process, status_file, frame_start, frame_end, frame_current):
+#        """Update UI"""
+#        for area in bpy.context.screen.areas:
+#            area.tag_redraw()
+        """Check if the process has completed"""
+        if not process.is_alive():
+            # Report frame completion
+            self.report({'INFO'}, f"Rendered frame {frame_current}")
+            return None
+        else:
+            # Update progress
+            total_frames = frame_end - frame_start + 1
+            progress = (frame_current - frame_start + 1) / total_frames
+            self.update_progress(progress)
+            # Continue timer
+            return 1.0
     
     def _render_thread_func(self, depsgraph, scene, frame_start=None, frame_end=None, frame_current=None):
         """Main render thread function"""

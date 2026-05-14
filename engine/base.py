@@ -104,7 +104,7 @@ class PBRAudioRenderEngine(RenderEngine):
         """
         Run the external acoustic rendering engine.
         """
-        try:
+#        try:
             # This is where you would call your external engine
             print('_run_external_engine: ', config_file)
 #            entity_manager = EntityManager(config_file)

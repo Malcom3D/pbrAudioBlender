@@ -122,7 +122,7 @@ class PBRAudioRenderEngine(RenderEngine):
         bpy.app.timers.register(lambda: self.check_completion(process, status_file, frame_start, frame_end, frame_current), first_interval=1.0)
 
         if render_success:
-            
+            self.report({'INFO'}, f"Rendered frame {frame_current}")
             return True
         else:
             self.report({'ERROR'}, f"Engine error: {str(e)}")
@@ -324,7 +324,7 @@ class PBRAudioRenderEngine(RenderEngine):
         frame = scene.frame_current
         
         # Cancel any existing render
-        self.cancel_render()
+#        self.cancel_render()
         
         # Start new render in background thread
         self.report({'INFO'}, "pbrAudio: render() function")
@@ -424,7 +424,7 @@ class PBRAudioRenderEngine(RenderEngine):
         self.report({'INFO'}, f"pbrAudio: Starting animation render ({start_frame}-{end_frame})")
         
         # Use the same render thread but for animation
-        self.cancel_render()
+#        self.cancel_render()
         
         self.report({'INFO'}, "pbrAudio: animation_render() function")
         self._render_thread_func(depsgraph, scene, start_frame, end_frame, frame_current)

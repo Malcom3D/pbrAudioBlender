@@ -19,7 +19,9 @@
 import bpy
 import os
 import time
-import threading
+#import threading
+import multiprocessing
+from functools import wraps
 from bpy.types import RenderEngine
 from mathutils import Matrix, Vector
 
@@ -30,6 +32,36 @@ from pbrAudioRay.core.entity_manager import EntityManager
 from pbrAudioRay.core.acoustic_engine import AcousticEngine
 
 classes = []
+
+def run_async(func):
+    """Decorator to run function in background process"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Create process
+        process = multiprocessing.Process(
+            target=func,
+            args=args,
+            kwargs=kwargs
+        )
+        process.start()
+
+        # Return process object for monitoring
+        return process
+
+    return wrapper
+
+@run_async
+def acoustic_render(config_file: str, frame_current: int):
+    entity_manager = EntityManager(config_file)
+    acoustic_engine = AcousticEngine(entity_manager)
+    acoustic_engine._compute_frame(frame_current)
+
+    # Post process at last frame
+    config = entity_manager.get('config')
+    if frame_current == config.system.end_frame:
+        acoustic_engine.render()
+
+    return True
 
 class PBRAudioRenderEngine(RenderEngine):
     """pbrAudio render engine implementation"""
@@ -64,8 +96,8 @@ class PBRAudioRenderEngine(RenderEngine):
     def cancel_render(self):
         """Cancel any ongoing render"""
         self._cancel_render = True
-        if self._render_thread and self._render_thread.is_alive():
-            self._render_thread.join(timeout=2.0)
+#        if self._render_thread and self._render_thread.is_alive():
+#            self._render_thread.join(timeout=2.0)
         self._is_rendering = False
     
     def _run_external_engine(self, config_file, output_dir, frame_start, frame_end, frame_current):
@@ -75,31 +107,37 @@ class PBRAudioRenderEngine(RenderEngine):
         try:
             # This is where you would call your external engine
             print('_run_external_engine: ', config_file)
-            entity_manager = EntityManager(config_file)
-            acoustic_engine = AcousticEngine(entity_manager)
+#            entity_manager = EntityManager(config_file)
+#            acoustic_engine = AcousticEngine(entity_manager)
+#            acoustic_engine._compute_frame(frame_current)
 
             self.report({'INFO'}, f"Starting acoustic rendering engine...")
             self.report({'INFO'}, f"Config: {config_file}")
             self.report({'INFO'}, f"Output: {output_dir}")
             self.report({'INFO'}, f"Frames: {frame_start}-{frame_end}")
-
             print(f"acoustic_engine.compute({frame_current})")
-            acoustic_engine._compute_frame(frame_current)
 
-            # Update progress
-            total_frames = frame_end - frame_start + 1
-            progress = (frame_current - frame_start + 1) / total_frames
-            self.update_progress(progress)
+            render_success = acoustic_render(config_file, frame_current)
+
+            if render_success:
+                # Update progress
+                total_frames = frame_end - frame_start + 1
+                progress = (frame_current - frame_start + 1) / total_frames
+                self.update_progress(progress)
             
-            # Report frame completion
-            self.report({'INFO'}, f"Rendered frame {frame_current}")
+                # Report frame completion
+                self.report({'INFO'}, f"Rendered frame {frame_current}")
+                return True
+            else:
+                self.report({'ERROR'}, f"Engine error: {str(e)}")
+                return False
 
-            config = entity_manager.get('config')
-            if frame_current == config.system.end_frame:
-                self.report({'INFO'}, f"Rendering ambisonic tracks...")
-                self.acoustic_engine.render()
 
-            return True
+#            config = entity_manager.get('config')
+#            if frame_current == config.system.end_frame:
+#                self.report({'INFO'}, f"Rendering ambisonic tracks...")
+#                self.acoustic_engine.render()
+
 
 #            # Simulate rendering progress
 #            total_frames = frame_end - frame_start + 1
@@ -119,10 +157,10 @@ class PBRAudioRenderEngine(RenderEngine):
 #                self.report({'INFO'}, f"Rendered frame {frame}")
 #           
 #            return True
-            
-        except Exception as e:
-            self.report({'ERROR'}, f"Engine error: {str(e)}")
-            return False
+#            
+#        except Exception as e:
+#            self.report({'ERROR'}, f"Engine error: {str(e)}")
+#            return False
     
     def _render_thread_func(self, depsgraph, scene, frame_start=None, frame_end=None, frame_current=None):
         """Main render thread function"""
@@ -277,9 +315,9 @@ class PBRAudioRenderEngine(RenderEngine):
         
         # Start new render in background thread
         self.report({'INFO'}, "pbrAudio: render() function")
-        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, frame, frame, frame), daemon=True)
-        
-        self._render_thread.start()
+        self._render_thread_func(depsgraph, scene, frame, frame, frame)
+#        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, frame, frame, frame), daemon=True)
+#        self._render_thread.start()
         
         # For Blender to know we're rendering asynchronously
         # We need to return and let the thread run
@@ -287,7 +325,7 @@ class PBRAudioRenderEngine(RenderEngine):
         
         # In a real implementation, you'd use proper async rendering
         # For now, we'll wait for completion (not ideal for UI)
-        self._render_thread.join()
+#        self._render_thread.join()
         
         self.report({'INFO'}, "pbrAudio: Render completed")
     
@@ -376,9 +414,9 @@ class PBRAudioRenderEngine(RenderEngine):
         self.cancel_render()
         
         self.report({'INFO'}, "pbrAudio: animation_render() function")
-        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame, frame_current), daemon=True)
-        
-        self._render_thread.start()
+        self._render_thread_func(depsgraph, scene, start_frame, end_frame, frame_current)
+#        self._render_thread = threading.Thread(target=self._render_thread_func, args=(depsgraph, scene, start_frame, end_frame, frame_current), daemon=True)
+#        self._render_thread.start()
         
         # Note: For proper animation rendering in Blender, you should
         # implement frame-by-frame rendering with proper callbacks

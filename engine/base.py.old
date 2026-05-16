@@ -404,9 +404,4 @@ class PBRAudioRenderEngine(RenderEngine):
         """Get float buffer (not applicable for audio)"""
         return None
 
-    def save_render_result(self, scene):
-        """Override to prevent Blender from saving image files"""
-        # Don't save any render result - we're an audio engine
-        return {'FINISHED'}
-
 classes.append(PBRAudioRenderEngine)

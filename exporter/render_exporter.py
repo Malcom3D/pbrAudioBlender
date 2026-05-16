@@ -232,6 +232,7 @@ class RenderExporter:
                 termination_config.update({
                     "energy_threshold": props.energy_threshold,
                 })
+            termination_config["min_rays_number"] = props.min_rays_number
         else:
             termination_config["energy_threshold"] = -120
             

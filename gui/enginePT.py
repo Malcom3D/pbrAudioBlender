@@ -319,6 +319,7 @@ class PBRAUDIO_PT_termination_panel(Panel):
             layout.prop(scene.pbraudiorender, "reverberation_time")
         if scene.pbraudiorender.termination_type == 'ENERGY_THRESHOLD':
             layout.prop(scene.pbraudiorender, "energy_threshold")
+        layout.prop(scene.pbraudiorender, "min_rays_number")
 
 classes.append(PBRAUDIO_PT_termination_panel)
 

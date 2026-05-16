@@ -340,4 +340,10 @@ class PBRAudioEngineProperties(PropertyGroup):
         default=60,
     )
 
+    min_rays_number: IntProperty(
+        name="Energy Threshold",
+        description="Minimum number of active rays below which terminate",
+        default=3,
+    )
+
 classes.append(PBRAudioEngineProperties)

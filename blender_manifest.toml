@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "pbrAudio"
-version = "0.2.1"
+version = "0.2.2"
 name = "pbrAudio Render"
 tagline = "Physically Based Render and Synthesis Audio Suite"
 maintainer = "Malcom3D <malcom3d.gpl@gmail.com>"
@@ -90,7 +90,7 @@ wheels = [
 #   "./downloads/meshlib-3.0.9.196-py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl",
    "./wheels/embreex-4.4.0-cp311-cp311-linux_x86_64.whl",
 #   "./wheels/pytinybvh-1.2.1-cp311-cp311-linux_x86_64.whl",
-   "./wheels/pbraudiorender-0.1.dev675+g6b6000805-py3-none-any.whl",
+   "./wheels/pbraudiorender-0.0.post1.dev676-py3-none-any.whl",
 ]
 
 # # Optional: add-ons can list which resources they will require:

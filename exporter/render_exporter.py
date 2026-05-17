@@ -132,7 +132,8 @@ class RenderExporter:
         vertices = []
         world_matrix = domain_obj.matrix_world
         for vertex in domain_obj.bound_box:
-            vertices += [world_matrix @ Vector(vertex)]
+            world_vertex = world_matrix @ Vector(vertex)
+            vertices += [[world_vertex.x, world_vertex.y, world_vertex.z]]
         return vertices
     
     def get_wave_propagation_config(self):

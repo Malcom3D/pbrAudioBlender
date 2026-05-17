@@ -255,10 +255,10 @@ class PBRAudioRenderEngine(RenderEngine):
                 else:
                     self.report({'WARNING'}, f"Ray data directory not found: {ray_data_dir}")
             
-        except Exception as e:
-            self.report({'WARNING'}, f"Post-processing error: {str(e)}")
-            import traceback
-            traceback.print_exc()
+            except Exception as e:
+                self.report({'WARNING'}, f"Post-processing error: {str(e)}")
+                import traceback
+                traceback.print_exc()
 
         self.report({'INFO'}, "Post-processing completed")
 

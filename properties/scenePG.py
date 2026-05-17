@@ -125,6 +125,12 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=False
     )
 
+    viewRays_collection: StringProperty(
+        name="Graphical Preview Collection Name",
+        description="Collection name for rays objects",
+        default='viewRays'
+    )
+
     enable_acoustic_preview: BoolProperty(
         name="Acoustic Preview",
         description="Enable acoustic preview",

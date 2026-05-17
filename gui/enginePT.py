@@ -74,7 +74,7 @@ class PBRAUDIO_PT_graphical_preview_panel(Panel):
         else:
             layout.enabled = False
 
-        layout.prop(scene.pbraudio, "viewRays_collection", text="collection name")
+        layout.prop(scene.pbraudio, "viewRays_collection")
 
 classes.append(PBRAUDIO_PT_graphical_preview_panel)
 

@@ -130,8 +130,9 @@ class RenderExporter:
     def get_domain_geometry(self, domain_obj):
         """Extract domain geometry vertices"""
         vertices = []
+        world_matrix = domain_obj.matrix_world
         for vertex in domain_obj.bound_box:
-            vertices.append([vertex[0], vertex[1], vertex[2]])
+            vertices += [world_matrix @ Vector(vertex)]
         return vertices
     
     def get_wave_propagation_config(self):

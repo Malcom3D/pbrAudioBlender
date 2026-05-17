@@ -258,7 +258,7 @@ class RenderExporter:
         """Get acoustic properties from material node tree"""
         acoustic_shader = {}
         
-        if hasattr(obj.pbraudio, 'nodetree'):
+        if hasattr(obj.pbraudio, 'nodetree') and obj.pbraudio.nodetree is not None:
             nodetree = obj.pbraudio.nodetree
             for node in nodetree.nodes.values():
                 if node.pbraudio_type == 'MaterialOutput':

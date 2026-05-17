@@ -341,7 +341,7 @@ class PBRAudioEngineProperties(PropertyGroup):
     )
 
     min_rays_number: IntProperty(
-        name="Energy Threshold",
+        name="Rays Threshold",
         description="Minimum number of active rays below which terminate",
         default=3,
     )

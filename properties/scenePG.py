@@ -126,8 +126,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     viewRays_collection: StringProperty(
-        name="Graphical Preview Collection Name",
-        description="Collection name for rays objects",
+        name="Rays Graphical Preview Collection Name",
         default='viewRays'
     )
 

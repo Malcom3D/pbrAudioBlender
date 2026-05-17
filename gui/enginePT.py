@@ -71,9 +71,10 @@ class PBRAUDIO_PT_graphical_preview_panel(Panel):
 
         if scene.pbraudio.enable_acoustic_preview:
             layout.enabled = True
+            layout.prop(scene.pbraudio, "viewRays_collection", text="collection name")
         else:
             layout.enabled = False
-        layout.prop(scene.pbraudio, "viewRays_collection", text="")
+            layout.prop(scene.pbraudio, "viewRays_collection", text="collection name")
 
 classes.append(PBRAUDIO_PT_graphical_preview_panel)
 

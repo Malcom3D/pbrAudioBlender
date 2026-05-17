@@ -177,7 +177,7 @@ class PBRAudioEngineProperties(PropertyGroup):
     max_transmission: FloatProperty(
         name="Max Transmission",
         description="Maximum quantity of recursive rays for transmission",
-        default=0.75,
+        default=0.5,
         min=0,
         max=1
     )

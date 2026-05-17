@@ -245,7 +245,7 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'INFO'}, "Generating ray visualization...")
             try:
                 # Get the ray data directory
-                ray_data_dir = os.path.join(bpy.path.abspath(scene.pbraudio.cache_path), "AcousticDomain", "ray_datas")
+                ray_data_dir = os.path.join(bpy.path.abspath(scene.pbraudio.cache_path), "ray_datas")
                 
                 # Check if ray data exists
                 if os.path.exists(ray_data_dir):

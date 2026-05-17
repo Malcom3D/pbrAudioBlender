@@ -255,12 +255,12 @@ class PBRAudioRenderEngine(RenderEngine):
                 else:
                     self.report({'WARNING'}, f"Ray data directory not found: {ray_data_dir}")
             
-            self.report({'INFO'}, "Post-processing completed")
-            
         except Exception as e:
             self.report({'WARNING'}, f"Post-processing error: {str(e)}")
             import traceback
             traceback.print_exc()
+
+        self.report({'INFO'}, "Post-processing completed")
 
     def _visualize_rays(self, ray_data_dir):
         """Visualize acoustic rays from JSON files"""

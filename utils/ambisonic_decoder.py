@@ -236,6 +236,7 @@ class AmbisonicDecoder:
         if self.audio_data is None:
             self.load_ambisonic_file()
         
+        max_val = 0
         results = {}
         
         for boundary in self.config['boundaries']:
@@ -263,14 +264,16 @@ class AmbisonicDecoder:
             
             # Decode for this direction
             audio = self.decode_to_position(azimuth, elevation)
-            
-            # Normalize if requested
-            if normalize and len(audio) > 0:
-                max_val = np.max(np.abs(audio))
-                if max_val > 0:
-                    audio = audio / max_val * 0.95  # Leave some headroom
+
+            max_val = max(np.max(np.abs(audio)), max_val)
             
             results[name] = audio
+
+        # Normalize if requested
+        if normalize and max_val > 0:
+        for boundary in self.config['boundaries']:
+            name = boundary['name']
+            results[name] *= 0.95 / max_val
         
         return results
     

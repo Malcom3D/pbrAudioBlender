@@ -271,9 +271,9 @@ class AmbisonicDecoder:
 
         # Normalize if requested
         if normalize and max_val > 0:
-        for boundary in self.config['boundaries']:
-            name = boundary['name']
-            results[name] *= 0.95 / max_val
+            for boundary in self.config['boundaries']:
+                name = boundary['name']
+                results[name] *= 0.95 / max_val
         
         return results
     

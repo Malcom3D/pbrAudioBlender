@@ -42,7 +42,20 @@ class PBRAUDIO_PT_material_panel(Panel):
                 AcousticDomain = world.pbraudio.acoustic_domain
 
         if not object == AcousticDomain:
-            layout.template_ID(snode, "nodetree", new="material.pbraudio_add")
+            # Main node tree selector
+            row = layout.row(align=True)
+            row.template_ID(snode, "nodetree", new="material.pbraudio_add")
+            # Add "Copy to Selected" button
+            if snode.nodetree is not None:
+                # Only show if there's a node tree and multiple objects are selected
+                if len(context.selected_objects) > 1:
+                    sub_row = row.row(align=True)
+                    sub_row.scale_x = 0.8
+                    op = sub_row.operator("material.pbraudio_copy_to_selected", text="", icon='DUPLICATE')
+                    if hasattr(op, 'bl_description'):
+                        sub_row.label(text="", icon='INFO')
+
+            # Other properties
             layout.prop(snode, "stochastic_variation", toggle=True)
             if not object.pbraudio.ground_disable:
                 layout.prop(snode, "ground", toggle=True)

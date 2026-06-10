@@ -67,3 +67,63 @@ class PBRAUDIO_OT_material_add(Operator):
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_material_add)
+
+class PBRAUDIO_OT_copy_material_to_selected(Operator):
+    """Copy acoustic material node tree to selected objects"""
+    bl_idname = "material.pbraudio_copy_to_selected"
+    bl_label = "Copy Acoustic Material to Selected"
+    bl_description = "Copy the acoustic node tree from the active object to all selected objects"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.active_object is not None and
+                hasattr(context.active_object, 'pbraudio') and
+                context.active_object.pbraudio.nodetree is not None)
+
+    def execute(self, context):
+        active_obj = context.active_object
+        
+        # Get the source node tree
+        source_nodetree = active_obj.pbraudio.nodetree
+        if not source_nodetree:
+            self.report({'ERROR'}, "Active object has no acoustic node tree")
+            return {'CANCELLED'}
+        
+        # Count objects that will receive the copy
+        copied_count = 0
+        skipped_count = 0
+        
+        # Iterate through all selected objects
+        for obj in context.selected_objects:
+            # Skip the active object itself
+            if obj == active_obj:
+                continue
+            
+            # Skip objects that don't have pbraudio properties
+            if not hasattr(obj, 'pbraudio'):
+                continue
+            
+            # Skip objects that are not mesh type (materials only apply to mesh objects)
+            if obj.type != 'MESH':
+                continue
+            
+            # Create a copy of the node tree
+            new_nodetree = source_nodetree.copy()
+            
+            # Rename the copy to reflect the target object
+            new_nodetree.name = f"{source_nodetree.name}_{obj.name}"
+            
+            # Assign the copied node tree to the target object
+            obj.pbraudio.nodetree = new_nodetree
+            
+            copied_count += 1
+        
+        if copied_count > 0:
+            self.report({'INFO'}, f"Copied acoustic material to {copied_count} object(s)")
+        else:
+            self.report({'WARNING'}, "No suitable objects found to copy to")
+        
+        return {'FINISHED'}
+
+classes.append(PBRAUDIO_OT_copy_material_to_selected)

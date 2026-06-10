@@ -239,7 +239,7 @@ class PBRAudioRenderEngine(RenderEngine):
     def _post_process_results(self, output_dir, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
         self.report({'INFO'}, "Post-processing rendered audio")
-        self.report({'INFO'}, "Post-processing completed" 
+        self.report({'INFO'}, "Post-processing completed" )
 
     def update_progress(self, progress):
         """Update render progress"""

@@ -51,7 +51,7 @@ class PBRAUDIO_PT_material_panel(Panel):
                 if len(context.selected_objects) > 1:
                     sub_row = row.row(align=True)
                     sub_row.scale_x = 0.8
-                    op = sub_row.operator("material.pbraudio_copy_to_selected", text="", icon='')
+                    op = sub_row.operator("material.pbraudio_copy_to_selected", text="", icon='COPY_ID')
                     if hasattr(op, 'bl_description'):
                         sub_row.label(text="", icon='INFO')
 

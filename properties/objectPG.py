@@ -40,7 +40,8 @@ class PBRAudioConnectedObjectList(PropertyGroup):
     """Connected Object properties"""
     connected_object: StringProperty(
         name="Connected Object Name",
-        description="Name of the connected object"
+        description="Name of the connected object",
+        options={'ANIMATABLE'}
     )
 
     connected_value: FloatProperty(
@@ -50,7 +51,8 @@ class PBRAudioConnectedObjectList(PropertyGroup):
         min=0.0,
         max=1.0,
         subtype='FACTOR',
-        update=update_connected_value
+        update=update_connected_value,
+        options={'ANIMATABLE'}
     )
 classes.append(PBRAudioConnectedObjectList)
 
@@ -58,7 +60,8 @@ class PBRAudioShardObjectList(PropertyGroup):
     """Shard Object properties"""
     shard_object: StringProperty(
         name="Shard Object Name",
-        description="Name of the shard object"
+        description="Name of the shard object",
+        options={'ANIMATABLE'}
     )
 classes.append(PBRAudioShardObjectList)
 
@@ -124,13 +127,15 @@ class PBRAudioObjectProperties(PropertyGroup):
     """pbrAudio Material nodetree"""
     nodetree: PointerProperty(
         name="NodeTree",
-        type=acousticNT.AcousticNodeTree
+        type=acousticNT.AcousticNodeTree,
+        options={'ANIMATABLE'}
     )
 
     stochastic_variation: BoolProperty(
         name="Stochastic Variation",
         description="Add stochastic variation based on material properties",
         default=False,
+        options={'ANIMATABLE'}
     )
 
     ground: BoolProperty(
@@ -149,7 +154,8 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="Enable object resonance",
         description="Enable Object Resonance Synth",
         default=False,
-        update=enable_resonance
+        update=enable_resonance,
+        options={'ANIMATABLE'}
     )
 
     resonance_modes: IntProperty(
@@ -157,42 +163,48 @@ class PBRAudioObjectProperties(PropertyGroup):
         description="Int value between 0 and 100",
         default=5,
         min=1,
-        max=100
+        max=100,
+        options={'ANIMATABLE'}
     )
 
     connected: BoolProperty(
         name="Object is connected to other",
         description="Synth Object as Connected",
         default=False,
-        update=enable_connected
+        update=enable_connected,
+        options={'ANIMATABLE'}
     )
 
     """Connected Object selection properties for pbrAudio"""
     selected_connected_object: PointerProperty(
         name="selected_connected_object",
         type=bpy.types.Object,
-        poll=poll_selected_connected_object
+        poll=poll_selected_connected_object,
+        options={'ANIMATABLE'}
     )
 
     """Fractured Object properties for pbrAudio"""
     fractured: BoolProperty(
         name="Object is fractured",
         description="Enable fractureSound Synth",
-        default=False
+        default=False,
+        options={'ANIMATABLE'}
     )
 
     """Shards of Object selection properties for pbrAudio"""
     selected_shard_object: PointerProperty(
         name="selected_shard_object",
         type=bpy.types.Object,
-        poll=poll_selected_shard_object
+        poll=poll_selected_shard_object,
+        options={'ANIMATABLE'}
     )
 
     """Source properties for pbrAudio"""
     source: BoolProperty(
         name="pbraudio_source",
         description="Object is sound source",
-        default=False
+        default=False,
+        options={'ANIMATABLE'}
     )
 
     source_file: StringProperty(
@@ -201,6 +213,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
+        options={'ANIMATABLE'}
     )
 
     source_type: EnumProperty(
@@ -209,28 +222,32 @@ class PBRAudioObjectProperties(PropertyGroup):
             ('SPHERE', "Spheric", "Spheric wave sound source"),
             ('PLANE', "Plane", "Plane wave sound source"),
         ],
-        default='SPHERE'
+        default='SPHERE',
+        options={'ANIMATABLE'}
     )
 
     source_sphere_size: FloatProperty(
         name="Size",
         description="Sphere Source Size",
         default=0.5,
-        update=update_sphere_size
+        update=update_sphere_size,
+        options={'ANIMATABLE'}
     )
 
     source_planar_width: FloatProperty(
         name="Width",
         description="Planar Source Width Size",
         default=0.5,
-        update=update_plane_size
+        update=update_plane_size,
+        options={'ANIMATABLE'}
     )
 
     source_planar_height: FloatProperty(
         name="Height",
         description="Planar Source Height Size",
         default=1.0,
-        update=update_plane_size
+        update=update_plane_size,
+        options={'ANIMATABLE'}
     )
 
     """Environment properties for pbrAudio"""
@@ -252,6 +269,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
+        options={'ANIMATABLE'}
     )
 
     environment_channels: IntProperty(
@@ -260,13 +278,15 @@ class PBRAudioObjectProperties(PropertyGroup):
         default=4,
         min=4,
         max=64,
-        update=update_environment_channels
+        update=update_environment_channels,
+        options={'ANIMATABLE'}
     )
 
     environment_size: FloatProperty(
         name="Environment Size",
         description="Environment Sphere Size",
-        update=update_environment_size
+        update=update_environment_size,
+        options={'ANIMATABLE'}
     )
 
 #    environment_dynamic_boundaries_update: BoolProperty(
@@ -280,14 +300,16 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="SoundOutput",
         description="Select the sound for the source",
         default=False,
-        update=add_camera_nodetree
+        update=add_camera_nodetree,
+        options={'ANIMATABLE'}
     )
 
     output_size: FloatProperty(
         name="Size",
         description="Output Sphere Size",
         default=0.5,
-        update=update_output_size
+        update=update_output_size,
+        options={'ANIMATABLE'}
     )
 
     output_type: EnumProperty(
@@ -296,7 +318,8 @@ class PBRAudioObjectProperties(PropertyGroup):
             ('MONO', "Mono", "Mono sound output"),
             ('AMBI', "Ambisonic", "Ambisonic sound output"),
         ],
-        default='MONO'
+        default='MONO',
+        options={'ANIMATABLE'}
     )
 
     ambisonic_order: EnumProperty(
@@ -307,7 +330,8 @@ class PBRAudioObjectProperties(PropertyGroup):
             ('2', "Second", "Second order"),
             ('3', "Third", "Third order"),
         ],
-        default='1'
+        default='1',
+        options={'ANIMATABLE'}
     )
 
     spatial_arrangement_file: StringProperty(
@@ -316,6 +340,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
+        options={'ANIMATABLE'}
     )
 
     mono_mic_type: EnumProperty(
@@ -326,7 +351,8 @@ class PBRAudioObjectProperties(PropertyGroup):
             ('HYPERCARDIOID', "Hypercardioid", "Hypercardioid Micrphone"),
             ('FIGURE_8', "Figure 8", "Figure 8 Micrphone"),
         ],
-        default='OMNIDIRECTIONAL'
+        default='OMNIDIRECTIONAL',
+        options={'ANIMATABLE'}
     )
 
     output_cal_file: StringProperty(
@@ -335,6 +361,7 @@ class PBRAudioObjectProperties(PropertyGroup):
         subtype='FILE_PATH',
         options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
+        options={'ANIMATABLE'}
     )
 
 classes.append(PBRAudioObjectProperties)

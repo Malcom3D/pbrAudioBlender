@@ -95,7 +95,7 @@ class RenderExporter:
             "number_of_rays": self.scene.pbraudiorender.number_of_rays,
             "direction_seed": self.scene.pbraudiorender.direction_seed,
             "bands_per_octave": self.scene.pbraudiorender.bands_per_octave,
-            "view_ray": self.scene.pbraudio.enable_graphical_preview
+            "view_ray": true
         }
 
         # Frequency range

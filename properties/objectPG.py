@@ -211,9 +211,8 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="SoundSource",
         description="Select the sound for the source",
         subtype='FILE_PATH',
-        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
-        options={'ANIMATABLE'}
+        options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
     )
 
     source_type: EnumProperty(

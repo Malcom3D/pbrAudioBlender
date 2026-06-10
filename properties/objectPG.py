@@ -266,9 +266,8 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="EnvironmetSource",
         description="Select the sound for the source",
         subtype='FILE_PATH',
-        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
-        options={'ANIMATABLE'}
+        options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
     )
 
     environment_channels: IntProperty(
@@ -337,9 +336,8 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="SoundOutputSpatialArrangement",
         description="Select the microphone spatial arrangement file for the ambisonic output",
         subtype='FILE_PATH',
-        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
-        options={'ANIMATABLE'}
+        options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
     )
 
     mono_mic_type: EnumProperty(
@@ -358,9 +356,8 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="SoundOutputCal",
         description="Select the calibration file for the output",
         subtype='FILE_PATH',
-        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
         default='',
-        options={'ANIMATABLE'}
+        options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
     )
 
 classes.append(PBRAudioObjectProperties)

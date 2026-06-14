@@ -127,7 +127,7 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
         obj = context.object
         layout = self.layout
 
-        if not obj.pbraudio.resonance:
+        if obj.pbraudio.connected and not obj.pbraudio.resonance:
         
             # Collection info
             collection = obj.users_collection[0]

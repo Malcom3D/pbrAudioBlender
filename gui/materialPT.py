@@ -83,6 +83,8 @@ class PBRAUDIO_PT_resonance_panel(Panel):
         layout = self.layout
         if not obj.pbraudio.connected:
             layout.prop(obj.pbraudio, "resonance", text="Enable Object Resonance")
+        else:
+            layout.label(text="Object Resonance")
     
     def draw(self, context):
         layout = self.layout

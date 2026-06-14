@@ -67,7 +67,8 @@ classes.append(PBRAUDIO_PT_material_panel)
 
 class PBRAUDIO_PT_resonance_panel(Panel):
     """Panel for pbrAudio resonance settings"""
-    bl_label = 'Object Resonance'
+#    bl_label = 'Object Resonance'
+    bl_label = ''
     bl_idname = 'PBRAUDIO_PT_resonance_panel' 
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -80,15 +81,15 @@ class PBRAUDIO_PT_resonance_panel(Panel):
     def draw_header(self, context):
         obj = context.object
         layout = self.layout
-        if not object.pbraudio.connected:
-            layout.prop(object.pbraudio, "resonance", text="Enable Object Resonance")
+        if not obj.pbraudio.connected:
+            layout.prop(obj.pbraudio, "resonance", text="Enable Object Resonance")
     
     def draw(self, context):
         layout = self.layout
-        object = context.object
+        obj = context.object
 
-        if object.pbraudio.resonance and not object.pbraudio.connected:
-            layout.prop(object.pbraudio, "resonance_modes", text="Resonance Modal Modes")
+        if obj.pbraudio.resonance and not obj.pbraudio.connected:
+            layout.prop(obj.pbraudio, "resonance_modes", text="Resonance Modal Modes")
 
 classes.append(PBRAUDIO_PT_resonance_panel)
 

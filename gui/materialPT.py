@@ -119,13 +119,13 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
         return context.scene.render.engine == 'PBRAUDIO' and context.object is not None
 
     def draw_header(self, context):
-        scene = context.scene
+        obj = context.object
         layout = self.layout
-        layout.prop(scene.pbraudio, "connected")
+        layout.prop(obj.pbraudio, "connected")
     
     def draw(self, context):
-        layout = self.layout
         obj = context.object
+        layout = self.layout
 
         if not obj.pbraudio.resonance:
         

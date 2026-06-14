@@ -106,7 +106,8 @@ classes.append(PBRAUDIO_CONNECTED_UL_object_list)
 
 class PBRAUDIO_CONNECTED_object_list(Panel):
     """Panel in Material Properties tab"""
-    bl_label = "Connected Object List"
+#    bl_label = "Connected Object List"
+    bl_label = ""
     bl_idname = "MATERIAL_PT_connected_object_list"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -116,6 +117,11 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
     @classmethod
     def poll(cls, context):
         return context.scene.render.engine == 'PBRAUDIO' and context.object is not None
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "connected")
     
     def draw(self, context):
         layout = self.layout

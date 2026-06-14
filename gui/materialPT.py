@@ -76,15 +76,19 @@ class PBRAUDIO_PT_resonance_panel(Panel):
     @classmethod
     def poll(cls, context):
         return context.scene.render.engine == 'PBRAUDIO' and context.object is not None
+ 
+    def draw_header(self, context):
+        obj = context.object
+        layout = self.layout
+        if not object.pbraudio.connected:
+            layout.prop(object.pbraudio, "resonance", text="Enable Object Resonance")
     
     def draw(self, context):
         layout = self.layout
         object = context.object
 
-        if not object.pbraudio.connected:
-            layout.prop(object.pbraudio, "resonance", text="Enable Object Resonance")
-            if object.pbraudio.resonance:
-                layout.prop(object.pbraudio, "resonance_modes", text="Resonance Modal Modes")
+        if object.pbraudio.resonance and not object.pbraudio.connected:
+            layout.prop(object.pbraudio, "resonance_modes", text="Resonance Modal Modes")
 
 classes.append(PBRAUDIO_PT_resonance_panel)
 
@@ -121,7 +125,8 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
     def draw_header(self, context):
         obj = context.object
         layout = self.layout
-        layout.prop(obj.pbraudio, "connected")
+        if not obj.pbraudio.resonance:
+            layout.prop(obj.pbraudio, "connected")
     
     def draw(self, context):
         obj = context.object

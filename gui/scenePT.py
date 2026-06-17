@@ -77,7 +77,8 @@ classes.append(PBRAUDIO_PT_Collision_panel)
 
 class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
     """Panel for pbrAudio AudioForcesDenoiser settings"""
-    bl_label = "PbrAudio AudioForcesDenoiser"
+#    bl_label = "PbrAudio AudioForcesDenoiser"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

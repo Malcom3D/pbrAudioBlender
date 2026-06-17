@@ -88,6 +88,11 @@ class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
     def poll(cls, context):
         return context.scene.render.engine == 'PBRAUDIO'
 
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_forces_denoiser")
+
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
@@ -96,7 +101,6 @@ class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
         scene = context.scene
 
         layout.enabled = not scene.pbraudio.cache_status
-        layout.prop(scene.pbraudio, "enable_forces_denoiser")
 
 classes.append(PBRAUDIO_PT_audioforcesdenoiser_panel)
 

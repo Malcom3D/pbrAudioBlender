@@ -118,7 +118,7 @@ class PBRAUDIO_PT_dcoffset_panel(Panel):
         layout.enabled = not scene.pbraudio.enable_forces_denoiser
         layout.prop(scene.pbraudio, "dc_blocker_alpha", slider=True)
 
-classes.append(PBRAUDIO_PT_dc_offset_panel)
+classes.append(PBRAUDIO_PT_dcoffset_panel)
 
 class PBRAUDIO_PT_noisegate_panel(Panel):
     bl_label = "Adaptive Noise Gate"

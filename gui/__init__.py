@@ -32,7 +32,7 @@ def register():
     bpy.utils.unregister_class(bpy.types.DATA_PT_empty)
 
     for cls in classes:
-        print(cls.bl_idname)
+        print(cls.bl_label)
         register_class(cls)
 
     # Add menu to 3D Viewport Add menu

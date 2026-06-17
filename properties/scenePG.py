@@ -352,7 +352,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     gaussian_force_threshold: FloatProperty(
-        name"Force threshold",
+        name="Force threshold",
         description="Force threshold for adaptive smoothing",
         default=0.1
     )

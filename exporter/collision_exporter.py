@@ -54,13 +54,13 @@ class CollisionExporter:
         self.config["system"] = system
 
         if scene.pbraudio.enable_forces_denoiser:
-            self.config["denoiser"] = self.get_denoiser()
+            self.config["denoiser"] = self.get_denoiser(scene)
 
         self.objects = []
         self.not_valid = []
         self.obj_idx = 0
 
-    def get_denoiser(self):
+    def get_denoiser(self, scene):
         denoiser = {}
         denoiser['dc_blocker_alpha'] = scene.pbraudio.dc_blocker_alpha
         denoiser['gate_threshold_db'] = scene.pbraudio.gate_threshold_db

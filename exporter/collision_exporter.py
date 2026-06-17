@@ -49,12 +49,37 @@ class CollisionExporter:
         system["modal_modes"] = scene.pbraudio.modal_modes
         system["collision_margin"] = scene.pbraudio.collision_margin
         system["cache_path"] = self.export_path
+        system["enable_denoiser"] = scene.pbraudio.enable_forces_denoiser
         self.config = {}
         self.config["system"] = system
+
+        if scene.pbraudio.enable_forces_denoiser:
+            self.config["denoiser"] = self.get_denoiser()
 
         self.objects = []
         self.not_valid = []
         self.obj_idx = 0
+
+    def get_denoiser(self):
+        denoiser = {}
+        denoiser['dc_blocker_alpha'] = scene.pbraudio.dc_blocker_alpha
+        denoiser['gate_threshold_db'] = scene.pbraudio.gate_threshold_db
+        denoiser['gate_attack_ms'] = scene.pbraudio.gate_attack_ms
+        denoiser['gate_release_ms'] = scene.pbraudio.gate_release_ms
+        denoiser['gate_hold_ms'] = scene.pbraudio.gate_hold_ms
+        denoiser['temporal_smoothing_window'] = scene.pbraudio.temporal_smoothing_window
+        denoiser['spectral_fft_size'] = scene.pbraudio.spectral_fft_size
+        denoiser['spectral_hop_size'] = scene.pbraudio.spectral_hop_size
+        denoiser['spectral_noise_floor_db'] = scene.pbraudio.spectral_noise_floor_db
+        denoiser['spectral_reduction_strength'] = scene.pbraudio.spectral_reduction_strength
+        denoiser['spectral_smoothing'] = scene.pbraudio.spectral_smoothing
+        denoiser['envelope_attack_ms'] = scene.pbraudio.envelope_attack_ms
+        denoiser['envelope_release_ms'] = scene.pbraudio.envelope_release_ms
+        denoiser['envelope_smoothing'] = scene.pbraudio.envelope_smoothing
+        denoiser['gaussian_sigma_min'] = scene.pbraudio.gaussian_sigma_min
+        denoiser['gaussian_sigma_max'] = scene.pbraudio.gaussian_sigma_max
+        denoiser['gaussian_force_threshold'] = scene.pbraudio.gaussian_force_threshold
+        return denoiser
 
     def get_from_previous(self, node):
         scene = bpy.context.scene

@@ -241,4 +241,120 @@ class PBRAudioSceneProperties(PropertyGroup):
         description="True if cache is initialized",
         default=False
     )
+
+    """Scene properties for pbrAudio AudioForcesDenoiser"""
+
+    enable_forces_denoiser: boolProperty(
+        name="Enable AudioForces Denoiser",
+        default=False
+    )
+
+    dc_blocker_alpha: FloatProperty(
+        name="Alpha",
+        description="DC blocker coefficient (higher = more aggressive)",
+        default=0.999
+    )
+
+    # Adaptive Noise Gate parameters
+    gate_threshold_db: FloatProperty( 
+        name="dB Threshold",
+        description="Noise gate threshold in dB",
+        default=-60.0
+    )
+
+    gate_attack_ms: FloatProperty(
+        name="Attack ms",
+        description="Attack time in ms",
+        default=2.0
+    )
+
+    gate_release_ms: FloatProperty(
+        name="Release ms",
+        description="Release time in ms",
+        default=50.0
+    )
+
+    gate_hold_ms: FloatProperty(
+        name="Hold ms",
+        description="Hold time in ms",
+        default=10.0
+    )
+
+    # Temporal Smoothing parameters
+    temporal_smoothing_window: IntProperty(
+        name="Window size",
+        description="Window size for temporal smoothing (samples)",
+        default=5
+    )
+
+    # Spectral Noise Reduction parameters
+    spectral_fft_size: IntProperty(
+        name="FFT size",
+        description="FFT size for spectral processing",
+        default=2048
+    )
+
+    spectral_hop_size: IntProperty(
+        name="Hop size",
+        description="Hop size for spectral processing",
+        default=512
+    )
+
+    spectral_noise_floor_db: FloatProperty(
+        name="Noise floor dB",
+        description="Noise floor estimate in dB",
+        default=-80.0
+    )
+
+
+    spectral_reduction_strength: FloatProperty(
+        name="Reduction strength",
+        description="Reduction strength (0-1)",
+        default=0.8
+    )
+
+    spectral_smoothing: FloatProperty(
+        name="Smoothing",
+        description="Spectral smoothing factor",
+        default=0.3
+    )
+
+    # Envelope Shaping parameters
+    envelope_attack_ms: FloatProperty(
+        name="Attack",
+        description="Attack time for envelope",
+        default=1.0
+    )
+
+    envelope_release_ms: FloatProperty(
+        name="Release",
+        description="Release time for envelope",
+        default=20.0
+    )
+
+    envelope_smoothing: FloatProperty(
+        name="Smoothing",
+        description="Envelope smoothing factor",
+        default=0.5
+    )
+
+    # Gaussian Adaptive Smoothing parameters
+    gaussian_sigma_min: FloatProperty(
+        name="Minimum sigma",
+        description="Minimum Gaussian sigma",
+        default=0.5
+    )
+
+    gaussian_sigma_max: FloatProperty(
+        name="Maximum sigma",
+        description="Maximum Gaussian sigma",
+        default=3.0
+    )
+
+    gaussian_force_threshold: FloatProperty(
+        name"Force threshold",
+        description="Force threshold for adaptive smoothing",
+        default=0.1
+    )
+
 classes.append(PBRAudioSceneProperties)

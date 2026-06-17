@@ -75,6 +75,162 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 
+class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
+    """Panel for pbrAudio AudioForcesDenoiser settings"""
+    bl_label = "PbrAudio AudioForcesDenoiser"
+    bl_idname = "PBRAUDIO_PT_AudioForcesDenoiser_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        layout.enabled = not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "enable_forces_denoiser")
+
+classes.append(PBRAUDIO_PT_audioforcesdenoiser_panel)
+
+class PBRAUDIO_PT_dcoffset_panel(Panel):
+    bl_label = "DC Offset" 
+    bl_idname = "PBRAUDIO_PT_dcoffset_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_options = {'DEFAULT_CLOSED'}
+    parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+        # DC Offset Removal parameters
+        layout.enabled = not scene.pbraudio.enable_forces_denoiser
+        layout.prop(scene.pbraudio, "dc_blocker_alpha", slider=True)
+
+classes.append(PBRAUDIO_PT_dc_offset_panel)
+
+class PBRAUDIO_PT_noisegate_panel(Panel):
+    bl_label = "Adaptive Noise Gate"
+    bl_idname = "PBRAUDIO_PT_noisegate_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_options = {'DEFAULT_CLOSED'}
+    parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Adaptive Noise Gate parameters
+        layout.enabled = not scene.pbraudio.enable_forces_denoiser
+        layout.prop(scene.pbraudio, "gate_threshold_db", slider=True)
+        layout.prop(scene.pbraudio, "gate_attack_ms", slider=True)
+        layout.prop(scene.pbraudio, "gate_release_ms", slider=True)
+        layout.prop(scene.pbraudio, "gate_hold_ms", slider=True)
+classes.append(PBRAUDIO_PT_noisegate_panel)
+
+class PBRAUDIO_PT_temporalsmoothing_panel(Panel):
+    bl_label = "Temporal Smoothing"
+    bl_idname = "PBRAUDIO_PT_temporalsmoothing_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_options = {'DEFAULT_CLOSED'}
+    parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Temporal Smoothing parameters
+        layout.enabled = not scene.pbraudio.enable_forces_denoiser
+        layout.prop(scene.pbraudio, "temporal_smoothing_window", slider=True)
+classes.append(PBRAUDIO_PT_temporalsmoothing_panel)
+
+class PBRAUDIO_PT_spectralnoise_panel(Panel):
+    bl_label = "Spectral Noise Reduction"
+    bl_idname = "PBRAUDIO_PT_spectralnoise_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_options = {'DEFAULT_CLOSED'}
+    parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Spectral Noise Reduction parameters
+        layout.enabled = not scene.pbraudio.enable_forces_denoiser
+        layout.prop(scene.pbraudio, "spectral_fft_size", slider=True)
+        layout.prop(scene.pbraudio, "spectral_hop_size", slider=True)
+        layout.prop(scene.pbraudio, "spectral_noise_floor_db", slider=True)
+        layout.prop(scene.pbraudio, "spectral_reduction_strength", slider=True)
+        layout.prop(scene.pbraudio, "spectral_smoothing", slider=True)
+classes.append(PBRAUDIO_PT_spectralnoise_panel)
+
+class PBRAUDIO_PT_envelopeshaping_panel(Panel):
+    bl_label = "Envelope Shaping"
+    bl_idname = "PBRAUDIO_PT_envelopeshaping_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_options = {'DEFAULT_CLOSED'}
+    parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Envelope Shaping parameters
+        layout.enabled = not scene.pbraudio.enable_forces_denoiser
+        layout.prop(scene.pbraudio, "envelope_attack_ms", slider=True)
+        layout.prop(scene.pbraudio, "envelope_release_ms", slider=True)
+        layout.prop(scene.pbraudio, "envelope_smoothing", slider=True)
+classes.append(PBRAUDIO_PT_envelopeshaping_panel)
+
+class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
+    bl_label = "Gaussian Adaptive Smoothing"
+    bl_idname = "PBRAUDIO_PT_adaptivesmooting_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_options = {'DEFAULT_CLOSED'}
+    parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Gaussian Adaptive Smoothing parameters
+        layout.enabled = not scene.pbraudio.enable_forces_denoiser
+        layout.prop(scene.pbraudio, "gaussian_sigma_min", slider=True)
+        layout.prop(scene.pbraudio, "gaussian_sigma_max", slider=True)
+        layout.prop(scene.pbraudio, "gaussian_force_threshold", slider=True)
+classes.append(PBRAUDIO_PT_adaptivesmooting_panel)
+
 class PBRAUDIO_PT_cache_panel(Panel):
     """Panel for pbrAudio cache path and settings"""
     bl_label = "PbrAudio Cache"
@@ -82,7 +238,7 @@ class PBRAUDIO_PT_cache_panel(Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
-    bl_options = {'DEFAULT_CLOSED'}
+#    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):

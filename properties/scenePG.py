@@ -244,7 +244,7 @@ class PBRAudioSceneProperties(PropertyGroup):
 
     """Scene properties for pbrAudio AudioForcesDenoiser"""
 
-    enable_forces_denoiser: boolProperty(
+    enable_forces_denoiser: BoolProperty(
         name="Enable AudioForces Denoiser",
         default=False
     )

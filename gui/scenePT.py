@@ -105,7 +105,7 @@ class PBRAUDIO_PT_dcoffset_panel(Panel):
     bl_idname = "PBRAUDIO_PT_dcoffset_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    #bl_context = "scene"
+    bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -126,7 +126,7 @@ class PBRAUDIO_PT_noisegate_panel(Panel):
     bl_idname = "PBRAUDIO_PT_noisegate_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    #bl_context = "scene"
+    bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -150,7 +150,7 @@ class PBRAUDIO_PT_temporalsmoothing_panel(Panel):
     bl_idname = "PBRAUDIO_PT_temporalsmoothing_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    #bl_context = "scene"
+    bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -171,7 +171,7 @@ class PBRAUDIO_PT_spectralnoise_panel(Panel):
     bl_idname = "PBRAUDIO_PT_spectralnoise_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    #bl_context = "scene"
+    bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -196,7 +196,7 @@ class PBRAUDIO_PT_envelopeshaping_panel(Panel):
     bl_idname = "PBRAUDIO_PT_envelopeshaping_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    #bl_context = "scene"
+    bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -219,7 +219,7 @@ class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
     bl_idname = "PBRAUDIO_PT_adaptivesmooting_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    #bl_context = "scene"
+    bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 

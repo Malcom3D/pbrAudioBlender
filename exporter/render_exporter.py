@@ -941,7 +941,7 @@ class RenderExporter:
         """Get connected objects list"""
         connected = []
         if obj.pbraudio.connected:
-            for item in obj.pbraudio__connected.values():
+            for item in obj.pbraudio_connected.values():
                 connected.append([
                     item.connected_object.replace('.', '_'),
                     item.connected_value / 10

@@ -36,19 +36,19 @@ include(ExternalProject)
 #    INSTALL_COMMAND cmake -E echo "Skipping install step."
 #    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 #)
-ExternalProject_Add(
-    numpy
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/65/fb/2b23769462b34398d9326081fad5655198fcf18966fcb1f1e49db44fbf31/numpy-2.3.5-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=8cba086a43d54ca804ce711b2a940b16e452807acebe7852ff327f1ecd49b0d4
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
+#ExternalProject_Add(
+#    numpy
+#    PREFIX "blender"
+#    URL    https://files.pythonhosted.org/packages/65/fb/2b23769462b34398d9326081fad5655198fcf18966fcb1f1e49db44fbf31/numpy-2.3.5-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+#    URL_HASH SHA256=8cba086a43d54ca804ce711b2a940b16e452807acebe7852ff327f1ecd49b0d4
+#    BUILD_ALWAYS OFF
+#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+#    DOWNLOAD_NO_EXTRACT ON
+#    DOWNLOAD_NO_PROGRESS ON
+#    BUILD_COMMAND cmake -E echo "Skipping build step."
+#    INSTALL_COMMAND cmake -E echo "Skipping install step."
+#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+#)
 ExternalProject_Add(
     fast-simplification
     PREFIX "blender"
@@ -615,7 +615,7 @@ if (NOT WIN32)
   add_custom_target (blender 
 #    DEPENDS meshlib
 #    DEPENDS embreex
-    DEPENDS numpy
+#    DEPENDS numpy
     DEPENDS fast-simplification
 #    DEPENDS pillow
     DEPENDS rtree
@@ -717,7 +717,7 @@ if (NOT WIN32)
 
 #  add_dependencies(blender meshlib)
 #  add_dependencies(blender embreex)
-  add_dependencies(blender numpy)
+#  add_dependencies(blender numpy)
   add_dependencies(blender fast-simplification)
 #  add_dependencies(blender pillow)
   add_dependencies(blender rtree)

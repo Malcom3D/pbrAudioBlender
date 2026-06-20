@@ -40,7 +40,7 @@ if not platform.system() in {"Linux"}:
 bl_info = {
     "name": "pbrAudio Suite",
     "author": "Malcom3D",
-    "version": (0, 2, 1),
+    "version": (0, 2, 3),
     "blender": (4, 5, 0),
     "category": "Render",
     "location": "Render Engine > pbrAudio",

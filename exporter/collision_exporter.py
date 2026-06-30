@@ -48,6 +48,7 @@ class CollisionExporter:
         system["subframes"] = 1
         system["modal_modes"] = scene.pbraudio.modal_modes
         system["collision_margin"] = scene.pbraudio.collision_margin
+        system["samples_per_sq_unit"] = scene.pbraudio.samples_per_sq_unit
         system["cache_path"] = self.export_path
         system["enable_denoiser"] = scene.pbraudio.enable_forces_denoiser
         self.config = {}

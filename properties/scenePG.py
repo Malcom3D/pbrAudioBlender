@@ -181,6 +181,13 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=1
     ) 
 
+    samples_per_sq_unit: IntProperty(
+        name="Samples per Square Unit",
+        default=1000,
+        min=0,
+        max=1e16
+    )
+
     modal_modes: IntProperty(
         name="Modal modes",
         description="Number of Modal Modes",

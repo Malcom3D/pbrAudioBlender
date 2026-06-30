@@ -54,7 +54,7 @@ def unregister():
         unregister_class(cls)
 
     # Remove collision exporter from File > Export menu
-     bpy.types.TOPBAR_MT_file_export.remove(exporterUI.menu_func_export)
+    bpy.types.TOPBAR_MT_file_export.remove(exporterUI.menu_func_export)
 
     # Register blender DATA_PT_empty
 #    bpy.utils.register_class(bpy.types.DATA_PT_empty)

@@ -22,9 +22,9 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu, nodetree_switch
+from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu, nodetree_switch, exporterUI
 
-for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu):
+for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu, exporterUI):
     classes += mod.classes
 
 def register():
@@ -33,6 +33,9 @@ def register():
 
     for cls in classes:
         register_class(cls)
+
+    # Add collision exporter to File > Export menu
+    bpy.types.INFO_MT_file_export.append(exporterUI.menu_func_export)
 
     # Add menu to 3D Viewport Add menu
     bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
@@ -49,6 +52,9 @@ def unregister():
     bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
     for cls in reversed(classes):
         unregister_class(cls)
+
+    # Remove collision exporter from File > Export menu
+    bpy.types.INFO_MT_file_export.remove(exporterUI.menu_func_export)
 
     # Register blender DATA_PT_empty
 #    bpy.utils.register_class(bpy.types.DATA_PT_empty)

@@ -181,8 +181,8 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=1
     ) 
 
-    samples_per_sq_unit: IntProperty(
-        name="Samples per Square Unit",
+    samples_per_object: IntProperty(
+        name="Samples per Object",
         default=1000,
         min=0,
         max=99999999

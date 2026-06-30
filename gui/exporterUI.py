@@ -18,5 +18,7 @@
 
 import bpy
 
+classes = []
+
 def menu_func_export(self, context):
     self.layout.operator("export.pbraudio_collision_data", text="Basic Model (.json)")

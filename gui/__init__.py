@@ -35,7 +35,7 @@ def register():
         register_class(cls)
 
     # Add collision exporter to File > Export menu
-    bpy.types.INFO_MT_file_export.append(exporterUI.menu_func_export)
+    bpy.types.TOPBAR_MT_file_export.append(exporterUI.menu_func_export)
 
     # Add menu to 3D Viewport Add menu
     bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
@@ -54,7 +54,7 @@ def unregister():
         unregister_class(cls)
 
     # Remove collision exporter from File > Export menu
-    bpy.types.INFO_MT_file_export.remove(exporterUI.menu_func_export)
+     bpy.types.TOPBAR_MT_file_export.remove(exporterUI.menu_func_export)
 
     # Register blender DATA_PT_empty
 #    bpy.utils.register_class(bpy.types.DATA_PT_empty)

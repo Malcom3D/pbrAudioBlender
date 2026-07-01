@@ -30,8 +30,8 @@ from dataclasses import dataclass
 from typing import List, Tuple, Optional
 
 from .baseND import AcousticMaterialNode
-from ..tools.pym2f import Pym2f
-from ..tools.faust_render import FaustRender
+from rigidBody import Pym2f
+from rigidBody import FaustRender
 from physicsSolver.lib.functions import _parse_lib
 
 classes = []

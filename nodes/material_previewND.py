@@ -112,7 +112,7 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
     
     # Create faces (triangles between consecutive cross-sections)
     for i in range(n_length - 1):
-               for j in range(n_cross):
+        for j in range(n_cross):
             v0 = i * n_cross + j
             v1 = i * n_cross + (j + 1) % n_cross
             v2 = (i + 1) * n_cross + j

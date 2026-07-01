@@ -22,9 +22,9 @@ from nodeitems_utils import NodeCategory, NodeItem, register_node_categories, un
 
 classes = []
 
-from . import worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND, soundND
+from . import worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND, soundND, material_previewND
 
-for mod in (worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND, soundND):
+for mod in (worldND, baseND, materialND, propertyND, outputND, plotND, audioND, spatialND, soundND, material_previewND):
     classes += mod.classes
 
 class WorldAcousticNodeCategory(NodeCategory):
@@ -62,7 +62,7 @@ property_node_categories = [
 sound_output_node_categories = [
     SoundAcousticNodeCategory("SOUND_OUTPUT_NODES", "Sound Output", items=[
         NodeItem("SoundOutputNode"),
-#        NodeItem("AcousticMaterialPreviewNode"),
+        NodeItem("AcousticMaterialPreviewNode"),
         NodeItem("ResponsePreviewNode"),
     ]),
 ]

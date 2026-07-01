@@ -30,19 +30,16 @@ for mod in (worldND, baseND, materialND, propertyND, outputND, plotND, audioND, 
 class WorldAcousticNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-#        return context.space_data.tree_type == 'AcousticNodeTree' and bpy.data.node_groups[context.space_data.node_tree.name].pbraudio_type == 'WORLD'
         return context.space_data.tree_type == 'AcousticNodeTree' and context.scene.acoustic_node_editor_props.acoustic_shader_type == 'WORLD'
 
 class ObjectAcousticNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-#        return context.space_data.tree_type == 'AcousticNodeTree' and bpy.data.node_groups[context.space_data.node_tree.name].pbraudio_type == 'OBJECT'
         return context.space_data.tree_type == 'AcousticNodeTree' and context.scene.acoustic_node_editor_props.acoustic_shader_type == 'OBJECT'
 
 class SoundAcousticNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-#        return context.space_data.tree_type == 'AcousticNodeTree' and bpy.data.node_groups[context.space_data.node_tree.name].pbraudio_type == 'SOUND'
         return context.space_data.tree_type == 'AcousticNodeTree' and context.scene.acoustic_node_editor_props.acoustic_shader_type == 'SOUND'
 
 world_node_categories = [
@@ -65,6 +62,7 @@ property_node_categories = [
 sound_output_node_categories = [
     SoundAcousticNodeCategory("SOUND_OUTPUT_NODES", "Sound Output", items=[
         NodeItem("SoundOutputNode"),
+#        NodeItem("AcousticMaterialPreviewNode"),
         NodeItem("ResponsePreviewNode"),
     ]),
 ]

@@ -540,7 +540,7 @@ process = process : fi.power_limiter(0.95) : *(0.5);
             
             # Create Faust DSP
             self.report({'INFO'}, "Creating synthesis DSP...")
-                       dsp_path = self._create_faust_dsp(lib_path, params, num_vertices)
+            dsp_path = self._create_faust_dsp(lib_path, params, num_vertices)
             
             # Render audio
             self.report({'INFO'}, "Rendering preview audio...")

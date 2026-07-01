@@ -632,7 +632,7 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         default=0.02,
         min=0.005,
         max=0.05,
-        unit='LLENGTH'
+        unit='LENGTH'
     )
     
     # Circular plate parameters

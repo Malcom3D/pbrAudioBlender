@@ -30,7 +30,7 @@ from dataclasses import dataclass
 from typing import List, Tuple, Optional
 
 from .baseND import AcousticMaterialNode
-from rigidBody import Pym2f
+from rigidBody import Mesh2Modal
 from rigidBody import FaustRender
 from physicsSolver.lib.functions import _parse_lib
 
@@ -384,8 +384,8 @@ class PBRAUDIO_OT_preview_material(Operator):
             # Use Pym2f to compute modal model
             from physicsSolver import EntityManager
             entity_manager = EntityManager(config_path)
-            pym2f = Pym2f(entity_manager)
-            pym2f.compute(0)
+            m2m = Mesh2Modal(entity_manager)
+            m2m.compute(0)
             
             # Check if lib file was created
             lib_path = os.path.join(temp_dir, "dsp", "preview.lib")

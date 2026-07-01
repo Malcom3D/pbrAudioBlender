@@ -51,7 +51,7 @@ class ShapeGeometry:
         for v in self.vertices:
             obj_lines.append(f"v {v[0]:.10f} {v[1]:.10f} {v[2]:.10f}")
         for n in self.normals:
-            obj obj_lines.append(f"vn {n[0]:.10f} {n[1]:.10f} {n[2]:.10f}")
+            obj_lines.append(f"vn {n[0]:.10f} {n[1]:.10f} {n[2]:.10f}")
         for f in self.faces:
             obj_lines.append(f"f {f[0]+1}//{f[0]+1} {f[1]+1}//{f[1]+1} {f[2]+1}//{f[2]+1}")
         return "\n".join(obj_lines)

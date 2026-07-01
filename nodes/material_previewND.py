@@ -670,7 +670,6 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         default=0.008,
         min=0.003,
         max=0.02,
-,
         unit='LENGTH'
     )
     

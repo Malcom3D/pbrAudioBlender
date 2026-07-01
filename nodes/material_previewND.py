@@ -701,7 +701,7 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
             
         else:  # SOLID_BAR
             sub_box = box.box()
-            sub_box.label(text="Solid Bar Dimensions:", icon='='MESH_CYLINDER')
+            sub_box.label(text="Solid Bar Dimensions:", icon='MESH_CYLINDER')
             sub_box.prop(self, "bar_length")
             sub_box.prop(self, "bar_radius")
         

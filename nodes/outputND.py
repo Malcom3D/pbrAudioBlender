@@ -25,17 +25,17 @@ from ..properties import materialPG
 
 classes = []
 
-class AcousticMaterialPreviewNode(AcousticMaterialNode):
-    """Acoustic material preview node for pbr synthesis"""
-    bl_idname = 'AcousticMaterialPreviewNode'
-    bl_label = "Acoustic Material Preview"
-
-    pbraudio_type: StringProperty(default='MaterialPreview')
-
-    def init(self, context):
-        self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
-
-classes.append(AcousticMaterialPreviewNode)
+#class AcousticMaterialPreviewNode(AcousticMaterialNode):
+#    """Acoustic material preview node for pbr synthesis"""
+#    bl_idname = 'AcousticMaterialPreviewNode'
+#    bl_label = "Acoustic Material Preview"
+#
+#    pbraudio_type: StringProperty(default='MaterialPreview')
+#
+#    def init(self, context):
+#        self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
+#
+#classes.append(AcousticMaterialPreviewNode)
 
 class AcousticMaterialOutputNode(AcousticMaterialNode):
     """Acoustic material output node"""

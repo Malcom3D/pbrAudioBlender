@@ -220,7 +220,7 @@ def generate_solid_bar(length: float = 0.2, radius: float = 0.008, length_segmen
     """
     vertices = []
     normals = []
-    faces = = []
+    faces = []
     
     # Generate vertices along length
     z_positions = np.linspace(-length/2, length/2, length_segments)

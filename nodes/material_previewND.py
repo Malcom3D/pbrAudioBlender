@@ -22,21 +22,22 @@ import numpy as np
 import trimesh
 import soundfile as sf
 import tempfile
-import struct
-import wave
+import json
+import hashlib
+import aud
 from bpy.types import Node, Operator
 from bpy.props import IntProperty, StringProperty, BoolProperty, EnumProperty, FloatProperty
 from dataclasses import dataclass
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 
 from .baseND import AcousticMaterialNode
-from rigidBody import Mesh2Modal
-from rigidBody import FaustRender
+from rigidBody.core.modal_luthier import ModalLuthier
+from rigidBody.lib.rigidbody_synth import RigidBodySynth
+from physicsSolver import EntityManager
 from physicsSolver.lib.functions import _parse_lib
 
 classes = []
 
-# Shape definitions for modal analysis
 @dataclass
 class ShapeGeometry:
     """Geometric parameters for test shapes"""
@@ -45,41 +46,45 @@ class ShapeGeometry:
     normals: np.ndarray
     faces: np.ndarray
     
-    def to_obj_string(self) -> str:
-        """Convert to OBJ format string"""
-        obj_lines = []
-        for v in self.vertices:
-            obj_lines.append(f"v {v[0]:.10f} {v[1]:.10f} {v[2]:.10f}")
-        for n in self.normals:
-            obj_lines.append(f"vn {n[0]:.10f} {n[1]:.10f} {n[2]:.10f}")
-        for f in self.faces:
-            obj_lines.append(f"f {f[0]+1}//{f[0]+1} {f[1]+1}//{f[1]+1} {f[2]+1}//{f[2]+1}")
-        return "\n".join(obj_lines)
+    def get_contact_vertices(self, contact_area: float) -> List[int]:
+        """Get vertex indices within contact area from center"""
+        if len(self.vertices) == 0:
+            return []
+        
+        # Calculate center of mesh
+        center = np.mean(self.vertices, axis=0)
+        
+        # Calculate distances from center
+        distances = np.linalg.norm(self.vertices - center, axis=1)
+        
+        # Find radius based on contact area (assuming circular contact)
+        contact_radius = np.sqrt(contact_area / np.pi)
+        
+        # Get vertices within contact radius
+        contact_indices = np.where(distances <= contact_radius)[0].tolist()
+        
+        return contact_indices if contact_indices else [0]  # At least one vertex
+    
+    def to_mesh_npz(self, output_file: str) -> None:
+        """Save mesh as npz file"""
+        np.savez_compressed(
+            output_file,
+            vertices=self.vertices,
+            normals=self.normals,
+            faces=self.faces
+        )
 
-def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.02, 
-                   subdivisions: int = 4) -> ShapeGeometry:
+def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.02, subdivisions: int = 4) -> ShapeGeometry:
     """
     Generate a U-shaped bar (channel section) for decay and brightness evaluation.
-    
-    Parameters:
-    -----------
-    length : float
-        Length of the bar in meters (default 0.3m)
-    width : float
-        Width of the U-channel in meters (default 0.03m)
-    height : float
-        Height of the U-channel in meters (default 0.02m)
-    subdivisions : int
-        Number of subdivisions along the length
+    Dimensions are automatically calculated from physical parameters.
     """
-    # Create U-shaped cross-section points
-    # The U shape has: bottom, left wall, right wall
+    # Calculate dimensions based on typical ratios
+    # For a U-bar, the resonant frequencies depend on length, width, and height
     n_length = max(4, subdivisions * 2)
-    n_cross = 8  # Points around U cross-section
+    n_cross = 8
     
     # Cross-section vertices (U shape)
-    t = np.linspace(0, 1, n_cross)
-    # U profile: [bottom-left, bottom-right, right-bottom, right-top, top-right, top-left, left-top, left-bottom]
     cross_section = np.array([
         [-width/2, -height/2],  # bottom-left
         [width/2, -height/2],   # bottom-right
@@ -101,7 +106,6 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
     for i, z in enumerate(z_positions):
         for j, (x, y) in enumerate(cross_section):
             vertices.append([x, y, z])
-            # Normal approximation (radial from center)
             norm = np.array([x, y, 0])
             norm_norm = np.linalg.norm(norm)
             if norm_norm > 0:
@@ -110,7 +114,7 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
                 norm = [0, 0, 1]
             normals.append(norm.tolist())
     
-    # Create faces (triangles between consecutive cross-sections)
+    # Create faces
     for i in range(n_length - 1):
         for j in range(n_cross):
             v0 = i * n_cross + j
@@ -122,10 +126,8 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
             faces.append([v1, v3, v2])
     
     # Close ends
-    # Front face
     for j in range(1, n_cross - 1):
         faces.append([j, j+1, 0])
-    # Back face
     offset = (n_length - 1) * n_cross
     for j in range(1, n_cross - 1):
         faces.append([offset, offset + j + 1, offset + j])
@@ -137,21 +139,9 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
         faces=np.array(faces, dtype=np.int32)
     )
 
-def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003,
-                           radial_segments: int = 8, circumferential_segments: int = 16) -> ShapeGeometry:
+def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radial_segments: int = 8, circumferential_se_segments: int = 16) -> ShapeGeometry:
     """
     Generate a thin circular plate for inharmonicity and brightness evaluation.
-    
-    Parameters:
-    -----------
-    radius : float
-        Radius of the plate in meters (default 0.05m)
-    thickness : float
-        Thickness of the plate in meters (default 0.003m)
-    radial_segments : int
-        Number of radial subdivisions
-    circumferential_segments : int
-        Number of circumferential subdivisions
     """
     vertices = []
     normals = []
@@ -195,12 +185,12 @@ def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003,
             faces.append([v1, v3, v2])
             # Bottom faces (reversed normals)
             faces.append([v0 + 1, v2 + 1, v1 + 1])
-            faces.append([v1 + 1, v2 + 1, v3 + 1])
+            faces.append([v1 + 1, v v2 + 1, v3 + 1])
     
     # Connect to center
     for j in range(circumferential_segments):
         v0 = (radial_segments - 1) * n_vertices_per_ring + 2 * j
-        v1 = (radial_segments - 1) * n_vertices_per_ring + 2 * ((j + 1) % circumferential_segments)
+        v1 = (radial_segments - 1) * n_vertices_per_ring +  2 * ((j + 1) % circumferential_segments)
         
         # Top
         faces.append([v0, v1, center_top])
@@ -224,25 +214,13 @@ def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003,
         faces=np.array(faces, dtype=np.int32)
     )
 
-def generate_solid_bar(length: float = 0.2, radius: float = 0.008,
-                      length_segments: int = 8, radial_segments: int = 8) -> ShapeGeometry:
+def generate_solid_bar(length: float = 0.2, radius: float = 0.008, length_segments: int = 8, radial_segments: int = 8) -> ShapeGeometry:
     """
     Generate a solid cylindrical bar (free-free) for tonal balance evaluation.
-    
-    Parameters:
-    -----------
-    length : float
-        Length of the bar in meters (default 0.2m)
-    radius : float
-        Radius of the bar in meters (default 0.008m)
-    length_segments : int
-        Number of segments along the length
-    radial_segments : int
-        Number of radial segments
     """
     vertices = []
     normals = []
-    faces = []
+    faces = = []
     
     # Generate vertices along length
     z_positions = np.linspace(-length/2, length/2, length_segments)
@@ -254,7 +232,6 @@ def generate_solid_bar(length: float = 0.2, radius: float = 0.008,
             y = radius * np.sin(theta)
             
             vertices.append([x, y, z])
-            # Normal is radial
             norm = np.array([x, y, 0])
             norm_norm = np.linalg.norm(norm)
             if norm_norm > 0:
@@ -289,13 +266,72 @@ def generate_solid_bar(length: float = 0.2, radius: float = 0.008,
     offset = (length_segments - 1) * radial_segments
     for j in range(1, radial_segments - 1):
         faces.append([center_back, offset + j, offset + j + 1])
-    
+
     return ShapeGeometry(
         name=f"Solid_Bar_{length*100:.0f}cm",
         vertices=np.array(vertices, dtype=np.float32),
         normals=np.array(normals, dtype=np.float32),
         faces=np.array(faces, dtype=np.int32)
-        )
+    )
+
+def generate_from_mesh(obj) -> ShapeGeometry:
+    """Generate shape geometry from an existing mesh object"""
+    # Get mesh data
+    mesh = obj.data
+    world_matrix = obj.matrix_world
+    
+    # Get vertices in world space
+    vertices = []
+    for vert in mesh.vertices:
+        world_co = world_matrix @ vert.co
+        vertices.append([world_co.x, world_co.y, world_co.z])
+    
+    # Get faces
+    faces = []
+    for poly in mesh.polygons:
+        if len(poly.vertices) == 3:
+            faces.append(list(poly.vertices))
+        elif len(poly.vertices) > 3:
+            # Triangulate
+            for i in range(1, len(poly.vertices) - 1):
+                faces.append([poly.vertices[0], poly.vertices[i], poly.vertices[i + 1]])
+    
+    # Get normals
+    normals = []
+    for vert in mesh.vertices:
+        normal = world_matrix.to_3x3() @ vert.normal
+        normals.append([normal.x, normal.y, normal.z])
+    
+    return ShapeGeometry(
+        name=obj.name.replace('.', '_'),
+        vertices=np.array(vertices, dtype=np.float32),
+        normals=np.array(normals, dtype=np.float32),
+        faces=np.array(faces, dtype=np.int32)
+    )
+
+def get_cache_path(node) -> str:
+    """Get unique cache path for this node's preview"""
+    # Create a unique hash based on node parameters
+    params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.preview_duration}"
+    params += f"_{node.u_bar_length}_{node.u_bar_width}_{node.u_bar_height}"
+    params += f"_{node.plate_radius}_{node.plate_thickness}"
+    params += f"_{node.bar_length}_{node.bar_radius}"
+    
+    # Add acoustic parameters from connected nodes
+    node_tree = node.id_data
+    for n in node_tree.nodes:
+        if hasattr(n, 'pbraudio_type') and n.pbraudio_type == 'AcousticShader':
+            for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 'friction', 'roughness', 'low_frequency', 'high_frequency']:
+                if hasattr(n, f'pbraudio_{prop}'):
+                    params += f"_{getattr(n, f'pbraudio_{prop}')}"
+    
+    hash_id = hashlib.md5(params.encode()).hexdigest()[:12]
+    
+    # Use Blender's temp directory
+    cache_dir = os.path.join(bpy.app.tempdir, "pbraudio_preview_cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    
+    return os.path.join(cache_dir, hash_id)
 
 class PBRAUDIO_OT_preview_material(Operator):
     """Preview acoustic material sound"""
@@ -306,7 +342,7 @@ class PBRAUDIO_OT_preview_material(Operator):
     node_tree: StringProperty(name="Node Tree", default="")
     node_name: StringProperty(name="Node Name", default="")
     
-    def _get_acoustic_params(self, node):
+    def _get_acoustic_params(self, node) -> Dict:
         """Traverse node tree to get acoustic parameters"""
         params = {
             'young_modulus': 0.005,  # Default values (GPa)
@@ -337,58 +373,111 @@ class PBRAUDIO_OT_preview_material(Operator):
         traverse_backwards(node)
         return params
     
-    def _create_temp_obj(self, shape_geo: ShapeGeometry) -> str:
-        """Create temporary OBJ file from shape geometry"""
-        temp_dir = tempfile.mkdtemp()
-        obj_path = os.path.join(temp_dir, f"{shape_geo.name}.obj")
+    def _calculate_shape_dimensions(self, params: Dict, shape_type: str) -> Dict:
+        """Calculate appropriate shape dimensions based on physical parameters"""
+        dimensions = {}
         
-        with open(obj_path, 'w') as f:
-            f.write(f"# {shape_geo.name}\n")
-            f.write(shape_geo.to_obj_string())
+        # Calculate characteristic dimensions based on material properties
+        young_modulus = params.get('young_modulus', 0.005) * 1e9  # Convert GPa to Pa
+        density = params.get('density', 800.0)
         
-        return obj_path, temp_dir
-    
-    def _compute_modal_model(self, obj_path: str, params: dict, temp_dir: str) -> Optional[str]:
-        """Compute modal model using mesh2faust"""
-        try:
-            # Create a temporary EntityManager-like config
-            import json
-            config = {
-                "system": {
-                    "cache_path": temp_dir,
-                    "modal_modes": 30  # Use 30 modes for preview
-                },
-                "objects": [{
-                    "idx": 0,
-                    "name": "preview",
-                    "obj_path": os.path.dirname(obj_path),
-                    "pose_path": temp_dir,
-                    "static": True,
-                    "acoustic_shader": {
-                        "young_modulus": params['young_modulus'] * 1e9,  # Convert GPa to Pa
-                        "poisson_ratio": params['poisson_ratio'],
-                        "density": params['density'],
-                        "damping": params['damping'] / 100.0,  # Convert % to ratio
-                        "low_frequency": params['low_frequency'],
-                        "high_frequency": params['high_frequency'],
-                        "friction": params['friction'],
-                        "roughness": params['roughness']
-                    }
-                }]
+        # Calculate wave speed in material
+        wave_speed = np.sqrt(young_modulus / density) if density > 0 else 1000.0
+        
+        # Target fundamental frequency range (based on low_frequency)
+        target_freq = params.get('low_frequency', 100.0)
+        
+        if shape_type == 'U_BAR':
+            # For a U-bar, fundamental frequency ~ (wave_speed * thickness) / (2 * length^2)
+            # We want the fundamental to be near the low_frequency
+            thickness = 0.02  # Fixed thickness
+            length = np.sqrt(wave_speed * thickness / (2 * target_freq))
+            length = np.clip(length, 0.1, 1.0)
+            width = length * 0.1  # Width proportional to length
+            height = length * 0.07  # Height proportional to length
+            
+            dimensions = {
+                'length': length,
+                'width': width,
+                'height': height
             }
             
-            config_path = os.path.join(temp_dir, "config.json")
-            with open(config_path, 'w') as f:
-                json.dump(config, f)
+        elif shape_type == 'CIRCULAR_PLATE':
+            # For a circular plate, fundamental frequency ~ (wave_speed * thickness) / (2 * radius^2)
+            thickness = 0.003  # Fixed thickness
+            radius = np.sqrt(wave_speed * thickness / (2 * target_freq))
+            radius = np.clip(radius, 0.01, 0.3)
             
-            # Use Pym2f to compute modal model
-            from physicsSolver import EntityManager
+            dimensions = {
+                'radius': radius,
+                'thickness': thickness
+            }
+            
+        else: # SOLID_BAR
+            # For a solid bar, fundamental frequency ~ wave_speed / (2 * length)
+            length = wave_speed / (2 * target_freq)
+            length = np.clip(length, 0.05, 0.5)
+            radius = length * 0.04  # Aspect ratio
+            
+            dimensions = {
+                'length': length,
+                'radius': radius
+            }
+
+        return dimensions
+    
+    def _create_config(self, node, shape_geo: ShapeGeometry, params: Dict, cache_path: str) -> str:
+        """Create configuration JSON for Mesh2Modal"""
+        config = {
+            "system": {
+                "cache_path": os.path.dirname(cache_path),
+                "sample_rate": 48000,
+                "modal_modes": 30,  # Use 30 modes for preview
+                "fps": 30,
+                "fps_base": 1.0,
+                "subframes": 1,
+                "start_frame": 1,
+                "end_frame": 1
+            },
+            "objects": [{
+                "idx": 0,
+                "name": "preview",
+                "obj_path": cache_path,
+                "pose_path": cache_path,
+                "static": True,
+                "acoustic_shader": {
+                    "young_modulus": params['young_modulus'] * 1e9,  # Convert GPa to Pa
+                    "poisson_ratio": params['poisson_ratio'],
+                    "density": params['density'],
+                    "damping": params['damping'] / 100.0,  # Convert % to ratio
+                    "low_frequency": params['low_frequency'],
+                    "high_frequency": params['high_frequency'],
+                    "friction": params['friction'],
+                    "roughness": params['roughness']
+                }
+            }]
+        }
+        
+        config_path = os.path.join(cache_path, "config.json")
+        os.makedirs(os.path.dirname(config_path), exist_ok=True)
+        
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=2)
+        
+        return config_path
+    
+    def _compute_modal_model(self, cache_path: str, config_path: str) -> Optional[str]:
+        """Compute modal model using Mesh2Modal"""
+        try:
+            # Create EntityManager
             entity_manager = EntityManager(config_path)
-            m2m = Mesh2Modal(entity_manager)
-            m2m.compute(0)
+            
+            # Use ModalLuthier to compute modal model
+            modal_luthier = ModalLuthier(entity_manager)
+            modal_luthier.compute(0)
             
             # Check if lib file was created
-            lib_path = os.path.join(temp_dir, "dsp", "preview.lib")
+            lib_path = os.path.join(cache_path, "dsp", "preview.lib")
             if os.path.exists(lib_path):
                 return lib_path
             
@@ -398,92 +487,161 @@ class PBRAUDIO_OT_preview_material(Operator):
             print(f"Modal model computation error: {e}")
             return None
     
-    def _create_faust_dsp(self, lib_path: str, params: dict, num_vertices: int) -> str:
-        """Create Faust DSP file for modal synthesis"""
-        dsp_content = f"""
-// Auto-generated preview DSP for acoustic material
-// Parameters:
-// - Young's Modulus: {params['young_modulus']} GPa
-// - Poisson Ratio: {params['poisson_ratio']}
-// - Density: {params['density']} kg/m³
-// - Damping: {params['damping']}%
-// - Frequency Range: {params['low_frequency']} - {params['high_frequency']} Hz
-
-import("stdfaust.lib");
-import("preview.lib");
-
-// Number of vertices to excite
-nVertices = {num_vertices};
-
-// Process: excite all vertices with same impulse
-process = par(i, nVertices, 
-    (button("play") : 
-        (0.0 : si.smoo) :  // Smooth trigger
-        *(1.0/nVertices) : // Distribute energy
-        modalModel(i)      // Each vertex's modal response
-    )
-) :> _;  // Sum all outputs
-
-// Apply gain and limiter
-process = process : fi.power_limiter(0.95) : *(0.5);
-"""
-        
-        dsp_path = os.path.join(os.path.dirname(lib_path), "preview.dsp")
-        with open(dsp_path, 'w') as f:
-            f.write(dsp_content)
-        
-        return dsp_path
-    
-    def _render_audio(self, dsp_path: str, duration: float = 2.0) -> Optional[str]:
-        """Render audio using FaustRender"""
+    def _render_audio(self, cache_path: str, lib_path: str, node, params: Dict, shape_geo: ShapeGeometry) -> Optional[np.ndarray]:
+        """Render audio using RigidBodySynth"""
         try:
-            output_path = os.path.join(os.path.dirname(dsp_path), "preview.raw")
-            renderer = FaustRender()
-            renderer.compute(dsp_path, output_path, duration)
+            # Load config
+            config_path = os.path.join(cache_path, "config.json")
+            entity_manager = EntityManager(config_path)
             
-            if os.path.exists(output_path):
-                return output_path
+            # Get sample rate from config
+            config = entity_manager.get('config')
+            sample_rate = 48000
             
-            return None
+            # Calculate duration in samples
+            duration_samples = int(node.preview_duration * sample_rate)
+            
+            # Initialize connected buffer
+            from physicsSolver.lib.connected_buffer import ConnectedBuffer
+            connected_buffer = ConnectedBuffer()
+            entity_manager.register('connected_buffer', connected_buffer)
+            
+            # Get vertex list from shape geometry
+            vertex_list = np.arange(len(shape_geo.vertices))
+            
+            # Initialize RigidBodySynth
+            rigidbody_synth = RigidBodySynth(
+                entity_manager=entity_manager,
+                obj_idx=0,
+                modal_lib=lib_path,
+                vertex_list=vertex_list,
+                sample_rate=sample_rate
+            )
+            
+            # Get contact vertices
+            contact_area = node.contact_area
+            vertex_ids = shape_geo.get_contact_vertices(contact_area)
+            
+            # Render audio
+            audio_buffer = np.zeros(duration_samples)
+            
+            # Impact excitation (synth_type = 1)
+            force_value = node.force_value
+            
+            for sample_idx in range(duration_samples):
+                if sample_idx == 0:
+                    # Apply impulse at first sample
+                    output = rigidbody_synth.process(
+                        synth_type=1,
+                        vertex_ids=vertex_ids,
+                        input_force=force_value,
+                        contact_area=contact_area
+                    )
+                else:
+                    # Continue processing (no new input)
+                    output = rigidbody_synth.process(
+                        synth_type=1,
+                        vertex_ids=[],
+                        input_force=0.0,
+                        contact_area=0.0
+                    )
+                
+                audio_buffer[sample_idx] = output if not np.isnan(output) and not np.isinf(output) else 0.0
+            
+            # Normalize
+            max_val = np.max(np.abs(audio_buffer))
+            if max_val > 0:
+                audio_buffer = audio_buffer / max_val * 0.95
+            
+            return audio_buffer
             
         except Exception as e:
             print(f"Audio rendering error: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
-    def _play_audio(self, audio_path: str):
-        """Play audio in Blender using aud module"""
+    def _save_audio(self, audio_buffer: np.ndarray, cache_path: str) -> str:
+        """Save rendered audio to file"""
+        audio_path = os.path.join(cache_path, "preview.wav")
+        os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+        
+        sf.write(audio_path, audio_buffer, 48000, subtype='FLOAT')
+        
+        return audio_path
+    
+    def _play_audio(self, audio_path: str, node) -> aud.Handle:
+        """Play audio using aud module and return handle"""
         try:
-            import aud
+            # Create sound object
+            sound = aud.Sound(audio_path)
             
-            # Read RAW PCM FLOAT32 file
-            with open(audio_path, 'rb') as f:
-                raw_data = f.read()
-            
-            # Convert to numpy array
-            samples = np.frombuffer(raw_data, dtype=np.float32)
-            
-            # Create temporary WAV file for aud
-            temp_wav = os.path.join(os.path.dirname(audio_path), "preview.wav")
-            sf.write(temp_wav, samples, 48000, subtype='FLOAT')
-            
-            # Play using aud
+            # Create device
             device = aud.Device()
-            sound = aud.Sound(temp_wav)
+            
+            # Play sound
             handle = device.play(sound)
             
-            print(f"Playing preview audio: {temp_wav}")
+            # Store device and handle in node for later cleanup
+            node._aud_device = device
+            node._aud_handle = handle
             
-        except ImportError:
-            print("aud module not available. Playing with system player...")
-            import subprocess
-            import platform
+            print(f"Playing preview audio: {audio_path}")
             
-            if platform.system() == 'Linux':
-                subprocess.Popen(['aplay', audio_path])
-            elif platform.system() == 'Darwin':
-                subprocess.Popen(['afplay', audio_path])
-            else:
-                print("Please install aud module or use an external player")
+            return handle
+            
+        except Exception as e:
+            print(f"Error playing audio: {e}")
+            return None
+    
+    def _cleanup_preview(self, node):
+        """Clean up existing preview data"""
+        # Stop audio if playing
+        if hasattr(node, '_aud_handle') and node._aud_handle:
+            try:
+                node._aud_handle.stop()
+            except:
+                pass
+            node._aud_handle = None
+        
+        # Close device
+        if hasattr(node, '_aud_device') and node._aud_device:
+            try:
+                node._aud_device.stopAll()
+                node._aud_device = None
+            except:
+                pass
+        
+        # Clear cached paths
+        node._cache_path = None
+        node._audio_path = None
+        node._lib_path = None
+    
+    def _has_parameters_changed(self, node) -> bool:
+        """Check if parameters have changed since last render"""
+        if not hasattr(node, '_last_params_hash'):
+            return True
+        
+        current_hash = self._get_params_hash(node)
+        return current_hash != node._last_params_hash
+    
+    def _get_params_hash(self, node) -> str:
+        """Get hash of current parameters"""
+        params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.preview_duration}"
+        params += f"_{node.u_bar_length}_{node.u_bar_width}_{node.u_bar_height}"
+        params += f"_{node.plate_radius}_{node.plate_thickness}"
+        params += f"_{node.bar_length}_{node.bar_radius}"
+        
+        # Add acoustic parameters from connected nodes
+        node_tree = node.id_data
+        for n in node_tree.nodes:
+            if hasattr(n, 'pbraudio_type') and n.pbraudio_type == 'AcousticShader':
+                for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 
+                            'friction', 'roughness', 'low_frequency', 'high_frequency']:
+                    if hasattr(n, f'pbraudio_{prop}'):
+                        params += f"_{getattr(n, f'pbraudio_{prop}')}"
+        
+        return hashlib.md5(params.encode()).hexdigest()
     
     def execute(self, context):
         if not self.node_tree or not self.node_name:
@@ -502,62 +660,96 @@ process = process : fi.power_limiter(0.95) : *(0.5);
                 self.report({'ERROR'}, "Node not found")
                 return {'CANCELLED'}
             
+            # Check if parameters have changed
+            if self._has_parameters_changed(node):
+                self.report({'INFO'}, "Parameters changed, cleaning up and recomputing...")
+                self._cleanup_preview(node)
+            
+            # Check if we have cached audio
+            if hasattr(node, '_audio_path') and node._audio_path and os.path.exists(node._audio_path):
+                self.report({'INFO'}, "Playing cached preview...")
+                self._play_audio(node._audio_path, node)
+                return return {'FINISHED'}
+            
             # Get acoustic parameters
             params = self._get_acoustic_params(node)
             
-            # Get shape type and parameters from node
+            # Calculate shape dimensions from physical parameters
             shape_type = node.preview_shape
-            num_vertices = node.preview_vertices
+            dimensions = self._calculate_shape_dimensions(params, shape_type)
             
             # Generate shape based on type
             if shape_type == 'U_BAR':
                 shape_geo = generate_u_bar(
-                    length=node.u_bar_length,
-                    width=node.u_bar_width,
-                    height=node.u_bar_height
+                    length=dimensions.get('length', node.u_bar_length),
+                    width=dimensions.get('width', node.u_bar_width),
+                    height=dimensions.get('height', node.u_bar_height)
                 )
             elif shape_type == 'CIRCULAR_PLATE':
                 shape_geo = generate_circular_plate(
-                    radius=node.plate_radius,
-                    thickness=node.plate_thickness
+                    radius=dimensions.get('radius', node.plate_radius),
+                    thickness=dimensions.get('thickness', node.plate_thickness)
                 )
-            else:  # SOLID_BAR
+            elif shape_type == 'SOLID_BAR':
                 shape_geo = generate_solid_bar(
-                    length=node.bar_length,
-                    radius=node.bar_radius
+                    length=dimensions.get('length', node.bar_length),
+                    radius=dimensions.get('radius', node.bar_radius)
                 )
+            else:  # MESH_OBJECT
+                # Get the mesh object from the node tree
+                obj = None
+                for o in bpy.data.objects:
+                    if hasattr(o, 'pbraudio') and o.pbraudio.nodetree == nodetree:
+                        obj = o
+                        break
+                
+                if obj and obj.type == 'MESH':
+                    shape_geo = generate_from_mesh(obj)
+                else:
+                    self.report({'ERROR'}, "No valid mesh object found")
+                    return {'CANCELLED'}
             
-            # Create temporary OBJ file
-            obj_path, temp_dir = self._create_temp_obj(shape_geo)
+            # Get cache path
+            cache_path = get_cache_path(node)
+            os.makedirs(cache_path, exist_ok=True)
+            
+            # Save mesh as npz
+            self.report({'INFO'}, f"Saving mesh to {cache_path}...")
+            mesh_path = os.path.join(cache_path, "preview.npz")
+            shape_geo.to_mesh_npz(mesh_path)
+            
+            # Create config
+            self.report({'INFO'}, "Creating configuration...")
+            config_path = self._create_config(node, shape_geo, params, cache_path)
             
             # Compute modal model
             self.report({'INFO'}, "Computing modal model...")
-            lib_path = self._compute_modal_model(obj_path, params, temp_dir)
+            lib_path = self._compute_modal_model(cache_path, config_path)
             
             if not lib_path:
                 self.report({'ERROR'}, "Failed to compute modal model")
                 return {'CANCELLED'}
             
-            # Create Faust DSP
-            self.report({'INFO'}, "Creating synthesis DSP...")
-            dsp_path = self._create_faust_dsp(lib_path, params, num_vertices)
-            
             # Render audio
             self.report({'INFO'}, "Rendering preview audio...")
-            duration = node.preview_duration
-            audio_path = self._render_audio(dsp_path, duration)
+            audio_buffer = self._render_audio(cache_path, lib_path, node, params, shape_geo)
             
-            if not audio_path:
+            if audio_buffer is None:
                 self.report({'ERROR'}, "Failed to render audio")
                 return {'CANCELLED'}
             
+            # Save audio
+            audio_path = self._save_audio(audio_buffer, cache_path)
+            
+            # Store paths in node for caching
+            node._cache_path = cache_path
+            node._audio_path = audio_path
+            node._lib_path = lib_path
+            node._last_params_hash = self._get_params_hash(node)
+            
             # Play audio
             self.report({'INFO'}, "Playing preview...")
-            self._play_audio(audio_path)
-            
-            # Cleanup temp files (optional)
-            import shutil
-            shutil.rmtree(temp_dir, ignore_errors=True)
+            self._play_audio(audio_path, node)
             
             return {'FINISHED'}
             
@@ -584,23 +776,34 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         items=[
             ('U_BAR', "U-Bar", "U-shaped bar for decay and brightness"),
             ('CIRCULAR_PLATE', "Circular Plate", "Thin circular plate for inharmonicity"),
-            ('SOLID_BAR', "Solid Bar", "Solid cylindrical bar for tonal balance balance"),
+            ('SOLID_BAR', "Solid Bar", "Solid cylindrical bar for tonal balance"),
+            ('MESH_OBJECT', "Mesh Object", "Use the mesh object assigned to this node tree"),
         ],
         default='SOLID_BAR'
     )
     
-    # Number of vertices to excite
-    preview_vertices: IntProperty(
-        name="Excitation Vertices",
-        description="Number of vertices to excite in the modal model",
-        default=4,
-        min=1,
-        max=20
+    # Contact area
+    contact_area: FloatProperty(
+        name="Contact Area (m²)",
+        description="Contact area for the impact in square meters",
+        default=0.001,
+        min=0.0001,
+        max=0.1,
+        precision=4
+    )
+    
+    # Force value
+    force_value: FloatProperty(
+        name="Force (N)",
+        description="Force value for the impact in Newtons",
+        default=10.0,
+        min=0.1,
+        max=1000.0
     )
     
     # Preview duration
     preview_duration: FloatProperty(
-        name="Preview Duration",
+        name="Preview Duration (s)",
         description="Duration of the preview sound in seconds",
         default=2.0,
         min=0.5,
@@ -698,15 +901,25 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
             sub_box.prop(self, "plate_radius")
             sub_box.prop(self, "plate_thickness")
             
-        else:  # SOLID_BAR
+        elif self.preview_shape == 'SOLID_BAR':
             sub_box = box.box()
             sub_box.label(text="Solid Bar Dimensions:", icon='MESH_CYLINDER')
             sub_box.prop(self, "bar_length")
             sub_box.prop(self, "bar_radius")
+            
+        elif self.preview_shape == 'MESH_OBJECT':
+            sub_box = box.box()
+            sub_box.label(text="Using mesh object from scene", icon='OBJECT_DATA')
         
-        # Excitation settings
+        # Contact parameters
         box.separator()
-        box.prop(self, "preview_vertices")
+        sub_box = box.box()
+        sub_box.label(text="Impact Parameters:", icon='FORCE_FORCE')
+        sub_box.prop(self, "contact_area")
+        sub_box.prop(self, "force_value")
+        
+        # Duration
+        box.separator()
         box.prop(self, "preview_duration")
         
         # Preview button
@@ -717,15 +930,42 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         # Create operator properties
         op = row.operator(
             "node.pbraudio_preview_material",
-            text="PlayPlay Preview",
+            text="Play Preview",
             icon='PLAY'
         )
         op.node_tree = self.id_data.name
         op.node_name = self.name
         
         # Status indicator
-        row = box.row()
-        row.label(text="", icon='SOUND')
+        if hasattr(self, '_audio_path') and self._audio_path and os.path.exists(self._audio_path):
+            row = box.row()
+            row.label(text="Cached", icon='CHECKMARK')
+    
+    def free(self):
+        """Clean up when node is deleted"""
+        self._cleanup_preview()
+    
+    def _cleanup_preview(self):
+        """Clean up preview resources"""
+        # Stop audio if playing
+        if hasattr(self, '_aud_handle') and self._aud_handle:
+            try:
+                self._aud_handle.stop()
+            except:
+                pass
+            self._aud_handle = None
+        
+        # Close device
+        if hasattr(self, '_aud_device') and self._aud_device:
+            try:
+                self._aud_device.stopAll()
+                self._aud_device = None
+            except:
+                pass
+        
+        # Clear cached paths
+        self._cache_path = None
+        self._audio_path = None
+        self._lib_path = None
 
 classes.append(AcousticMaterialPreviewNode)
-

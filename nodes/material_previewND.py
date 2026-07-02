@@ -185,12 +185,12 @@ def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radi
             faces.append([v1, v3, v2])
             # Bottom faces (reversed normals)
             faces.append([v0 + 1, v2 + 1, v1 + 1])
-            faces.append([v1 + 1, v v2 + 1, v3 + 1])
+            faces.append([v1 + 1, v2 + 1, v3 + 1])
     
     # Connect to center
     for j in range(circumferential_segments):
         v0 = (radial_segments - 1) * n_vertices_per_ring + 2 * j
-        v1 = (radial_segments - 1) * n_vertices_per_ring +  2 * ((j + 1) % circumferential_segments)
+        v1 = (radial_segments - 1) * n_vertices_per_ring + 2 * ((j + 1) % circumferential_segments)
         
         # Top
         faces.append([v0, v1, center_top])

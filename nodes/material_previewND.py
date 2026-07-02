@@ -139,7 +139,7 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
         faces=np.array(faces, dtype=np.int32)
     )
 
-def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radial_segments: int = 8, circumferential_se_segments: int = 16) -> ShapeGeometry:
+def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radial_segments: int = 8, circumferential_segments: int = 16) -> ShapeGeometry:
     """
     Generate a thin circular plate for inharmonicity and brightness evaluation.
     """
@@ -435,9 +435,7 @@ class PBRAUDIO_OT_preview_material(Operator):
                 "modal_modes": 30,  # Use 30 modes for preview
                 "fps": 30,
                 "fps_base": 1.0,
-                "subframes": 1,
-                "start_frame": 1,
-                "end_frame": 1
+                "subframes": 1
             },
             "objects": [{
                 "idx": 0,
@@ -470,10 +468,15 @@ class PBRAUDIO_OT_preview_material(Operator):
         """Compute modal model using Mesh2Modal"""
         try:
             # Create EntityManager
-            entity_manager = EntityManager(config_path)
+            self.entity_manager = EntityManager(config_path)
+
+            # Initialize connected buffer
+            from physicsSolver.lib.connected_buffer import ConnectedBuffer
+            connected_buffer = ConnectedBuffer()
+            self.entity_manager.register('connected_buffer', connected_buffer)
             
             # Use ModalLuthier to compute modal model
-            modal_luthier = ModalLuthier(entity_manager)
+            modal_luthier = ModalLuthier(self.entity_manager)
             modal_luthier.compute(0)
             
             # Check if lib file was created
@@ -492,26 +495,20 @@ class PBRAUDIO_OT_preview_material(Operator):
         try:
             # Load config
             config_path = os.path.join(cache_path, "config.json")
-            entity_manager = EntityManager(config_path)
             
             # Get sample rate from config
-            config = entity_manager.get('config')
+            config = self.entity_manager.get('config')
             sample_rate = 48000
             
             # Calculate duration in samples
             duration_samples = int(node.preview_duration * sample_rate)
-            
-            # Initialize connected buffer
-            from physicsSolver.lib.connected_buffer import ConnectedBuffer
-            connected_buffer = ConnectedBuffer()
-            entity_manager.register('connected_buffer', connected_buffer)
             
             # Get vertex list from shape geometry
             vertex_list = np.arange(len(shape_geo.vertices))
             
             # Initialize RigidBodySynth
             rigidbody_synth = RigidBodySynth(
-                entity_manager=entity_manager,
+                entity_manager=self.entity_manager,
                 obj_idx=0,
                 modal_lib=lib_path,
                 vertex_list=vertex_list,

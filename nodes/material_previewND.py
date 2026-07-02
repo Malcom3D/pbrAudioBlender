@@ -31,8 +31,11 @@ from dataclasses import dataclass
 from typing import List, Tuple, Optional, Dict
 
 from .baseND import AcousticMaterialNode
-from rigidBody.core.modal_luthier import ModalLuthier
-from rigidBody.lib.rigidbody_synth import RigidBodySynth
+#from rigidBody.core.modal_luthier import ModalLuthier
+#from rigidBody.lib.rigidbody_synth import RigidBodySynth
+from rigidBody import ModalLuthier, RigidBodySynth
+from rigidBody import RigidBodySynth
+from rigidBody import ConnectedBuffer
 from physicsSolver import EntityManager
 from physicsSolver.lib.functions import _parse_lib
 
@@ -471,7 +474,6 @@ class PBRAUDIO_OT_preview_material(Operator):
             self.entity_manager = EntityManager(config_path)
 
             # Initialize connected buffer
-            from physicsSolver.lib.connected_buffer import ConnectedBuffer
             connected_buffer = ConnectedBuffer()
             self.entity_manager.register('connected_buffer', connected_buffer)
             

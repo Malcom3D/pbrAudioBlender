@@ -669,7 +669,7 @@ class PBRAUDIO_OT_preview_material(Operator):
             if hasattr(node, '_audio_path') and node._audio_path and os.path.exists(node._audio_path):
                 self.report({'INFO'}, "Playing cached preview...")
                 self._play_audio(node._audio_path, node)
-                return return {'FINISHED'}
+                return {'FINISHED'}
             
             # Get acoustic parameters
             params = self._get_acoustic_params(node)

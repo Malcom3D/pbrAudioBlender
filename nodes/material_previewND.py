@@ -328,13 +328,11 @@ def get_cache_path(node) -> str:
                 if hasattr(n, f'pbraudio_{prop}'):
                     params += f"_{getattr(n, f'pbraudio_{prop}')}"
     
-    hash_id = hashlib.md5(params.encode()).hexdigest()[:12]
-    
     # Use Blender's temp directory
     cache_dir = os.path.join(bpy.app.tempdir, "pbraudio_preview_cache")
     os.makedirs(cache_dir, exist_ok=True)
     
-    return os.path.join(cache_dir, hash_id)
+    return cache_dir
 
 class PBRAUDIO_OT_preview_material(Operator):
     """Preview acoustic material sound"""
@@ -482,7 +480,7 @@ class PBRAUDIO_OT_preview_material(Operator):
             modal_luthier.compute(0)
             
             # Check if lib file was created
-            lib_path = os.path.join(cache_path, "dsp", "preview.lib")
+            lib_path = os.path.join(cache_path, "preview.lib")
             if os.path.exists(lib_path):
                 return lib_path
             

@@ -31,13 +31,9 @@ from dataclasses import dataclass
 from typing import List, Tuple, Optional, Dict
 
 from .baseND import AcousticMaterialNode
-#from rigidBody.core.modal_luthier import ModalLuthier
-#from rigidBody.lib.rigidbody_synth import RigidBodySynth
-from rigidBody import ModalLuthier, RigidBodySynth
-from rigidBody import RigidBodySynth
-from rigidBody import ConnectedBuffer
 from physicsSolver import EntityManager
 from physicsSolver.lib.functions import _parse_lib
+from rigidBody import Mesh2Modal, RigidBodySynth, ConnectedBuffer
 
 classes = []
 
@@ -53,7 +49,10 @@ class ShapeGeometry:
         """Get vertex indices within contact area from center"""
         if len(self.vertices) == 0:
             return []
-        
+
+        mesh = trimesh.Trimesh(vertices=self.vertices, faces_normals=self.normals, faces=self.faces)
+        contact_area *= mesh.area
+
         # Calculate center of mesh
         center = np.mean(self.vertices, axis=0)
         
@@ -70,21 +69,16 @@ class ShapeGeometry:
     
     def to_mesh_npz(self, output_file: str) -> None:
         """Save mesh as npz file"""
-        np.savez_compressed(
-            output_file,
-            vertices=self.vertices,
-            normals=self.normals,
-            faces=self.faces
-        )
+        np.savez_compressed(output_file, vertices=self.vertices, normals=self.normals, faces=self.faces)
 
-def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.02, subdivisions: int = 4) -> ShapeGeometry:
+def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.02, subdivisions: int = 1) -> ShapeGeometry:
     """
     Generate a U-shaped bar (channel section) for decay and brightness evaluation.
     Dimensions are automatically calculated from physical parameters.
     """
     # Calculate dimensions based on typical ratios
     # For a U-bar, the resonant frequencies depend on length, width, and height
-    n_length = max(4, subdivisions * 2)
+    n_length = max(2, subdivisions * 2)
     n_cross = 8
     
     # Cross-section vertices (U shape)
@@ -142,7 +136,7 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
         faces=np.array(faces, dtype=np.int32)
     )
 
-def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radial_segments: int = 8, circumferential_segments: int = 16) -> ShapeGeometry:
+def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radial_segments: int = 4, circumferential_segments: int = 8) -> ShapeGeometry:
     """
     Generate a thin circular plate for inharmonicity and brightness evaluation.
     """
@@ -316,9 +310,6 @@ def get_cache_path(node) -> str:
     """Get unique cache path for this node's preview"""
     # Create a unique hash based on node parameters
     params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.preview_duration}"
-    params += f"_{node.u_bar_length}_{node.u_bar_width}_{node.u_bar_height}"
-    params += f"_{node.plate_radius}_{node.plate_thickness}"
-    params += f"_{node.bar_length}_{node.bar_radius}"
     
     # Add acoustic parameters from connected nodes
     node_tree = node.id_data
@@ -329,10 +320,7 @@ def get_cache_path(node) -> str:
                     params += f"_{getattr(n, f'pbraudio_{prop}')}"
     
     # Use Blender's temp directory
-    cache_dir = os.path.join(bpy.app.tempdir, "pbraudio_preview_cache")
-    os.makedirs(cache_dir, exist_ok=True)
-    
-    return cache_dir
+    return bpy.app.tempdir
 
 class PBRAUDIO_OT_preview_material(Operator):
     """Preview acoustic material sound"""
@@ -433,16 +421,16 @@ class PBRAUDIO_OT_preview_material(Operator):
             "system": {
                 "cache_path": os.path.dirname(cache_path),
                 "sample_rate": 48000,
-                "modal_modes": 30,  # Use 30 modes for preview
-                "fps": 30,
+                "modal_modes": 6,  # Use 6 modes for preview
+                "fps": 120,
                 "fps_base": 1.0,
                 "subframes": 1
             },
             "objects": [{
                 "idx": 0,
                 "name": "preview",
-                "obj_path": cache_path,
-                "pose_path": cache_path,
+                "obj_path": f"{cache_path}/data/preview",
+                "pose_path": f"{cache_path}",
                 "static": True,
                 "acoustic_shader": {
                     "young_modulus": params['young_modulus'] * 1e9,  # Convert GPa to Pa
@@ -473,14 +461,15 @@ class PBRAUDIO_OT_preview_material(Operator):
 
             # Initialize connected buffer
             connected_buffer = ConnectedBuffer()
+            connected_buffer.add_obj(0)
             self.entity_manager.register('connected_buffer', connected_buffer)
-            
-            # Use ModalLuthier to compute modal model
-            modal_luthier = ModalLuthier(self.entity_manager)
-            modal_luthier.compute(0)
+
+            # Use Mesh2Modal to compute modal model
+            mesh2modal = Mesh2Modal(self.entity_manager)
+            mesh2modal.compute(0)
             
             # Check if lib file was created
-            lib_path = os.path.join(cache_path, "preview.lib")
+            lib_path = os.path.join(cache_path, "dsp/preview.lib")
             if os.path.exists(lib_path):
                 return lib_path
             
@@ -507,14 +496,8 @@ class PBRAUDIO_OT_preview_material(Operator):
             vertex_list = np.arange(len(shape_geo.vertices))
             
             # Initialize RigidBodySynth
-            rigidbody_synth = RigidBodySynth(
-                entity_manager=self.entity_manager,
-                obj_idx=0,
-                modal_lib=lib_path,
-                vertex_list=vertex_list,
-                sample_rate=sample_rate
-            )
-            
+            rigidbody_synth = RigidBodySynth(entity_manager=self.entity_manager, obj_idx=0, modal_lib=lib_path, vertex_list=vertex_list, sample_rate=sample_rate)
+ 
             # Get contact vertices
             contact_area = node.contact_area
             vertex_ids = shape_geo.get_contact_vertices(contact_area)
@@ -522,29 +505,19 @@ class PBRAUDIO_OT_preview_material(Operator):
             # Render audio
             audio_buffer = np.zeros(duration_samples)
             
-            # Impact excitation (synth_type = 1)
+            # Impulse excitation (synth_type = 1)
             force_value = node.force_value
             
             for sample_idx in range(duration_samples):
                 if sample_idx == 0:
                     # Apply impulse at first sample
-                    output = rigidbody_synth.process(
-                        synth_type=1,
-                        vertex_ids=vertex_ids,
-                        input_force=force_value,
-                        contact_area=contact_area
-                    )
+                    output = rigidbody_synth.process(synth_type=1, vertex_ids=vertex_ids, input_force=force_value, contact_area=contact_area)
                 else:
                     # Continue processing (no new input)
-                    output = rigidbody_synth.process(
-                        synth_type=1,
-                        vertex_ids=[],
-                        input_force=0.0,
-                        contact_area=0.0
-                    )
+                    output = rigidbody_synth.process(synth_type=1, vertex_ids=vertex_ids, input_force=0.0, contact_area=contact_area)
                 
                 audio_buffer[sample_idx] = output if not np.isnan(output) and not np.isinf(output) else 0.0
-            
+
             # Normalize
             max_val = np.max(np.abs(audio_buffer))
             if max_val > 0:
@@ -570,11 +543,11 @@ class PBRAUDIO_OT_preview_material(Operator):
     def _play_audio(self, audio_path: str, node) -> aud.Handle:
         """Play audio using aud module and return handle"""
         try:
-            # Create sound object
-            sound = aud.Sound(audio_path)
-            
             # Create device
             device = aud.Device()
+            
+            # Create sound object
+            sound = aud.Sound(audio_path)
             
             # Play sound
             handle = device.play(sound)
@@ -625,9 +598,6 @@ class PBRAUDIO_OT_preview_material(Operator):
     def _get_params_hash(self, node) -> str:
         """Get hash of current parameters"""
         params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.preview_duration}"
-        params += f"_{node.u_bar_length}_{node.u_bar_width}_{node.u_bar_height}"
-        params += f"_{node.plate_radius}_{node.plate_thickness}"
-        params += f"_{node.bar_length}_{node.bar_radius}"
         
         # Add acoustic parameters from connected nodes
         node_tree = node.id_data
@@ -708,11 +678,11 @@ class PBRAUDIO_OT_preview_material(Operator):
             
             # Get cache path
             cache_path = get_cache_path(node)
-            os.makedirs(cache_path, exist_ok=True)
+            os.makedirs(f"{cache_path}/data/preview", exist_ok=True)
             
             # Save mesh as npz
             self.report({'INFO'}, f"Saving mesh to {cache_path}...")
-            mesh_path = os.path.join(cache_path, "preview.npz")
+            mesh_path = os.path.join(cache_path, "data/preview/preview.npz")
             shape_geo.to_mesh_npz(mesh_path)
             
             # Create config
@@ -781,18 +751,18 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
     
     # Contact area
     contact_area: FloatProperty(
-        name="Contact Area (m²)",
-        description="Contact area for the impact in square meters",
+        name="Contact Area",
+        description="Contact area ratio for the impulse",
         default=0.001,
         min=0.0001,
-        max=0.1,
+        max=1,
         precision=4
     )
     
     # Force value
     force_value: FloatProperty(
         name="Force (N)",
-        description="Force value for the impact in Newtons",
+        description="Force value for the impulse in Newtons",
         default=10.0,
         min=0.1,
         max=1000.0
@@ -802,8 +772,8 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
     preview_duration: FloatProperty(
         name="Preview Duration (s)",
         description="Duration of the preview sound in seconds",
-        default=2.0,
-        min=0.5,
+        default=0.1,
+        min=0.01,
         max=10.0
     )
     
@@ -877,65 +847,90 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         self.inputs.new('AcousticMaterialNodeSocket', "AcousticMaterial")
     
     def draw_buttons(self, context, layout):
-        box = layout.box()
-        box.label(text="Preview Settings", icon='SETTINGS')
-        
-        # Shape selection
-        row = box.row()
-        row.prop(self, "preview_shape", expand=True)
-        
-        # Shape-specific parameters
-        if self.preview_shape == 'U_BAR':
-            sub_box = box.box()
-            sub_box.label(text="U-Bar Dimensions:", icon='MESH_CUBE')
-            sub_box.prop(self, "u_bar_length")
-            sub_box.prop(self, "u_bar_width")
-            sub_box.prop(self, "u_bar_height")
-            
-        elif self.preview_shape == 'CIRCULAR_PLATE':
-            sub_box = box.box()
-            sub_box.label(text="Circular Plate Dimensions:", icon='MESH_CIRCLE')
-            sub_box.prop(self, "plate_radius")
-            sub_box.prop(self, "plate_thickness")
-            
-        elif self.preview_shape == 'SOLID_BAR':
-            sub_box = box.box()
-            sub_box.label(text="Solid Bar Dimensions:", icon='MESH_CYLINDER')
-            sub_box.prop(self, "bar_length")
-            sub_box.prop(self, "bar_radius")
-            
-        elif self.preview_shape == 'MESH_OBJECT':
-            sub_box = box.box()
-            sub_box.label(text="Using mesh object from scene", icon='OBJECT_DATA')
-        
-        # Contact parameters
-        box.separator()
-        sub_box = box.box()
-        sub_box.label(text="Impact Parameters:", icon='FORCE_FORCE')
-        sub_box.prop(self, "contact_area")
-        sub_box.prop(self, "force_value")
-        
+#        box = layout.box()
+#        box.label(text="Preview Settings", icon='SETTINGS')
+#        
+#        # Shape selection
+#        row = box.row()
+#        row.prop(self, "preview_shape", expand=True)
+#        
+#        # Shape-specific parameters
+#        if self.preview_shape == 'U_BAR':
+#            sub_box = box.box()
+#            sub_box.label(text="U-Bar Dimensions:", icon='MESH_CUBE')
+#            sub_box.prop(self, "u_bar_length")
+#            sub_box.prop(self, "u_bar_width")
+#            sub_box.prop(self, "u_bar_height")
+#            
+#        elif self.preview_shape == 'CIRCULAR_PLATE':
+#            sub_box = box.box()
+#            sub_box.label(text="Circular Plate Dimensions:", icon='MESH_CIRCLE')
+#            sub_box.prop(self, "plate_radius")
+#            sub_box.prop(self, "plate_thickness")
+#            
+#        elif self.preview_shape == 'SOLID_BAR':
+#            sub_box = box.box()
+#            sub_box.label(text="Solid Bar Dimensions:", icon='MESH_CYLINDER')
+#            sub_box.prop(self, "bar_length")
+#            sub_box.prop(self, "bar_radius")
+#            
+#        elif self.preview_shape == 'MESH_OBJECT':
+#            sub_box = box.box()
+#            sub_box.label(text="Using mesh object from scene", icon='OBJECT_DATA')
+#        
+#        # Contact parameters
+#        box.separator()
+#        sub_box = box.box()
+#        sub_box.label(text="Impulse Parameters:", icon='FORCE_FORCE')
+#        sub_box.prop(self, "contact_area")
+#        sub_box.prop(self, "force_value")
+#        
+#        # Duration
+#        box.separator()
+#        box.prop(self, "preview_duration")
+#        
+#        # Preview button
+#        box.separator()
+#        row = box.row(align=True)
+#        row.scale_y = 2.0
+#        
+#        # Create operator properties
+#        op = row.operator(
+#            "node.pbraudio_preview_material",
+#            text="Play Preview",
+#            icon='PLAY'
+#        )
+#        op.node_tree = self.id_data.name
+#        op.node_name = self.name
+#        
+#        # Status indicator
+#        if hasattr(self, '_audio_path') and self._audio_path and os.path.exists(self._audio_path):
+#            row = box.row()
+#            row.label(text="Cached", icon='CHECKMARK')
+
+        layout.prop(self, "preview_shape", expand=True)
+        layout.label(text="Preview Settings", icon='SETTINGS')
+        layout.label(text="Impulse Parameters:", icon='FORCE_FORCE')
+        layout.prop(self, "contact_area", slider=True)
+        layout.prop(self, "force_value", slider=True)
+
         # Duration
-        box.separator()
-        box.prop(self, "preview_duration")
-        
+        layout.separator()
+        layout.prop(self, "preview_duration", slider=True)
+
         # Preview button
-        box.separator()
-        row = box.row(align=True)
+        layout.separator()
+        row = layout.row(align=True)
         row.scale_y = 2.0
-        
+
         # Create operator properties
-        op = row.operator(
-            "node.pbraudio_preview_material",
-            text="Play Preview",
-            icon='PLAY'
-        )
+        op = row.operator("node.pbraudio_preview_material", text="Play Preview", icon='PLAY')
         op.node_tree = self.id_data.name
         op.node_name = self.name
-        
+
         # Status indicator
         if hasattr(self, '_audio_path') and self._audio_path and os.path.exists(self._audio_path):
-            row = box.row()
+            row = layout.row()
             row.label(text="Cached", icon='CHECKMARK')
     
     def free(self):

@@ -384,7 +384,6 @@ class PBRAUDIO_PT_cache_panel(Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
-    bl_options = {'DEFAULT_OPEN'}
 
     @classmethod
     def poll(cls, context):

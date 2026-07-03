@@ -76,199 +76,53 @@ def generate_u_bar(length: float = 0.3, width: float = 0.03, height: float = 0.0
     Generate a U-shaped bar (channel section) for decay and brightness evaluation.
     Dimensions are automatically calculated from physical parameters.
     """
-    # Calculate dimensions based on typical ratios
-    # For a U-bar, the resonant frequencies depend on length, width, and height
-    n_length = max(2, subdivisions * 2)
-    n_cross = 8
-    
-    # Cross-section vertices (U shape)
-    cross_section = np.array([
-        [-width/2, -height/2],  # bottom-left
-        [width/2, -height/2],   # bottom-right
-        [width/2, -height/2 + 0.001],  # right-bottom inner
-        [width/2, height/2],    # right-top
-        [width/2 - 0.002, height/2],  # right-top inner
-        [-width/2 + 0.002, height/2], # left-top inner
-        [-width/2, height/2],   # left-top
-        [-width/2, -height/2 + 0.001]  # left-bottom inner
-    ])
-    
-    # Extrude along length
-    z_positions = np.linspace(-length/2, length/2, n_length)
-    
-    vertices = []
-    normals = []
-    faces = []
-    
-    for i, z in enumerate(z_positions):
-        for j, (x, y) in enumerate(cross_section):
-            vertices.append([x, y, z])
-            norm = np.array([x, y, 0])
-            norm_norm = np.linalg.norm(norm)
-            if norm_norm > 0:
-                norm = norm / norm_norm
-            else:
-                norm = [0, 0, 1]
-            normals.append(norm.tolist())
-    
-    # Create faces
-    for i in range(n_length - 1):
-        for j in range(n_cross):
-            v0 = i * n_cross + j
-            v1 = i * n_cross + (j + 1) % n_cross
-            v2 = (i + 1) * n_cross + j
-            v3 = (i + 1) * n_cross + (j + 1) % n_cross
-            
-            faces.append([v0, v1, v2])
-            faces.append([v1, v3, v2])
-    
-    # Close ends
-    for j in range(1, n_cross - 1):
-        faces.append([j, j+1, 0])
-    offset = (n_length - 1) * n_cross
-    for j in range(1, n_cross - 1):
-        faces.append([offset, offset + j + 1, offset + j])
-    
+    gap = 10.0 # gap between prongs
+
+    # We'll create a simple U shape using trimesh primitives
+    # Two parallel prongs connected by a base
+    prong1 = trimesh.creation.box(extents=[length*0.45, width, height])
+    prong2 = trimesh.creation.box(extents=[length*0.45, width, height])
+    base   = trimesh.creation.box(extents=[width, width*2 + gap, height])
+
+    # position prongs
+    prong1.apply_translation([length*0.275, -(width/2 + gap/2), 0])
+    prong2.apply_translation([length*0.275,  (width/2 + gap/2), 0])
+    base.apply_translation([-length*0.05, 0, 0])
+
+    mesh = trimesh.util.concatenate([prong1, prong2, base])
+
     return ShapeGeometry(
         name=f"U_Bar_{length:.2f}m",
-        vertices=np.array(vertices, dtype=np.float32),
-        normals=np.array(normals, dtype=np.float32),
-        faces=np.array(faces, dtype=np.int32)
+        vertices=mesh.vertices,
+        normals=mesh.vertex_normals,
+        faces=mesh.faces
     )
 
-def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radial_segments: int = 4, circumferential_segments: int = 8) -> ShapeGeometry:
+def generate_circular_plate(radius: float = 0.05, thickness: float = 0.003, radial_segments: int = 2, circumferential_segments: int = 4) -> ShapeGeometry:
     """
     Generate a thin circular plate for inharmonicity and brightness evaluation.
     """
-    vertices = []
-    normals = []
-    faces = []
-    
-    # Generate vertices
-    for i in range(radial_segments + 1):
-        r = radius * i / radial_segments
-        for j in range(circumferential_segments):
-            theta = 2 * np.pi * j / circumferential_segments
-            x = r * np.cos(theta)
-            y = r * np.sin(theta)
-            
-            # Top face
-            vertices.append([x, y, thickness/2])
-            normals.append([0, 0, 1])
-            # Bottom face
-            vertices.append([x, y, -thickness/2])
-            normals.append([0, 0, -1])
-    
-    # Center vertex
-    center_top = len(vertices)
-    vertices.append([0, 0, thickness/2])
-    normals.append([0, 0, 1])
-    center_bottom = len(vertices)
-    vertices.append([0, 0, -thickness/2])
-    normals.append([0, 0, -1])
-    
-    n_vertices_per_ring = 2 * circumferential_segments
-    
-    # Generate faces
-    for i in range(radial_segments - 1):
-        for j in range(circumferential_segments):
-            v0 = i * n_vertices_per_ring + 2 * j
-            v1 = i * n_vertices_per_ring + 2 * ((j + 1) % circumferential_segments)
-            v2 = (i + 1) * n_vertices_per_ring + 2 * j
-            v3 = (i + 1) * n_vertices_per_ring + 2 * ((j + 1) % circumferential_segments)
-            
-            # Top faces
-            faces.append([v0, v1, v2])
-            faces.append([v1, v3, v2])
-            # Bottom faces (reversed normals)
-            faces.append([v0 + 1, v2 + 1, v1 + 1])
-            faces.append([v1 + 1, v2 + 1, v3 + 1])
-    
-    # Connect to center
-    for j in range(circumferential_segments):
-        v0 = (radial_segments - 1) * n_vertices_per_ring + 2 * j
-        v1 = (radial_segments - 1) * n_vertices_per_ring + 2 * ((j + 1) % circumferential_segments)
-        
-        # Top
-        faces.append([v0, v1, center_top])
-        # Bottom
-        faces.append([v0 + 1, center_bottom, v1 + 1])
-    
-    # Side faces (edge)
-    for j in range(circumferential_segments):
-        v0 = 2 * j
-        v1 = 2 * ((j + 1) % circumferential_segments)
-        v2 = v0 + 1
-        v3 = v1 + 1
-        
-        faces.append([v0, v1, v2])
-        faces.append([v1, v3, v2])
-    
+    sections = radial_segments * circumferential_segments
+    mesh = trimesh.creation.cylinder(radius=radius, height=thickness, sections=sections)
     return ShapeGeometry(
         name=f"Circular_Plate_{radius*1000:.0f}mm",
-        vertices=np.array(vertices, dtype=np.float32),
-        normals=np.array(normals, dtype=np.float32),
-        faces=np.array(faces, dtype=np.int32)
+        vertices=mesh.vertices,
+        normals=mesh.vertex_normals,
+        faces=mesh.faces
     )
 
-def generate_solid_bar(length: float = 0.2, radius: float = 0.008, length_segments: int = 8, radial_segments: int = 8) -> ShapeGeometry:
+def generate_solid_bar(length: float = 0.2, radius: float = 0.008, length_segments: int = 2, radial_segments: int = 2) -> ShapeGeometry:
     """
     Generate a solid cylindrical bar (free-free) for tonal balance evaluation.
     """
-    vertices = []
-    normals = []
-    faces = []
-    
-    # Generate vertices along length
-    z_positions = np.linspace(-length/2, length/2, length_segments)
-    
-    for z in z_positions:
-        for i in range(radial_segments):
-            theta = 2 * np.pi * i / radial_segments
-            x = radius * np.cos(theta)
-            y = radius * np.sin(theta)
-            
-            vertices.append([x, y, z])
-            norm = np.array([x, y, 0])
-            norm_norm = np.linalg.norm(norm)
-            if norm_norm > 0:
-                norm = norm / norm_norm
-            else:
-                norm = [0, 0, 1]
-            normals.append(norm.tolist())
-    
-    # End caps
-    center_front = len(vertices)
-    vertices.append([0, 0, -length/2])
-    normals.append([0, 0, -1])
-    center_back = len(vertices)
-    vertices.append([0, 0, length/2])
-    normals.append([0, 0, 1])
-    
-    # Side faces
-    for i in range(length_segments - 1):
-        for j in range(radial_segments):
-            v0 = i * radial_segments + j
-            v1 = i * radial_segments + (j + 1) % radial_segments
-            v2 = (i + 1) * radial_segments + j
-            v3 = (i + 1) * radial_segments + (j + 1) % radial_segments
-            
-            faces.append([v0, v1, v2])
-            faces.append([v1, v3, v2])
-    
-    # Front cap
-    for j in range(1, radial_segments - 1):
-        faces.append([center_front, center_front + j, center_front + j + 1])
-    # Back cap
-    offset = (length_segments - 1) * radial_segments
-    for j in range(1, radial_segments - 1):
-        faces.append([center_back, offset + j, offset + j + 1])
+    width, height = (2*radius for _ in range(2))
+    mesh = trimesh.creation.box(extents=[length, width, height])
 
     return ShapeGeometry(
         name=f"Solid_Bar_{length*100:.0f}cm",
-        vertices=np.array(vertices, dtype=np.float32),
-        normals=np.array(normals, dtype=np.float32),
-        faces=np.array(faces, dtype=np.int32)
+        vertices=mesh.vertices,
+        normals=mesh.vertex_normals,
+        faces=mesh.faces
     )
 
 def generate_from_mesh(obj) -> ShapeGeometry:
@@ -309,7 +163,7 @@ def generate_from_mesh(obj) -> ShapeGeometry:
 def get_cache_path(node) -> str:
     """Get unique cache path for this node's preview"""
     # Create a unique hash based on node parameters
-    params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.preview_duration}"
+    params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.impulse_duration}_{node.preview_duration}"
     
     # Add acoustic parameters from connected nodes
     node_tree = node.id_data
@@ -507,11 +361,32 @@ class PBRAUDIO_OT_preview_material(Operator):
             
             # Impulse excitation (synth_type = 1)
             force_value = node.force_value
+
+            # Calculate impulse
+            impulse_duration = node.impulse_duration / 1000
+            impulse = force_value * impulse_duration
+
+            # Impulse duration in sample
+            impulse_samples = int(impulse_duration * sample_rate)
+
+            # Generate impact envelope (Hertzian asimmetric force profile)
+            rise_sample = int(impulse_samples / 2) + 1
+            decay_sample = int(impulse_samples / 2)
+            t_rise = np.linspace(0, 0.5, int(rise_sample))
+            t_decay = np.linspace(0.5, 1, int(decay_sample))
+            t = np.concatenate((t_rise, t_decay[1:]))
+
+            force_envelope = force_value * (1 - np.cos(2 * np.pi * t))/2
+
+            # Normalize to match total impulse
+            actual_impulse = np.trapz(force_envelope, t)
+            if actual_impulse > 0:
+                force_envelope = force_envelope * (impulse / actual_impulse)
             
             for sample_idx in range(duration_samples):
-                if sample_idx == 0:
+                if sample_idx < force_envelope.shape[0]:
                     # Apply impulse at first sample
-                    output = rigidbody_synth.process(synth_type=1, vertex_ids=vertex_ids, input_force=force_value, contact_area=contact_area)
+                    output = rigidbody_synth.process(synth_type=1, vertex_ids=vertex_ids, input_force=force_envelope[sample_idx], contact_area=contact_area)
                 else:
                     # Continue processing (no new input)
                     output = rigidbody_synth.process(synth_type=1, vertex_ids=vertex_ids, input_force=0.0, contact_area=contact_area)
@@ -597,7 +472,7 @@ class PBRAUDIO_OT_preview_material(Operator):
     
     def _get_params_hash(self, node) -> str:
         """Get hash of current parameters"""
-        params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.preview_duration}"
+        params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.impulse_duration}_{node.preview_duration}"
         
         # Add acoustic parameters from connected nodes
         node_tree = node.id_data
@@ -767,6 +642,15 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         min=0.1,
         max=1000.0
     )
+
+    # Impulse duration 
+    impulse_duration: FloatProperty(
+        name="Impulse Duration (s)",
+        description="Duration of the impulse force in seconds",
+        default=0.2,
+        min=0.00001,
+        max=1
+    )
     
     # Preview duration
     preview_duration: FloatProperty(
@@ -913,6 +797,7 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         layout.label(text="Impulse Parameters:", icon='FORCE_FORCE')
         layout.prop(self, "contact_area", slider=True)
         layout.prop(self, "force_value", slider=True)
+        layout.prop(self, "impulse_duration", slider=True)
 
         # Duration
         layout.separator()

@@ -243,6 +243,140 @@ class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
         layout.prop(scene.pbraudio, "gaussian_force_threshold", slider=True)
 classes.append(PBRAUDIO_PT_adaptivesmooting_panel)
 
+class PBRAUDIO_PT_postprocess_panel(Panel):
+    """Panel for pbrAudio PostProcess settings"""
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_postprocess_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_postprocess")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        layout.enabled = not scene.pbraudio.cache_status
+
+classes.append(PBRAUDIO_PT_postprocess_panel)
+
+class PBRAUDIO_PT_postprocess_dynamic_denoise_panel(Panel):
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_postprocess_dynamic_denoise_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "postprocess_dynamic_denoise_enabled")
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+        
+        scene = context.scene
+        layout.enabled = scene.pbraudio.postprocess_dynamic_denoise_enabled
+        layout.prop(scene.pbraudio, "postprocess_noise_gate_threshold_db", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_noise_floor_estimate_db", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_spectral_reduction_strength", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_temporal_smoothing_window", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_force_reference_weight", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_min_force_threshold", slider=True)
+
+classes.append(PBRAUDIO_PT_postprocess_dynamic_denoise_panel)
+
+class PBRAUDIO_PT_postprocess_smoothing_panel(Panel):
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_postprocess_smoothing_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "postprocess_smoothing_enabled")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+        layout.enabled = scene.pbraudio.postprocess_smoothing_enabled
+        layout.prop(scene.pbraudio, "postprocess_smoothing_window_ms", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_adaptive_smoothing", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_phase_align_enabled", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_crossfade_samples", slider=True)
+
+classes.append(PBRAUDIO_PT_postprocess_smoothing_panel)
+
+class PBRAUDIO_PT_postprocess_dynamic_amplify_panel(Panel):
+    bl_label = "Audio-Force drived dynamic Amplification"
+    bl_idname = "PBRAUDIO_PT_postprocess_dynamic_amplify_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+        layout.prop(scene.pbraudio, "postprocess_target_rms", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_max_gain_db", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_dynamic_range_compression", slider=True)
+
+classes.append(PBRAUDIO_PT_postprocess_dynamic_amplify_panel)
+
+class PBRAUDIO_PT_postprocess_blend_panel(Panel):
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_postprocess_blend_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "postprocess_blend_enabled")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+        layout.enabled = scene.pbraudio.postprocess_blend_enabled
+        layout.prop(scene.pbraudio, "postprocess_dry_wet_mix", slider=True)
+        layout.prop(scene.pbraudio, "postprocess_normalize_output", slider=True)
+
+classes.append(PBRAUDIO_PT_postprocess_blend_panel)
+
 class PBRAUDIO_PT_cache_panel(Panel):
     """Panel for pbrAudio cache path and settings"""
     bl_label = "PbrAudio Cache"
@@ -250,7 +384,7 @@ class PBRAUDIO_PT_cache_panel(Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
-#    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_OPEN'}
 
     @classmethod
     def poll(cls, context):

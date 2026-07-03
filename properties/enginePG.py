@@ -72,7 +72,7 @@ class PBRAudioEngineProperties(PropertyGroup):
     max_interactions: IntProperty(
         name="Max Interactions",
         description="Maximum number of rays interactions",
-        default=8192,
+        default=1024,
         min=1,
         max=65536
     )
@@ -80,7 +80,7 @@ class PBRAudioEngineProperties(PropertyGroup):
     bands_per_octave: IntProperty(
         name="Bands for Octave",
         description="Number of bands for octave",
-        default=8,
+        default=0,
         min=0,
         max=256
     )
@@ -131,25 +131,25 @@ class PBRAudioEngineProperties(PropertyGroup):
     enable_interface: BoolProperty(
         name="Interface",
         description="Enable boundary interface with rays",
-        default=False,
+        default=True,
     )
 
     enable_absorption: BoolProperty(
         name="Absorption",
         description="Handle absorption at boundary and in medium",
-        default=False,
+        default=True,
     )
 
     enable_reflection: BoolProperty(
         name="Reflection",
         description="Handle reflection with boundary",
-        default=False,
+        default=True,
     )
 
     max_reflection: IntProperty(
         name="Max Reflection",
         description="Maximum number of rays bouces for reflection",
-        default=8,
+        default=4,
         min=1,
         max=2048
     )
@@ -157,13 +157,13 @@ class PBRAudioEngineProperties(PropertyGroup):
     enable_scattering: BoolProperty(
         name="Scattering",
         description="Handle scattering at boundary and in medium",
-        default=False,
+        default=True,
     )
 
     max_scattering: IntProperty(
         name="Max Scattering",
         description="Maximum number of scattering rays",
-        default=8,
+        default=2,
         min=1,
         max=2048
     )
@@ -171,21 +171,21 @@ class PBRAudioEngineProperties(PropertyGroup):
     enable_transmission: BoolProperty(
         name="Transmission",
         description="Handle transmission at boundary",
-        default=False,
+        default=True,
     )
 
     max_transmission: FloatProperty(
         name="Max Transmission",
         description="Maximum quantity of recursive rays for transmission",
-        default=0.5,
+        default=0.1,
         min=0,
-        max=1
+        max=0.5
     )
 
     enable_diffraction: BoolProperty(
         name="Diffraction",
         description="Handle diffraction at boundary and in medium",
-        default=False,
+        default=True,
     )
 
     max_diffraction: IntProperty(
@@ -313,7 +313,7 @@ class PBRAudioEngineProperties(PropertyGroup):
     enable_termination: BoolProperty(
         name="Termination",
         description="Enable termination",
-        default=False,
+        default=True,
     )
 
     termination_type: EnumProperty(
@@ -337,13 +337,13 @@ class PBRAudioEngineProperties(PropertyGroup):
     energy_threshold: FloatProperty(
         name="Energy Threshold",
         description="Minimum energy in dB of pressure value beyond which terminate",
-        default=60,
+        default=90,
     )
 
     min_rays_number: IntProperty(
         name="Rays Threshold",
         description="Minimum number of active rays below which terminate",
-        default=3,
+        default=5,
     )
 
 classes.append(PBRAudioEngineProperties)

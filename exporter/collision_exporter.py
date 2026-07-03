@@ -51,15 +51,41 @@ class CollisionExporter:
         system["samples_per_object"] = scene.pbraudio.samples_per_object
         system["cache_path"] = self.export_path
         system["enable_denoiser"] = scene.pbraudio.enable_forces_denoiser
+        system["enable_postprocess"] = scene.pbraudio.enable_postprocess
         self.config = {}
         self.config["system"] = system
 
         if scene.pbraudio.enable_forces_denoiser:
             self.config["denoiser"] = self.get_denoiser(scene)
 
+        if scene.pbraudio.enable_postprocess:
+            self.config["postprocess"] = self.get_postprocess(scene)
+
         self.objects = []
         self.not_valid = []
         self.obj_idx = 0
+
+    def get_postprocess(self, scene):
+        postprocess = {}
+        postprocess['dynamic_denoise_enabled'] = scene.pbraudio.postprocess_dynamic_denoise_enabled
+        postprocess['noise_gate_threshold_db'] = scene.pbraudio.postprocess_noise_gate_threshold_db
+        postprocess['noise_floor_estimate_db'] = scene.pbraudio.postprocess_noise_floor_estimate_db
+        postprocess['spectral_reduction_strength'] = scene.pbraudio.postprocess_spectral_reduction_strength
+        postprocess['temporal_smoothing_window'] = scene.pbraudio.postprocess_temporal_smoothing_window
+        postprocess['force_reference_weight'] = scene.pbraudio.postprocess_force_reference_weight
+        postprocess['min_force_threshold'] = scene.pbraudio.postprocess_min_force_threshold
+        postprocess['smoothing_enabled'] = scene.pbraudio.postprocess_smoothing_enabled
+        postprocess['smoothing_window_ms'] = scene.pbraudio.postprocess_smoothing_window_ms
+        postprocess['adaptive_smoothing'] = scene.pbraudio.postprocess_adaptive_smoothing
+        postprocess['phase_align_enabled'] = scene.pbraudio.postprocess_phase_align_enabled
+        postprocess['crossfade_samples'] = scene.pbraudio.postprocess_crossfade_samples
+        postprocess['target_rms'] = scene.pbraudio.postprocess_target_rms
+        postprocess['max_gain_db'] = scene.pbraudio.postprocess_max_gain_db
+        postprocess['dynamic_range_compression'] = scene.pbraudio.postprocess_dynamic_range_compression
+        postprocess['blend_enabled'] = scene.pbraudio.postprocess_blend_enabled
+        postprocess['dry_wet_mix'] = scene.pbraudio.postprocess_dry_wet_mix
+        postprocess['normalize_output'] = scene.pbraudio.postprocess_normalize_output
+        return postprocess
 
     def get_denoiser(self, scene):
         denoiser = {}

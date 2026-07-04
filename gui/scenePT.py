@@ -268,7 +268,7 @@ class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
         scene = context.scene
 
         # Gaussian Adaptive Smoothing parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser and enable_gaussian_adaptive_smoothing
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_gaussian_adaptive_smoothing
         layout.prop(scene.pbraudio, "gaussian_sigma_min", slider=True)
         layout.prop(scene.pbraudio, "gaussian_sigma_max", slider=True)
         layout.prop(scene.pbraudio, "gaussian_force_threshold", slider=True)

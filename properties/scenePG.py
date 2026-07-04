@@ -368,7 +368,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     """Configuration for pbrAudio post-processing parameters."""
 
     enable_postprocess: BoolProperty(
-        name="Enable PostProcess",
+        name="PostProcessing",
         default=True
     )
 

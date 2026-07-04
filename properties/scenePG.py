@@ -256,6 +256,11 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=False
     )
 
+    enable_dc_blocker: BoolProperty(
+        name="DC Blocker",
+        default=False
+    )
+
     dc_blocker_alpha: FloatProperty(
         name="Alpha",
         description="DC blocker coefficient (higher = more aggressive)",
@@ -263,6 +268,11 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     # Adaptive Noise Gate parameters
+    enable_noise_gate: BoolProperty(
+        name="Adaptive Noise Gate",
+        default=False
+    )
+
     gate_threshold_db: FloatProperty( 
         name="dB Threshold",
         description="Noise gate threshold in dB",
@@ -288,6 +298,11 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     # Temporal Smoothing parameters
+    enable_temporal_smoothing: BoolProperty(
+        name="Temporal Smoothing",
+        default=False
+    )
+
     temporal_smoothing_window: IntProperty(
         name="Window size",
         description="Window size for temporal smoothing (samples)",
@@ -295,6 +310,11 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     # Spectral Noise Reduction parameters
+    enable_spectral_noise_reduction: BoolProperty(
+        name="Spectral Noise Reduction",
+        default=False
+    )
+
     spectral_fft_size: IntProperty(
         name="FFT size",
         description="FFT size for spectral processing",
@@ -313,7 +333,6 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=-80.0
     )
 
-
     spectral_reduction_strength: FloatProperty(
         name="Reduction strength",
         description="Reduction strength (0-1)",
@@ -327,6 +346,11 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     # Envelope Shaping parameters
+    enable_envelope_shaping: BoolProperty(
+        name="Envelope Shaping",
+        default=False
+    )
+
     envelope_attack_ms: FloatProperty(
         name="Attack",
         description="Attack time for envelope",
@@ -346,6 +370,11 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     # Gaussian Adaptive Smoothing parameters
+    enable_gaussian_adaptive_smoothing: BoolProperty(
+        name="Gaussian Adaptive Smoothing",
+        default=False
+    )
+
     gaussian_sigma_min: FloatProperty(
         name="Minimum sigma",
         description="Minimum Gaussian sigma",
@@ -373,13 +402,13 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     postprocess_dynamic_denoise_enabled: BoolProperty(
-        name="Enable denoise",
+        name="Dynamic Denoise",
         description="Enable PostProcess Dynamic Denoise",
         default=False
     ) 
 
     postprocess_noise_gate_threshold_db: FloatProperty(
-        name="Threshold",
+        name="Noise Gate Threshold",
         description="PostProcess Noise Gate Threshold in dB",
         default=-60.0
     )
@@ -419,7 +448,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     
     # Smoothing parameters
     postprocess_smoothing_enabled: BoolProperty(
-        name="Enable smoothing",
+        name="Smoothing",
         description="Enable PostProcess Dynamic Smoothing",
         default=False
     )
@@ -431,20 +460,20 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     postprocess_adaptive_smoothing: BoolProperty(
-        name="Enable adaptive smoothing",
+        name="Adaptive Smoothing",
         description="Enable PostProcess Dynamic Adaptive Smoothing",
         default=False
     )
     
     # Phase alignment
     postprocess_phase_align_enabled: BoolProperty(    
-        name="Enable phase align",
+        name="Phase Align",
         description="Enable PostProcess Dynamic Phase Alignment",
         default=False
     )
 
     postprocess_crossfade_samples: IntProperty(
-        name="Crossfade length",
+        name="Crossfade Length",
         description="PostProcess Crossfade Length in samples",
         default=5
     )
@@ -472,7 +501,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     
     # Blending
     postprocess_blend_enabled: BoolProperty(
-        name="Enable tracks blend",
+        name="Tracks Blend",
         description="Enable PostProcess Dynamic Tracks Blending",
         default=False
     )

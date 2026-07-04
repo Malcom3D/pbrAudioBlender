@@ -89,20 +89,26 @@ class CollisionExporter:
 
     def get_denoiser(self, scene):
         denoiser = {}
+        denoiser['enable_dc_blocker'] = scene.pbraudio.enable_dc_blocker
         denoiser['dc_blocker_alpha'] = scene.pbraudio.dc_blocker_alpha
+        denoiser['enable_noise_gate'] = scene.pbraudio.enable_noise_gate
         denoiser['gate_threshold_db'] = scene.pbraudio.gate_threshold_db
         denoiser['gate_attack_ms'] = scene.pbraudio.gate_attack_ms
         denoiser['gate_release_ms'] = scene.pbraudio.gate_release_ms
         denoiser['gate_hold_ms'] = scene.pbraudio.gate_hold_ms
+        denoiser['enable_temporal_smoothing'] = scene.pbraudio.enable_temporal_smoothing
         denoiser['temporal_smoothing_window'] = scene.pbraudio.temporal_smoothing_window
+        denoiser['enable_spectral_noise_reduction'] = scene.pbraudio.enable_spectral_noise_reduction
         denoiser['spectral_fft_size'] = scene.pbraudio.spectral_fft_size
         denoiser['spectral_hop_size'] = scene.pbraudio.spectral_hop_size
         denoiser['spectral_noise_floor_db'] = scene.pbraudio.spectral_noise_floor_db
         denoiser['spectral_reduction_strength'] = scene.pbraudio.spectral_reduction_strength
         denoiser['spectral_smoothing'] = scene.pbraudio.spectral_smoothing
+        denoiser['enable_envelope_shaping'] = scene.pbraudio.enable_envelope_shaping
         denoiser['envelope_attack_ms'] = scene.pbraudio.envelope_attack_ms
         denoiser['envelope_release_ms'] = scene.pbraudio.envelope_release_ms
         denoiser['envelope_smoothing'] = scene.pbraudio.envelope_smoothing
+        denoiser['enable_gaussian_adaptive_smoothing'] = scene.pbraudio.enable_gaussian_adaptive_smoothing
         denoiser['gaussian_sigma_min'] = scene.pbraudio.gaussian_sigma_min
         denoiser['gaussian_sigma_max'] = scene.pbraudio.gaussian_sigma_max
         denoiser['gaussian_force_threshold'] = scene.pbraudio.gaussian_force_threshold

@@ -107,7 +107,7 @@ class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
 classes.append(PBRAUDIO_PT_audioforcesdenoiser_panel)
 
 class PBRAUDIO_PT_dcoffset_panel(Panel):
-    bl_label = "DC Offset" 
+    bl_label = "" 
     bl_idname = "PBRAUDIO_PT_dcoffset_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -115,26 +115,37 @@ class PBRAUDIO_PT_dcoffset_panel(Panel):
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_dc_blocker")
+
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
+
         # DC Offset Removal parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_dc_blocker
         layout.prop(scene.pbraudio, "dc_blocker_alpha", slider=True)
 
 classes.append(PBRAUDIO_PT_dcoffset_panel)
 
 class PBRAUDIO_PT_noisegate_panel(Panel):
-    bl_label = "Adaptive Noise Gate"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_noisegate_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_noise_gate")
 
     def draw(self, context):
         layout = self.layout
@@ -144,7 +155,7 @@ class PBRAUDIO_PT_noisegate_panel(Panel):
         scene = context.scene
 
         # Adaptive Noise Gate parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_noise_gate
         layout.prop(scene.pbraudio, "gate_threshold_db", slider=True)
         layout.prop(scene.pbraudio, "gate_attack_ms", slider=True)
         layout.prop(scene.pbraudio, "gate_release_ms", slider=True)
@@ -152,13 +163,18 @@ class PBRAUDIO_PT_noisegate_panel(Panel):
 classes.append(PBRAUDIO_PT_noisegate_panel)
 
 class PBRAUDIO_PT_temporalsmoothing_panel(Panel):
-    bl_label = "Temporal Smoothing"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_temporalsmoothing_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_temporal_smoothing")
 
     def draw(self, context):
         layout = self.layout
@@ -168,18 +184,23 @@ class PBRAUDIO_PT_temporalsmoothing_panel(Panel):
         scene = context.scene
 
         # Temporal Smoothing parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_temporal_smoothing
         layout.prop(scene.pbraudio, "temporal_smoothing_window", slider=True)
 classes.append(PBRAUDIO_PT_temporalsmoothing_panel)
 
 class PBRAUDIO_PT_spectralnoise_panel(Panel):
-    bl_label = "Spectral Noise Reduction"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_spectralnoise_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_spectral_noise_reduction")
 
     def draw(self, context):
         layout = self.layout
@@ -189,7 +210,7 @@ class PBRAUDIO_PT_spectralnoise_panel(Panel):
         scene = context.scene
 
         # Spectral Noise Reduction parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_spectral_noise_reduction
         layout.prop(scene.pbraudio, "spectral_fft_size", slider=True)
         layout.prop(scene.pbraudio, "spectral_hop_size", slider=True)
         layout.prop(scene.pbraudio, "spectral_noise_floor_db", slider=True)
@@ -198,13 +219,18 @@ class PBRAUDIO_PT_spectralnoise_panel(Panel):
 classes.append(PBRAUDIO_PT_spectralnoise_panel)
 
 class PBRAUDIO_PT_envelopeshaping_panel(Panel):
-    bl_label = "Envelope Shaping"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_envelopeshaping_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_envelope_shaping")
 
     def draw(self, context):
         layout = self.layout
@@ -214,20 +240,25 @@ class PBRAUDIO_PT_envelopeshaping_panel(Panel):
         scene = context.scene
 
         # Envelope Shaping parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_envelope_shaping
         layout.prop(scene.pbraudio, "envelope_attack_ms", slider=True)
         layout.prop(scene.pbraudio, "envelope_release_ms", slider=True)
         layout.prop(scene.pbraudio, "envelope_smoothing", slider=True)
 classes.append(PBRAUDIO_PT_envelopeshaping_panel)
 
 class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
-    bl_label = "Gaussian Adaptive Smoothing"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_adaptivesmooting_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_gaussian_adaptive_smoothing")
 
     def draw(self, context):
         layout = self.layout
@@ -237,7 +268,7 @@ class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
         scene = context.scene
 
         # Gaussian Adaptive Smoothing parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and enable_gaussian_adaptive_smoothing
         layout.prop(scene.pbraudio, "gaussian_sigma_min", slider=True)
         layout.prop(scene.pbraudio, "gaussian_sigma_max", slider=True)
         layout.prop(scene.pbraudio, "gaussian_force_threshold", slider=True)

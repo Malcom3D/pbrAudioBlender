@@ -427,35 +427,24 @@ class PBRAUDIO_OT_preview_material(Operator):
             # Play sound
             handle = device.play(sound)
             
-            # Store device and handle in node for later cleanup
-            node._aud_device = device
-            node._aud_handle = handle
-            
             print(f"Playing preview audio: {audio_path}")
             
-            return handle
-            
+            # Close device if audio is played
+            while not handle.status():
+                if device:
+                    try:
+                        handle = None
+                        device.stopAll()
+                        device = None
+                    except:
+                        pass
+
         except Exception as e:
             print(f"Error playing audio: {e}")
             return None
-    
+
     def _cleanup_preview(self, node):
         """Clean up existing preview data"""
-        # Stop audio if playing
-        if hasattr(node, '_aud_handle') and node._aud_handle:
-            try:
-                node._aud_handle.stop()
-            except:
-                pass
-            node._aud_handle = None
-        
-        # Close device
-        if hasattr(node, '_aud_device') and node._aud_device:
-            try:
-                node._aud_device.stopAll()
-                node._aud_device = None
-            except:
-                pass
         
         # Clear cached paths
         node._cache_path = None
@@ -824,21 +813,6 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
     
     def _cleanup_preview(self):
         """Clean up preview resources"""
-        # Stop audio if playing
-        if hasattr(self, '_aud_handle') and self._aud_handle:
-            try:
-                self._aud_handle.stop()
-            except:
-                pass
-            self._aud_handle = None
-        
-        # Close device
-        if hasattr(self, '_aud_device') and self._aud_device:
-            try:
-                self._aud_device.stopAll()
-                self._aud_device = None
-            except:
-                pass
         
         # Clear cached paths
         self._cache_path = None

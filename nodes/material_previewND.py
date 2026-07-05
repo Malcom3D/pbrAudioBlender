@@ -433,8 +433,10 @@ class PBRAUDIO_OT_preview_material(Operator):
             while not handle.status:
                 if device:
                     try:
-                        handle = None
+                        handle.stop()
                         device.stopAll()
+                        device.close()
+                        handle = None
                         device = None
                     except:
                         pass

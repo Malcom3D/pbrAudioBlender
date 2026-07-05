@@ -161,17 +161,17 @@ def generate_from_mesh(obj) -> ShapeGeometry:
     )
 
 def get_cache_path(node) -> str:
-    """Get unique cache path for this node's preview"""
-    # Create a unique hash based on node parameters
-    params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.impulse_duration}_{node.preview_duration}"
-    
-    # Add acoustic parameters from connected nodes
-    node_tree = node.id_data
-    for n in node_tree.nodes:
-        if hasattr(n, 'pbraudio_type') and n.pbraudio_type == 'AcousticShader':
-            for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 'friction', 'roughness', 'low_frequency', 'high_frequency']:
-                if hasattr(n, f'pbraudio_{prop}'):
-                    params += f"_{getattr(n, f'pbraudio_{prop}')}"
+#    """Get unique cache path for this node's preview"""
+#    # Create a unique hash based on node parameters
+#    params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.impulse_duration}_{node.preview_duration}"
+#    
+#    # Add acoustic parameters from connected nodes
+#    node_tree = node.id_data
+#    for n in node_tree.nodes:
+#        if hasattr(n, 'pbraudio_type') and n.pbraudio_type == 'AcousticShader':
+#            for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 'friction', 'roughness', 'low_frequency', 'high_frequency']:
+#                if hasattr(n, f'pbraudio_{prop}'):
+#                    params += f"_{getattr(n, f'pbraudio_{prop}')}"
     
     # Use Blender's temp directory
     return bpy.app.tempdir
@@ -430,7 +430,7 @@ class PBRAUDIO_OT_preview_material(Operator):
             print(f"Playing preview audio: {audio_path}")
             
             # Close device if audio is played
-            while not handle.status():
+            while not handle.status:
                 if device:
                     try:
                         handle = None
@@ -447,9 +447,9 @@ class PBRAUDIO_OT_preview_material(Operator):
         """Clean up existing preview data"""
         
         # Clear cached paths
-        node._cache_path = None
-        node._audio_path = None
-        node._lib_path = None
+        node.cache_path = None
+        node.audio_path = None
+        node.lib_path = None
     
     def _has_parameters_changed(self, node) -> bool:
         """Check if parameters have changed since last render"""
@@ -467,8 +467,7 @@ class PBRAUDIO_OT_preview_material(Operator):
         node_tree = node.id_data
         for n in node_tree.nodes:
             if hasattr(n, 'pbraudio_type') and n.pbraudio_type == 'AcousticShader':
-                for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 
-                            'friction', 'roughness', 'low_frequency', 'high_frequency']:
+                for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 'friction', 'roughness', 'low_frequency', 'high_frequency']:
                     if hasattr(n, f'pbraudio_{prop}'):
                         params += f"_{getattr(n, f'pbraudio_{prop}')}"
         
@@ -497,11 +496,11 @@ class PBRAUDIO_OT_preview_material(Operator):
                 self._cleanup_preview(node)
             
             # Check if we have cached audio
-            if hasattr(node, '_audio_path') and node._audio_path and os.path.exists(node._audio_path):
+            if hasattr(node, 'audio_path') and node.audio_path and os.path.exists(node.audio_path):
                 self.report({'INFO'}, "Playing cached preview...")
-                self._play_audio(node._audio_path, node)
+                self._play_audio(node.audio_path, node)
                 return {'FINISHED'}
-            
+ 
             # Get acoustic parameters
             params = self._get_acoustic_params(node)
             
@@ -573,10 +572,10 @@ class PBRAUDIO_OT_preview_material(Operator):
             audio_path = self._save_audio(audio_buffer, cache_path)
             
             # Store paths in node for caching
-            node._cache_path = cache_path
-            node._audio_path = audio_path
-            node._lib_path = lib_path
-            node._last_params_hash = self._get_params_hash(node)
+            node.cache_path = cache_path
+            node.audio_path = audio_path
+            node.lib_path = lib_path
+            node.last_params_hash = self._get_params_hash(node)
             
             # Play audio
             self.report({'INFO'}, "Playing preview...")
@@ -599,7 +598,29 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
     bl_icon = 'PLAY'
     
     pbraudio_type: StringProperty(default='MaterialPreview')
-    
+
+    # Preview tmp path
+    cache_path: StringProperty(
+        subtype='DIR_PATH',
+#        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default=''
+    )
+
+    audio_path: StringProperty(
+        subtype='FILE_PATH',
+#        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default=''
+    )
+
+    lib_path: StringProperty(
+        subtype='FILE_PATH',
+#        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default=''
+    )
+
+    # Preview parameters hash
+    _last_params_hash: StringProperty(default='')
+
     # Preview shape selection
     preview_shape: EnumProperty(
         name="Test Shape",
@@ -803,7 +824,7 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         op.node_name = self.name
 
         # Status indicator
-        if hasattr(self, '_audio_path') and self._audio_path and os.path.exists(self._audio_path):
+        if hasattr(self, 'audio_path') and self.audio_path and os.path.exists(self.audio_path):
             row = layout.row()
             row.label(text="Cached", icon='CHECKMARK')
     
@@ -815,8 +836,8 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         """Clean up preview resources"""
         
         # Clear cached paths
-        self._cache_path = None
-        self._audio_path = None
-        self._lib_path = None
+        self.cache_path = None
+        self.audio_path = None
+        self.lib_path = None
 
 classes.append(AcousticMaterialPreviewNode)

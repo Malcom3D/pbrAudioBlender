@@ -453,11 +453,11 @@ class PBRAUDIO_OT_preview_material(Operator):
     
     def _has_parameters_changed(self, node) -> bool:
         """Check if parameters have changed since last render"""
-        if not hasattr(node, '_last_params_hash'):
+        if not hasattr(node, 'last_params_hash'):
             return True
         
         current_hash = self._get_params_hash(node)
-        return current_hash != node._last_params_hash
+        return current_hash != node.last_params_hash
     
     def _get_params_hash(self, node) -> str:
         """Get hash of current parameters"""
@@ -619,7 +619,7 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
     )
 
     # Preview parameters hash
-    _last_params_hash: StringProperty(default='')
+    last_params_hash: StringProperty(default='')
 
     # Preview shape selection
     preview_shape: EnumProperty(

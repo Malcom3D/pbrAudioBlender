@@ -447,9 +447,9 @@ class PBRAUDIO_OT_preview_material(Operator):
         """Clean up existing preview data"""
         
         # Clear cached paths
-        node.cache_path = None
-        node.audio_path = None
-        node.lib_path = None
+        node.cache_path = ''
+        node.audio_path = ''
+        node.lib_path = ''
     
     def _has_parameters_changed(self, node) -> bool:
         """Check if parameters have changed since last render"""
@@ -836,8 +836,8 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
         """Clean up preview resources"""
         
         # Clear cached paths
-        self.cache_path = None
-        self.audio_path = None
-        self.lib_path = None
+        self.cache_path = ''
+        self.audio_path = ''
+        self.lib_path = ''
 
 classes.append(AcousticMaterialPreviewNode)

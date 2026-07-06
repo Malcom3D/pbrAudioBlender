@@ -93,7 +93,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=192000
     )
 
-    output_format = EnumProperty(
+    output_format: EnumProperty(
         name="Output Format",
         description="Output Format to save the rendered audio",
         items=[

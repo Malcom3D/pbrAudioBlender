@@ -47,6 +47,11 @@ class PBRAudioSceneProperties(PropertyGroup):
         if 'ULTRA' in self.preview_audio_quality:
             self.preview_sample_rate = 192000
 
+    # Define the first property
+    def update_value(self, context):
+        if self.surround_LFE > self.surround_channels:
+            self.surround_LFE = self.surround_channels
+
 #    """Scene properties for pbrAudio NodeTree"""
 #    acoustic_shader_type = EnumProperty(
 #        name="AcousticShaderType",
@@ -88,12 +93,54 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=192000
     )
 
-    output_path: StringProperty(
-        name="Output",
-        description="Path to save audio files",
+    output_format = EnumProperty(
+        name="Output Format",
+        description="Output Format to save the rendered audio",
+        items=[
+            ('AMBISONIC', "Ambisonic", "Output Audio in ambisonic format"),
+            ('SURROUND', "Surround", "Output Audio in surround format"),
+            ('STEREO', "Stereo", "Output Audio in stereo format"),
+        ],
+        default='AMBISONIC'
+    )
+
+    ambisonic_order: IntProperty(
+        name="Ambisonic order of rendered audio",
+        description="Audio sample rate in Hz",
+        default=1,
+        min=0,
+        max=3 
+    )
+
+    surround_channels: IntProperty(
+        name="Number of channels",
+        description="Number of full range channels of rendered audio",
+        default=5,
+        min=2,
+        max=256 
+    )
+
+    surround_LFE: IntProperty(
+        name="Number of LFE channels",
+        description="Number of low-frequency effect dedicated audio tracks (120Hz limited)",
+        default=1,
+        min=0,
+        max=256 
+        update=update_value
+    )
+
+    stereo_hrtf: BoolProperty(
+        name="Enable HRTF process",
+        description="Enable rendering of ambisonic sound tracks to HRTF stereo",
+        default=False
+    )
+
+    hrtf_file: StringProperty( 
+        name="HRTF",
+        description="Select the HRTF file for rendering",
         subtype='FILE_PATH',
-        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
-        default='/tmp/'
+        default='',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
     )
 
     file_format: EnumProperty(
@@ -101,10 +148,16 @@ class PBRAudioSceneProperties(PropertyGroup):
         items=[
             ('RAW', "RAW: un-containerized and uncompressed RAW Waveform Audio File Format", "RAW Waveform Audio File Format"),
             ('PCM', "WAV: PCM Waveform Audio File Format", "PCM Waveform Audio File Format"),
-            ('BWF', "WAV: Broadcast Wave Format", "Broadcast Wave Format"),
-            ('FLAC', "FLAC: Free Lossless Audio Codec", "Free Lossless Audio Codec")
         ],
         default='PCM',
+    )
+
+    output_path: StringProperty(
+        name="Output",
+        description="Path to save audio files",
+        subtype='FILE_PATH',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE'},
+        default='/tmp/'
     )
 
     bit_depth: EnumProperty(

@@ -99,26 +99,28 @@ class PBRAudioSceneProperties(PropertyGroup):
         items=[
             ('AMBISONIC', "Ambisonic", "Output Audio in ambisonic format"),
             ('SURROUND', "Surround", "Output Audio in surround format"),
-            ('STEREO', "Stereo", "Output Audio in stereo format"),
+            ('STEREO', "Stereo", "Output Audio in stereo format")
         ],
         default='AMBISONIC'
     )
 
-    surround_channels: IntProperty(
-        name="Number of channels",
-        description="Number of full range channels of rendered audio",
-        default=5,
-        min=2,
-        max=256 
-    )
-
-    surround_LFE: IntProperty(
-        name="Number of LFE channels",
-        description="Number of low-frequency effect dedicated audio tracks (120Hz limited)",
-        default=1,
-        min=0,
-        max=256,
-        update=update_value
+    surround_format: EnumProperty(
+        name="Surround Format",
+        description="Standard surround sound format configuration",
+        items=[
+            ('21', "StereoLFE", "Output Audio in stereo with LFE channel"),
+            ('LCR', "LCR", "Output Audio in Left-Center-Right channels format"),
+            ('QUAD', "Quad", "Output Audio in Quadraphonic channels format"),
+            ('50', "5.0", "Output Audio in 5.0 surround sound format"),
+            ('51', "5.1", "Output Audio in 5.1 surround sound format"),
+            ('61', "6.1", "Output Audio in 6.1 surround sound format"),
+            ('71', "7.1", "Output Audio in 7.1 surround sound format"),
+            ('91', "9.1", "Output Audio in 9.1 surround sound format"),
+            ('111', "11.1", "Output Audio in 11.1 surround sound format"),
+            ('151', "15.1", "Output Audio in Sony 360 Reality 15.1 surround sound format"),
+            ('222', "22.2", "Output Audio in NHK 22.2 surround sound format"),
+        ],
+        default='51'
     )
 
     stereo_hrtf: BoolProperty(

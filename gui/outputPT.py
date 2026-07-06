@@ -69,8 +69,7 @@ class PBRAUDIO_PT_output_panel(Panel):
 
         layout.prop(scene.pbraudio, "output_format")
         if scene.pbraudio.output_format == 'SURROUND':
-            layout.prop(scene.pbraudio, "surround_channels")
-            layout.prop(scene.pbraudio, "surround_LFE")
+            layout.prop(scene.pbraudio, "surround_format")
         elif scene.pbraudio.output_format == 'STEREO':
             layout.prop(scene.pbraudio, "stereo_hrtf")
             if scene.pbraudio.stereo_hrtf:

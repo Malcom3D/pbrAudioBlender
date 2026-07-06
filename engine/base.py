@@ -246,7 +246,7 @@ class PBRAudioRenderEngine(RenderEngine):
         if scene.pbraudio.output_format == 'SURROUND':
             pass
             #     write the config text to config the AmbisonicDecoder and save to scene.pbraudio.output_path
-        else scene.pbraudio.output_format == 'STEREO':
+        elif scene.pbraudio.output_format == 'STEREO':
             pass
             #     if HRTF:
             #         ToDo: write and use the HRTFRender class for Ambisonic to stereoHRTF and save to scene.pbraudio.output_path

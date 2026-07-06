@@ -125,7 +125,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         description="Number of low-frequency effect dedicated audio tracks (120Hz limited)",
         default=1,
         min=0,
-        max=256 
+        max=256,
         update=update_value
     )
 

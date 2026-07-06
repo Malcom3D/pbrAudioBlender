@@ -68,9 +68,7 @@ class PBRAUDIO_PT_output_panel(Panel):
         scene = context.scene
 
         layout.prop(scene.pbraudio, "output_format")
-        if scene.pbraudio.output_format == 'AMBISONIC':
-            layout.prop(scene.pbraudio, "ambisonic_order")
-        elif scene.pbraudio.output_format == 'SURROUND':
+        if scene.pbraudio.output_format == 'SURROUND':
             layout.prop(scene.pbraudio, "surround_channels")
             layout.prop(scene.pbraudio, "surround_LFE")
         elif scene.pbraudio.output_format == 'STEREO':

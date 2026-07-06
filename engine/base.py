@@ -206,7 +206,10 @@ class PBRAudioRenderEngine(RenderEngine):
             # Step 3: Run external acoustic engine
             config_file = os.path.join(cache_path, "AcousticDomain/config.json")
 
-            output_dir = scene.pbraudio.output_path
+            if scene.pbraudio.output_format == 'AMBISONIC':
+                output_dir = scene.pbraudio.output_path
+            else:
+                output_dir = os.path.join(cache_path, "AcousticDomain/AmbisonicOutput")
 
             if output_dir.startswith('//'):
                 output_dir = bpy.path.abspath(output_dir)
@@ -240,6 +243,16 @@ class PBRAudioRenderEngine(RenderEngine):
     def _post_process_results(self, output_dir, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
         self.report({'INFO'}, "Post-processing rendered audio")
+        if scene.pbraudio.output_format == 'SURROUND':
+            pass
+            #     write the config text to config the AmbisonicDecoder and save to scene.pbraudio.output_path
+        else scene.pbraudio.output_format == 'STEREO':
+            pass
+            #     if HRTF:
+            #         ToDo: write and use the HRTFRender class for Ambisonic to stereoHRTF and save to scene.pbraudio.output_path
+            #     else:
+            #         write the config text to config the AmbisonicDecoder and save stereo to scene.pbraudio.output_path
+
         self.report({'INFO'}, "Post-processing completed" )
 
     def update_progress(self, progress):

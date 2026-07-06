@@ -104,14 +104,6 @@ class PBRAudioSceneProperties(PropertyGroup):
         default='AMBISONIC'
     )
 
-    ambisonic_order: IntProperty(
-        name="Ambisonic order of rendered audio",
-        description="Audio sample rate in Hz",
-        default=1,
-        min=0,
-        max=3 
-    )
-
     surround_channels: IntProperty(
         name="Number of channels",
         description="Number of full range channels of rendered audio",

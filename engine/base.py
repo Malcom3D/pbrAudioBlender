@@ -25,7 +25,8 @@ from bpy.types import RenderEngine
 from mathutils import Matrix, Vector
 
 from ..utils import frd_io, environment_json
-from ..utils.ambisonic_decoder import AmbisonicDecoder
+from postProcess import AmbisonicDecoder
+#from ..utils.ambisonic_decoder import AmbisonicDecoder
 from ..exporter.render_exporter import RenderExporter
 from pbrAudioRay.core.entity_manager import EntityManager
 from pbrAudioRay.core.acoustic_engine import AcousticEngine

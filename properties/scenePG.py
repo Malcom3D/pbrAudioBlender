@@ -47,11 +47,6 @@ class PBRAudioSceneProperties(PropertyGroup):
         if 'ULTRA' in self.preview_audio_quality:
             self.preview_sample_rate = 192000
 
-    # Define the first property
-    def update_value(self, context):
-        if self.surround_LFE > self.surround_channels:
-            self.surround_LFE = self.surround_channels
-
 #    """Scene properties for pbrAudio NodeTree"""
 #    acoustic_shader_type = EnumProperty(
 #        name="AcousticShaderType",
@@ -111,13 +106,13 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('21', "StereoLFE", "Output Audio in stereo with LFE channel"),
             ('LCR', "LCR", "Output Audio in Left-Center-Right channels format"),
             ('QUAD', "Quad", "Output Audio in Quadraphonic channels format"),
-            ('50', "5.0", "Output Audio in 5.0 surround sound format"),
+            ('50', "5.0", "Output Audio in ITU 5.0 surround sound format"),
             ('51', "5.1", "Output Audio in 5.1 surround sound format"),
             ('61', "6.1", "Output Audio in 6.1 surround sound format"),
             ('71', "7.1", "Output Audio in 7.1 surround sound format"),
             ('91', "9.1", "Output Audio in 9.1 surround sound format"),
-            ('111', "11.1", "Output Audio in 11.1 surround sound format"),
-            ('151', "15.1", "Output Audio in Sony 360 Reality 15.1 surround sound format"),
+            ('111', "11.1", "Output Audio in Auro 11.1 surround sound format"),
+            ('151', "15.1", "Output Audio in 360 Reality 15.1 surround sound format"),
             ('222', "22.2", "Output Audio in NHK 22.2 surround sound format"),
         ],
         default='51'

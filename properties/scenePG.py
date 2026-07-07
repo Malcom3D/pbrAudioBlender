@@ -111,9 +111,9 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('61', "6.1", "Output Audio in 6.1 surround sound format"),
             ('71', "7.1", "Output Audio in 7.1 surround sound format"),
             ('91', "9.1", "Output Audio in 9.1 surround sound format"),
-            ('111', "11.1", "Output Audio in Auro 11.1 surround sound format"),
-            ('151', "15.1", "Output Audio in 360 Reality 15.1 surround sound format"),
-            ('222', "22.2", "Output Audio in NHK 22.2 surround sound format"),
+            ('111', "11.1/7.1.4", "Output Audio in Auro 11.1 surround sound format"),
+            ('151', "15.1/9.1.6", "Output Audio in 360 Reality 15.1 surround sound format"),
+            ('222', "NHK 22.2", "Output Audio in NHK 22.2 surround sound format"),
         ],
         default='51'
     )

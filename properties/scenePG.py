@@ -118,6 +118,12 @@ class PBRAudioSceneProperties(PropertyGroup):
         default='51'
     )
 
+    enable_vog: BoolProperty(
+        name="Add VOG channel",
+        description="Enable rendering of 'Voice Of God' channel sound track if supported by the surround standard",
+        default=False
+    )
+
     stereo_hrtf: BoolProperty(
         name="Enable HRTF process",
         description="Enable rendering of ambisonic sound tracks to HRTF stereo",

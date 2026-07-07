@@ -25,8 +25,6 @@ from bpy.types import RenderEngine
 from mathutils import Matrix, Vector
 
 from ..utils import frd_io, environment_json
-from postProcess import AmbisonicDecoder
-#from ..utils.ambisonic_decoder import AmbisonicDecoder
 from ..exporter.render_exporter import RenderExporter
 from pbrAudioRay.core.entity_manager import EntityManager
 from pbrAudioRay.core.acoustic_engine import AcousticEngine
@@ -227,7 +225,7 @@ class PBRAudioRenderEngine(RenderEngine):
                 self.report({'INFO'}, "Acoustic rendering completed successfully!")
                 
                 # Step 4: Post-process results if needed
-                self._post_process_results(output_dir, scene)
+                self._post_process_results(config_file, scene)
                 
             else:
                 self.report({'ERROR'}, "Acoustic rendering failed")
@@ -240,254 +238,21 @@ class PBRAudioRenderEngine(RenderEngine):
             traceback.print_exc()
             self._is_rendering = False
     
-    def _post_process_results(self, output_dir, scene):
+    def _post_process_results(self, config_file, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
+        from postProcess import AmbisonicPostProcessEngine
         self.report({'INFO'}, "Post-processing rendered audio")
-        if scene.pbraudio.output_format == 'SURROUND':
-            # Get surround configuration
-            surround_format = scene.pbraudio.surround_format
-            sample_rate = scene.pbraudio.sample_rate
-            file_format = scene.pbraudio.file_format
 
-            # Generate standard speaker arrangement based on channel count
-            speaker_positions = self._get_speaker_positions(surround_format)
-            num_channels = len(speaker_positions['speakers'])
-            num_lfe = len(speaker_positions['lfe'])
-            num_speakers = num_channels + num_lfe
+        # init Entity Manager
+        entity_manager = EntityManager(config_file)
 
-            # Create output directory
-            output_path = scene.pbraudio.output_path
-            if output_path.startswith('//'):
-                output_path = bpy.path.abspath(output_path)
-            os.makedirs(output_path, exist_ok=True)
+        # Ambisonic decoding
+        if not scene.pbraudio.output_format == 'AMBISONIC':
+            ambisonic_processor = AmbisonicPostProcessEngine(entity_manager)
+            ambisonic_processor.process()
 
-            # Find all ambisonic tracks
-            ambi_tracks = os.listdir(output_dir)
-            ambi_tracks = [x for x in items if x.endswith('.wav')]
-            for ambi_track in ambi_tracks:
-                track_config = {
-                    "file_path": f"{output_path}/{ambi_track}"
-                    "channels": num_speakers,
-                    "center_location": {"x": 0.0, "y": 0.0, "z": 0.0}
-                }
+        self.report({'INFO'}, "Post-processing completed")
 
-                # Create decoder with the environment config
-                decoder = AmbisonicDecoder(config_data=track_config)
-
-                # Decode for all speaker positions
-                decoded_audio = self._decode_surround(decoder, speaker_positions)
-
-                # Save surround track
-                track_name = ambi_track.replace('.wav','')
-                self._save_surround(decoded_audio, output_path, name, sample_rate, num_channels, num_lfe)
-
-                # Save a configuration file for reference
-                self._save_surround_config(output_path, name, speaker_positions, sample_rate, file_format)
-
-            self.report({'INFO'}, "Surround decoding completed")
-            
-        elif scene.pbraudio.output_format == 'STEREO':
-            if scene.pbraudio.stereo_hrtf:
-                # ToDo: Implement HRTF decoding
-                self.report({'INFO'}, "HRTF decoding not yet implemented")
-            else:
-                # Standard stereo decoding
-                self._decode_stereo(output_dir, scene)
-
-        self.report({'INFO'}, "Post-processing completed" )
-
-    def _get_speaker_positions(self, surround_format):
-        """
-        Generate standard speaker positions of configured format.
-        Supports standard configurations up to NHK 22.2.
-
-        Returns list of (azimuth, elevation, is_lfe) tuples.
-        """
-        # Standard speaker configurations (azimuth, elevation)
-        standard_configs = {
-            21: {  # Stereo w/LFE
-                'speakers': [(-30, 0), (30, 0)],
-                'lfe': [0]
-            },
-            LCR: {  # LCR
-                'speakers': [(-30, 0), (0, 0), (30, 0)],
-                'lfe': []
-            },
-            QUAD: {  # Quad
-                'speakers': [(-45, 0), (45, 0), (-135, 0), (135, 0)],
-                'lfe': []
-            },
-            50: {  # 5.0
-                'speakers': [(-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0)],
-                'lfe': []
-            },
-            51: {  # 5.1
-                'speakers': [(-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0)],
-                'lfe': [0]  # LFE at center
-            },
-            61: {  # 6.1
-                'speakers': [(-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0), (-180, 0)],
-                'lfe': [0]
-            },
-            71: {  # 7.1
-                'speakers': [(-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0), (-135, 0), (135, 0)],
-                'lfe': [0]
-            },
-            91: {  # 9.1
-                'speakers': [(-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0),
-                            (-135, 0), (135, 0), (-45, 45), (45, 45)],
-                'lfe': [0]
-            },
-            111: {  # 11.1
-                'speakers': [(-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0),
-                            (-135, 0), (135, 0), (-45, 45), (45, 45), (-90, 45), (90, 45)],
-                'lfe': [0]
-            },
-            151: {  # 15.1 (Sony 360 Reality Audio)
-                'speakers': [(-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0),
-                            (-135, 0), (135, 0), (-45, 45), (45, 45), (-90, 45), (90, 45),
-                            (-45, -30), (45, -30), (-135, -30), (135, -30)],
-                'lfe': [0]
-            },
-            222: {  # 22.2 (NHK)
-                'speakers': [
-                    # Bottom layer (z=-30°)
-                    (-45, -30), (45, -30), (-135, -30), (135, -30),
-                    # Middle layer (z=0°)
-                    (-30, 0), (30, 0), (0, 0), (-110, 0), (110, 0),
-                    (-135, 0), (135, 0), (-180, 0),
-                    # Top layer (z=45°)
-                    (-45, 45), (45, 45), (-90, 45), (90, 45), (-135, 45), (135, 45), (0, 45)],
-                'lfe': [0, 0]  # Two LFE channels
-            }
-        }
-
-        # Find the selected standard configuration
-        standard = standard_configs[surround_format]
-
-        # Build speaker positions list
-        positions = []
-   
-        # Add main speakers
-        for i, (azimuth, elevation) in enumerate(standard['speakers']):
-            is_lfe = False
-            positions.append((azimuth, elevation, is_lfe))
-   
-        # Add LFE channels
-        for i in range(len(standard['lfe'])):
-            azimuth = 0  # LFE typically at center
-            elevation = 0
-            is_lfe = True
-            positions.append((azimuth, elevation, is_lfe))
-        return positions
-
-    def _decode_surround(self, decoder, speaker_positions):
-        """
-        Decode ambisonic audio for all speaker positions.
-
-        Returns dict with speaker index -> audio array
-        """
-        decoded = {}
-
-        for i, (azimuth, elevation, is_lfe) in enumerate(speaker_positions):
-            # Decode for this speaker position
-            audio = decoder.decode_to_position(azimuth, elevation)
-
-            # Apply LFE filtering if needed
-            if is_lfe:
-                audio = self._apply_lfe_filter(audio, decoder.sample_rate)
-
-            decoded[i] = audio
-
-        return decoded
-
-    def _apply_lfe_filter(self, audio, sample_rate):
-        """
-        Apply low-pass filter for LFE channel (typically 120Hz cutoff).
-        Uses a simple butterworth-like filter.
-        """
-        from scipy import signal
-
-        # Design a 4th order low-pass filter at 120Hz
-        nyquist = sample_rate / 2
-        cutoff = 120.0 / nyquist  # 120Hz cutoff
-
-        if cutoff >= 1.0:
-            return audio  # Can't filter at this sample rate
-
-        # Use butterworth filter
-        b, a = signal.butter(4, cutoff, btype='low')
-
-        # Apply filter
-        filtered = signal.filtfilt(b, a, audio)
-
-        return filtered
-
-    def _save_surround(self, decoded_audio, output_path, name, sample_rate, num_channels, num_lfe):
-        """Save surround audio as multichannel WAV file."""
-        import numpy as np
-    
-        # Ensure all channels have the same length
-        lengths = [len(audio) for audio in decoded_audio.values()]
-        max_length = max(lengths)
-            
-        # Create multichannel array
-        multichannel = np.zeros((max_length, num_channels))
-   
-        for i, audio in decoded_audio.items():
-            multichannel[:len(audio), i] = audio
-    
-        # Normalize to prevent clipping
-        max_val = np.max(np.abs(multichannel))
-        if max_val > 0:
-            multichannel = multichannel / max_val * 0.95
-
-        # Save as WAV
-        output_file = os.path.join(output_path, f"{name}_surround.wav")
-
-        # Determine subtype based on bit depth
-        bit_depth = scene.pbraudio.bit_depth
-        if bit_depth == '16BIT':
-            subtype = 'PCM_16'
-        elif bit_depth == '24BIT':
-            subtype = 'PCM_24'
-        elif bit_depth == '32BIT':
-            subtype = 'PCM_32'
-        elif bit_depth == 'FLOAT':
-            subtype = 'FLOAT'
-        else:
-            subtype = 'FLOAT'
-
-        sf.write(output_file, multichannel, sample_rate, subtype=subtype)
-
-        self.report({'INFO'}, f"Saved surround WAV: {output_file}")
-
-    def _save_surround_config(self, output_path, name, speaker_positions, sample_rate, file_format):
-        """Save configuration file for the surround output."""
-        config = {
-            'name': name,
-            'sample_rate': sample_rate,
-            'file_format': file_format,
-            'num_channels': len(speaker_positions),
-            'num_lfe': sum(1 for _, _, is_lfe in speaker_positions if is_lfe),
-            'speakers': []
-        }
-   
-        for i, (azimuth, elevation, is_lfe) in enumerate(speaker_positions):
-            speaker = {
-                'channel': i,
-                'azimuth': azimuth,
-                'elevation': elevation,
-                'is_lfe': is_lfe
-            }
-            config['speakers'].append(speaker)
-
-        # Save configuration
-        config_file = os.path.join(output_path, f"{name}_surround_config.json")
-        with open open(config_file, 'w') as f:
-            json.dump(config, f, indent=2)
-
-        self.report({'INFO'}, f"Saved surround config: {config_file}")
 
     def update_progress(self, progress):
         """Update render progress"""

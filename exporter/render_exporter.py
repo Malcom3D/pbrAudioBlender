@@ -82,6 +82,7 @@ class RenderExporter:
     def get_system_config(self):
         """Get system configuration"""
         system = {
+            "output_format": self.scene.pbraudio.output_format,
             "sample_rate": self.scene.pbraudio.sample_rate,
             "bit_depth": self.scene.pbraudio.bit_depth.replace('BIT', ''),
             "file_format": self.scene.pbraudio.file_format,
@@ -91,12 +92,21 @@ class RenderExporter:
             "start_frame": self.scene.frame_start,
             "end_frame": self.scene.frame_end,
             "cache_path": self.cache_path,
+            "output_path": self.render_path,
             "render_path": self.render_path,
             "number_of_rays": self.scene.pbraudiorender.number_of_rays,
             "direction_seed": self.scene.pbraudiorender.direction_seed,
             "bands_per_octave": self.scene.pbraudiorender.bands_per_octave,
             "view_ray": True
         }
+
+        # Ambisonic render path
+        if not self.scene.pbraudio.output_format == 'AMBISONIC':
+            system["render_path"] = f"{self.cache_path}/AmbisonicOutput"
+        if self.scene.pbraudio.output_format == 'SURROUND':
+            system["surround_format"] = self.scene.pbraudio.surround_format
+            system["enable_lfe"] = self.scene.pbraudio.enable_lfe
+            system["enable_vog"] = self.scene.pbraudio.enable_vog
 
         # Frequency range
         if self.scene.pbraudiorender.enable_frequencies_range_set:

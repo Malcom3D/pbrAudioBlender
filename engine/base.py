@@ -28,6 +28,7 @@ from ..utils import frd_io, environment_json
 from ..exporter.render_exporter import RenderExporter
 from pbrAudioRay.core.entity_manager import EntityManager
 from pbrAudioRay.core.acoustic_engine import AcousticEngine
+from postProcess import AmbisonicDecoder
 
 classes = []
 
@@ -57,7 +58,10 @@ def acoustic_render(config_file: str, frame_current: int):
     # Post process at last frame
     config = entity_manager.get('config')
     if frame_current == config.system.end_frame:
+        # ToDo: IRs sequence correlation postprocessing
         acoustic_engine.render()
+        if not config.system.output_format == 'AMBISONIC':
+            acoustic_engine._ambisonic_post_process()
 
     return True
 
@@ -240,19 +244,10 @@ class PBRAudioRenderEngine(RenderEngine):
     
     def _post_process_results(self, config_file, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
-        from postProcess import AmbisonicPostProcessEngine
         self.report({'INFO'}, "Post-processing rendered audio")
-
-        # init Entity Manager
-        entity_manager = EntityManager(config_file)
-
-        # Ambisonic decoding
-        if not scene.pbraudio.output_format == 'AMBISONIC':
-            ambisonic_processor = AmbisonicPostProcessEngine(entity_manager)
-            ambisonic_processor.process()
-
+        # Ray frame IR postProcessing
+        # FDTD step IR postProcessing
         self.report({'INFO'}, "Post-processing completed")
-
 
     def update_progress(self, progress):
         """Update render progress"""

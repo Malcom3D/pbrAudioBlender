@@ -105,7 +105,6 @@ class RenderExporter:
             system["render_path"] = f"{self.cache_path}/AmbisonicOutput"
         if self.scene.pbraudio.output_format == 'SURROUND':
             system["surround_format"] = self.scene.pbraudio.surround_format
-            system["enable_lfe"] = self.scene.pbraudio.enable_lfe
             system["enable_vog"] = self.scene.pbraudio.enable_vog
 
         # Frequency range

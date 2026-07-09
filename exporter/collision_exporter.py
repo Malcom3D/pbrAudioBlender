@@ -300,17 +300,35 @@ class CollisionExporter:
 
         name = obj.name_full.replace('.', '_')
         quest_mesh = trimesh.Trimesh(vertices=vertices, vertex_normals=normals, faces=faces)
-        if not quest_mesh.is_watertight or not quest_mesh.is_volume and self.to_add(name):
-            self.not_valid.append(name)
-#            print('watertight: ', quest_mesh.is_watertight)
-#            print('volume: ', quest_mesh.is_volume)
-#            print(f"Warming: {obj.name} is not manifold/watertight.")
-#            print(f"Warming: trying to fix {obj.name} manifold/watertight.")
-#            quest_mesh.fill_holes()
-#            if not quest_mesh.is_watertight and not quest_mesh.is_volume:
-#                print(f"ERROR: cannot fix manifold/watertight of {obj.name}.")
-#                print(f"ERROR: please try with Select -> Select All by trait -> Non Manifold, and then Mesh -> Merge -> By Distance.")
-#                self.not_valid.append(obj.name_full.replace('.', '_'))
+        if not quest_mesh.is_volume and self.to_add(name):
+            print(f"Warming: {obj.name} mesh problem.")
+            print('convex: ', quest_mesh.is_convex)
+            print('empty: ', quest_mesh.is_empty)
+            print('====================')
+            print('volume: ', quest_mesh.is_volume)
+            print('watertight: ', quest_mesh.is_watertight)
+            print('winding: ', quest_mesh.is_winding_consistent)
+            print(f"Warning: trying to fix {name}:")
+            print('    fixing normals')
+            quest_mesh.fix_normals()
+            print('    fixing surfaces holes')
+            status_fill = quest_mesh.fill_holes()
+            print('    fixing and validate mesh')
+            quest_mesh = quest_mesh.process(validate=True)
+            print('        convex: ', quest_mesh.is_convex)
+            print('        empty: ', quest_mesh.is_empty)
+            print('empty: ', quest_mesh.is_empty)
+            print('        volume: ', quest_mesh.is_volume)
+            print('        watertight: ', quest_mesh.is_watertight)
+            print('        winding: ', quest_mesh.is_winding_consistent)
+            if not quest_mesh.is_volume:
+                print(f"ERROR: cannot fix manifold/watertight of {obj.name}.")
+                print(f"ERROR: please try with Select -> Select All by trait -> Non Manifold, and then Mesh -> Merge -> By Distance.")
+                self.not_valid.append(name)
+            else:
+                vertices = quest_mesh.vertices
+                normals = quest_mesh.vertex_normals
+                faces = quest_mesh.faces
 
         return {
             'vertices': vertices,

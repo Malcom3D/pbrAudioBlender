@@ -125,9 +125,24 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('90', "90", "Output Audio for stereo speakers placed at an angle of 45 degrees towards the listening position"),
             ('120', "120", "Output Audio for stereo speakers placed at an angle of 60 degrees towards the listening position"),
             ('180', "180", "Output Audio for stereo speakers placed at an angle of 90 degrees towards the listening position"),
-            ('ProLogicII', "ProLogicII", "Output in stereo ProLogic II surround sound (stereo with folded surround sound channels)")
+            ('ProLogicII', "ProLogicII", "Output in stereo ProLogic II surround sound (stereo with folded surround sound channels)"),
+            ('HRTF', "HRTF", "Output in binaural format with HRTF processing)")
         ],
         default='120'
+    )
+
+    enable_vog: BoolProperty(
+        name="Add VOG channel",
+        description="Enable rendering of 'Voice Of God' channel sound track if supported by the surround standard",
+        default=False
+    )
+
+    hrtf_file: StringProperty( 
+        name="HRTF",
+        description="Select the HRTF file for rendering",
+        subtype='FILE_PATH',
+        default='',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
     )
 
     file_format: EnumProperty(

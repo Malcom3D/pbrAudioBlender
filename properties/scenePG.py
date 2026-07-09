@@ -122,9 +122,9 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Stereo Format",
         description="Standard stereo configuration",
         items=[
-            ('90', "90", "Output Audio for stereo speakers placed at an angle of 45 degrees towards the listening position"),
-            ('120', "120", "Output Audio for stereo speakers placed at an angle of 60 degrees towards the listening position"),
-            ('180', "180", "Output Audio for stereo speakers placed at an angle of 90 degrees towards the listening position"),
+            ('90', "90 deg", "Output Audio for stereo speakers placed at an angle of 45 degrees towards the listening position"),
+            ('120', "120 deg", "Output Audio for stereo speakers placed at an angle of 60 degrees towards the listening position"),
+            ('180', "180 deg", "Output Audio for stereo speakers placed at an angle of 90 degrees towards the listening position"),
             ('ProLogicII', "ProLogicII", "Output in stereo ProLogic II surround sound (stereo with folded surround sound channels)"),
             ('HRTF', "HRTF", "Output in binaural format with HRTF processing)")
         ],
@@ -138,10 +138,10 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
 
     hrtf_file: StringProperty( 
-        name="HRTF",
-        description="Select the HRTF file for rendering",
+        name="HRTF file",
+        description="Select the path to SOFA HRTF file for rendering",
         subtype='FILE_PATH',
-        default='',
+        default='generated',
         options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
     )
 

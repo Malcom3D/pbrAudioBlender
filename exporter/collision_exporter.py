@@ -329,6 +329,8 @@ class CollisionExporter:
                 vertices = quest_mesh.vertices
                 normals = quest_mesh.vertex_normals
                 faces = quest_mesh.faces
+        else:
+            print(f'{obj.name} mesh do not need fixing')
 
         return {
             'vertices': vertices,

@@ -931,6 +931,8 @@ class RenderExporter:
             is_valid = quest_mesh.is_watertight and quest_mesh.is_volume
             if not is_valid:
                 print(f"Mesh {name} is not valid: watertight={quest_mesh.is_watertight}, volume={quest_mesh.is_volume}")
+        else:
+            print(f'{name} mesh do not need fixing')
         
         return is_valid
     

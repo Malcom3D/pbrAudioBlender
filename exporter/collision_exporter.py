@@ -301,7 +301,7 @@ class CollisionExporter:
         name = obj.name_full.replace('.', '_')
         quest_mesh = trimesh.Trimesh(vertices=vertices, vertex_normals=normals, faces=faces)
         if not quest_mesh.is_volume and self.to_add(name):
-            print(f"Warming: {obj.name} mesh problem.")
+            print(f"Warming: {obj.name} mesh at frame {frame_number} problem.")
             print('convex: ', quest_mesh.is_convex)
             print('empty: ', quest_mesh.is_empty)
             print('====================')
@@ -322,7 +322,7 @@ class CollisionExporter:
             print('        watertight: ', quest_mesh.is_watertight)
             print('        winding: ', quest_mesh.is_winding_consistent)
             if not quest_mesh.is_volume:
-                print(f"ERROR: cannot fix manifold/watertight of {obj.name}.")
+                print(f"ERROR: cannot fix manifold/watertight of {obj.name} at frame {frame_number}.")
                 print(f"ERROR: please try with Select -> Select All by trait -> Non Manifold, and then Mesh -> Merge -> By Distance.")
                 self.not_valid.append(name)
             else:
@@ -330,7 +330,7 @@ class CollisionExporter:
                 normals = quest_mesh.vertex_normals
                 faces = quest_mesh.faces
         else:
-            print(f'{obj.name} mesh do not need fixing')
+            print(f'{obj.name} mesh at frame {frame_number} do not need fixing')
 
         return {
             'vertices': vertices,

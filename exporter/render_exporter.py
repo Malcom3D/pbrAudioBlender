@@ -921,7 +921,7 @@ class RenderExporter:
         is_valid = quest_mesh.is_watertight and quest_mesh.is_volume
         
         if not is_valid:
-            print(f"Warning: trying to fix {name}:")
+            print(f"Warning: trying to fix {name} at frame {self.scene.frame_start}:")
             print('    fixing normals')
             quest_mesh.fix_normals()
             print('    fixing surfaces holes')
@@ -930,9 +930,9 @@ class RenderExporter:
             quest_mesh = quest_mesh.process(validate=True)
             is_valid = quest_mesh.is_watertight and quest_mesh.is_volume
             if not is_valid:
-                print(f"Mesh {name} is not valid: watertight={quest_mesh.is_watertight}, volume={quest_mesh.is_volume}")
+                print(f"Mesh {name} at frame {self.scene.frame_start} is not valid: watertight={quest_mesh.is_watertight}, volume={quest_mesh.is_volume}")
         else:
-            print(f'{name} mesh do not need fixing')
+            print(f'{name} mesh at frame {self.scene.frame_start} do not need fixing')
         
         return is_valid
     

@@ -469,7 +469,7 @@ class PBRAUDIO_OT_preview_material(Operator):
         node_tree = node.id_data
         for n in node_tree.nodes:
             if hasattr(n, 'pbraudio_type') and n.pbraudio_type == 'AcousticShader':
-                for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 'friction', 'roughness', 'low_frequency', 'high_frequency']:
+                for prop in ['sound_speed', 'young_modulus', 'poisson_ratio', 'density', 'damping', 'friction', 'roughness', 'low_frequency', 'high_frequency']:
                     if hasattr(n, f'pbraudio_{prop}'):
                         params += f"_{getattr(n, f'pbraudio_{prop}')}"
         

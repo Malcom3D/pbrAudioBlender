@@ -24,6 +24,7 @@ import numpy as np
 import trimesh
 from mathutils import Matrix
 from bpy_extras.io_utils import axis_conversion
+from scipy.spatial import ConvexHull
 
 from ..utils import frd_io
 
@@ -329,8 +330,8 @@ class CollisionExporter:
                 vertices = quest_mesh.vertices
                 normals = quest_mesh.vertex_normals
                 faces = quest_mesh.faces
-        else:
-            print(f'{obj.name} mesh at frame {frame_number} do not need fixing')
+#        else:
+#            print(f'{obj.name} mesh at frame {frame_number} do not need fixing')
 
         return {
             'vertices': vertices,
@@ -384,6 +385,7 @@ class CollisionExporter:
         object["name"] = name
         object["obj_path"] = f"{self.export_path}/data/{name}"
         object["pose_path"] = f"{self.export_path}/data/pose"
+        object["proxy_type"] = obj.proxy_type
 
         # verify is not static
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
@@ -403,6 +405,10 @@ class CollisionExporter:
                 frame_data['normals'] = frame_result['normals']
                 frame_data['faces'] = frame_result['faces']
 
+                # Determine if an object should be replaced with an ellipsoidal proxy
+                if frame == start_frame and not obj.proxy_type:
+                    object["proxy_type"] = self._should_replace_with_proxy(frame_data['vertices'])
+
                 # Save to npz
                 output_file = os.path.join(self.export_path, f"data/{name}/{name}_{frame:05d}.npz")
                 np.savez_compressed(output_file, **frame_data)
@@ -418,6 +424,10 @@ class CollisionExporter:
             frame_data[f'vertices'] = frame_result['vertices']
             frame_data[f'normals'] = frame_result['normals']
             frame_data[f'faces'] = frame_result['faces']
+
+            # Determine if an object should be replaced with an ellipsoidal proxy
+            if not obj.proxy_type:
+                object["proxy_type"] = self._should_replace_with_proxy(scene, frame_data['vertices'])
 
             # Save to npz
             output_file = os.path.join(self.export_path, f"data/{name}/{name}.npz")
@@ -458,6 +468,57 @@ class CollisionExporter:
             self.objects.append(object)
             self.obj_idx += 1
         obj.select_set(False)            
+
+    def _should_replace_with_proxy(self, scene, vertices: np.ndarray) -> bool:
+        """
+        Determine if an object should be replaced with an ellipsoidal proxy.
+
+        Criteria:
+        - Maximum dimension < proxy_size_threshold
+        """
+        # Avoid to proxy mesh with less than 7 vertices
+        if vertices.shape[0] <= 6:
+            return False
+
+        # Compute bounding box dimensions
+        min_coords = np.min(vertices, axis=0)
+        max_coords = np.max(vertices, axis=0)
+        dimensions = max_coords - min_coords
+        max_dimension = np.max(dimensions)
+
+        # Check if object is small enough
+        if max_dimension < scene.proxy_size_threshold:
+            # Also compute volume ratio to avoid replacing flat/long objects
+            # that might have one dimension large but are still small in volume
+            volume = self._compute_volume(vertices)
+            bounding_box_volume = np.prod(dimensions)
+
+            if bounding_box_volume > 0:
+                volume_ratio = volume / bounding_box_volume
+                # Replace if object fills reasonable portion of bounding box
+                # (avoids replacing thin shells or sparse point clouds)
+                if volume_ratio > 0.1:
+                    if scene.proxy_size_threshold > max_dimension > scene.proxy_size_threshold * 0.9:
+                        return 1
+                    else:
+                        return 0
+
+        return False
+
+    def _compute_volume(self, vertices: np.ndarray) -> float:
+        """Estimate volume from vertex cloud using convex hull."""
+        if len(vertices) < 4:
+            return 0.0
+
+        try:
+            hull = ConvexHull(vertices)
+            return hull.volume
+        except:
+            # Fallback: approximate as bounding box volume / 2
+            min_coords = np.min(vertices, axis=0)
+            max_coords = np.max(vertices, axis=0)
+            dimensions = max_coords - min_coords
+            return np.prod(dimensions) / 2.0
 
     def save_config(self):
         # remove invalid objects and replace object name with idx in connected

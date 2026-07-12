@@ -76,6 +76,36 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 
+class PBRAUDIO_PT_small_mesh_proxy_panel(Panel):
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_small_mesh_proxy_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_small_proxy")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Small Mesh Proxy parameters
+        layout.enabled = scene.pbraudio.enable_small_proxy and not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "proxy_size_threshold", slider=True)
+
+classes.append(PBRAUDIO_PT_small_mesh_proxy_panel)
+
 class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
     """Panel for pbrAudio AudioForcesDenoiser settings"""
 #    bl_label = "PbrAudio AudioForcesDenoiser"

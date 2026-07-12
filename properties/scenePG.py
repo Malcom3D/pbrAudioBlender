@@ -236,6 +236,20 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=1
     ) 
 
+    enable_small_proxy: BoolProperty(
+        name="Small Mesh Proxy",
+        description="Enable small mesh proxying",
+        default=False
+    )
+
+    proxy_size_threshold: FloatProperty(
+        name="Size Threshold",
+        description="Max mesh size threshold for proxed mesh in meter",
+        default=0.01,
+        min=0,
+        soft_max=1
+    )
+
     samples_per_object: IntProperty(
         name="Samples per Object",
         default=1000,

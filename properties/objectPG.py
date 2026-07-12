@@ -183,6 +183,25 @@ class PBRAudioObjectProperties(PropertyGroup):
         options={'ANIMATABLE'}
     )
 
+    """Proxy properties for pbrAudio Object"""
+    proxy: BoolProperty(
+        name="Proxy",
+        description="Replace object mesh with proxy mesh",
+        default=False,
+        options={'ANIMATABLE'}
+    )
+
+    proxy_type: EnumProperty(
+        name="Proxy Type",
+        items=[
+            ('2', "LowRes", "Low resolution proxy: icosahedron"),
+            ('3', "MidRes", "Midium resolution proxy: icosahedron with 1 subdivision"),
+            ('4', "HiRes", "High resolution proxy: icosahedron with 2 subdivision"),
+        ],
+        default='2',
+        options={'ANIMATABLE'}
+    )
+
     """Fractured Object properties for pbrAudio"""
     fractured: BoolProperty(
         name="Object is fractured",

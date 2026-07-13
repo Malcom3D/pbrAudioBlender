@@ -60,8 +60,8 @@ class PBRAUDIO_PT_material_panel(Panel):
             if not object.pbraudio.ground_disable:
                 layout.prop(snode, "ground", toggle=True)
             layout.prop(snode, "proxy", toggle=True)
-            layout.enable = snode.proxy
-            layout.prop(snode, "proxy_type", toggle=True)
+            if snode.proxy:
+                layout.prop(snode, "proxy_type", toggle=True)
         else:
             layout.label(text='Acoustic World Domain.')
             layout.label(text='Settings are in the world panel.')

@@ -385,7 +385,9 @@ class CollisionExporter:
         object["name"] = name
         object["obj_path"] = f"{self.export_path}/data/{name}"
         object["pose_path"] = f"{self.export_path}/data/pose"
-        object["proxy_type"] = obj.pbraudio.proxy_type
+        object["proxy_type"] = False
+        if obj.pbraudio.proxy:
+            object["proxy_type"] = obj.pbraudio.proxy_type
 
         # verify is not static
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
@@ -406,7 +408,7 @@ class CollisionExporter:
                 frame_data['faces'] = frame_result['faces']
 
                 # Determine if an object should be replaced with an ellipsoidal proxy
-                if frame == start_frame and not obj.pbraudio.proxy_type:
+                if frame == start_frame and not obj.pbraudio.proxy:
                     object["proxy_type"] = self._should_replace_with_proxy(frame_data['vertices'])
 
                 # Save to npz
@@ -426,7 +428,7 @@ class CollisionExporter:
             frame_data[f'faces'] = frame_result['faces']
 
             # Determine if an object should be replaced with an ellipsoidal proxy
-            if not obj.pbraudio.proxy_type:
+            if not obj.pbraudio.proxy:
                 object["proxy_type"] = self._should_replace_with_proxy(scene, frame_data['vertices'])
 
             # Save to npz

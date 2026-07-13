@@ -409,7 +409,7 @@ class CollisionExporter:
 
                 # Determine if an object should be replaced with an ellipsoidal proxy
                 if frame == start_frame and not obj.pbraudio.proxy:
-                    object["proxy_type"] = self._should_replace_with_proxy(frame_data['vertices'])
+                    object["proxy_type"] = self._should_replace_with_proxy(scene, frame_data['vertices'])
 
                 # Save to npz
                 output_file = os.path.join(self.export_path, f"data/{name}/{name}_{frame:05d}.npz")
@@ -489,7 +489,7 @@ class CollisionExporter:
         max_dimension = np.max(dimensions)
 
         # Check if object is small enough
-        if max_dimension < scene.proxy_size_threshold:
+        if max_dimension < scene.pbraudio.proxy_size_threshold:
             # Also compute volume ratio to avoid replacing flat/long objects
             # that might have one dimension large but are still small in volume
             volume = self._compute_volume(vertices)
@@ -500,7 +500,7 @@ class CollisionExporter:
                 # Replace if object fills reasonable portion of bounding box
                 # (avoids replacing thin shells or sparse point clouds)
                 if volume_ratio > 0.1:
-                    if scene.proxy_size_threshold > max_dimension > scene.proxy_size_threshold * 0.9:
+                    if scene.pbraudio.proxy_size_threshold > max_dimension > scene.pbraudio.proxy_size_threshold * 0.9:
                         return 1
                     else:
                         return 0

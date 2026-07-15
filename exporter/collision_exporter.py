@@ -501,9 +501,9 @@ class CollisionExporter:
                 # (avoids replacing thin shells or sparse point clouds)
                 if volume_ratio > 0.1:
                     if scene.pbraudio.proxy_size_threshold > max_dimension > scene.pbraudio.proxy_size_threshold * 0.9:
-                        return 1
+                        return "1"
                     else:
-                        return 0
+                        return "0"
 
         return False
 

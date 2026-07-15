@@ -387,7 +387,7 @@ class CollisionExporter:
         object["pose_path"] = f"{self.export_path}/data/pose"
         object["proxy_type"] = False
         if obj.pbraudio.proxy:
-            object["proxy_type"] = obj.pbraudio.proxy_type
+            object["proxy_type"] = int(obj.pbraudio.proxy_type)
 
         # verify is not static
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):
@@ -501,9 +501,9 @@ class CollisionExporter:
                 # (avoids replacing thin shells or sparse point clouds)
                 if volume_ratio > 0.1:
                     if scene.pbraudio.proxy_size_threshold > max_dimension > scene.pbraudio.proxy_size_threshold * 0.9:
-                        return "1"
+                        return 1
                     else:
-                        return "0"
+                        return 0
 
         return False
 

@@ -77,7 +77,7 @@ class PBRAudioEngineProperties(PropertyGroup):
         max=65536
     )
 
-    bands_per_octave: IntProperty(
+    bands_per_octave: FloatProperty(
         name="Bands for Octave",
         description="Number of bands for octave",
         default=0,

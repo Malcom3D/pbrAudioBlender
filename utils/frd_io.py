@@ -436,7 +436,7 @@ def generate_bands(freq_min, freq_max, bands_per_octave):
     Parameters:
         freq_min (float): Minimum frequency in Hz.
         freq_max (float): Maximum frequency in Hz.
-        bands_per_octave (int): Number of bands per octave.
+        bands_per_octave (float): Number of bands per octave.
 
     Returns:
         Tuple[total number of bands, list of tuples]:

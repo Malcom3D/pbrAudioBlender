@@ -45,7 +45,15 @@ class PBRAUDIO_PT_Collision_panel(Panel):
             layout.progress(factor=scene.pbraudio.status_progress, type='BAR')
 #            layout.prop(scene.pbraudio, "status_progress", text="Shader Progress", slider=True)
 
+        layout.enabled = not scene.pbraudio.shader_processing
+
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
+        if scene.pbraudio.collision_collection and 'is_valid' in scene.pbraudio.collision_collection.keys():
+            if scene.pbraudio.collision_collection['is_valid']:
+                layout.label(text="Cache Valid", icon='CHECKMARK')
+            elif not scene.pbraudio.collision_collection['is_valid']:
+                layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
+
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
         layout.prop(scene.pbraudio, "samples_per_object", text="Samples per Object", slider=True)
         layout.prop(scene.pbraudio, "modal_modes", text="Modal Modes")
@@ -65,19 +73,22 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         row_physics = layout.row()
         row_physics.operator('scene.pbraudio_physics')
         row_physics.enabled = not scene.pbraudio.shader_processing
-        row_physics.enabled = True if row_physics.enabled and not scene.pbraudio.physics else False
+#        row_physics.enabled = True if row_physics.enabled and not scene.pbraudio.physics else False
+        row_physics.enabled = True if row_physics.enabled and not scene.pbraudio.collision_collection['physics'] else False
         row_prebake = layout.row()
         row_prebake.operator('scene.pbraudio_prebake')
         row_prebake.enabled = not scene.pbraudio.shader_processing
-        row_prebake.enabled = True if row_prebake.enabled and not scene.pbraudio.prebake else False
+#        row_prebake.enabled = True if row_prebake.enabled and not scene.pbraudio.prebake else False
+        row_prebake.enabled = True if row_prebake.enabled and not scene.pbraudio.collision_collection['prebake'] else False
         row_bake = layout.row()
         row_bake.operator('scene.pbraudio_bake')
         row_bake.enabled = not scene.pbraudio.shader_processing
-        row_bake.enabled = True if row_bake.enabled and not scene.pbraudio.bake else False
+#        row_bake.enabled = True if row_bake.enabled and not scene.pbraudio.bake else False
+        row_bake.enabled = True if row_bake.enabled and not scene.pbraudio.collision_collection['bake'] else False
         row_fracture = layout.row()
         row_fracture.operator('scene.pbraudio_fracture')
         row_fracture.enabled = not scene.pbraudio.shader_processing
-        row_fracture.enabled = True if row_fracture.enabled and fracture_enabled else False
+        row_fracture.enabled = True if row_fracture.enabled and fracture_enabled and not scene.pbraudio.collision_collection['fracture'] else False
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 
@@ -153,7 +164,7 @@ class PBRAUDIO_PT_dcoffset_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "enable_dc_blocker")
 
     def draw(self, context):
@@ -164,7 +175,7 @@ class PBRAUDIO_PT_dcoffset_panel(Panel):
         scene = context.scene
 
         # DC Offset Removal parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_dc_blocker
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_dc_blocker and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "dc_blocker_alpha", slider=True)
 
 classes.append(PBRAUDIO_PT_dcoffset_panel)
@@ -181,7 +192,7 @@ class PBRAUDIO_PT_noisegate_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "enable_noise_gate")
 
     def draw(self, context):
@@ -192,7 +203,7 @@ class PBRAUDIO_PT_noisegate_panel(Panel):
         scene = context.scene
 
         # Adaptive Noise Gate parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_noise_gate
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_noise_gate and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "gate_threshold_db", slider=True)
         layout.prop(scene.pbraudio, "gate_attack_ms", slider=True)
         layout.prop(scene.pbraudio, "gate_release_ms", slider=True)
@@ -211,7 +222,7 @@ class PBRAUDIO_PT_temporalsmoothing_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "enable_temporal_smoothing")
 
     def draw(self, context):
@@ -222,7 +233,7 @@ class PBRAUDIO_PT_temporalsmoothing_panel(Panel):
         scene = context.scene
 
         # Temporal Smoothing parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_temporal_smoothing
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_temporal_smoothing and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "temporal_smoothing_window", slider=True)
 classes.append(PBRAUDIO_PT_temporalsmoothing_panel)
 
@@ -238,7 +249,7 @@ class PBRAUDIO_PT_spectralnoise_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "enable_spectral_noise_reduction")
 
     def draw(self, context):
@@ -249,7 +260,7 @@ class PBRAUDIO_PT_spectralnoise_panel(Panel):
         scene = context.scene
 
         # Spectral Noise Reduction parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_spectral_noise_reduction
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_spectral_noise_reduction and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "spectral_fft_size", slider=True)
         layout.prop(scene.pbraudio, "spectral_hop_size", slider=True)
         layout.prop(scene.pbraudio, "spectral_noise_floor_db", slider=True)
@@ -269,7 +280,7 @@ class PBRAUDIO_PT_envelopeshaping_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "enable_envelope_shaping")
 
     def draw(self, context):
@@ -280,7 +291,7 @@ class PBRAUDIO_PT_envelopeshaping_panel(Panel):
         scene = context.scene
 
         # Envelope Shaping parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_envelope_shaping
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_envelope_shaping and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "envelope_attack_ms", slider=True)
         layout.prop(scene.pbraudio, "envelope_release_ms", slider=True)
         layout.prop(scene.pbraudio, "envelope_smoothing", slider=True)
@@ -298,7 +309,7 @@ class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.enabled = scene.pbraudio.enable_forces_denoiser
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "enable_gaussian_adaptive_smoothing")
 
     def draw(self, context):
@@ -309,7 +320,7 @@ class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
         scene = context.scene
 
         # Gaussian Adaptive Smoothing parameters
-        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_gaussian_adaptive_smoothing
+        layout.enabled = scene.pbraudio.enable_forces_denoiser and scene.pbraudio.enable_gaussian_adaptive_smoothing and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "gaussian_sigma_min", slider=True)
         layout.prop(scene.pbraudio, "gaussian_sigma_max", slider=True)
         layout.prop(scene.pbraudio, "gaussian_force_threshold", slider=True)
@@ -385,7 +396,7 @@ class PBRAUDIO_PT_postprocess_dynamic_denoise_panel(Panel):
         layout.use_property_decorate = False  # No animation.
         
         scene = context.scene
-        layout.enabled = scene.pbraudio.postprocess_dynamic_denoise_enabled
+        layout.enabled = scene.pbraudio.postprocess_dynamic_denoise_enabled and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "postprocess_noise_gate_threshold_db", slider=True)
         layout.prop(scene.pbraudio, "postprocess_noise_floor_estimate_db", slider=True)
         layout.prop(scene.pbraudio, "postprocess_spectral_reduction_strength", slider=True)
@@ -415,7 +426,7 @@ class PBRAUDIO_PT_postprocess_smoothing_panel(Panel):
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
-        layout.enabled = scene.pbraudio.postprocess_smoothing_enabled
+        layout.enabled = scene.pbraudio.postprocess_smoothing_enabled and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "postprocess_smoothing_window_ms", slider=True)
         layout.prop(scene.pbraudio, "postprocess_adaptive_smoothing", slider=True)
         layout.prop(scene.pbraudio, "postprocess_phase_align_enabled", slider=True)
@@ -443,7 +454,7 @@ class PBRAUDIO_PT_postprocess_blend_panel(Panel):
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
-        layout.enabled = scene.pbraudio.postprocess_blend_enabled
+        layout.enabled = scene.pbraudio.postprocess_blend_enabled and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "postprocess_dry_wet_mix", slider=True)
         layout.prop(scene.pbraudio, "postprocess_normalize_output", slider=True)
 

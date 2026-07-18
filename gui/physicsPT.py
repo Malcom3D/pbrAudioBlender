@@ -27,7 +27,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
     bl_idname = "PBRAUDIO_PT_Collision_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -67,6 +67,9 @@ class PBRAUDIO_PT_Collision_panel(Panel):
                     fracture_enabled = True
 
         # operator button
+        row_clear_coll_cache = layout.row()
+        row_clear_coll_cache.operator('scene.pbraudio_clear_coll_cache')
+        row_clear_coll_cache.enabled = not scene.pbraudio.shader_processing
         row_physics = layout.row()
         row_physics.operator('scene.pbraudio_physics')
         row_physics.enabled = not scene.pbraudio.shader_processing
@@ -98,7 +101,7 @@ class PBRAUDIO_PT_small_mesh_proxy_panel(Panel):
     bl_idname = "PBRAUDIO_PT_small_mesh_proxy_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -130,7 +133,7 @@ class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
     bl_idname = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -158,7 +161,7 @@ class PBRAUDIO_PT_dcoffset_panel(Panel):
     bl_idname = "PBRAUDIO_PT_dcoffset_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -186,7 +189,7 @@ class PBRAUDIO_PT_noisegate_panel(Panel):
     bl_idname = "PBRAUDIO_PT_noisegate_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -216,7 +219,7 @@ class PBRAUDIO_PT_temporalsmoothing_panel(Panel):
     bl_idname = "PBRAUDIO_PT_temporalsmoothing_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -243,7 +246,7 @@ class PBRAUDIO_PT_spectralnoise_panel(Panel):
     bl_idname = "PBRAUDIO_PT_spectralnoise_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -274,7 +277,7 @@ class PBRAUDIO_PT_envelopeshaping_panel(Panel):
     bl_idname = "PBRAUDIO_PT_envelopeshaping_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -303,7 +306,7 @@ class PBRAUDIO_PT_adaptivesmooting_panel(Panel):
     bl_idname = "PBRAUDIO_PT_adaptivesmooting_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_audioforcesdenoiser_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -333,7 +336,7 @@ class PBRAUDIO_PT_postprocess_panel(Panel):
     bl_idname = "PBRAUDIO_PT_postprocess_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -361,7 +364,7 @@ class PBRAUDIO_PT_postprocess_dynamic_amplify_panel(Panel):
     bl_idname = "PBRAUDIO_PT_postprocess_dynamic_amplify_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -382,7 +385,7 @@ class PBRAUDIO_PT_postprocess_dynamic_denoise_panel(Panel):
     bl_idname = "PBRAUDIO_PT_postprocess_dynamic_denoise_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -412,7 +415,7 @@ class PBRAUDIO_PT_postprocess_smoothing_panel(Panel):
     bl_idname = "PBRAUDIO_PT_postprocess_smoothing_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -440,7 +443,7 @@ class PBRAUDIO_PT_postprocess_blend_panel(Panel):
     bl_idname = "PBRAUDIO_PT_postprocess_blend_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
     bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -467,7 +470,7 @@ class PBRAUDIO_PT_cache_panel(Panel):
     bl_idname = "PBRAUDIO_PT_cache_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = "scene"
+    bl_context = "physics"
 
     @classmethod
     def poll(cls, context):
@@ -483,7 +486,7 @@ class PBRAUDIO_PT_cache_panel(Panel):
         layout.enabled = not scene.pbraudio.cache_status
         layout.operator('scene.pbraudio_clear_cache')
         layout.enabled = not scene.pbraudio.shader_processing
-        layout.enabled = True if layout.enabled and scene.pbraudio.cache_status else False
+        layout.enabled = True if layout.enabled and not scene.pbraudio.cache_status else False
         layout.prop(scene.pbraudio, "cache_path", toggle=scene.pbraudio.cache_status)
 
 classes.append(PBRAUDIO_PT_cache_panel)

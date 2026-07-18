@@ -22,9 +22,9 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu, nodetree_switch, exporterUI
+from . import enginePT, materialPT, worldPT, dataPT, outputPT, physicsPT, view3d_menu, nodetree_switch, exporterUI
 
-for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, scenePT, view3d_menu, exporterUI):
+for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, physicsPT, view3d_menu, exporterUI):
     classes += mod.classes
 
 def register():

@@ -21,6 +21,7 @@ import os
 import sys
 import bpy
 import time
+import hashlib
 import multiprocessing
 from functools import wraps
 from bpy.types import Operator
@@ -401,6 +402,32 @@ class PBRAUDIO_OT_physics(Operator):
 
 classes.append(PBRAUDIO_OT_physics)
 
+class PBRAUDIO_OT_clear_coll_cache(Operator):
+    bl_idname = "scene.pbraudio_clear_coll_cache"
+    bl_label = "Clear Collision Cache"
+    bl_description = "Clear Collision Cache"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        scene = context.scene
+        collision_collection = scene.pbraudio.collision_collection
+        if collision_collection is not None and 'is_valid' in collision_collection.keys():
+                # Invalidate collision cache
+                import shutil
+                if os.path.exists(collision_collection['cache_path'])
+                    shutil.rmtree('collision_collection['cache_path'])
+                collision_collection['cache_path'] = ''
+                collision_collection['cache_hash'] = ''
+                collision_collection['is_valid'] = False
+                collision_collection['physics'] = False
+                collision_collection['prebake'] = False
+                collision_collection['bake'] = False
+                collision_collection['fracture'] = False
+                self.report({'INFO'}, f"Collision cache for {scene.pbraudio.collision_collection.name_full} cleared")
+        return {'FINISHED'}
+
+classes.append(PBRAUDIO_OT_clear_cache)
+
 class PBRAUDIO_OT_clear_cache(Operator):
     bl_idname = "scene.pbraudio_clear_cache"
     bl_label = "Clear Cache"
@@ -417,15 +444,7 @@ class PBRAUDIO_OT_clear_cache(Operator):
                 scene.pbraudio.cache_status = False
                 scene.pbraudio.status_progress = 1
                 scene.pbraudio.shader_processing = False
-
-                # Invalidate cache
-                scene.pbraudio.collision_collection['cache_hash'] = ''
-                scene.pbraudio.collision_collection['is_valid'] = False
-                scene.pbraudio.collision_collection['physics'] = False
-                scene.pbraudio.collision_collection['prebake'] = False
-                scene.pbraudio.collision_collection['bake'] = False
-                scene.pbraudio.collision_collection['fracture'] = False
-                self.report({'INFO'}, f"Collision cache for {scene.pbraudio.collision_collection.name_full} cleared")
+                self.report({'INFO'}, f"pbrAudio cache cleared")
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_clear_cache)

@@ -17,6 +17,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
+import json
+import hashlib
 from bpy.types import PropertyGroup
 from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty, PointerProperty, FloatProperty
 
@@ -84,12 +86,14 @@ class PBRAudioSceneProperties(PropertyGroup):
         return hashlib.sha256(hash_str.encode()).hexdigest()
 
     def update_collection(self, context):
+        scene = context.scene
         self.collision_collection['is_valid'] = True
         self.collision_collection['physics'] = False
         self.collision_collection['prebake'] = False
         self.collision_collection['bake'] = False
         self.collision_collection['fracture'] = False
         self.collision_collection['cache_hash'] = self.compute_collision_hash(context)
+        self.collision_collection['cache_path'] = f"{scene.pbraudio.cache_path}/{self.collision_collection.name_full}"
 
 #    """Scene properties for pbrAudio NodeTree"""
 #    acoustic_shader_type = EnumProperty(

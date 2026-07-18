@@ -49,7 +49,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         collision_collection = scene.pbraudio.collision_collection
-        if collision_collection is not None:
+        if collision_collection is not None and 'is_valid' in collision_collection.keys():
             if collision_collection['is_valid']:
                 layout.label(text="Cache Valid", icon='CHECKMARK')
             else:
@@ -70,7 +70,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         cache_is_valid = collision_collection['is_valid'] if collision_collection is not None and 'is_valid' in collision_collection.keys() else False
         row_clear_coll_cache = layout.row()
         row_clear_coll_cache.operator('scene.pbraudio_clear_coll_cache')
-        row_clear_coll_cache.enabled = True if not scene.pbraudio.shader_processing and cache_is_valid else False
+        row_clear_coll_cache.enabled = True if not scene.pbraudio.shader_processing and not cache_is_valid else False
         row_physics = layout.row()
         row_physics.operator('scene.pbraudio_physics')
         row_physics.enabled = True if not scene.pbraudio.shader_processing and cache_is_valid else False

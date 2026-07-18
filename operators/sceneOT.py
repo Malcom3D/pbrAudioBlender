@@ -140,49 +140,9 @@ class PBRAUDIO_OT_fracture(Operator):
             # Continue timer
             return 1.0
 
-    def compute_collision_hash(self, context):
-        """Compute a hash of the collision collection state"""
-        scene = context.scene 
-        if not scene.pbraudio.collision_collection:
-            return ""
-
-        hash_input = []
-
-        # Include collection name
-        hash_input.append(scene.pbraudio.collision_collection.name_full)
-
-        # Include all object names and their properties
-        for obj in self.collision_collection.objects:
-            hash_input.append(obj.name)
-            hash_input.append(str(obj.type))
-
-            # Include pbrAudio properties that affect cache
-            if hasattr(obj, 'pbraudio'):
-                hash_input.append(str(obj.pbraudio.stochastic_variation))
-                hash_input.append(str(obj.pbraudio.ground))
-                hash_input.append(str(obj.pbraudio.resonance))
-                hash_input.append(str(obj.pbraudio.resonance_modes))
-                hash_input.append(str(obj.pbraudio.connected))
-                hash_input.append(str(obj.pbraudio.fractured))
-                hash_input.append(str(obj.pbraudio.proxy))
-                hash_input.append(str(obj.pbraudio.proxy_type))
-
-        # Include scene animation range
-        hash_input.append(scene.pbraudio.modal_modes)
-        hash_input.append(scene.pbraudio.enable_forces_denoiser)
-        hash_input.append(scene.pbraudio.enable_postprocess)
-
-        # Create hash
-        hash_str = json.dumps(hash_input, sort_keys=True)
-        return hashlib.sha256(hash_str.encode()).hexdigest()
-
     def execute(self, context):
         scene = context.scene
-        # Validate collision - cache_path
-        cache_hash = self.compute_collision_hash()
-        if not scene.pbraudio.collision_collection['cache_hash'] == cache_hash:
-            scene.pbraudio.collision_collection['is_valid'] = False
-        if hasattr(scene.pbraudio, 'fracture') and not scene.pbraudio.collision_collection['fracture'] and scene.pbraudio.collision_collection['is_valid']:
+        if not scene.pbraudio.collision_collection['fracture'] and scene.pbraudio.collision_collection['is_valid']:
 #            if not scene.pbraudio.bake:
 #                bpy.ops.scene.pbraudio_bake('EXEC_DEFAULT')
             # Start async processing
@@ -240,49 +200,9 @@ class PBRAUDIO_OT_bake(Operator):
             # Continue timer
             return 1.0
 
-    def compute_collision_hash(self, context):
-        """Compute a hash of the collision collection state"""
-        scene = context.scene
-        if not scene.pbraudio.collision_collection:
-            return ""
-
-        hash_input = []
-
-        # Include collection name
-        hash_input.append(scene.pbraudio.collision_collection.name_full)
-
-        # Include all object names and their properties
-        for obj in self.collision_collection.objects:
-            hash_input.append(obj.name)
-            hash_input.append(str(obj.type))
-
-            # Include pbrAudio properties that affect cache
-            if hasattr(obj, 'pbraudio'):
-                hash_input.append(str(obj.pbraudio.stochastic_variation))
-                hash_input.append(str(obj.pbraudio.ground))
-                hash_input.append(str(obj.pbraudio.resonance))
-                hash_input.append(str(obj.pbraudio.resonance_modes))
-                hash_input.append(str(obj.pbraudio.connected))
-                hash_input.append(str(obj.pbraudio.fractured))
-                hash_input.append(str(obj.pbraudio.proxy))
-                hash_input.append(str(obj.pbraudio.proxy_type))
-                
-        # Include scene animation range
-        hash_input.append(scene.pbraudio.modal_modes)
-        hash_input.append(scene.pbraudio.enable_forces_denoiser)
-        hash_input.append(scene.pbraudio.enable_postprocess)
-                    
-        # Create hash
-        hash_str = json.dumps(hash_input, sort_keys=True)
-        return hashlib.sha256(hash_str.encode()).hexdigest()
-                
     def execute(self, context):
         scene = context.scene
-        # Validate collision - cache_path
-        cache_hash = self.compute_collision_hash()
-        if not scene.pbraudio.collision_collection['cache_hash'] == cache_hash:
-            scene.pbraudio.collision_collection['is_valid'] = False
-        if hasattr(scene.pbraudio, 'bake') and not scene.pbraudio.collision_collection['bake'] and scene.pbraudio.collision_collection['is_valid']:
+        if not scene.pbraudio.collision_collection['bake'] and scene.pbraudio.collision_collection['is_valid']:
 #        if hasattr(scene.pbraudio, 'bake') and not scene.pbraudio.bake and scene.pbraudio.collision_collection['is_valid']:
 #            if not scene.pbraudio.prebake:
 #                bpy.ops.scene.pbraudio_prebake('EXEC_DEFAULT')
@@ -340,49 +260,9 @@ class PBRAUDIO_OT_prebake(Operator):
             # Continue timer
             return 1.0
 
-    def compute_collision_hash(self, context):
-        """Compute a hash of the collision collection state"""
-        scene = context.scene
-        if not scene.pbraudio.collision_collection:
-            return ""
-                
-        hash_input = []
-                
-        # Include collection name
-        hash_input.append(scene.pbraudio.collision_collection.name_full)
-                    
-        # Include all object names and their properties
-        for obj in self.collision_collection.objects:
-            hash_input.append(obj.name)
-            hash_input.append(str(obj.type))
-                
-            # Include pbrAudio properties that affect cache
-            if hasattr(obj, 'pbraudio'):
-                hash_input.append(str(obj.pbraudio.stochastic_variation))
-                hash_input.append(str(obj.pbraudio.ground))
-                hash_input.append(str(obj.pbraudio.resonance))
-                hash_input.append(str(obj.pbraudio.resonance_modes))
-                hash_input.append(str(obj.pbraudio.connected))
-                hash_input.append(str(obj.pbraudio.fractured))
-                hash_input.append(str(obj.pbraudio.proxy))
-                hash_input.append(str(obj.pbraudio.proxy_type))
-
-        # Include scene animation range
-        hash_input.append(scene.pbraudio.modal_modes)
-        hash_input.append(scene.pbraudio.enable_forces_denoiser)
-        hash_input.append(scene.pbraudio.enable_postprocess)
-
-        # Create hash
-        hash_str = json.dumps(hash_input, sort_keys=True)
-        return hashlib.sha256(hash_str.encode()).hexdigest()
-
     def execute(self, context):
         scene = context.scene
-        # Validate collision - cache_path
-        cache_hash = self.compute_collision_hash()
-        if not scene.pbraudio.collision_collection['cache_hash'] == cache_hash:
-            scene.pbraudio.collision_collection['is_valid'] = False
-        if hasattr(scene.pbraudio, 'prebake') and not scene.pbraudio.collision_collection['prebake'] and scene.pbraudio.collision_collection['is_valid']:
+        if not scene.pbraudio.collision_collection['prebake'] and scene.pbraudio.collision_collection['is_valid']:
 #        if hasattr(scene.pbraudio, 'prebake') and not scene.pbraudio.prebake and scene.pbraudio.collision_collection['is_valid']:
 #            if not scene.pbraudio.physics:
 #                bpy.ops.scene.pbraudio_physics('EXEC_DEFAULT')
@@ -493,8 +373,7 @@ class PBRAUDIO_OT_physics(Operator):
 
                 self.report({'INFO'}, "Physics dynamics bake processing started")
                 # Create exporter
-                scene.pbraudio.collision_collection['cache_hash'] = self.compute_collision_hash()
-                scene.pbraudio.collision_collection['is_valid'] = True
+                if scene.pbraudio.collision_collection['cache_hash'] == self.compute_collision_hash() and scene.pbraudio.collision_collection['is_valid'] == True:
                 scene.pbraudio.shader_processing = True
                 scene.pbraudio.status_progress = 0.0
                 exporter = CollisionExporter(scene=scene, decimals=decimals)

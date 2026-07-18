@@ -54,8 +54,6 @@ class PBRAUDIO_PT_Collision_panel(Panel):
                 layout.label(text="Cache Valid", icon='CHECKMARK')
             elif not collision_collection['is_valid']:
                 layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
-        elif collision_collection is not None and not 'is_valid' in collision_collection.keys():
-            bpy.ops.collection.pbraudio_add(collection_name=collision_collection.name)
 
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
         layout.prop(scene.pbraudio, "samples_per_object", text="Samples per Object", slider=True)
@@ -69,10 +67,6 @@ class PBRAUDIO_PT_Collision_panel(Panel):
                     fracture_enabled = True
 
         # operator button
-        row_clear_cache = layout.row()
-        row_clear_cache.operator('scene.pbraudio_clear_cache')
-        row_clear_cache.enabled = not scene.pbraudio.shader_processing
-        row_clear_cache.enabled = True if row_clear_cache.enabled and scene.pbraudio.cache_status else False
         row_physics = layout.row()
         row_physics.operator('scene.pbraudio_physics')
         row_physics.enabled = not scene.pbraudio.shader_processing
@@ -487,6 +481,9 @@ class PBRAUDIO_PT_cache_panel(Panel):
         scene = context.scene
 
         layout.enabled = not scene.pbraudio.cache_status
+        layout.operator('scene.pbraudio_clear_cache')
+        layout.enabled = not scene.pbraudio.shader_processing
+        layout.enabled = True if layout.enabled and scene.pbraudio.cache_status else False
         layout.prop(scene.pbraudio, "cache_path", toggle=scene.pbraudio.cache_status)
 
 classes.append(PBRAUDIO_PT_cache_panel)

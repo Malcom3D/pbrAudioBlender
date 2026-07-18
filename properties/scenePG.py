@@ -47,6 +47,50 @@ class PBRAudioSceneProperties(PropertyGroup):
         if 'ULTRA' in self.preview_audio_quality:
             self.preview_sample_rate = 192000
 
+    def compute_collision_hash(self, context):
+        """Compute a hash of the collision collection state"""
+        scene = context.scene
+        if not scene.pbraudio.collision_collection:
+            return ""
+
+        hash_input = []
+
+        # Include collection name
+        hash_input.append(scene.pbraudio.collision_collection.name_full)
+
+        # Include all object names and their properties
+        for obj in self.collision_collection.objects:
+            hash_input.append(obj.name)
+            hash_input.append(str(obj.type))
+
+            # Include pbrAudio properties that affect cache
+            if hasattr(obj, 'pbraudio'):
+                hash_input.append(str(obj.pbraudio.stochastic_variation))
+                hash_input.append(str(obj.pbraudio.ground))
+                hash_input.append(str(obj.pbraudio.resonance))
+                hash_input.append(str(obj.pbraudio.resonance_modes))
+                hash_input.append(str(obj.pbraudio.connected))
+                hash_input.append(str(obj.pbraudio.fractured))
+                hash_input.append(str(obj.pbraudio.proxy))
+                hash_input.append(str(obj.pbraudio.proxy_type))
+
+        # Include scene animation range
+        hash_input.append(scene.pbraudio.modal_modes)
+        hash_input.append(scene.pbraudio.enable_forces_denoiser)
+        hash_input.append(scene.pbraudio.enable_postprocess)
+
+        # Create hash
+        hash_str = json.dumps(hash_input, sort_keys=True)
+        return hashlib.sha256(hash_str.encode()).hexdigest()
+
+     def update_collection(self, context):
+        self.collision_collection['is_valid'] = True
+        self.collision_collection['physics'] = False
+        self.collision_collection['prebake'] = False
+        self.collision_collection['bake'] = False
+        self.collision_collection['fracture'] = False
+        self.collision_collection['cache_hash'] = self.compute_collision_hash(context)
+
 #    """Scene properties for pbrAudio NodeTree"""
 #    acoustic_shader_type = EnumProperty(
 #        name="AcousticShaderType",
@@ -226,7 +270,8 @@ class PBRAudioSceneProperties(PropertyGroup):
     collision_collection: PointerProperty(
         name="Collision Collection",
         description="Collection for collision",
-        type=bpy.types.Collection
+        type=bpy.types.Collection,
+        update=update_collection
     )
 
     collision_margin: FloatProperty(

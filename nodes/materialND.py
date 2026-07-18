@@ -82,8 +82,8 @@ class GlassShaderNode(DefaultAcousticShaderNode):
 
     pbraudio_friction: FloatProperty(
         name="Friction",
-        default=0.25,
-        soft_min=0.2,
+        default=0.025,
+        soft_min=0.01,
         soft_max=0.5,
         precision=5
     )

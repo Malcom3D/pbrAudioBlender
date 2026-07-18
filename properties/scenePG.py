@@ -87,13 +87,14 @@ class PBRAudioSceneProperties(PropertyGroup):
 
     def update_collection(self, context):
         scene = context.scene
-        self.collision_collection['is_valid'] = True
-        self.collision_collection['physics'] = False
-        self.collision_collection['prebake'] = False
-        self.collision_collection['bake'] = False
-        self.collision_collection['fracture'] = False
-        self.collision_collection['cache_hash'] = self.compute_collision_hash(context)
-        self.collision_collection['cache_path'] = f"{scene.pbraudio.cache_path}/{self.collision_collection.name_full}"
+        if self.collision_collection is not None:
+            self.collision_collection['is_valid'] = True
+            self.collision_collection['physics'] = False
+            self.collision_collection['prebake'] = False
+            self.collision_collection['bake'] = False
+            self.collision_collection['fracture'] = False
+            self.collision_collection['cache_hash'] = self.compute_collision_hash(context)
+            self.collision_collection['cache_path'] = f"{scene.pbraudio.cache_path}/{self.collision_collection.name_full}"
 
 #    """Scene properties for pbrAudio NodeTree"""
 #    acoustic_shader_type = EnumProperty(

@@ -83,7 +83,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         hash_str = json.dumps(hash_input, sort_keys=True)
         return hashlib.sha256(hash_str.encode()).hexdigest()
 
-     def update_collection(self, context):
+    def update_collection(self, context):
         self.collision_collection['is_valid'] = True
         self.collision_collection['physics'] = False
         self.collision_collection['prebake'] = False

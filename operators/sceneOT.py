@@ -373,30 +373,30 @@ class PBRAUDIO_OT_physics(Operator):
 
                 self.report({'INFO'}, "Physics dynamics bake processing started")
                 # Create exporter
-                if scene.pbraudio.collision_collection['cache_hash'] == self.compute_collision_hash() and scene.pbraudio.collision_collection['is_valid'] == True:
-                scene.pbraudio.shader_processing = True
-                scene.pbraudio.status_progress = 0.0
-                exporter = CollisionExporter(scene=scene, decimals=decimals)
-                progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
-                for obj in scene.pbraudio.collision_collection.objects.values():
-                    # Export animation
-                    scene.pbraudio.status_progress += progress_step
-                    exporter.export_animation(obj, start_frame, end_frame)
-                    obj.select_set(False)
+                if scene.pbraudio.collision_collection['cache_hash'] == self.compute_collision_hash() and scene.pbraudio.collision_collection['is_valid'] and not scene.pbraudio.collision_collection['physics']:
+                    scene.pbraudio.shader_processing = True
+                    scene.pbraudio.status_progress = 0.0
+                    exporter = CollisionExporter(scene=scene, decimals=decimals)
+                    progress_step = 0.5 / len(scene.pbraudio.collision_collection.objects.values())
+                    for obj in scene.pbraudio.collision_collection.objects.values():
+                        # Export animation
+                        scene.pbraudio.status_progress += progress_step
+                        exporter.export_animation(obj, start_frame, end_frame)
+                        obj.select_set(False)
 
-                # Save config
-                exporter.save_config()
+                    # Save config
+                    exporter.save_config()
 
-                # Start async processing
-                export_path = f"{scene.pbraudio.cache_path}"
-                if scene.pbraudio.cache_path.startswith('//'):
-                    export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
-                config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
-                status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
-                process = pbrAudio_physics(config_file, status_file)
+                    # Start async processing
+                    export_path = f"{scene.pbraudio.cache_path}"
+                    if scene.pbraudio.cache_path.startswith('//'):
+                        export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
+                    config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
+                    status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
+                    process = pbrAudio_physics(config_file, status_file)
 
-                # Monitor completion
-                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
+                    # Monitor completion
+                    bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_physics)

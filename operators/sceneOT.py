@@ -21,6 +21,8 @@ import os
 import sys
 import bpy
 import time
+import json
+import hashlib
 import multiprocessing
 from functools import wraps
 from bpy.types import Operator
@@ -142,7 +144,7 @@ class PBRAUDIO_OT_fracture(Operator):
 
     def execute(self, context):
         scene = context.scene
-        if not scene.pbraudio.collision_collection['fracture'] and scene.pbraudio.collision_collection['is_valid']:
+        if not scene.pbraudio.collision_collection['fracture']:
 #            if not scene.pbraudio.bake:
 #                bpy.ops.scene.pbraudio_bake('EXEC_DEFAULT')
             # Start async processing
@@ -202,7 +204,7 @@ class PBRAUDIO_OT_bake(Operator):
 
     def execute(self, context):
         scene = context.scene
-        if not scene.pbraudio.collision_collection['bake'] and scene.pbraudio.collision_collection['is_valid']:
+        if not scene.pbraudio.collision_collection['bake']:
 #        if hasattr(scene.pbraudio, 'bake') and not scene.pbraudio.bake and scene.pbraudio.collision_collection['is_valid']:
 #            if not scene.pbraudio.prebake:
 #                bpy.ops.scene.pbraudio_prebake('EXEC_DEFAULT')
@@ -262,7 +264,7 @@ class PBRAUDIO_OT_prebake(Operator):
 
     def execute(self, context):
         scene = context.scene
-        if not scene.pbraudio.collision_collection['prebake'] and scene.pbraudio.collision_collection['is_valid']:
+        if not scene.pbraudio.collision_collection['prebake']:
 #        if hasattr(scene.pbraudio, 'prebake') and not scene.pbraudio.prebake and scene.pbraudio.collision_collection['is_valid']:
 #            if not scene.pbraudio.physics:
 #                bpy.ops.scene.pbraudio_physics('EXEC_DEFAULT')
@@ -333,7 +335,7 @@ class PBRAUDIO_OT_physics(Operator):
         hash_input.append(scene.pbraudio.collision_collection.name_full)
 
         # Include all object names and their properties
-        for obj in self.collision_collection.objects:
+        for obj in scene.pbraudio.collision_collection.objects:
             hash_input.append(obj.name)
             hash_input.append(str(obj.type))
 
@@ -421,14 +423,16 @@ class PBRAUDIO_OT_clear_coll_cache(Operator):
                     if collision_cache_path.startswith('//'):
                         collision_cache_path = f"{bpy.path.abspath(collision_cache_path)}"
                     shutil.rmtree(collision_cache_path)
-                collision_collection['cache_path'] = ''
-                collision_collection['cache_hash'] = ''
-                collision_collection['is_valid'] = True
-                collision_collection['physics'] = False
-                collision_collection['prebake'] = False
-                collision_collection['bake'] = False
-                collision_collection['fracture'] = False
-                self.report({'INFO'}, f"Collision cache for {scene.pbraudio.collision_collection.name_full} cleared")
+                del collision_collection['cache_path']
+                del collision_collection['cache_hash']
+                del collision_collection['is_valid']
+                del collision_collection['physics']
+                del collision_collection['prebake']
+                del collision_collection['bake']
+                del collision_collection['fracture']
+                collection_name = scene.pbraudio.collision_collection.name_full 
+                scene.pbraudio.collision_collection = None
+                self.report({'INFO'}, f"Collision cache for {collection_name} cleared")
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_clear_coll_cache)

@@ -49,11 +49,11 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         collision_collection = scene.pbraudio.collision_collection
-        if collision_collection is not None and 'is_valid' in collision_collection.keys():
-            if collision_collection['is_valid']:
-                layout.label(text="Cache Valid", icon='CHECKMARK')
-            elif not collision_collection['is_valid']:
-                layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
+        cache_hash_status = bpy.ops.object.pbraudio_validate_cache_hash(collection_name=collision_collection.name_full):
+        if collision_collection is not None and cache_hash_status:
+            layout.label(text="Cache Valid", icon='CHECKMARK')
+        elif collision_collection is not None and not cache_hash_status:
+            layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
 
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
         layout.prop(scene.pbraudio, "samples_per_object", text="Samples per Object", slider=True)

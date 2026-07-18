@@ -21,7 +21,6 @@ import os
 import sys
 import bpy
 import time
-import hashlib
 import multiprocessing
 from functools import wraps
 from bpy.types import Operator
@@ -322,42 +321,6 @@ class PBRAUDIO_OT_physics(Operator):
             # Continue timer
             return 1.0
 
-    def compute_collision_hash(self, context):
-        """Compute a hash of the collision collection state"""
-        scene = context.scene
-        if not scene.pbraudio.collision_collection:
-            return ""
-    
-        hash_input = []
-    
-        # Include collection name
-        hash_input.append(scene.pbraudio.collision_collection.name_full)
-    
-        # Include all object names and their properties
-        for obj in self.collision_collection.objects:
-            hash_input.append(obj.name)
-            hash_input.append(str(obj.type))
-
-            # Include pbrAudio properties that affect cache
-            if hasattr(obj, 'pbraudio'):
-                hash_input.append(str(obj.pbraudio.stochastic_variation))
-                hash_input.append(str(obj.pbraudio.ground))
-                hash_input.append(str(obj.pbraudio.resonance))
-                hash_input.append(str(obj.pbraudio.resonance_modes))
-                hash_input.append(str(obj.pbraudio.connected))
-                hash_input.append(str(obj.pbraudio.fractured))
-                hash_input.append(str(obj.pbraudio.proxy))
-                hash_input.append(str(obj.pbraudio.proxy_type))
-
-        # Include scene animation range
-        hash_input.append(scene.pbraudio.modal_modes)
-        hash_input.append(scene.pbraudio.enable_forces_denoiser)
-        hash_input.append(scene.pbraudio.enable_postprocess)
-
-        # Create hash
-        hash_str = json.dumps(hash_input, sort_keys=True)
-        return hashlib.sha256(hash_str.encode()).hexdigest()
-
     def execute(self, context):
         scene = context.scene
         if hasattr(scene.pbraudio, 'physics'):
@@ -414,11 +377,11 @@ class PBRAUDIO_OT_clear_coll_cache(Operator):
         if collision_collection is not None and 'is_valid' in collision_collection.keys():
                 # Invalidate collision cache
                 import shutil
-                if os.path.exists(collision_collection['cache_path'])
-                    shutil.rmtree('collision_collection['cache_path'])
+                if os.path.exists(collision_collection['cache_path']):
+                    shutil.rmtree(collision_collection['cache_path'])
                 collision_collection['cache_path'] = ''
                 collision_collection['cache_hash'] = ''
-                collision_collection['is_valid'] = False
+                collision_collection['is_valid'] = True
                 collision_collection['physics'] = False
                 collision_collection['prebake'] = False
                 collision_collection['bake'] = False
@@ -426,7 +389,7 @@ class PBRAUDIO_OT_clear_coll_cache(Operator):
                 self.report({'INFO'}, f"Collision cache for {scene.pbraudio.collision_collection.name_full} cleared")
         return {'FINISHED'}
 
-classes.append(PBRAUDIO_OT_clear_cache)
+classes.append(PBRAUDIO_OT_clear_coll_cache)
 
 class PBRAUDIO_OT_clear_cache(Operator):
     bl_idname = "scene.pbraudio_clear_cache"

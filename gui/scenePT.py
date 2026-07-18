@@ -48,11 +48,14 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.enabled = not scene.pbraudio.shader_processing
 
         layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
-        if scene.pbraudio.collision_collection and 'is_valid' in scene.pbraudio.collision_collection.keys():
-            if scene.pbraudio.collision_collection['is_valid']:
+        collision_collection = scene.pbraudio.collision_collection
+        if collision_collection is not None and 'is_valid' in collision_collection.keys():
+            if collision_collection['is_valid']:
                 layout.label(text="Cache Valid", icon='CHECKMARK')
-            elif not scene.pbraudio.collision_collection['is_valid']:
+            elif not collision_collection['is_valid']:
                 layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
+        elif collision_collection is not None and not 'is_valid' in collision_collection.keys():
+            bpy.ops.collection.pbraudio_add(collection_name=collision_collection.name)
 
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
         layout.prop(scene.pbraudio, "samples_per_object", text="Samples per Object", slider=True)
@@ -74,21 +77,25 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         row_physics.operator('scene.pbraudio_physics')
         row_physics.enabled = not scene.pbraudio.shader_processing
 #        row_physics.enabled = True if row_physics.enabled and not scene.pbraudio.physics else False
-        row_physics.enabled = True if row_physics.enabled and not scene.pbraudio.collision_collection['physics'] else False
+        collection_physics = collision_collection['physics'] if collision_collection is not None and 'physics' in collision_collection.keys() else False
+        row_physics.enabled = True if row_physics.enabled and not collection_physics else False
         row_prebake = layout.row()
         row_prebake.operator('scene.pbraudio_prebake')
         row_prebake.enabled = not scene.pbraudio.shader_processing
 #        row_prebake.enabled = True if row_prebake.enabled and not scene.pbraudio.prebake else False
-        row_prebake.enabled = True if row_prebake.enabled and not scene.pbraudio.collision_collection['prebake'] else False
+        collection_prebake = collision_collection['prebake'] if collision_collection is not None and 'prebake' in collision_collection.keys() else False
+        row_prebake.enabled = True if row_prebake.enabled and not collection_prebake else False
         row_bake = layout.row()
         row_bake.operator('scene.pbraudio_bake')
         row_bake.enabled = not scene.pbraudio.shader_processing
 #        row_bake.enabled = True if row_bake.enabled and not scene.pbraudio.bake else False
-        row_bake.enabled = True if row_bake.enabled and not scene.pbraudio.collision_collection['bake'] else False
+        collection_bake = collision_collection['bake'] if collision_collection is not None and 'bake' in collision_collection.keys() else False
+        row_bake.enabled = True if row_bake.enabled and not collection_bake else False
         row_fracture = layout.row()
         row_fracture.operator('scene.pbraudio_fracture')
         row_fracture.enabled = not scene.pbraudio.shader_processing
-        row_fracture.enabled = True if row_fracture.enabled and fracture_enabled and not scene.pbraudio.collision_collection['fracture'] else False
+        collection_fracture = collision_collection['fracture'] if collision_collection is not None and 'fracture' in collision_collection.keys() else False
+        row_fracture.enabled = True if row_fracture.enabled and fracture_enabled and not collection_fracture else False
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 

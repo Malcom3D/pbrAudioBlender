@@ -21,9 +21,9 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import renderOT, materialOT, worldOT, sceneOT, objectOT, plotOT, audioOT, spatialOT, soundOT, exportOT
+from . import renderOT, materialOT, worldOT, sceneOT, objectOT, plotOT, audioOT, spatialOT, soundOT, exportOT, collectionOT
 
-for mod in (renderOT, materialOT, worldOT, sceneOT, objectOT, plotOT, audioOT, spatialOT, soundOT, exportOT):
+for mod in (renderOT, materialOT, worldOT, sceneOT, objectOT, plotOT, audioOT, spatialOT, soundOT, exportOT, collectionOT):
     classes += mod.classes
 
 def register():

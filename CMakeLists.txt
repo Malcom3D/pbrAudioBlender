@@ -933,7 +933,7 @@ if (NOT WIN32)
     DEPENDS anyio
     DEPENDS pydantic
     DEPENDS httpx
-    DEPENDS losc2
+    DEPENDS blosc2
 #    DEPENDS donfig
 DEPENDS yaml
 #    DEPENDS crc32c

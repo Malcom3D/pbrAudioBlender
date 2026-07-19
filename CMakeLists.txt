@@ -245,19 +245,6 @@ ExternalProject_Add(
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
 ExternalProject_Add(
-    msgpack
-    PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/45/16/a20fa8c32825cc7ae8457fab45670c7a8996d7746ce80ce41cc51e3b2bd7/msgpack-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-    URL_HASH SHA256=8a8b10fdb84a43e50d38057b06901ec9da52baac6983d3f709d8507f3889d43f
-    BUILD_ALWAYS OFF
-    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-    DOWNLOAD_NO_EXTRACT ON
-    DOWNLOAD_NO_PROGRESS ON
-    BUILD_COMMAND cmake -E echo "Skipping build step."
-    INSTALL_COMMAND cmake -E echo "Skipping install step."
-    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-)
-ExternalProject_Add(
     jinja2
     PREFIX "blender"
     URL    https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl

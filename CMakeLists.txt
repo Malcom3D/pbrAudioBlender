@@ -478,19 +478,19 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-#ExternalProject_Add(
-#    rich
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/e3/30/3c4d035596d3cf444529e0b2953ad0466f6049528a879d27534700580395/rich-14.1.0-py3-none-any.whl
-#    URL_HASH SHA256=536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    rich
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/e3/30/3c4d035596d3cf444529e0b2953ad0466f6049528a879d27534700580395/rich-14.1.0-py3-none-any.whl
+    URL_HASH SHA256=536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 #ExternalProject_Add(
 #    zarrs
 #    PREFIX "blender"
@@ -517,19 +517,292 @@ ExternalProject_Add(
 #    INSTALL_COMMAND cmake -E echo "Skipping install step."
 #    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 #)
-#ExternalProject_Add(
-#    typing-extensions
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
-#    URL_HASH SHA256=f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    typing-extensions
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl
+    URL_HASH SHA256=481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    threadpoolctl
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/32/d5/f9a850d79b0851d1d4ef6456097579a9005b31fea68726a4ae5f2d82ddd9/threadpoolctl-3.6.0-py3-none-any.whl
+    URL_HASH SHA256=43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    pygments
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl
+    URL_HASH SHA256=81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    ndindex
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/fd/cb/7a02b6f29b15a16cd0002f4591d14493eff8e9236f7ca4c02ee4d4bcefbd/ndindex-1.10.1-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=9fdf3ca16efcdfbb8800aa88fbab1bc6528e6a0504bcb9cf7af4cb9d50e9f5d9
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    msgpack
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/03/8d/671d81534ea0e2b0e8a121be100020da09eb78861fe3aa8f3ef7dcd3bed1/msgpack-1.2.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=a28d076ca7c82b9c8728ad90b7147489449557038bed50e4241eb832395169b4
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    mdurl
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl
+    URL_HASH SHA256=84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    idna
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/1e/5e/d4e9f1a599fb8e573b7b87160658329fbf28d19eac2718f51fc3def3aa5a/idna-3.18-py3-none-any.whl
+    URL_HASH SHA256=7f952cbe720b688055e3f87de14f5c3e5fdaa8bc3928985c4077ca689de849a2
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    hyperframe
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/48/30/47d0bf6072f7252e6521f3447ccfa40b421b6824517f82854703d0f5a98b/hyperframe-6.1.0-py3-none-any.whl
+    URL_HASH SHA256=b03380493a519fce58ea5af42e4a42317bf9bd425596f7a0835ffce80f1a42e5
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    hpack
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/71/b4/4a9fcfb2aef6ba44d9073ecd301443aa00b3dac95de5619f2a7de7ec8a91/hpack-4.2.0-py3-none-any.whl
+    URL_HASH SHA256=858ac0b02280fa582b5080d68db0899c62a80375e0e5413a74970c5e518b6986
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    h11
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
+    URL_HASH SHA256=63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    certifi
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/ef/2f/c5464532e965badff2f4c4c1a3a83f5697f0d7c407ed0cda44aaa99bb451/certifi-2026.6.17-py3-none-any.whl
+    URL_HASH SHA256=2227dcbaafe0d2f59279d1762ddddc37783ed4354594f194ffc31d20f41fc3db
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    annotated-types
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/78/b6/6307fbef88d9b5ee7421e68d78a9f162e0da4900bc5f5793f6d3d0e34fb8/annotated_types-0.7.0-py3-none-any.whl
+    URL_HASH SHA256=1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    typing-inspection
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl
+    URL_HASH SHA256=4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    pydantic-core
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/b6/4f/7fe179b37f887297a5bfd7b38a4a26cd485748b6b424c43c73a36c02f57b/pydantic_core-2.47.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+    URL_HASH SHA256=c9a891c20be5110deb1904f639f3615ec5022b3495995850d1abe7b8fa1550b5
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    numexpr
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/d6/15/9a7bf92b7c8047157fd96bc42ff6b0a20351f43aa58b9f61eb8f5ff3048b/numexpr-2.14.2-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=f41170e9d0dbba76851e35d80cfa9f4ca5fe78628c5bf24d941cf3364940ab7a
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    markdown-it-py
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl
+    URL_HASH SHA256=9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    httpcore
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl
+    URL_HASH SHA256=2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    h2
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/69/b2/119f6e6dcbd96f9069ce9a2665e0146588dc9f88f29549711853645e736a/h2-4.3.0-py3-none-any.whl
+    URL_HASH SHA256=c438f029a25f7945c69e0ccf0fb951dc3f73a5f6412981daee861431b70e2bdd
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    anyio
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/da/35/f2287558c17e29fafc8ef3daf819bb9834061cfa43bff8014f7df7f63bdc/anyio-4.14.2-py3-none-any.whl
+    URL_HASH SHA256=9f505dda5ac9f0c8309b5e8bd445a8c2bf7246f3ce950121e45ea15bc41d1494
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    pydantic
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/fd/7b/122376b1fd3c62c1ed9dc80c931ace4844b3c55407b6fb2d199377c9736f/pydantic-2.13.4-py3-none-any.whl
+    URL_HASH SHA256=45a282cde31d808236fd7ea9d919b128653c8b38b393d1c4ab335c62924d9aba
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    httpx
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl
+    URL_HASH SHA256=d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    blosc2
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/ef/8d/f78ceadd7daee81e1ada2f393081823a623e698ad15bc3aefb971101b474/blosc2-4.9.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=70ac9eb0eb82a33f2cec25759c2607bb6aa52dd32da6b6d0ec2a52315bedd4f1
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 #ExternalProject_Add(
 #    donfig
 #    PREFIX "blender"
@@ -649,15 +922,36 @@ if (NOT WIN32)
     DEPENDS llvmlite
     DEPENDS soundfile
     DEPENDS cffi
-#    DEPENDS rich
+    DEPENDS rich
 #    DEPENDS zarrs
 #    DEPENDS zarr
-#    DEPENDS typing-extensions
+    DEPENDS typing-extensions
+    DEPENDS threadpoolctl
+    DEPENDS pygments
+    DEPENDS ndindex
+    DEPENDS msgpack
+    DEPENDS mdurl
+    DEPENDS idna
+    DEPENDS hyperframe
+    DEPENDS hpack
+    DEPENDS h11
+    DEPENDS certifi
+    DEPENDS annotated-types
+    DEPENDS typing-inspection
+    DEPENDS pydantic-core
+    DEPENDS numexpr
+    DEPENDS markdown-it-py
+    DEPENDS httpcore
+    DEPENDS h2
+    DEPENDS anyio
+    DEPENDS pydantic
+    DEPENDS httpx
+    DEPENDS losc2
 #    DEPENDS donfig
-    DEPENDS yaml
+DEPENDS yaml
 #    DEPENDS crc32c
 #    DEPENDS google-crc32c
-    DEPENDS packaging
+DEPENDS packaging
 #    DEPENDS numcodecs
 #    COMMAND ${CMAKE_COMMAND} -E make_directory pbrAudio
 #    COMMAND ${CMAKE_COMMAND} -E copy
@@ -713,52 +1007,73 @@ if (NOT WIN32)
 #      pbrAudio/wheels
 #    COMMAND ${CMAKE_COMMAND} -E tar "cfv" "${CMAKE_PROJECT_NAME}.zip" --format=zip pbrAudio
 #    COMMAND ${CMAKE_COMMAND} -E remove_directory pbrAudio
-  )
+)
 
 #  add_dependencies(blender meshlib)
 #  add_dependencies(blender embreex)
 #  add_dependencies(blender numpy)
-  add_dependencies(blender fast-simplification)
+add_dependencies(blender fast-simplification)
 #  add_dependencies(blender pillow)
-  add_dependencies(blender rtree)
-  add_dependencies(blender python_fcl)
+add_dependencies(blender rtree)
+add_dependencies(blender python_fcl)
 #  add_dependencies(blender networkx)
 #  add_dependencies(blender pympler)
-  add_dependencies(blender resampy)
-  add_dependencies(blender trimesh)
-  add_dependencies(blender MarkupSafe)
-  add_dependencies(blender tblib)
-  add_dependencies(blender sortedcontainers)
-  add_dependencies(blender zict)
-  add_dependencies(blender urllib3)
-  add_dependencies(blender tornado)
-  add_dependencies(blender psutil)
-  add_dependencies(blender msgpack)
-  add_dependencies(blender jinja2)
-  add_dependencies(blender distributed)
-  add_dependencies(blender scipy)
+add_dependencies(blender resampy)
+add_dependencies(blender trimesh)
+add_dependencies(blender MarkupSafe)
+add_dependencies(blender tblib)
+add_dependencies(blender sortedcontainers)
+add_dependencies(blender zict)
+add_dependencies(blender urllib3)
+add_dependencies(blender tornado)
+add_dependencies(blender psutil)
+add_dependencies(blender msgpack)
+add_dependencies(blender jinja2)
+add_dependencies(blender distributed)
+add_dependencies(blender scipy)
 #  add_dependencies(blender pywavelets)
-  add_dependencies(blender locket)
-  add_dependencies(blender partd)
-  add_dependencies(blender zipp)
-  add_dependencies(blender importlib_metadata)
-  add_dependencies(blender toolz)
-  add_dependencies(blender fsspec)
-  add_dependencies(blender cloudpickle)
-  add_dependencies(blender click)
-  add_dependencies(blender dask)
-  add_dependencies(blender numba)
-  add_dependencies(blender llvmlite)
-  add_dependencies(blender soundfile)
-  add_dependencies(blender cffi)
-#  add_dependencies(blender rich)
+add_dependencies(blender locket)
+add_dependencies(blender partd)
+add_dependencies(blender zipp)
+add_dependencies(blender importlib_metadata)
+add_dependencies(blender toolz)
+add_dependencies(blender fsspec)
+add_dependencies(blender cloudpickle)
+add_dependencies(blender click)
+add_dependencies(blender dask)
+add_dependencies(blender numba)
+add_dependencies(blender llvmlite)
+add_dependencies(blender soundfile)
+add_dependencies(blender cffi)
+add_dependencies(blender rich)
 #  add_dependencies(blender zarrs)
 #  add_dependencies(blender zarr)
-  add_dependencies(blender yaml)
+add_dependencies(blender yaml)
 #  add_dependencies(blender crc32c)
 #  add_dependencies(blender google-crc32c)
-  add_dependencies(blender packaging)
+add_dependencies(blender packaging)
 #  add_dependencies(blender numcodecs)
 #  add_dependencies(blender donfig)
-#  add_dependencies(blender typing-extensions)
+add_dependencies(blender typing-extensions)
+add_dependencies(blender threadpoolctl)
+add_dependencies(blender pygments)
+add_dependencies(blender ndindex)
+add_dependencies(blender mdurl)
+add_dependencies(blender idna)
+add_dependencies(blender msgpack)
+add_dependencies(blender hyperframe)
+add_dependencies(blender hpack)
+add_dependencies(blender h11)
+add_dependencies(blender certifi)
+add_dependencies(blender annotated-types)
+add_dependencies(blender typing-inspection)
+add_dependencies(blender pydantic-core)
+add_dependencies(blender numexpr)
+add_dependencies(blender markdown-it-py)
+add_dependencies(blender httpcore)
+add_dependencies(blender h2)
+add_dependencies(blender anyio)
+add_dependencies(blender pydantic)
+add_dependencies(blender httpx)
+add_dependencies(blender blosc2)
 endif ()

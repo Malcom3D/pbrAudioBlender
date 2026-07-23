@@ -124,6 +124,41 @@ class PBRAUDIO_PT_small_mesh_proxy_panel(Panel):
 
 classes.append(PBRAUDIO_PT_small_mesh_proxy_panel)
 
+class PBRAUDIO_PT_trajectory_correction_panel(Panel):
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_trajectory_correction_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "physics"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "enable_trajectory_postprocess")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Trajectory Correction Parameters
+        layout.enabled = scene.pbraudio.enable_trajectory_postprocess and not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "bounce_threshold", slider=True)
+        layout.prop(scene.pbraudio, "correction_strength", slider=True)
+        layout.prop(scene.pbraudio, "smoothing_sigma", slider=True)
+        layout.prop(scene.pbraudio, "min_contact_duration", slider=True)
+        layout.prop(scene.pbraudio, "max_velocity_change", slider=True)
+        layout.prop(scene.pbraudio, "max_angular_velocity", slider=True)
+
+classes.append(PBRAUDIO_PT_trajectory_correction_panel)
+
 class PBRAUDIO_PT_audioforcesdenoiser_panel(Panel):
     """Panel for pbrAudio AudioForcesDenoiser settings"""
 #    bl_label = "PbrAudio AudioForcesDenoiser"

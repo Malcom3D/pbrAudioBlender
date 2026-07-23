@@ -373,6 +373,51 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=False
     )
 
+    """Scene properties for pbrAudio TrajectoryPostProcess"""
+
+    enable_trajectory_postprocess: BoolProperty(
+        name="Trajectory Correction PostProcess",
+        default=False
+    )
+
+    bounce_threshold: FloatProperty(
+        name="Bounce Threshold",
+        description="Minimum displacement for bounce detection (meters)",
+        default=0.001
+    )
+
+    correction_strength: FloatProperty(
+        name="Correction Strength",
+        description="Normalized artifacts correction strength",
+        default=0.8,
+        min=0.0,
+        max=1.0
+    )
+
+    smoothing_sigma: FloatProperty(
+        name="Smoothing Sigma",
+        description="Gaussian sigma for trajectory smoothing",
+        default=2.0
+    )
+
+    min_contact_duration: IntProperty(
+        name="Min Contact",
+        description="Minimum number of frames for contact detection",
+        default=5
+    )
+
+    max_velocity_change: FloatProperty(
+        name="Max Velocity Change",
+        description="Maximum allowed velocity change (m/s² per frame)",
+        default=10.0
+    )
+
+    max_angular_velocity: FloatProperty(
+        name="Max Angular Velocity",
+        description="Maximum angular velocity (rad/s)",
+        default=100.0
+    )
+
     """Scene properties for pbrAudio AudioForcesDenoiser"""
 
     enable_forces_denoiser: BoolProperty(

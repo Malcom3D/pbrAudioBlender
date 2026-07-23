@@ -56,6 +56,9 @@ class CollisionExporter:
         self.config = {}
         self.config["system"] = system
 
+        if scene.pbraudio.enable_trajectory_postprocess:
+            self.config["trajectory_postprocess"] = self.get_trajectory_postprocess(scene)
+
         if scene.pbraudio.enable_forces_denoiser:
             self.config["denoiser"] = self.get_denoiser(scene)
 
@@ -65,6 +68,16 @@ class CollisionExporter:
         self.objects = []
         self.not_valid = []
         self.obj_idx = 0
+
+    def get_trajectory_postprocess(self, scene):
+        trajectory_postprocess = {}
+        trajectory_postprocess['bounce_threshold'] = scene.pbraudio.bounce_threshold
+        trajectory_postprocess['correction_strength'] = scene.pbraudio.correction_strength
+        trajectory_postprocess['smoothing_sigma'] = scene.pbraudio.smoothing_sigma
+        trajectory_postprocess['min_contact_duration'] = scene.pbraudio.min_contact_duration
+        trajectory_postprocess['max_velocity_change'] = scene.pbraudio.max_velocity_change
+        trajectory_postprocess['max_angular_velocity'] = scene.pbraudio.max_angular_velocity
+        return trajectory_postprocess
 
     def get_postprocess(self, scene):
         postprocess = {}

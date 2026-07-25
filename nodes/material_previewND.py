@@ -633,7 +633,7 @@ class AcousticMaterialPreviewNode(AcousticMaterialNode):
             ('SOLID_BAR', "Solid Bar", "Solid cylindrical bar for tonal balance"),
             ('MESH_OBJECT', "Mesh Object", "Use the mesh object assigned to this node tree"),
         ],
-        default='SOLID_BAR'
+        default='U_BAR'
     )
     
     # Contact area

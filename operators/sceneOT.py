@@ -155,11 +155,16 @@ class PBRAUDIO_OT_fracture(Operator):
                 export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
-            process = pbrAudio_fracture(config_file, status_file)
+            try:
+                process = pbrAudio_fracture(config_file, status_file)
+                # Monitor completion
+                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
+                self.report({'INFO'}, "Bake of fracture data for sound synthesis started")
+            except:
+                scene.pbraudio.shader_processing = False
+                scene.pbraudio.collision_collection['fracture'] = False
+                return {'CANCELLED'}
 
-            # Monitor completion
-            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
-            self.report({'INFO'}, "Bake of fracture data for sound synthesis started")
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_fracture)
@@ -216,10 +221,15 @@ class PBRAUDIO_OT_bake(Operator):
                 export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/bake"
-            process = pbrAudio_bake(config_file, status_file)
-            # Monitor completion
-            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
-            self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
+            try:
+                process = pbrAudio_bake(config_file, status_file)
+                # Monitor completion
+                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
+                self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
+            except:
+                scene.pbraudio.shader_processing = False
+                scene.pbraudio.collision_collection['bake'] = False
+                return {'CANCELLED'}
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_bake)
@@ -276,10 +286,15 @@ class PBRAUDIO_OT_prebake(Operator):
                 export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
-            process = pbrAudio_prebake(config_file, status_file)
-            # Monitor completion
-            bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
-            self.report({'INFO'}, "Prebaking of baked physics dynamics for sound synthesis started")
+            try:
+                process = pbrAudio_prebake(config_file, status_file)
+                # Monitor completion
+                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
+                self.report({'INFO'}, "Prebaking of baked physics dynamics for sound synthesis started")
+            except:
+                scene.pbraudio.shader_processing = False
+                scene.pbraudio.collision_collection['prebake'] = False
+                return {'CANCELLED'}
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_prebake)
@@ -365,7 +380,7 @@ class PBRAUDIO_OT_physics(Operator):
 #            if not scene.pbraudio.physics:
             if not scene.pbraudio.collision_collection['physics']:
                 cache_hash = self.compute_collision_hash(context)
-                if not scene.pbraudio.collision_collection['cache_hash'] == cache_hash:
+                if not scene.pbraudio.collision_collection['cache_hash'] == cache_hash and len(scene.pbraudio.collision_collection.objects.values()) == 0:
                     return {'CANCELLED'}
                 decimals = 18
                 fps = scene.render.fps
@@ -398,10 +413,15 @@ class PBRAUDIO_OT_physics(Operator):
                         export_path = f"{bpy.path.abspath(scene.pbraudio.cache_path)}"
                     config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
                     status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
-                    process = pbrAudio_physics(config_file, status_file)
+                    try:
+                        process = pbrAudio_physics(config_file, status_file)
+                        # Monitor completion
+                        bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
+                    except:
+                        scene.pbraudio.shader_processing = False
+                        scene.pbraudio.collision_collection['physics'] = True
+                        return {'CANCELLED'}
 
-                    # Monitor completion
-                    bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
         return {'FINISHED'}
 
 classes.append(PBRAUDIO_OT_physics)

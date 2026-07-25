@@ -70,7 +70,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         cache_is_valid = collision_collection['is_valid'] if collision_collection is not None and 'is_valid' in collision_collection.keys() else False
         row_clear_coll_cache = layout.row()
         row_clear_coll_cache.operator('scene.pbraudio_clear_coll_cache')
-        row_clear_coll_cache.enabled = True if not scene.pbraudio.shader_processing and not cache_is_valid else False
+        row_clear_coll_cache.enabled = True if not scene.pbraudio.shader_processing and cache_is_valid else False
         row_physics = layout.row()
         row_physics.operator('scene.pbraudio_physics')
         row_physics.enabled = True if not scene.pbraudio.shader_processing and cache_is_valid else False
@@ -516,10 +516,12 @@ class PBRAUDIO_PT_cache_panel(Panel):
 
         scene = context.scene
 
-        layout.enabled = not scene.pbraudio.cache_status
-        layout.operator('scene.pbraudio_clear_cache')
-        layout.enabled = not scene.pbraudio.shader_processing
-        layout.enabled = True if layout.enabled and not scene.pbraudio.cache_status else False
-        layout.prop(scene.pbraudio, "cache_path", toggle=scene.pbraudio.cache_status)
+        row_clear_cache = layout.row()
+        row_clear_cache.enabled = scene.pbraudio.cache_status and not scene.pbraudio.shader_processing
+        row_clear_cache.operator('scene.pbraudio_clear_cache')
+        row_cache_path = layout.row() 
+        row_cache_path.prop(scene.pbraudio, "cache_path", toggle=scene.pbraudio.cache_status)
+        row_cache_path.enabled = not scene.pbraudio.shader_processing
+        row_cache_path.enabled = True if row_cache_path.enabled and not scene.pbraudio.cache_status else False
 
 classes.append(PBRAUDIO_PT_cache_panel)

@@ -160,7 +160,7 @@ def generate_from_mesh(obj) -> ShapeGeometry:
         faces=np.array(faces, dtype=np.int32)
     )
 
-def get_cache_path(node) -> str:
+#def get_cache_path(node) -> str:
 #    """Get unique cache path for this node's preview"""
 #    # Create a unique hash based on node parameters
 #    params = f"{node.preview_shape}_{node.contact_area}_{node.force_value}_{node.impulse_duration}_{node.preview_duration}"
@@ -172,9 +172,9 @@ def get_cache_path(node) -> str:
 #            for prop in ['young_modulus', 'poisson_ratio', 'density', 'damping', 'friction', 'roughness', 'low_frequency', 'high_frequency']:
 #                if hasattr(n, f'pbraudio_{prop}'):
 #                    params += f"_{getattr(n, f'pbraudio_{prop}')}"
-    
-    # Use Blender's temp directory
-    return bpy.app.tempdir
+#    
+#    # Use Blender's temp directory
+#    return bpy.app.tempdir
 
 class PBRAUDIO_OT_preview_material(Operator):
     """Preview acoustic material sound"""
@@ -542,7 +542,8 @@ class PBRAUDIO_OT_preview_material(Operator):
                     return {'CANCELLED'}
             
             # Get cache path
-            cache_path = get_cache_path(node)
+#            cache_path = get_cache_path(node)
+            cache_path = bpy.app.tempdir
             os.makedirs(f"{cache_path}/data/preview", exist_ok=True)
             
             # Save mesh as npz

@@ -376,7 +376,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     """Scene properties for pbrAudio TrajectoryPostProcess"""
 
     enable_trajectory_postprocess: BoolProperty(
-        name="Trajectory Correction PostProcess",
+        name="Trajectory Correction",
         default=False
     )
 

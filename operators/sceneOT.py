@@ -29,6 +29,37 @@ from bpy.types import Operator
 
 from ..exporter.collision_exporter import CollisionExporter
 
+def _check_physics_completion(scene_name, processing, process, status_file):
+    """Check if the process has completed"""
+    scene = bpy.data.scenes.get(scene_name)
+    if not scene:
+        return None  # Scene was deleted
+    
+    # Update UI
+    for area in bpy.context.screen.areas:
+        area.tag_redraw()
+    
+    """Check if the process has completed"""
+    if not process.is_alive():
+        # Process finished
+        scene.pbraudio.shader_processing = False
+        scene.pbraudio.collision_collection[processing] = True
+        scene.pbraudio.cache_status = True
+        scene.pbraudio.status_progress = 1.0
+        return None
+    else:
+        # Update progress from status file
+        if os.path.exists(status_file):
+            try:
+                with open(status_file, 'r') as f:
+                    progress = f.read().strip()
+                    if progress:
+                        scene.pbraudio.status_progress = 0.5 + (float(progress) / 100)
+            except:
+                pass
+        # Continue timer
+        return 1.0
+
 def run_async(func):
     """Decorator to run function in background process"""
     @wraps(func)
@@ -305,38 +336,38 @@ class PBRAUDIO_OT_physics(Operator):
     bl_description = "Bake physics"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def update_progress(self, scene, status_file):
-        """Update progress from status file"""
-        if os.path.exists(status_file):
-            try:
-                with open(status_file, 'r') as f:
-                    progress = f.read().strip()
-                    if progress:
-                        scene.pbraudio.status_progress = 0.5 + (float(progress) / 100)
-                return True
-            except:
-                pass
-        return False
+#    def update_progress(self, scene, status_file):
+#        """Update progress from status file"""
+#        if os.path.exists(status_file):
+#            try:
+#                with open(status_file, 'r') as f:
+#                    progress = f.read().strip()
+#                    if progress:
+#                        scene.pbraudio.status_progress = 0.5 + (float(progress) / 100)
+#                return True
+#            except:
+#                pass
+#        return False
 
-    def check_completion(self, scene, process, status_file):
-        """Update UI"""
-        for area in bpy.context.screen.areas:
-            area.tag_redraw()
-        """Check if the process has completed"""
-        if not process.is_alive():
-            # Process finished
-            scene.pbraudio.shader_processing = False
-#            scene.pbraudio.physics = True
-            scene.pbraudio.collision_collection['physics'] = True
-            scene.pbraudio.cache_status = True
-            scene.pbraudio.status_progress = 1.0
-            self.report({'INFO'}, "Physics dynamics bake processing completed")
-            return None
-        else:
-            # Update progress
-            self.update_progress(scene, status_file)
-            # Continue timer
-            return 1.0
+#    def check_completion(self, scene, process, status_file):
+#        """Update UI"""
+#        for area in bpy.context.screen.areas:
+#            area.tag_redraw()
+#        """Check if the process has completed"""
+#        if not process.is_alive():
+#            # Process finished
+#            scene.pbraudio.shader_processing = False
+##            scene.pbraudio.physics = True
+#            scene.pbraudio.collision_collection['physics'] = True
+#            scene.pbraudio.cache_status = True
+#            scene.pbraudio.status_progress = 1.0
+#            self.report({'INFO'}, "Physics dynamics bake processing completed")
+#            return None
+#        else:
+#            # Update progress
+#            self.update_progress(scene, status_file)
+#            # Continue timer
+#            return 1.0
 
     def compute_collision_hash(self, context):
         """Compute a hash of the collision collection state"""
@@ -415,11 +446,17 @@ class PBRAUDIO_OT_physics(Operator):
                     status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/physicsEngine/bake"
                     try:
                         process = pbrAudio_physics(config_file, status_file)
-                        # Monitor completion
-                        bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
+                        # Monitor completion - use standalone function with scene name instead of reference
+                        scene_name = scene.name
+                        bpy.app.timers.register(lambda sn=scene_name, b='physics', p=process, sf=status_file: _check_physics_completion(sn, b, p, sf), first_interval=1.0)
+
+#                        process = pbrAudio_physics(config_file, status_file)
+#                        # Monitor completion
+#                        bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
                     except:
                         scene.pbraudio.shader_processing = False
                         scene.pbraudio.collision_collection['physics'] = True
+                        self.report({'ERROR'}, f"Failed to start physics processing: {str(e)}")
                         return {'CANCELLED'}
 
         return {'FINISHED'}

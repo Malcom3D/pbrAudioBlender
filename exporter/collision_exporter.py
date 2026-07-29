@@ -515,9 +515,11 @@ class CollisionExporter:
                 # Replace if object fills reasonable portion of bounding box
                 # (avoids replacing thin shells or sparse point clouds)
                 if volume_ratio > 0.1:
-                    if scene.pbraudio.proxy_size_threshold > max_dimension > scene.pbraudio.proxy_size_threshold * 0.9:
+                    if scene.pbraudio.proxy_size_threshold > max_dimension > (scene.pbraudio.proxy_size_threshold * 0.8):
+                        return 2
+                    elif (0.8 * scene.pbraudio.proxy_size_threshold) > max_dimension > (scene.pbraudio.proxy_size_threshold * 0.5):
                         return 1
-                    else:
+                    elif (0.5 * scene.pbraudio.proxy_size_threshold) > max_dimension:
                         return 0
 
         return False

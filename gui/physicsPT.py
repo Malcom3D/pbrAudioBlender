@@ -43,17 +43,16 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         # Draw progress bar if baking are processed
         if scene.pbraudio.shader_processing:
             layout.progress(factor=scene.pbraudio.status_progress, type='BAR')
-#            layout.prop(scene.pbraudio, "status_progress", text="Shader Progress", slider=True)
 
-        layout.enabled = not scene.pbraudio.shader_processing
-
-        layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
+        row_layout = layout.row()
+        row_layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         collision_collection = scene.pbraudio.collision_collection
         if collision_collection is not None and 'is_valid' in collision_collection.keys():
             if collision_collection['is_valid']:
-                layout.label(text="Cache Valid", icon='CHECKMARK')
+                row_layout.label(text="Cache Valid", icon='CHECKMARK')
             else:
-                layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
+                row_layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
+        row_layout.enabled = not scene.pbraudio.shader_processing
 
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)
         layout.prop(scene.pbraudio, "samples_per_object", text="Samples per Object", slider=True)

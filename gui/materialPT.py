@@ -84,10 +84,9 @@ class PBRAUDIO_PT_resonance_panel(Panel):
     def draw_header(self, context):
         obj = context.object
         layout = self.layout
-        if not obj.pbraudio.connected:
-            layout.prop(obj.pbraudio, "resonance", text="Enable Object Resonance")
-        else:
-            layout.label(text="Object Resonance")
+        row_layout = layout.row()
+        row_layout.prop(obj.pbraudio, "resonance", text="Enable Object Resonance")
+        row_layout.enabled = not obj.pbraudio.connected
     
     def draw(self, context):
         layout = self.layout
@@ -131,14 +130,15 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
     def draw_header(self, context):
         obj = context.object
         layout = self.layout
-        if not obj.pbraudio.resonance:
-            layout.prop(obj.pbraudio, "connected")
+        row_layout = layout.row()
+        row_layout.enabled = not obj.pbraudio.resonance
     
     def draw(self, context):
         obj = context.object
         layout = self.layout
-
-        if obj.pbraudio.connected and not obj.pbraudio.resonance:
+        layout.enabled = not obj.pbraudio.resonance
+   
+        if obj.pbraudio.connected:
         
             # Collection info
             collection = obj.users_collection[0]

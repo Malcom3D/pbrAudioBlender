@@ -493,6 +493,7 @@ class CollisionExporter:
         - Maximum dimension < proxy_size_threshold
         """
         # Avoid to proxy mesh with less than 7 vertices
+        # Avoid to proxy mesh with less than 4 vertices that are not manifold/watertight or not volume (trimesh.is_volume) or volume == 0 [pass faces to _should_replace_with_proxy]
         if vertices.shape[0] <= 6:
             return False
 

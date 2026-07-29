@@ -131,6 +131,7 @@ class PBRAUDIO_CONNECTED_object_list(Panel):
         obj = context.object
         layout = self.layout
         row_layout = layout.row()
+        row_layout.prop(obj.pbraudio, "connected")
         row_layout.enabled = not obj.pbraudio.resonance
     
     def draw(self, context):

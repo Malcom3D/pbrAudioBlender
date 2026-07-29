@@ -48,10 +48,11 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         row_layout.prop(scene.pbraudio, "collision_collection", text="Select Collection")
         collision_collection = scene.pbraudio.collision_collection
         if collision_collection is not None and 'is_valid' in collision_collection.keys():
+            valid_layout = layout.row()
             if collision_collection['is_valid']:
-                row_layout.label(text="Cache Valid", icon='CHECKMARK')
+                valid_layout.label(text="Cache Valid", icon='CHECKMARK')
             else:
-                row_layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
+                valid_layout.label(text="Cache Invalid - full re-bake required", icon='ERROR')
         row_layout.enabled = not scene.pbraudio.shader_processing
 
         layout.prop(scene.pbraudio, "collision_margin", text="Collision Margin", slider=True)

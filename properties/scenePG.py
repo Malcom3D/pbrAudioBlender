@@ -105,7 +105,7 @@ class PBRAudioSceneProperties(PropertyGroup):
                 self.collision_collection['bake'] = False
                 self.collision_collection['fracture'] = False
                 self.collision_collection['hi_res_face2face'] = False
-                self.collision_collection['modes_per_face'] = 1000
+                self.collision_collection['samples_per_face'] = 1000
                 self.collision_collection['small_proxy'] = False
                 self.collision_collection['proxy_size_threshold'] = 0.5
                 self.collision_collection['cache_hash'] = cache_hash
@@ -117,12 +117,24 @@ class PBRAudioSceneProperties(PropertyGroup):
             if not scene.pbraudio.collision_collection['small_proxy'] == self.enable_small_proxy:
                 scene.pbraudio.collision_collection['small_proxy'] = self.enable_small_proxy
 
+    def update_proxy_size(self, context):
+        scene = context.scene
+        if scene.pbraudio.collision_collection is not None:
+            if not scene.pbraudio.collision_collection['proxy_size_threshold'] == self.proxy_size_threshold:
+                scene.pbraudio.collision_collection['proxy_size_threshold'] = self.proxy_size_threshold
+
     def update_hig_res(self, context):
         scene = context.scene
         if scene.pbraudio.collision_collection is not None:
             if not scene.pbraudio.collision_collection['hi_res_face2face'] == self.hi_res_face2face:
                 scene.pbraudio.collision_collection['hi_res_face2face'] = self.hi_res_face2face
       
+    def update_samples_per_face(self, context):
+        scene = context.scene
+        if scene.pbraudio.collision_collection is not None:
+            if not scene.pbraudio.collision_collection['samples_per_face'] == self.samples_per_face:
+                scene.pbraudio.collision_collection['samples_per_face'] = self.samples_per_face
+
 #    """Scene properties for pbrAudio NodeTree"""
 #    acoustic_shader_type = EnumProperty(
 #        name="AcousticShaderType",
@@ -325,7 +337,8 @@ class PBRAudioSceneProperties(PropertyGroup):
         description="Max mesh size threshold for proxed mesh in meter",
         default=0.01,
         min=0,
-        soft_max=1
+        soft_max=1,
+        update=update_proxy_size
     )
 
     hi_res_face2face: BoolProperty(
@@ -339,8 +352,10 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Samples per face",
         default=1000,
         min=0,
-        max=99999999
+        max=99999999,
+        update=update_samples_per_face
     )
+
     samples_per_object: IntProperty(
         name="Samples per Object",
         default=1000,

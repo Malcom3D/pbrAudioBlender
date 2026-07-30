@@ -123,7 +123,7 @@ class PBRAudioSceneProperties(PropertyGroup):
             if not scene.pbraudio.collision_collection['proxy_size_threshold'] == self.proxy_size_threshold:
                 scene.pbraudio.collision_collection['proxy_size_threshold'] = self.proxy_size_threshold
 
-    def update_hig_res(self, context):
+    def update_hi_res(self, context):
         scene = context.scene
         if scene.pbraudio.collision_collection is not None:
             if not scene.pbraudio.collision_collection['hi_res_face2face'] == self.hi_res_face2face:

@@ -187,11 +187,10 @@ class PBRAUDIO_OT_fracture(Operator):
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/fractureEngine/bake"
             try:
-                process = pbrAudio_physics(config_file, status_file)
+                process = pbrAudio_fracture(config_file, status_file)
                 # Monitor completion - use standalone function with scene name instead of reference
                 scene_name = scene.name
                 bpy.app.timers.register(lambda sn=scene_name, b='fracture', p=process, sf=status_file: _check_process_completion(sn, b, p, sf), first_interval=1.0)
-#                process = pbrAudio_fracture(config_file, status_file)
 #                # Monitor completion
 #                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
                 self.report({'INFO'}, "Bake of fracture data for sound synthesis started")
@@ -257,11 +256,10 @@ class PBRAUDIO_OT_bake(Operator):
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/bake"
             try:
-                process = pbrAudio_physics(config_file, status_file)
+                process = pbrAudio_bake(config_file, status_file)
                 # Monitor completion - use standalone function with scene name instead of reference
                 scene_name = scene.name
                 bpy.app.timers.register(lambda sn=scene_name, b='bake', p=process, sf=status_file: _check_process_completion(sn, b, p, sf), first_interval=1.0)
-#                process = pbrAudio_bake(config_file, status_file)
 #                # Monitor completion
 #                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
                 self.report({'INFO'}, "Bake of prebaked data for sound synthesis started")
@@ -326,11 +324,10 @@ class PBRAUDIO_OT_prebake(Operator):
             config_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/config.json"
             status_file = f"{export_path}/{scene.pbraudio.collision_collection.name_full}/status/rigidBodyEngine/prebake"
             try:
-                process = pbrAudio_physics(config_file, status_file)
+                process = pbrAudio_prebake(config_file, status_file)
                 # Monitor completion - use standalone function with scene name instead of reference
                 scene_name = scene.name
                 bpy.app.timers.register(lambda sn=scene_name, b='prebake', p=process, sf=status_file: _check_process_completion(sn, b, p, sf), first_interval=1.0)
-#                process = pbrAudio_prebake(config_file, status_file)
 #                # Monitor completion
 #                bpy.app.timers.register(lambda: self.check_completion(scene, process, status_file), first_interval=1.0)
                 self.report({'INFO'}, "Prebaking of baked physics dynamics for sound synthesis started")

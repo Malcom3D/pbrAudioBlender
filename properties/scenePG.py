@@ -92,15 +92,37 @@ class PBRAudioSceneProperties(PropertyGroup):
             if 'cache_hash' in self.collision_collection.keys():
                 if not self.collision_collection['cache_hash'] == cache_hash:
                     self.collision_collection['is_valid'] = False
+                if not scene.pbraudio.hi_res_face2face == self.collision_collection['hi_res_face2face']:
+                    scene.pbraudio.hi_res_face2face = self.collision_collection['hi_res_face2face']
+                    scene.pbraudio.samples_per_face = self.collision_collection['samples_per_face']
+                if not scene.pbraudio.enable_small_proxy == self.collision_collection['small_proxy']:
+                    scene.pbraudio.enable_small_proxy = self.collision_collection['small_proxy']
+                    scene.pbraudio.proxy_size_threshold = self.collision_collection['proxy_size_threshold']
             else:
                 self.collision_collection['is_valid'] = True
                 self.collision_collection['physics'] = False
                 self.collision_collection['prebake'] = False
                 self.collision_collection['bake'] = False
                 self.collision_collection['fracture'] = False
+                self.collision_collection['hi_res_face2face'] = False
+                self.collision_collection['modes_per_face'] = 1000
+                self.collision_collection['small_proxy'] = False
+                self.collision_collection['proxy_size_threshold'] = 0.5
                 self.collision_collection['cache_hash'] = cache_hash
                 self.collision_collection['cache_path'] = f"{scene.pbraudio.cache_path}/{self.collision_collection.name_full}"
 
+    def update_small_proxy(self, context):
+        scene = context.scene
+        if scene.pbraudio.collision_collection is not None:
+            if not scene.pbraudio.collision_collection['small_proxy'] == self.enable_small_proxy:
+                scene.pbraudio.collision_collection['small_proxy'] = self.enable_small_proxy
+
+    def update_hig_res(self, context):
+        scene = context.scene
+        if scene.pbraudio.collision_collection is not None:
+            if not scene.pbraudio.collision_collection['hi_res_face2face'] == self.hi_res_face2face:
+                scene.pbraudio.collision_collection['hi_res_face2face'] = self.hi_res_face2face
+      
 #    """Scene properties for pbrAudio NodeTree"""
 #    acoustic_shader_type = EnumProperty(
 #        name="AcousticShaderType",
@@ -294,7 +316,8 @@ class PBRAudioSceneProperties(PropertyGroup):
     enable_small_proxy: BoolProperty(
         name="Small Mesh Proxy",
         description="Enable small mesh proxying",
-        default=False
+        default=False,
+        update=update_small_proxy
     )
 
     proxy_size_threshold: FloatProperty(
@@ -308,7 +331,8 @@ class PBRAudioSceneProperties(PropertyGroup):
     hi_res_face2face: BoolProperty(
         name="HiRes collision detection",
         description="Enable high resolution colliding faces detection",
-        default=False
+        default=False,
+        update=update_hi_res
     )
 
     samples_per_face: IntProperty(

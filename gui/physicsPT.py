@@ -119,7 +119,7 @@ class PBRAUDIO_PT_hi_res_face2face_panel(Panel):
         scene = context.scene
 
         # High Resolution Colliding Faces parameters
-        layout.enabled = scene.pbraudio.hi_res_face2face and not scene.pbraudio.cache_status
+        layout.enabled = scene.pbraudio.hi_res_face2face and not scene.pbraudio.collision_collection['physics']
         layout.prop(scene.pbraudio, "samples_per_face", slider=True)
 
 classes.append(PBRAUDIO_PT_hi_res_face2face_panel)

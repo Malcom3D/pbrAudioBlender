@@ -94,6 +94,36 @@ class PBRAUDIO_PT_Collision_panel(Panel):
 
 classes.append(PBRAUDIO_PT_Collision_panel)
 
+class PBRAUDIO_PT_hi_res_face2face_panel(Panel):
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_hi_res_face2face_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "physics"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "hi_res_face2face")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # High Resolution Colliding Faces parameters
+        layout.enabled = scene.pbraudio.hi_res_face2face and not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "samples_per_face", slider=True)
+
+classes.append(PBRAUDIO_PT_hi_res_face2face_panel)
+
 class PBRAUDIO_PT_small_mesh_proxy_panel(Panel):
     bl_label = ""
     bl_idname = "PBRAUDIO_PT_small_mesh_proxy_panel"

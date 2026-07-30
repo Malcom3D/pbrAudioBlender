@@ -305,6 +305,17 @@ class PBRAudioSceneProperties(PropertyGroup):
         soft_max=1
     )
 
+    hi_res_face2face: BoolProperty(
+        name="HiRes collision detection",
+        description="Enable high resolution colliding faces detection",
+        default=False
+
+    samples_per_face: IntProperty(
+        name="Samples per face",
+        default=1000,
+        min=0,
+        max=99999999
+    )
     samples_per_object: IntProperty(
         name="Samples per Object",
         default=1000,

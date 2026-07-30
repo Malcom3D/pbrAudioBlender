@@ -309,6 +309,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="HiRes collision detection",
         description="Enable high resolution colliding faces detection",
         default=False
+    )
 
     samples_per_face: IntProperty(
         name="Samples per face",

@@ -50,6 +50,8 @@ class CollisionExporter:
         system["modal_modes"] = scene.pbraudio.modal_modes
         system["collision_margin"] = scene.pbraudio.collision_margin
         system["samples_per_object"] = scene.pbraudio.samples_per_object
+        system["hi_res_face2face"] = scene.pbraudio.hi_res_face2face
+        system["samples_per_face"] = scene.pbraudio.samples_per_face
         system["cache_path"] = self.export_path
         system["enable_denoiser"] = scene.pbraudio.enable_forces_denoiser
         system["enable_postprocess"] = scene.pbraudio.enable_postprocess

@@ -31,7 +31,7 @@ from dataclasses import dataclass
 from typing import List, Tuple, Optional, Dict
 
 from .baseND import AcousticMaterialNode
-from physicsSolver import EntityManager
+from pbrAudioCommon import EntityManager
 from physicsSolver.lib.functions import _parse_lib
 from rigidBody import Mesh2Modal, RigidBodySynth, ConnectedBuffer
 

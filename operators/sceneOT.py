@@ -79,7 +79,7 @@ def run_async(func):
 
 @run_async
 def pbrAudio_physics(config_file: str, status_file: str):
-    from physicsSolver import EntityManager
+    from pbrAudioCommon import EntityManager
     from physicsSolver import physicsEngine
     em = EntityManager(config_file)
     phys = physicsEngine(em)
@@ -93,7 +93,7 @@ def pbrAudio_physics(config_file: str, status_file: str):
 
 @run_async
 def pbrAudio_prebake(config_file: str, status_file: str):
-    from physicsSolver import EntityManager
+    from pbrAudioCommon import EntityManager
     from rigidBody import rigidBodyEngine
     em = EntityManager(config_file)
     rbs = rigidBodyEngine(em)
@@ -107,7 +107,7 @@ def pbrAudio_prebake(config_file: str, status_file: str):
 
 @run_async
 def pbrAudio_bake(config_file: str, status_file: str):
-    from physicsSolver import EntityManager
+    from pbrAudioCommon import EntityManager
     from rigidBody import rigidBodyEngine
     em = EntityManager(config_file)
     rbs = rigidBodyEngine(em)
@@ -121,7 +121,7 @@ def pbrAudio_bake(config_file: str, status_file: str):
 
 @run_async
 def pbrAudio_fracture(config_file: str, status_file: str):
-    from physicsSolver import EntityManager
+    from pbrAudioCommon import EntityManager
     from fractureSound import fractureEngine
     em = EntityManager(config_file)
     fract = fractureEngine(em)

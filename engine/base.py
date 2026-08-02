@@ -24,11 +24,12 @@ from functools import wraps
 from bpy.types import RenderEngine
 from mathutils import Matrix, Vector
 
-from ..utils import frd_io, environment_json
-from ..exporter.render_exporter import RenderExporter
-from pbrAudioRay.core.entity_manager import EntityManager
+from pbrAudioCommon import EntityManager
 from pbrAudioRay.core.acoustic_engine import AcousticEngine
 from postProcess import AmbisonicDecoder
+
+from ..exporter.render_exporter import RenderExporter
+from ..utils import frd_io, environment_json
 
 classes = []
 

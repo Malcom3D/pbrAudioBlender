@@ -194,11 +194,11 @@ class PBRAudioObjectProperties(PropertyGroup):
     proxy_type: EnumProperty(
         name="Proxy Type",
         items=[
-            ('2', "LowRes", "Low resolution proxy: icosahedron"),
-            ('3', "MidRes", "Midium resolution proxy: icosahedron with 1 subdivision"),
-            ('4', "HiRes", "High resolution proxy: icosahedron with 2 subdivision"),
+            ('3', "LowRes", "Low resolution proxy: icosahedron"),
+            ('4', "MidRes", "Midium resolution proxy: icosahedron with 1 subdivision"),
+            ('5', "HiRes", "High resolution proxy: icosahedron with 2 subdivision"),
         ],
-        default='2',
+        default='3',
         options={'ANIMATABLE'}
     )
 

@@ -53,6 +53,7 @@ class CollisionExporter:
         system["hi_res_face2face"] = scene.pbraudio.hi_res_face2face
         system["samples_per_face"] = scene.pbraudio.samples_per_face
         system["cache_path"] = self.export_path
+        system["enable_proxy_synth"] = scene.pbraudio.enable_proxy_synth
         system["enable_denoiser"] = scene.pbraudio.enable_forces_denoiser
         system["enable_postprocess"] = scene.pbraudio.enable_postprocess
         system["enable_trajectory_postprocess"] = scene.pbraudio.enable_trajectory_postprocess
@@ -65,8 +66,7 @@ class CollisionExporter:
         if scene.pbraudio.enable_forces_denoiser:
             self.config["denoiser"] = self.get_denoiser(scene)
 
-        if scene.pbraudio.enable_proxy_synth:
-            self.config["enable_proxy_synth"] = scene.pbraudio.enable_proxy_synth
+#        if scene.pbraudio.enable_proxy_synth:
 #            self.config["enable_proxy_synth"] = self.get_proxy_synth(scene)
 
         if scene.pbraudio.enable_postprocess:

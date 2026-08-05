@@ -151,6 +151,7 @@ class PBRAUDIO_PT_small_mesh_proxy_panel(Panel):
         # Small Mesh Proxy parameters
         layout.enabled = scene.pbraudio.enable_small_proxy
         layout.prop(scene.pbraudio, "proxy_size_threshold", slider=True)
+        layout.prop(scene.pbraudio, "enable_proxy_synth")
 
 classes.append(PBRAUDIO_PT_small_mesh_proxy_panel)
 

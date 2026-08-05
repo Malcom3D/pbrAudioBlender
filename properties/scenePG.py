@@ -98,6 +98,8 @@ class PBRAudioSceneProperties(PropertyGroup):
                 if not scene.pbraudio.enable_small_proxy == self.collision_collection['small_proxy']:
                     scene.pbraudio.enable_small_proxy = self.collision_collection['small_proxy']
                     scene.pbraudio.proxy_size_threshold = self.collision_collection['proxy_size_threshold']
+                if not scene.pbraudio.enable_proxy_synth == self.collision_collection['enable_proxy_synth']:
+                    scene.pbraudio.enable_proxy_synth = self.collision_collection['enable_proxy_synth']
             else:
                 self.collision_collection['is_valid'] = True
                 self.collision_collection['physics'] = False
@@ -108,6 +110,7 @@ class PBRAudioSceneProperties(PropertyGroup):
                 self.collision_collection['samples_per_face'] = 1000
                 self.collision_collection['small_proxy'] = False
                 self.collision_collection['proxy_size_threshold'] = 0.5
+                self.collision_collection['enable_proxy_synth'] = False
                 self.collision_collection['cache_hash'] = cache_hash
                 self.collision_collection['cache_path'] = f"{scene.pbraudio.cache_path}/{self.collision_collection.name_full}"
 
@@ -116,6 +119,12 @@ class PBRAudioSceneProperties(PropertyGroup):
         if scene.pbraudio.collision_collection is not None:
             if not scene.pbraudio.collision_collection['small_proxy'] == self.enable_small_proxy:
                 scene.pbraudio.collision_collection['small_proxy'] = self.enable_small_proxy
+
+    def update_proxy_synth(self, context):
+        scene = context.scene
+        if scene.pbraudio.collision_collection is not None:
+            if not scene.pbraudio.collision_collection['enable_proxy_synth'] == self.enable_proxy_synth:
+                scene.pbraudio.collision_collection['enable_proxy_synth'] = self.enable_proxy_synth
 
     def update_proxy_size(self, context):
         scene = context.scene
@@ -339,6 +348,13 @@ class PBRAudioSceneProperties(PropertyGroup):
         min=0,
         soft_max=1,
         update=update_proxy_size
+    )
+
+    enable_proxy_synth: BoolProperty(
+        name="ProxySynth",
+        description="Enable small mesh proxy synthesizer",
+        default=False,
+        update=update_proxy_synth
     )
 
     hi_res_face2face: BoolProperty(

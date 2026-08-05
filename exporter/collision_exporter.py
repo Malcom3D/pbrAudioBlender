@@ -65,6 +65,10 @@ class CollisionExporter:
         if scene.pbraudio.enable_forces_denoiser:
             self.config["denoiser"] = self.get_denoiser(scene)
 
+        if scene.pbraudio.enable_proxy_synth:
+            self.config["enable_proxy_synth"] = scene.pbraudio.enable_proxy_synth
+#            self.config["enable_proxy_synth"] = self.get_proxy_synth(scene)
+
         if scene.pbraudio.enable_postprocess:
             self.config["postprocess"] = self.get_postprocess(scene)
 

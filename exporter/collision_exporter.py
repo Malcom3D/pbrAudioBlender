@@ -408,6 +408,8 @@ class CollisionExporter:
         object["proxy_type"] = False
         if obj.pbraudio.proxy:
             object["proxy_type"] = int(obj.pbraudio.proxy_type)
+            if int(obj.pbraudio.proxy_type) == 6:
+                object["min_detail_size"] = obj.pbraudio.min_detail_size
 
         # verify is not static
         if not np.all(location == location[0]) or not np.all(rotation == rotation[0]):

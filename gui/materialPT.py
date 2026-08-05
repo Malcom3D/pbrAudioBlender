@@ -62,6 +62,8 @@ class PBRAUDIO_PT_material_panel(Panel):
             layout.prop(snode, "proxy", toggle=True)
             if snode.proxy:
                 layout.prop(snode, "proxy_type", toggle=True)
+                if snode.proxy_type == 6:
+                    layout.prop(snode, "min_detail_size", toggle=True)
         else:
             layout.label(text='Acoustic World Domain.')
             layout.label(text='Settings are in the world panel.')

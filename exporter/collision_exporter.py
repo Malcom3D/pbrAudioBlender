@@ -57,6 +57,7 @@ class CollisionExporter:
         system["enable_denoiser"] = scene.pbraudio.enable_forces_denoiser
         system["enable_postprocess"] = scene.pbraudio.enable_postprocess
         system["enable_trajectory_postprocess"] = scene.pbraudio.enable_trajectory_postprocess
+        system["debug"] = True
         self.config = {}
         self.config["system"] = system
 

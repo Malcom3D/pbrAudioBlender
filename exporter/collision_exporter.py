@@ -277,7 +277,7 @@ class CollisionExporter:
                 if 'fractured' in action.data_path:
                     for keyframe in action.keyframe_points:
                         if keyframe.co[1] == 1:
-                            fractured = keyframe.co[0]
+                            fractured = keyframe.co[0] - frame_number
 
         # Clean up
         eval_obj.to_mesh_clear()

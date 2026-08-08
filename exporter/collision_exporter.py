@@ -277,7 +277,7 @@ class CollisionExporter:
                 if 'fractured' in action.data_path:
                     for keyframe in action.keyframe_points:
                         if keyframe.co[1] == 1:
-                            fractured = keyframe.co[0] - frame_number
+                            fractured = keyframe.co[0]
 
         # Clean up
         eval_obj.to_mesh_clear()
@@ -418,6 +418,7 @@ class CollisionExporter:
             rotation.append(frame_result['rotation'])
 
             if not frame_result['fractured'] == False:
+                frame_result['fractured'] -= start_frame
                 fractured = frame_result['fractured']
 
         location = np.round(np.array(location), self.decimals)

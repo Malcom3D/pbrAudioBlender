@@ -154,6 +154,8 @@ class CollisionExporter:
             if node.inputs[in_idx].is_linked:
                 previous_acoustic_dict = self.get_from_previous(node.inputs[in_idx].links[0].from_node)
                 if previous_acoustic_dict['type'] == 'AcousticShader':
+                    # Failure Stress
+                    previous_acoustic_dict['failure_stress'] = self._compute_failure_stress(previous_acoustic_dict['young_modulus'], previous_acoustic_dict['poisson_ratio'], previous_acoustic_dict['roughness'])
                     acoustic_dict = {**acoustic_dict, **previous_acoustic_dict}
                 elif previous_acoustic_dict['type'] == 'AcousticProperties':
                     acoustic_dict['acoustic_properties'] = previous_acoustic_dict
@@ -204,6 +206,27 @@ class CollisionExporter:
                 acoustic_shader = self.get_from_previous(output_node)
                     
         return acoustic_shader
+
+    def _compute_failure_stress(young_modulus: float, poisson_ratio: float, roughness: float = None):
+        """
+        Approximate the failure stress (Pa) from material physical parameters.
+        The failure stress is the maximum stress a material can withstand before fracture.
+        """
+        if poisson_ratio < 0.2:
+            failure_strain = 0.001      # very brittle
+        elif poisson_ratio < 0.3:
+            failure_strain = 0.003      # brittle
+        elif poisson_ratio < 0.4:
+            failure_strain = 0.01       # moderate ductility
+        else:
+            failure_strain = 0.05       # ductile (e.g., rubber-like)
+
+        # Clamp roughness to [0, 1] and apply a linear scale factor 1.0–1.5
+        roughness_factor = 1.0 + 0.5 * max(0.0, min(1.0, roughness))
+        failure_strain *= roughness_factor
+
+        # Failure stress = E * failure_strain
+        return young_modulus * failure_strain
 
     def triangulate_mesh(self, mesh):
         """Triangulate the mesh using bmesh"""

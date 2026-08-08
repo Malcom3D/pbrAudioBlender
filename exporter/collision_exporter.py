@@ -207,7 +207,7 @@ class CollisionExporter:
                     
         return acoustic_shader
 
-    def _compute_failure_stress(young_modulus: float, poisson_ratio: float, roughness: float = None):
+    def _compute_failure_stress(self, young_modulus: float, poisson_ratio: float, roughness: float = None):
         """
         Approximate the failure stress (Pa) from material physical parameters.
         The failure stress is the maximum stress a material can withstand before fracture.

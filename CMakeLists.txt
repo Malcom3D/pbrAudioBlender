@@ -101,19 +101,19 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-#ExternalProject_Add(
-#    networkx
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
-#    URL_HASH SHA256=cdb395b105806062473d3be36458d8f1459a4e4b98e236a66c3a48996e07684f
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    networkx
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/9e/c9/b2622292ea83fbb4ec318f5b9ab867d0a28ab43c5717bb85b0a5f6b3b0a4/networkx-3.6.1-py3-none-any.whl
+    URL_HASH SHA256=d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 #ExternalProject_Add(
 #    pympler
 #    PREFIX "blender"
@@ -880,7 +880,7 @@ if (NOT WIN32)
 #    DEPENDS pillow
     DEPENDS rtree
     DEPENDS python_fcl
-#    DEPENDS networkx
+    DEPENDS networkx
 #    DEPENDS pympler
     DEPENDS resampy
     DEPENDS trimesh
@@ -1003,7 +1003,7 @@ add_dependencies(blender fast-simplification)
 #  add_dependencies(blender pillow)
 add_dependencies(blender rtree)
 add_dependencies(blender python_fcl)
-#  add_dependencies(blender networkx)
+add_dependencies(blender networkx)
 #  add_dependencies(blender pympler)
 add_dependencies(blender resampy)
 add_dependencies(blender trimesh)

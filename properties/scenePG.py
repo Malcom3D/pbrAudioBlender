@@ -374,6 +374,7 @@ class PBRAudioSceneProperties(PropertyGroup):
 
     samples_per_object: IntProperty(
         name="Samples per Object",
+        description="Number of Samples per object as fallback in distance solver",
         default=1000,
         min=0,
         max=99999999
@@ -385,6 +386,14 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=20,
         min=1,
         max=100
+    )
+
+    voxel_size: FloatProperty(
+        name="Voxel Size",
+        description="Voxel size for modal model fallback and proxy mesh approximation in meter",
+        default=0.01,
+        min=0.00000000001,
+        soft_max=1,
     )
 
     fracture: BoolProperty(

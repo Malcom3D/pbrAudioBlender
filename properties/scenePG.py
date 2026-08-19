@@ -388,14 +388,6 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=100
     )
 
-    voxel_size: FloatProperty(
-        name="Voxel Size",
-        description="Voxel size for modal model fallback and proxy mesh approximation in meter",
-        default=0.01,
-        min=0.00000000001,
-        soft_max=1,
-    )
-
     fracture: BoolProperty(
         name="fracture",
         description="Bake fracture data for sound synthesis",

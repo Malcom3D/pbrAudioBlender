@@ -380,6 +380,14 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=99999999
     )
 
+    voxel_size: FloatProperty(
+        name="Voxel Size",
+        description="Voxel size for modal model fallback and proxy mesh approximation in meter",
+        default=0.01,
+        min=0.00000000001,
+        soft_max=1,
+    )
+
     modal_modes: IntProperty(
         name="Modal modes",
         description="Number of Modal Modes",

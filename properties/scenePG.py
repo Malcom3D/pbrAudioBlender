@@ -383,7 +383,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     voxel_size: FloatProperty(
         name="Voxel Size",
         description="Voxel size for modal model fallback and proxy mesh approximation in meter",
-        default=0.01,
+        default=0.1,
         min=0.00000000001,
         soft_max=1,
     )
@@ -724,6 +724,12 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
     
     # Audio-Force drived dynamic Amplification
+    postprocess_amplification_enabled: BoolProperty(
+        name="Dynamic Amplification",
+        description="Enable PostProcess Audio-Force drived dynamic Amplification",
+        default=True
+    )
+
     postprocess_target_rms: FloatProperty(
         name="Target RMS",
         description="PostProcess Target RMS Dynamic Amplification Level in dB",
@@ -733,7 +739,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     postprocess_max_gain_db: FloatProperty(
         name="Maximum Gain",
         description="PostProcess Maximum Dynamic Amplification Gain in dB",
-        default=20.0
+        default=24.0
     )
 
     postprocess_dynamic_range_compression: FloatProperty(

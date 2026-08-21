@@ -425,7 +425,7 @@ class PBRAUDIO_PT_postprocess_panel(Panel):
 classes.append(PBRAUDIO_PT_postprocess_panel)
 
 class PBRAUDIO_PT_postprocess_dynamic_amplify_panel(Panel):
-    bl_label = "Audio-Force drived dynamic Amplification"
+    bl_label = ""
     bl_idname = "PBRAUDIO_PT_postprocess_dynamic_amplify_panel"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -433,12 +433,18 @@ class PBRAUDIO_PT_postprocess_dynamic_amplify_panel(Panel):
     bl_parent_id = "PBRAUDIO_PT_postprocess_panel"
     bl_options = {'DEFAULT_CLOSED'}
 
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "postprocess_amplification_enabled")
+    
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
+        layout.enabled = scene.pbraudio.postprocess_amplification_enabled and not scene.pbraudio.cache_status
         layout.prop(scene.pbraudio, "postprocess_target_rms", slider=True)
         layout.prop(scene.pbraudio, "postprocess_max_gain_db", slider=True)
         layout.prop(scene.pbraudio, "postprocess_dynamic_range_compression", slider=True)

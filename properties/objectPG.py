@@ -197,18 +197,8 @@ class PBRAudioObjectProperties(PropertyGroup):
             ('3', "LowRes", "Low resolution proxy: icosahedron"),
             ('4', "MidRes", "Midium resolution proxy: icosahedron with 1 subdivision"),
             ('5', "HiRes", "High resolution proxy: icosahedron with 2 subdivision"),
-            ('6', "ConvexHull", "Detail sized proxy: Convex Hull of original mesh"),
         ],
         default='3',
-        options={'ANIMATABLE'}
-    )
-
-    min_detail_size: FloatProperty(
-        name="Detail size",
-        description="Minimum detail size for convex hull proxy",
-        default=0.01,
-        min=0,
-        soft_max=1,
         options={'ANIMATABLE'}
     )
 

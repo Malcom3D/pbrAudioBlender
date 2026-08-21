@@ -207,6 +207,8 @@ class PBRAudioObjectProperties(PropertyGroup):
         name="Detail size",
         description="Minimum detail size for convex hull proxy",
         default=0.01,
+        min=0,
+        soft_max=1,
         options={'ANIMATABLE'}
     )
 

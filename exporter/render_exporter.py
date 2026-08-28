@@ -23,6 +23,8 @@ import trimesh
 import os
 import json
 from mathutils import Matrix, Vector
+from psutil import cpu_count
+
 from ..utils import frd_io
 
 class RenderExporter:
@@ -82,6 +84,7 @@ class RenderExporter:
     def get_system_config(self):
         """Get system configuration"""
         system = {
+            "physical_core": cpu_count(logical=False),
             "output_format": self.scene.pbraudio.output_format,
             "sample_rate": self.scene.pbraudio.sample_rate,
             "bit_depth": self.scene.pbraudio.bit_depth.replace('BIT', ''),

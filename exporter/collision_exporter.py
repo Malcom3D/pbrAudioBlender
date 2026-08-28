@@ -25,6 +25,7 @@ import trimesh
 from mathutils import Matrix
 from bpy_extras.io_utils import axis_conversion
 from scipy.spatial import ConvexHull
+from psutil import cpu_count
 
 from ..utils import frd_io
 
@@ -41,6 +42,7 @@ class CollisionExporter:
         self.export_path = f"{export_path}/{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)
         system = {}
+        system["physical_core"] = cpu_count(logical=False)
         system["sample_rate"] = scene.pbraudio.sample_rate
         system["bit_depth"] = scene.pbraudio.bit_depth.replace('BIT', '')
         system["file_format"] = scene.pbraudio.file_format

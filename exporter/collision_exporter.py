@@ -27,6 +27,8 @@ from bpy_extras.io_utils import axis_conversion
 from scipy.spatial import ConvexHull
 from psutil import cpu_count
 
+from .particle_exporter import ParticleExporter
+
 from ..utils import frd_io
 
 class CollisionExporter:
@@ -78,6 +80,8 @@ class CollisionExporter:
         self.objects = []
         self.not_valid = []
         self.obj_idx = 0
+        self.particles = []
+        self.particle_idx = 0
 
     def get_trajectory_postprocess(self, scene):
         trajectory_postprocess = {}
@@ -522,6 +526,9 @@ class CollisionExporter:
             self.obj_idx += 1
         obj.select_set(False)            
 
+        # Export particle systems owned by object
+        self.export_particle_systems(obj, start_frame, end_frame)
+
     def _should_replace_with_proxy(self, scene, vertices: np.ndarray) -> bool:
         """
         Determine if an object should be replaced with an ellipsoidal proxy.
@@ -612,8 +619,69 @@ class CollisionExporter:
         # add objects to config
         self.config["objects"] = self.objects
 
+        # add objects to config
+        self.config["particles"] = self.particles
+
         # create config file
         config_file = f"{self.export_path}/config.json"
         js = json.dumps(self.config, indent=2, separators=(',', ': '))
         with open(config_file, 'w+') as json_file:
             json_file.write(js)
+
+    def export_particle_systems(self, obj: bpy.types.Object, start_frame: int = None, end_frame: int = None):
+        """
+        Export all particle systems on an object.
+        
+        Args:
+            obj: The object with particle systems
+            start_frame: First frame to export
+            end_frame: Last frame to export
+        """
+        if not obj.particle_systems:
+            return
+        
+        if start_frame is None:
+            start_frame = self.scene.frame_start
+        if end_frame is None:
+            end_frame = self.scene.frame_end
+        
+        # Create output directory for particles
+        particle_path = os.path.join(self.export_path, "data", "particles")
+        os.makedirs(particle_path, exist_ok=True)
+        
+        # Create particle exporter
+        particle_exporter = ParticleExporter(scene=self.scene, decimals=self.decimals)
+        
+        # Export each particle system
+        for psys in obj.particle_systems:
+            # Use per-material splitting for collection rendering
+            particle_config = particle_exporter.export_particle_system_by_material(
+                obj, self.particle_idx, psys, particle_path, start_frame, end_frame
+            )
+            
+            # If the particle system has multiple materials, create separate configs
+            if 'materials' in particle_config:
+                # Remove the materials key from the main config
+                materials = particle_config.pop('materials')
+                
+                # Keep the first material as the default
+                self.particles.append(particle_config)
+                self.particle_idx += 1
+                
+                # Create separate configs for additional materials
+                for mat_name, mat_data in materials.items():
+                    # Skip the first material (already added)
+                    if mat_name == list(materials.keys())[0]:
+                        continue
+                    
+                    # Create a copy of the particle config
+                    material_config = dict(particle_config)
+                    material_config['idx'] = self.particle_idx
+                    material_config['name'] = f"{particle_config['name']}_{mat_name.replace('.', '_')}"
+                    material_config['acoustic_shader'] = mat_data['acoustic_shader']
+                    
+                    self.particles.append(material_config)
+                    self.particle_idx += 1
+            else:
+                self.particles.append(particle_config)
+                self.particle_idx += 1

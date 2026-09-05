@@ -43,12 +43,6 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
     )
     
     # Export options
-    export_frames: BoolProperty(
-        name="Export All Frames",
-        description="Export all frames from start to end",
-        default=True,
-    )
-    
     start_frame: IntProperty(
         name="Start Frame",
         description="First frame to export",
@@ -63,18 +57,6 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         min=0,
     )
     
-    export_pose_only: BoolProperty(
-        name="Export Pose Only",
-        description="Export only pose data (no mesh geometry)",
-        default=False,
-    )
-    
-    export_mesh_data: BoolProperty(
-        name="Export Mesh Data",
-        description="Export mesh geometry data",
-        default=True,
-    )
-    
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
@@ -85,14 +67,9 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         box.label(text="Export Options", icon='EXPORT')
         box.prop(self, "export_frames")
         
-        if self.export_frames:
-            col = box.column(align=True)
-            col.prop(self, "start_frame")
-            col.prop(self, "end_frame")
-        
-        box.separator()
-        box.prop(self, "export_pose_only")
-        box.prop(self, "export_mesh_data")
+        col = box.column(align=True)
+        col.prop(self, "start_frame")
+        col.prop(self, "end_frame")
         
         # Show warning if no collection selected
         scene = context.scene
@@ -112,12 +89,8 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         # Get export parameters
         decimals = 18
         
-        if self.export_frames:
-            start_frame = self.start_frame
-            end_frame = self.end_frame
-        else:
-            start_frame = scene.frame_current
-            end_frame = start_frame
+        start_frame = self.start_frame
+        end_frame = self.end_frame
         
         try:
             # Create exporter
@@ -181,7 +154,7 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         scene = context.scene
         if scene.pbraudio.collision_collection:
             collection_name = scene.pbraudio.collision_collection.name
-            self.filepath = f"{collection_name}_collision_data.json"
+            self.filepath = f"{collection_name}/config.json"
         
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}

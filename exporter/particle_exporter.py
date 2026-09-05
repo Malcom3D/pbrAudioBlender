@@ -203,7 +203,7 @@ class ParticleExporter:
                             'position': position,
                             'rotation': (rot_0, rot_1, rot_2),
                             'size': size,
-                            'state':': 'alive'
+                            'state': 'alive'
                         }
                     elif child.alive_state == 'UNBORN':
                         particle_data[identifier] = {

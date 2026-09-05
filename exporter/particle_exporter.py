@@ -351,9 +351,6 @@ class ParticleExporter:
         # Get the render type of the particle system
         render_type = psys.settings.render_type
         
-        # Default: use emitter's acoustic material
-        acoustic_shader = self._get_acoustic_shader_from_object(obj)
-        
         if render_type == 'OBJECT':
             # Particle system renders as an object - use that object's material
             if psys.settings.instance_object:
@@ -370,6 +367,9 @@ class ParticleExporter:
                     if collection_obj.type == 'MESH':
                         acoustic_shader = self._get_acoustic_shader_from_object(collection_obj)
                         break
+        else:
+            # Default: use emitter's acoustic material
+            acoustic_shader = self._get_acoustic_shader_from_object(obj)
         
         return acoustic_shader
 
@@ -461,6 +461,7 @@ class ParticleExporter:
         
         # Get all materials from the collection objects
         materials = {}
+        material_to_object = {}  # Map material name to object name
         for collection_obj in collection.objects:
             if collection_obj.type == 'MESH':
                 for material_slot in collection_obj.material_slots:
@@ -471,31 +472,183 @@ class ParticleExporter:
                                 'object': collection_obj,
                                 'acoustic_shader': self._get_acoustic_shader_from_object(collection_obj)
                             }
+                            material_to_object[mat_name] = collection_obj.name
         
         if len(materials) == 1:
             # Only one material - use standard export
             return self.export_particle_system(obj, particle_idx, psys, output_path, start_frame, end_frame)
         
         # Multiple materials - split by material
-        # This is a simplified approach - for proper per-material splitting,
-        # you would need to track which particles use which material
-        # For now, we'll export the full system with the first material's shader
-        # and note the other materials in the config
+        if start_frame is None:
+            start_frame = self.scene.frame_start
+        if end_frame is None:
+            end_frame = self.scene.frame_end
         
-        particle_config = self.export_particle_system(obj, particle_idx, psys, output_path, start_frame, end_frame)
+        # Get the particle system name for file naming
+        psys_name = psys.name.replace('.', '_')
+        obj_name = obj.name.replace('.', '_')
         
-        # Add material information to the config
-        particle_config['materials'] = {
-            mat_name: {
+        # Create output directory
+        os.makedirs(output_path, exist_ok=True)
+        
+        # Collect particle data for all frames
+        all_particles = []
+        for frame in range(start_frame, end_frame + 1):
+            frame_data = self._collect_particles_at_frame(obj, psys, frame)
+            
+            # For collection rendering, we need to determine which material each particle uses
+            # by checking which collection object it instances
+            material_frame_data = {}
+            
+            
+            # Get the evaluated particle system to access instance information
+            self.scene.frame_set(frame)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            eval_obj = obj.evaluated_get(depsgraph)
+            
+            for psys_eval in eval_obj.particle_systems:
+                if psys_eval.name != psys.name:
+                    continue
+                
+                # Get particles with their instance information
+                for particle in psys_eval.particles:
+                    if particle.alive_state != 'ALIVE':
+                        continue
+                    
+                    identifier = self._get_particle_identifier(obj, psys, particle)
+                    
+                    # Determine which material this particle uses
+                    # For collection rendering, particles instance objects from the collection
+                    # The particle's rotation and location determine which object it instances
+                    material_name = self._get_particle_material(particle, psys, collection, material_to_object)
+                    
+                    if material_name:
+                        if material_name not in material_frame_data:
+                            material_frame_data[material_name] = {}
+                        
+                        # Copy particle data to material-specific dict
+                        if identifier in frame_data:
+                            material_frame_data[material_name][identifier] = frame_data[identifier]
+            
+            all_particles.append(material_frame_data)
+        
+        # Build master particle list for each material
+        material_configs = []
+        for mat_name, mat_data in materials.items():
+            # Get particles for this material across all frames
+            material_particles = [frame_data.get(mat_name, {}) for frame_data in all_particles]
+            
+            # Build master list for this material
+            self.master_particle_list = []
+            self.particle_index_map = {}
+            
+            for frame_data in material_particles:
+                for identifier in frame_data.keys():
+                    if identifier not in self.particle_index_map:
+                        self.particle_index_map[identifier] = len(self.master_particle_list)
+                        self.master_particle_list.append(identifier)
+            
+            if len(self.master_particle_list) == 0:
+                continue  # No particles for this material
+            
+            # Check if this material's particles are static
+            is_material_static = True
+            for particle_id in self.master_particle_list:
+                if not self._is_particle_static(material_particles, particle_id):
+                    is_material_static = False
+                    break
+            
+            # Create material-specific config
+            material_config = {
+                'idx': particle_idx,
+                'name': f"{obj_name}_{psys_name}_{mat_name.replace('.', '_')}",
+                'obj_path': output_path,
+                'static': is_material_static,
                 'acoustic_shader': mat_data['acoustic_shader']
             }
-            for mat_name, mat_data in materials.items()
-        }
+            
+            if is_material_static:
+                # Export single frame for static material
+                self._export_particle_frame(material_particles[0], 0, output_path, obj_name, f"{psys_name}_{mat_name.replace('.', '_')}", static=True, start_frame=start_frame)
+            else:
+                # Export all frames for this material
+                for i, frame_data in enumerate(material_particles):
+                    frame = start_frame + i
+                    self._export_particle_frame(frame_data, frame, output_path, obj_name, f"{psys_name}_{mat_name.replace('.', '_')}")
+            
+            material_configs.append(material_config)
+            particle_idx += 1
         
-        return particle_config
+        # If we have material configs, return the first one with materials info
+        if material_configs:
+            # Store all material configs for later processing
+            self._material_configs = material_configs
+            
+            # Return the first config with all materials info
+            first_config = material_configs[0].copy()
+            first_config['materials'] = {
+                mat_name: {
+                    'acoustic_shader': mat_data['acoustic_shader']
+                }
+                for mat_name, mat_data in materials.items()
+                if any(config['name'].endswith(mat_name.replace('.', '_')) for config in material_configs)
+            }
+            
+            return first_config
+        
+        # No materials found - fallback to standard export
+        return self.export_particle_system(obj, particle_idx, psys, output_path, start_frame, end_frame)
 
-    def _export_particle_frame(self, frame_data: Dict[str, Dict], frame: int, output_path: str, 
-                              obj_name: str, psys_name: str, static: bool = False, start_frame: int = None):
+    def _get_particle_material(self, particle, psys, collection, material_to_object):
+        """
+        Determine which material a particle uses based on its instance object.
+        
+        For collection rendering, particles instance objects from the collection.
+        We need to figure out which object each particle instances and thus which material it uses.
+        """
+        # Check if particle has instance information
+        if hasattr(particle, 'instanceinstance_object') and particle.instance_object:
+            # Direct instance object reference
+            if particle.instance_object.name in material_to_object.values():
+                # Find the material for this object
+                for mat_name, obj_name in material_to_object.items():
+                    if particle.instance_object.name == obj_name:
+                        return mat_name
+        elif hasattr(particle, 'instance_collection') and particle.instance_collection:
+            # Instance collection - check which object in the collection
+            pass
+        else:
+            # For collection rendering, particles are distributed among collection objects
+            # We can use the particle's index or random value to determine which object it instances
+            # This is a simplified approach - in reality, Blender uses a more complex distribution
+            
+            # Get the collection objects that have materials
+            mat_objects = list(material_to_object.keys())
+            if not mat_objects:
+                return None
+            
+            # Use particle's random value or index to distribute
+            if hasattr(particle, 'random'):
+                # Use particle's random value for distribution
+                random_value = particle.random
+            elif hasattr(particle, 'index'):
+                # Use particle index as fallback
+                random_value = particle.index / max(psys.settings.count, 1)
+            else:
+                random_value = 0.5
+            
+            # Simple distribution based on random value
+            # This assumes equal distribution among objects
+            # For more accurate results, you'd need to check the actual instance
+            num_objects = len(mat_objects)
+            object_idx = int(random_value * num_objects)
+            object_idx = min(object_idx, num_objects - 1)
+            
+            return mat_objects[object_idx]
+        
+        return None
+
+    def _export_particle_frame(self, frame_data: Dict[str, Dict], frame: int, output_path: str, obj_name: str, psys_name: str, static: bool = False, start_frame: int = None):
         """
         Export a single frame of particle data to npz format.
         
@@ -517,7 +670,7 @@ class ParticleExporter:
             if particle_id in frame_data:
                 data = frame_data[particle_id]
                 positions[index] = data['position']
-                rotations[index] = data['['rotation']
+                rotations[index] = data['rotation']
                 sizes[index] = data['size']
                 
                 if data['state'] == 'alive':
@@ -556,7 +709,6 @@ class ParticleExporter:
         
         print(f"  Exported frame {frame}: {num_particles} particles -> {filename}")
     
-    # Update the export_all_particle_systems method to use per-material splitting:
     def export_all_particle_systems(self, obj: bpy.types.Object, output_path: str, start_frame: int = None, end_frame: int = None):
         """Export all particle systems on an object"""
         if not obj.particle_systems:

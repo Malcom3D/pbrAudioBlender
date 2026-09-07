@@ -218,7 +218,7 @@ class CollisionExporter:
             acoustic_shader['friction'] = 0.5
             acoustic_shader['roughness'] = 0.4
             acoustic_shader['low_frequency'] = 5.0
-            acoustic_shader['high_frequency'] = self.config.system["sample_rate"]/2
+            acoustic_shader['high_frequency'] = self.config["system"]["sample_rate"]/2
                     
         return acoustic_shader
 
@@ -424,6 +424,7 @@ class CollisionExporter:
         # If do not own acoustic shader export only particles if exist
         if obj.pbraudio.nodetree == None and not obj.particle_systems.values() == []:
             self.export_particle_systems(obj, start_frame, end_frame)
+            return
 
         frame_data = {}
         fractured = False

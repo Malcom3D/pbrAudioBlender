@@ -202,14 +202,23 @@ class CollisionExporter:
     def get_acoustic_properties_from_material(self, obj):
         """Get acoustic properties from the acoustic material node chain"""
 
-        # ADD DEFAULT VALUE IF OBJECT HAVE NO MATERIAL
         acoustic_shader = {}
-
-        nodetree = obj.pbraudio.nodetree
-        for key in nodetree.nodes.keys():
-            if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
-                output_node = nodetree.nodes[key]
-                acoustic_shader = self.get_from_previous(output_node)
+        if obj.pbraudio.nodetree is not None:
+            nodetree = obj.pbraudio.nodetree
+            for key in nodetree.nodes.keys():
+                if nodetree.nodes[key].pbraudio_type == 'MaterialOutput':
+                    output_node = nodetree.nodes[key]
+                    acoustic_shader = self.get_from_previous(output_node)
+        else:
+            acoustic_shader['sound_speed'] = 5000.0
+            acoustic_shader['young_modulus'] = 0.005
+            acoustic_shader['poisson_ratio'] = 0.46
+            acoustic_shader['density'] = 800
+            acoustic_shader['damping'] = 5
+            acoustic_shader['friction'] = 0.5
+            acoustic_shader['roughness'] = 0.4
+            acoustic_shader['low_frequency'] = 5.0
+            acoustic_shader['high_frequency'] = self.config.system["sample_rate"]/2
                     
         return acoustic_shader
 
@@ -411,7 +420,11 @@ class CollisionExporter:
             start_frame = scene.frame_current
         if end_frame is None:
             end_frame = start_frame
-        
+
+        # If do not own acoustic shader export only particles if exist
+        if obj.pbraudio.nodetree == None and not obj.particle_systems.values() == []:
+            self.export_particle_systems(obj, start_frame, end_frame)
+
         frame_data = {}
         fractured = False
         location, rotation = ([] for _ in range(2))
@@ -527,7 +540,8 @@ class CollisionExporter:
         obj.select_set(False)            
 
         # Export particle systems owned by object
-        self.export_particle_systems(obj, start_frame, end_frame)
+        if not obj.particle_systems.values() == []:
+            self.export_particle_systems(obj, start_frame, end_frame)
 
     def _should_replace_with_proxy(self, scene, vertices: np.ndarray) -> bool:
         """
@@ -619,7 +633,7 @@ class CollisionExporter:
         # add objects to config
         self.config["objects"] = self.objects
 
-        # add objects to config
+        # add particles to config
         self.config["particles"] = self.particles
 
         # create config file
@@ -637,20 +651,22 @@ class CollisionExporter:
             start_frame: First frame to export
             end_frame: Last frame to export
         """
+        scene = bpy.context.scene
+        
         if not obj.particle_systems:
             return
-        
+
         if start_frame is None:
-            start_frame = self.scene.frame_start
+            start_frame = scene.frame_start
         if end_frame is None:
-            end_frame = self.scene.frame_end
+            end_frame = scene.frame_end
         
         # Create output directory for particles
         particle_path = os.path.join(self.export_path, "data", "particles")
         os.makedirs(particle_path, exist_ok=True)
         
         # Create particle exporter
-        particle_exporter = ParticleExporter(scene=self.scene, decimals=self.decimals)
+        particle_exporter = ParticleExporter(scene=scene, decimals=self.decimals)
         
         # Export each particle system
         for psys in obj.particle_systems:

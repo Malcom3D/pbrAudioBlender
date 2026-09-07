@@ -65,7 +65,6 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         # Export options
         box = layout.box()
         box.label(text="Export Options", icon='EXPORT')
-        box.prop(self, "export_frames")
         
         col = box.column(align=True)
         col.prop(self, "start_frame")

@@ -38,19 +38,6 @@ class ParticleExporter:
         self.master_particle_list = []  # List of particle identifiers
         self.particle_index_map = {}  # identifier -> index
         
-    def _get_particle_identifier(self, obj: bpy.types.Object, psys: bpy.types.ParticleSystem, particle: bpy.types.Particle) -> str:
-        """Create a unique identifier for a particle"""
-        # Use particle.id if available, otherwise use index
-        if hasattr(particle, 'id') and particle.id != -1:
-            return f"{obj.name}_{psys.name}_{particle.id}"
-        else:
-            # Fallback to persistent index if available
-            if hasattr(particle, 'persistent_index'):
-                return f"{obj.name}_{psys.name}_{particle.persistent_index}"
-            else:
-                # Use the particle's index in the system
-                return f"{obj.name}_{psys.name}_{particle.index}"
-    
     def _get_particle_rotation(self, particle: bpy.types.Particle) -> Tuple[float, float, float, float]:
         """Extract particle rotation as quaternion"""
         if hasattr(particle, 'rotation') and particle.rotation:
@@ -71,22 +58,7 @@ class ParticleExporter:
     def _get_particle_size(self, particle: bpy.types.Particle, psys: bpy.types.ParticleSystem) -> Tuple[float, float, float]:
         """Extract particle size (can be anisotropic with size_random)"""
         # Base size
-        base_size = particle.size
-        
-        # Check if particle system uses size randomization
-        if psys.settings.use_size_random:
-            # Particle size is already randomized per-particle
-            size_x = size_y = size_z = base_size
-        else:
-            size_x = size_y = size_z = base_size
-        
-        # Check for anisotropic scaling (if available)
-        if hasattr(particle, 'size_x'):
-            size_x = particle.size_x
-        if hasattr(particle, 'size_y'):
-            size_y = particle.size_y
-        if hasattr(particle, 'size_z'):
-            size_z = particle.size_z
+        size_x = size_y = size_z = particle.size
         
         # Apply scale factor
         size_x *= self.scale_factor
@@ -132,9 +104,9 @@ class ParticleExporter:
             particles = psys_eval.particles
             
             # Process each particle
-            for particle in particles:
+            for index, particle in particles.items():
                 # Get particle identifier
-                identifier = self._get_particle_identifier(obj, psys, particle)
+                identifier = f"{obj.name}_{psys.name}_{index}"
                 
                 # Check particle state
                 is_alive = particle.alive_state == 'ALIVE'
@@ -187,17 +159,18 @@ class ParticleExporter:
                     }
             
             # Handle children particles
-            if psys.settings.child_nbr > 0:
+#            if psys.settings.child_nbr > 0:
+#            if psys.settings.child_type is not None:
                 child_particles = psys_eval.child_particles
-                for child in child_particles:
-                    identifier = self._get_particle_identifier(obj, psys, child)
+                for index, child in child_particles.items():
+                    identifier = f"{obj.name}_{psys.name}_{psys.settings.child_type}_{index}"
                     
                     if child.alive_state == 'ALIVE':
                         position = self._get_particle_position(child, obj)
                         rotation = self._get_particle_rotation(child)
                         size = self._get_particle_size(child, psys)
                         
-                        rot_0, rot_1, rot_2 = self._getget_particle_euler_rotation(rotation)
+                        rot_0, rot_1, rot_2 = self._get_particle_euler_rotation(rotation)
                         
                         particle_data[identifier] = {
                             'position': position,
@@ -511,11 +484,11 @@ class ParticleExporter:
                     continue
                 
                 # Get particles with their instance information
-                for particle in psys_eval.particles:
+                for index, particle in psys_eval.particles.items():
                     if particle.alive_state != 'ALIVE':
                         continue
                     
-                    identifier = self._get_particle_identifier(obj, psys, particle)
+                    identifier = f"{obj.name}_{psys.name}_{index}"
                     
                     # Determine which material this particle uses
                     # For collection rendering, particles instance objects from the collection

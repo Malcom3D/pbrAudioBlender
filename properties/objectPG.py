@@ -202,6 +202,14 @@ class PBRAudioObjectProperties(PropertyGroup):
         options={'ANIMATABLE'}
     )
 
+    """Particles properties for pbrAudio Object"""
+    particles_proxy: BoolProperty(
+        name="Particles Proxy",
+        description="if True the particleSound synthesizer keep in account only the surface voxels where collisions occur",
+        default=True,
+        options={'ANIMATABLE'}
+    )
+
     """Fractured Object properties for pbrAudio"""
     fractured: BoolProperty(
         name="Object is fractured",

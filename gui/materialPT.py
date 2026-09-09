@@ -97,6 +97,27 @@ class PBRAUDIO_PT_resonance_panel(Panel):
 
 classes.append(PBRAUDIO_PT_resonance_panel)
 
+class PBRAUDIO_PT_particles_panel(Panel):
+    """Panel for pbrAudio particles settings"""
+    bl_label = 'Object Particles'
+    bl_idname = 'PBRAUDIO_PT_particles_panel'  
+    bl_space_type = 'PROPERTIES' 
+    bl_region_type = 'WINDOW'
+    bl_context = 'material'
+            
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO' and context.object is not None
+        
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+    
+        if not obj.particle_systems.values() == []:
+            layout.prop(obj.pbraudio, "particles_proxy")
+            
+classes.append(PBRAUDIO_PT_particles_panel)
+
 class PBRAUDIO_CONNECTED_UL_object_list(UIList):
     """UIList for displaying objects with float values"""
     

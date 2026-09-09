@@ -25,10 +25,11 @@ from typing import Dict, List, Tuple, Optional, Set
 class ParticleExporter:
     """Exporter for Blender particle systems to 3DGS-compatible format"""
     
-    def __init__(self, scene: bpy.types.Scene, decimals: int = 18):
+    def __init__(self, scene: bpy.types.Scene, decimals: int = 18, chunk_size: int = 10000):
         self.scene = scene
         self.decimals = decimals
         self.scale_factor = 1.0  # Blender units to meters
+        self.chunk_size = chunk_size  # Process particles in chunks
         
         # Track particle data across frames
         self.particle_data = {}  # particle_id -> {frame: data}
@@ -47,7 +48,7 @@ class ParticleExporter:
             # Calculate rotation from velocity direction
             velocity = particle.velocity
             if velocity.length > 0.001:
-                # Create rotation that aligns Z axis with velocity
+                # Create Create rotation that aligns Z axis with velocity
                 direction = velocity.normalized()
                 quat = Vector((0, 0, 1)).rotation_difference(direction)
                 return quat
@@ -159,39 +160,37 @@ class ParticleExporter:
                     }
             
             # Handle children particles
-#            if psys.settings.child_nbr > 0:
-#            if psys.settings.child_type is not None:
-                child_particles = psys_eval.child_particles
-                for index, child in child_particles.items():
-                    identifier = f"{obj.name}_{psys.name}_{psys.settings.child_type}_{index}"
+            child_particles = psys_eval.child_particles
+            for index, child in child_particles.items():
+                identifier = f"{obj.name}_{psys.name}_{psys.settings.child_type}_{index}"
+                
+                if child.alive_state == 'ALIVE':
+                    position = self._get_particle_position(child, obj)
+                    rotation = self._get_particle_rotation(child)
+                    size = self._get_particle_size(child, psys)
                     
-                    if child.alive_state == 'ALIVE':
-                        position = self._get_particle_position(child, obj)
-                        rotation = self._get_particle_rotation(child)
-                        size = self._get_particle_size(child, psys)
-                        
-                        rot_0, rot_1, rot_2 = self._get_particle_euler_rotation(rotation)
-                        
-                        particle_data[identifier] = {
-                            'position': position,
-                            'rotation': (rot_0, rot_1, rot_2),
-                            'size': size,
-                            'state': 'alive'
-                        }
-                    elif child.alive_state == 'UNBORN':
-                        particle_data[identifier] = {
-                            'position': (0, 0, 0),
-                            'rotation': (0, 0, 0),
-                            'size': (0, 0, 0),
-                            'state': 'unborn'
-                        }
-                    elif child.alive_state == 'DEAD':
-                        particle_data[identifier] = {
-                            'position': (0, 0, 0),
-                            'rotation': (0, 0, 0),
-                            'size': (0, 0, 0),
-                            'state': 'dead'
-                        }
+                    rot_0, rot_1, rot_2 = self._get_particle_euler_rotation(rotation)
+                    
+                    particle_data[identifier] = {
+                        'position': position,
+                        'rotation': (rot_0, rot_1, rot_2),
+                        'size': size,
+                        'state': 'alive'
+                    }
+                elif child.alive_state == 'UNBORN':
+                    particle_data[identifier] = {
+                        'position': (0, 0, 0),
+                        'rotation': (0, 0, 0),
+                        'size': (0, 0, 0),
+                        'state': 'unborn'
+                    }
+                elif child.alive_state == 'DEAD':
+                    particle_data[identifier] = {
+                        'position': (0, 0, 0),
+                        'rotation': (0, 0, 0),
+                        'size': (0, 0, 0),
+                        'state': 'dead'
+                    }
         
         return particle_data
     
@@ -204,45 +203,71 @@ class ParticleExporter:
             return (world_location.x, world_location.y, world_location.z)
         return (0, 0, 0)
     
-    def _build_master_particle_list(self, all_particles: List[Dict[str, Dict]], start_frame: int, end_frame: int) -> None:
-        """Build the master list of all particles for consistent indexing"""
-        self.master_particle_list = []
-        self.particle_index_map = {}
+    def _export_particle_frame(self, frame_data: Dict[str, Dict], frame: int, output_path: str, obj_name: str, psys_name: str, static: bool = False, start_frame: int = None):
+        """
+        Export a single frame of particle data to npz format.
         
-        # Collect all unique particle identifiers
-        for frame_data in all_particles:
-            for identifier in frame_data.keys():
-                if identifier not in self.particle_index_map:
-                    self.particle_index_map[identifier] = len(self.master_particle_list)
-                    self.master_particle_list.append(identifier)
-    
-    def _is_particle_static(self, particle_data: List[Dict], particle_id: str) -> bool:
-        """Check if a particle is static across all frames"""
-        positions = []
-        rotations = []
-        sizes = []
+        The format follows the 3DGS PLY structure:
+:
+        - position: (x, y, z)
+        - rotation: (rot_0, rot_1, rot_2) - euler angles
+        - size: (size_x, size_y, size_z)
+        """
+        num_particles = len(self.master_particle_list)
         
-        for frame_data in particle_data:
+        # Initialize arrays
+        positions = np.zeros((num_particles, 3), dtype=np.float32)
+        rotations = np.zeros((num_particles, 3), dtype=np.float32)
+        sizes = np.zeros((num_particles, 3), dtype=np.float32)
+        states = np.zeros(num_particles, dtype=np.int8)  # 0=dead, 1=alive, 2=unborn
+        
+        # Fill arrays
+        for particle_id, index in self.particle_index_map.items():
             if particle_id in frame_data:
                 data = frame_data[particle_id]
+                positions[index] = data['position']
+                rotations[index] = data['rotation']
+                sizes[index] = data['size']
+                
                 if data['state'] == 'alive':
-                    positions.append(data['position'])
-                    rotations.append(data['rotation'])
-                    sizes.append(data['size'])
+                    states[index] = 1
+                elif data['state'] == 'unborn':
+                    states[index] = 2
+                else:  # dead
+                    states[index] = 0
+            else:
+                # Particle not in this frame - mark as dead
+                states[index] = 0
         
-        if len(positions) < 2:
-            return True  # Not enough data to determine movement
+        # Round to specified decimals
+        if self.decimals is not None:
+            positions = np.round(positions, self.decimals)
+            rotations = np.round(rotations, self.decimals)
+            sizes = np.round(sizes, self.decimals)
         
-        # Check if all positions are the same
-        positions_array = np.array(positions)
-        rotations_array = np.array(rotations)
-        sizes_array = np.array(sizes)
+        # Create data dictionary
+        data = {
+            'positions': positions,
+            'rotations': rotations,
+            'sizes': sizes,
+            'states': states,
+            'particle_count': num_particles
+        }
         
-        position_static = np.all(np.abs(positions_array - positions_array[0]) < 1e-6)
-        rotation_static = np.all(np.abs(rotations_array - rotations_array[0]) < 1e-6)
-        size_static = np.all(np.abs(sizes_array - sizes_array[0]) < 1e-6)
+        # Save to file
+        if static:
+            filename = f"{obj_name}_{psys_name}.npz"
+        else:
+            filename = f"{obj_name}_{psys_name}_{frame:05d}.npz"
         
-        return position_static and rotation_static and size_static
+        output_file = os.path.join(output_path, filename)
+        np.savez_compressed(output_file, **data)
+        
+        print(f"  Exported frame {frame}: {num_particles} particles -> {filename}")
+        
+        # Clear frame data to free memory
+        del frame_data
+        del data
     
     def export_particle_system(self, obj: bpy.types.Object, particle_idx: int, psys: bpy.types.ParticleSystem, output_path: str, start_frame: int = None, end_frame: int = None):
         """
@@ -269,6 +294,7 @@ class ParticleExporter:
         obj_name = obj.name.replace('.', '_')
 
         particle_config['name'] = f"{obj_name}_{psys_name}"
+        particle_config['proxy'] = int(obj.pbraudio.particles_proxy)
         
         output_path = f"{output_path}/{obj_name}_{psys_name}"
 
@@ -277,21 +303,36 @@ class ParticleExporter:
         # Create output directory
         os.makedirs(output_path, exist_ok=True)
         
-        # Collect particle data for all frames
-        all_particles = []
+        # First pass: Collect particle identifiers across all frames
+        # This is done without storing all frame data
+        print("First pass: Collecting particle identifiers...")
+        
+        # Use a set to track unique particles across frames
+        all_particle_ids = set()
+        
+        # Process frames in the first pass to collect particle IDs
         for frame in range(start_frame, end_frame + 1):
             frame_data = self._collect_particles_at_frame(obj, psys, frame)
-            all_particles.append(frame_data)
+            
+            # Add all particle IDs from this frame
+            for particle_id in frame_data.keys():
+                all_particle_ids.add(particle_id)
+            
+            # Clear frame data to free memory
+            del frame_data
         
-        # Build master particle list for consistent indexing
-        self._build_master_particle_list(all_particles, start_frame, end_frame)
+        # Build master particle list
+        self.master_particle_list = list(all_particle_ids)
+        self.particle_index_map = {particle_id: idx for idx, particle_id in enumerate(self.master_particle_list)}
+        
+        # Clear the set as we have the list now
+        del all_particle_ids
+        
+        print(f"Total unique particles: {len(self.master_particle_list)}")
         
         # Check if the entire particle system is static
-        is_system_static = True
-        for particle_id in self.master_particle_list:
-            if not self._is_particle_static(all_particles, particle_id):
-                is_system_static = False
-                break
+        # We'll check a few frames to determine if static
+        is_system_static = self._is_system_static(obj, psys, start_frame, end_frame)
         
         particle_config['static'] = is_system_static
 
@@ -299,20 +340,80 @@ class ParticleExporter:
         acoustic_shader = self._get_particle_acoustic_shader(obj, psys, particle_config)
         particle_config['acoustic_shader'] = acoustic_shader
 
+        # Second pass: Export frames
+        print("Second pass: Exporting frames...")
+        
         if is_system_static:
             # Export single frame for static system
-            self._export_particle_frame(all_particles[0], 0, output_path, obj_name, psys_name, static=True, start_frame=start_frame)
+            frame_data = self._collect_particles_at_frame(obj, psys, start_frame)
+            self._export_particle_frame(frame_data, 0, output_path, obj_name, psys_name, static=True, start_frame=start_frame)
+            del frame_data  # Free memory
         else:
             # Export all frames
-            for i, frame_data in enumerate(all_particles):
-                frame = start_frame + i
+            for i, frame in enumerate(range(start_frame, end_frame + 1)):
+                frame_data = self._collect_particles_at_frame(obj, psys, frame)
                 self._export_particle_frame(frame_data, frame, output_path, obj_name, psys_name)
+                del frame_data  # Free memory after each frame
         
         print(f"Exported particle system '{psys.name}' from {start_frame} to {end_frame}")
         print(f"  Total particles: {len(self.master_particle_list)}")
         print(f"  Static: {is_system_static}")
 
+        # Clear memory
+        self.master_particle_list = []
+        self.particle_index_map = {}
+
         return particle_config
+
+    def _is_system_static(self, obj: bpy.types.Object, psys: bpy.types.ParticleSystem, start_frame: int, end_frame: int) -> bool:
+        """
+        Check if the particle system is static by sampling frames.
+        
+        Instead of checking all frames, we sample a few frames to determine if static.
+        """
+        # Sample up to 3 frames (start, middle, end)
+        sample_frames = set()
+        sample_frames.add(start_frame)
+        sample_frames.add(end_frame)
+        sample_frames.add((start_frame + end_frame) // 2)
+        
+        # Remove duplicates and sort
+        sample_frames = sorted(sample_frames)
+        
+        # Track positions for comparison
+        reference_positions = None
+        
+        for frame in sample_frames:
+            frame_data = self._collect_particles_at_frame(obj, psys, frame)
+            
+            # Get alive particles positions
+            current_positions = {}
+            for particle_id, data in frame_data.items():
+                if data['state'] == 'alive':
+                    current_positions[particle_id] = data['position']
+            
+            if reference_positions is not None:
+                # Compare with reference
+                if set(current_positions.keys()) != set(reference_positions.keys()):
+                    del frame_data
+                    return False
+                
+                # Check if positions are the same
+                for particle_id in current_positions:
+                    if particle_id in reference_positions:
+                        pos1 = np.array(current_positions[particle_id])
+                        pos2 = np.array(reference_positions[particle_id])
+                        if not np.allclose(pos1, pos2, atol=1e-6):
+                            del frame_data
+                            return False
+                    else:
+                        del frame_data
+                        return False
+            
+            reference_positions = current_positions
+            del frame_data  # Free memory
+        
+        return True
 
     def _get_particle_acoustic_shader(self, obj: bpy.types.Object, psys: bpy.types.ParticleSystem, particle_config: dict) -> dict:
         """
@@ -415,7 +516,7 @@ class ParticleExporter:
         Export a particle system split by material when rendering as collection with multiple materials.
         
         Args:
-            obj: The object with the particle system
+            obj: The object with with the particle system
             particle_idx: the particle id for the exported collection
             psys: The particle system to export
             output_path: Directory to save the npz files
@@ -449,7 +550,7 @@ class ParticleExporter:
         
         if len(materials) == 1:
             # Only one material - use standard export
-            return self.export_particle_system(obj, particle_idx, psys, output_path, start_frame, end_frame)
+            return self.export_particle_systemystem(obj, particle_idx, psys, output_path, start_frame, end_frame)
         
         # Multiple materials - split by material
         if start_frame is None:
@@ -464,93 +565,77 @@ class ParticleExporter:
         # Create output directory
         os.makedirs(output_path, exist_ok=True)
         
-        # Collect particle data for all frames
-        all_particles = []
-        for frame in range(start_frame, end_frame + 1):
-            frame_data = self._collect_particles_at_frame(obj, psys, frame)
-            
-            # For collection rendering, we need to determine which material each particle uses
-            # by checking which collection object it instances
-            material_frame_data = {}
-            
-            
-            # Get the evaluated particle system to access instance information
-            self.scene.frame_set(frame)
-            depsgraph = bpy.context.evaluated_depsgraph_get()
-            eval_obj = obj.evaluated_get(depsgraph)
-            
-            for psys_eval in eval_obj.particle_systems:
-                if psys_eval.name != psys.name:
-                    continue
-                
-                # Get particles with their instance information
-                for index, particle in psys_eval.particles.items():
-                    if particle.alive_state != 'ALIVE':
-                        continue
-                    
-                    identifier = f"{obj.name}_{psys.name}_{index}"
-                    
-                    # Determine which material this particle uses
-                    # For collection rendering, particles instance objects from the collection
-                    # The particle's rotation and location determine which object it instances
-                    material_name = self._get_particle_material(particle, psys, collection, material_to_object)
-                    
-                    if material_name:
-                        if material_name not in material_frame_data:
-                            material_frame_data[material_name] = {}
-                        
-                        # Copy particle data to material-specific dict
-                        if identifier in frame_data:
-                            material_frame_data[material_name][identifier] = frame_data[identifier]
-            
-            all_particles.append(material_frame_data)
-        
-        # Build master particle list for each material
+        # For each material, we'll do two passes (collect IDs, then export)
         material_configs = []
+        
         for mat_name, mat_data in materials.items():
-            # Get particles for this material across all frames
-            material_particles = [frame_data.get(mat_name, {}) for frame_data in all_particles]
+            # Create material-specific output path
+            mat_psys_name = f"{psys_name}_{mat_name.replace('.', '_')}"
+            mat_output_path = f"{output_path}/{obj_name}_{mat_psys_name}"
+            os.makedirs(mat_output_path, exist_ok=True)
             
-            # Build master list for this material
-            self.master_particle_list = []
-            self.particle_index_map = {}
+            # First pass: Collect particle IDs for this material
+            print(f"First pass for material {mat_name}: Collecting particle identifiers...")
+            all_particle_ids = set()
             
-            for frame_data in material_particles:
-                for identifier in frame_data.keys():
-                    if identifier not in self.particle_index_map:
-                        self.particle_index_map[identifier] = len(self.master_particle_list)
-                        self.master_particle_list.append(identifier)
+            for frame in range(start_frame, end_frame + 1):
+                frame_data = self._collect_particles_at_frame(obj, psys, frame)
+                
+                # Filter particles by material
+                for particle_id, data in frame_data.items():
+                    if self._particle_belongs_to_material(particle_id, mat_name, material_to_object):
+                        all_particle_ids.add(particle_id)
+                
+                del frame_data  # Free memory
             
-            if len(self.master_particle_list) == 0:
+            if len(all_particle_ids) == 0:
                 continue  # No particles for this material
             
+            # Build master particle list for this material
+            self.master_particle_list = list(all_particle_ids)
+            self.particle_index_map = {pid: idx for idx, pid in enumerate(self.master_particle_list)}
+            
+            del all_particle_ids
+            
             # Check if this material's particles are static
-            is_material_static = True
-            for particle_id in self.master_particle_list:
-                if not self._is_particle_static(material_particles, particle_id):
-                    is_material_static = False
-                    break
+            is_material_static = self._is_material_static(obj, psys, start_frame, end_frame, mat_name, material_to_object)
             
             # Create material-specific config
             material_config = {
                 'idx': particle_idx,
-                'name': f"{obj_name}_{psys_name}_{mat_name.replace('.', '_')}",
-                'obj_path': output_path,
+                'name': f"{obj_name}_{mat_psys_name}",
+                'obj_path': mat_output_path,
                 'static': is_material_static,
                 'acoustic_shader': mat_data['acoustic_shader']
             }
             
+            # Second pass: Export frames for this material
+            print(f"Second pass for material {mat_name}: Exporting frames...")
+            
             if is_material_static:
                 # Export single frame for static material
-                self._export_particle_frame(material_particles[0], 0, output_path, obj_name, f"{psys_name}_{mat_name.replace('.', '_')}", static=True, start_frame=start_frame)
+                frame_data = self._collect_particles_at_frame(obj, psys, start_frame)
+                # Filter by material
+                filtered_data = {pid: data for pid, data in frame_data.items() 
+                               if self._particle_belongs_to_material(pid, mat_name, material_to_object)}
+                self._export_particle_frame(filtered_data, 0, mat_output_path, obj_name, mat_psys_name, static=True, start_frame=start_frame)
+                del frame_data, filtered_data
             else:
                 # Export all frames for this material
-                for i, frame_data in enumerate(material_particles):
-                    frame = start_frame + i
-                    self._export_particle_frame(frame_data, frame, output_path, obj_name, f"{psys_name}_{mat_name.replace('.', '_')}")
+                for frame in range(start_frame, end_frame + 1):
+                    frame_data = self._collect_particles_at_frame(obj, psys, frame)
+                    # Filter by material
+                    filtered_data = {pid: data for pid, data in frame_data.items() 
+                                   if self._particle_belongs_to_material(pid, mat_name, material_to_object)}
+                    self._export_particle_frame(filtered_data, frame, mat_output_path, obj_name, mat_psys_name)
+                    del frame_data, filtered_data
             
             material_configs.append(material_config)
             particle_idx += 1
+            
+            # Clear memory after each material
+            self.master_particle_list = []
+            self.particle_index_map = {}
         
         # If we have material configs, return the first one with materials info
         if material_configs:
@@ -571,6 +656,56 @@ class ParticleExporter:
         
         # No materials found - fallback to standard export
         return self.export_particle_system(obj, particle_idx, psys, output_path, start_frame, end_frame)
+
+    def _particle_belongs_to_material(self, particle_id: str, mat_name: str, material_to_object: dict) -> bool:
+        """
+        Helper method to determine if a particle belongs to a specific material.
+        This is a simplified version - in reality, you'd need to track which object each particle instances.
+        """
+        # For now, distribute particles evenly among materials based on hash
+        # This is a placeholder - you should implement proper material assignment
+        particle_hash = hash(particle_id) % len(material_to_object)
+        mat_names = list(material_to_object.keys())
+        return mat_names[particle_hash] == mat_name
+
+    def _is_material_static(self, obj, psys, start_frame, end_frame, mat_name, material_to_object) -> bool:
+        """
+        Check if particles for a specific material are static.
+        """
+        # Sample a few frames
+        sample_frames = sorted(set([start_frame, end_frame, (start_frame + end_frame) // 2]))
+        
+        reference_positions = None
+        
+        for frame in sample_frames:
+            frame_data = self._collect_particles_at_frame(obj, psys, frame)
+            
+            # Filter by material
+            current_positions = {}
+            for particle_id, data in frame_data.items():
+                if data['state'] == 'alive' and self._particle_belongs_to_material(particle_id, mat_name, material_to_object):
+                    current_positions[particle_id] = data['position']
+            
+            if reference_positions is not None:
+                if set(current_positions.keys()) != set(reference_positions.keys()):
+                    del frame_data
+                    return False
+                
+                for particle_id in current_positions:
+                    if particle_id in reference_positions:
+                        pos1 = np.array(current_positions[particle_id])
+                        pos2 = np.array(reference_positions[particle_id])
+                        if not np.allclose(pos1, pos2, atol=1e-6):
+                            del frame_data
+                            return False
+                    else:
+                        del frame_data
+                        return False
+            
+            reference_positions = current_positions
+            del frame_data
+        
+        return True
 
     def _get_particle_material(self, particle, psys, collection, material_to_object):
         """
@@ -595,7 +730,7 @@ class ParticleExporter:
             # We can use the particle's index or random value to determine which object it instances
             # This is a simplified approach - in reality, Blender uses a more complex distribution
             
-            # Get the collection objects that have materials
+            # Get the collection objects objects that have materials
             mat_objects = list(material_to_object.keys())
             if not mat_objects:
                 return None
@@ -620,73 +755,3 @@ class ParticleExporter:
             return mat_objects[object_idx]
         
         return None
-
-    def _export_particle_frame(self, frame_data: Dict[str, Dict], frame: int, output_path: str, obj_name: str, psys_name: str, static: bool = False, start_frame: int = None):
-        """
-        Export a single frame of particle data to npz format.
-        
-        The format follows the 3DGS PLY structure:
-        - position: (x, y, z)
-        - rotation: (rot_0, rot_1, rot_2) - euler angles
-        - size: (size_x, size_y, size_z)
-        """
-        num_particles = len(self.master_particle_list)
-        
-        # Initialize arrays
-        positions = np.zeros((num_particles, 3), dtype=np.float32)
-        rotations = np.zeros((num_particles, 3), dtype=np.float32)
-        sizes = np.zeros((num_particles, 3), dtype=np.float32)
-        states = np.zeros(num_particles, dtype=np.int8)  # 0=dead, 1=alive, 2=unborn
-        
-        # Fill arrays
-        for particle_id, index in self.particle_index_map.items():
-            if particle_id in frame_data:
-                data = frame_data[particle_id]
-                positions[index] = data['position']
-                rotations[index] = data['rotation']
-                sizes[index] = data['size']
-                
-                if data['state'] == 'alive':
-                    states[index] = 1
-                elif data['state'] == 'unborn':
-                    states[index] = 2
-                else:  # dead
-                    states[index] = 0
-            else:
-                # Particle not in this frame - mark as dead
-                states[index] = 0
-        
-        # Round to specified decimals
-        if self.decimals is not None:
-            positions = np.round(positions, self.decimals)
-            rotations = np.round(rotations, self.decimals)
-            sizes = np.round(sizes, self.decimals)
-        
-        # Create data dictionary
-        data = {
-            'positions': positions,
-            'rotations': rotations,
-            'sizes': sizes,
-            'states': states,
-            'particle_count': num_particles
-        }
-        
-        # Save to file
-        if static:
-            filename = f"{obj_name}_{psys_name}.npz"
-        else:
-            filename = f"{obj_name}_{psys_name}_{frame:05d}.npz"
-        
-        output_file = os.path.join(output_path, filename)
-        np.savez_compressed(output_file, **data)
-        
-        print(f"  Exported frame {frame}: {num_particles} particles -> {filename}")
-    
-    def export_all_particle_systems(self, obj: bpy.types.Object, output_path: str, start_frame: int = None, end_frame: int = None):
-        """Export all particle systems on an object"""
-        if not obj.particle_systems:
-            print(f"Object '{obj.name}' has no particle systems")
-            return
-
-        for particle_idx, psys in enumerate(obj.particle_systems):
-            self.export_particle_system_by_material(obj, particle_idx, psys, output_path, start_frame, end_frame)

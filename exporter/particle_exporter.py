@@ -294,7 +294,7 @@ class ParticleExporter:
         obj_name = obj.name.replace('.', '_')
 
         particle_config['name'] = f"{obj_name}_{psys_name}"
-        particle_config['proxy'] = int(obj.pbraudio.particles_proxy)
+        particle_config['proxy'] = obj.pbraudio.particles_proxy
         
         output_path = f"{output_path}/{obj_name}_{psys_name}"
 

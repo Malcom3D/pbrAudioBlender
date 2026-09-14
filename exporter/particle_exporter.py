@@ -219,7 +219,7 @@ class ParticleExporter:
         positions = np.zeros((num_particles, 3), dtype=np.float32)
         rotations = np.zeros((num_particles, 3), dtype=np.float32)
         sizes = np.zeros((num_particles, 3), dtype=np.float32)
-        states = np.zeros(num_particles, dtype=np.int8)  # 0=dead, 1=alive, 2=unborn
+        states = np.zeros((num_particles,), dtype=np.int8)  # 0=dead, 1=alive, 2=unborn
         
         # Fill arrays
         for particle_id, index in self.particle_index_map.items():
@@ -245,14 +245,14 @@ class ParticleExporter:
             rotations = np.round(rotations, self.decimals)
             sizes = np.round(sizes, self.decimals)
         
-        # Create data dictionary
-        data = {
-            'positions': positions,
-            'rotations': rotations,
-            'sizes': sizes,
-            'states': states,
-            'particle_count': num_particles
-        }
+#        # Create data dictionary
+#        data = {
+#            'positions': positions,
+#            'rotations': rotations,
+#            'sizes': sizes,
+#            'states': states,
+#            'particle_count': num_particles
+#        }
         
         # Save to file
         if static:
@@ -261,13 +261,13 @@ class ParticleExporter:
             filename = f"{obj_name}_{psys_name}_{frame:05d}.npz"
         
         output_file = os.path.join(output_path, filename)
-        np.savez_compressed(output_file, **data)
+        np.savez_compressed(output_file, positions, rotations, sizes, states)
         
         print(f"  Exported frame {frame}: {num_particles} particles -> {filename}")
         
         # Clear frame data to free memory
         del frame_data
-        del data
+#        del data
     
     def export_particle_system(self, obj: bpy.types.Object, particle_idx: int, psys: bpy.types.ParticleSystem, output_path: str, start_frame: int = None, end_frame: int = None):
         """

@@ -22,8 +22,8 @@ import os
 from mathutils import Vector, Quaternion, Matrix
 from typing import Dict, List, Tuple, Optional, Set
 
-class ParticleExporter:
-    """Exporter for Blender particle systems to 3DGS-compatible format"""
+class ParticlesExporter:
+    """Exporter for Blender particles systems to 3DGS-compatible format"""
     
     def __init__(self, scene: bpy.types.Scene, decimals: int = 18, chunk_size: int = 10000):
         self.scene = scene

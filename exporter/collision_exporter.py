@@ -27,7 +27,7 @@ from bpy_extras.io_utils import axis_conversion
 from scipy.spatial import ConvexHull
 from psutil import cpu_count
 
-from .particle_exporter import ParticleExporter
+from .particle_exporter import ParticlesExporter
 
 from ..utils import frd_io
 
@@ -667,7 +667,7 @@ class CollisionExporter:
         os.makedirs(particle_path, exist_ok=True)
         
         # Create particle exporter
-        particle_exporter = ParticleExporter(scene=scene, decimals=self.decimals)
+        particle_exporter = ParticlesExporter(scene=scene, decimals=self.decimals)
         
         # Export each particle system
         for psys in obj.particle_systems:

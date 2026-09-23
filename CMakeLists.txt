@@ -935,10 +935,10 @@ if (NOT WIN32)
     DEPENDS httpx
     DEPENDS blosc2
 #    DEPENDS donfig
-DEPENDS yaml
+    DEPENDS yaml
 #    DEPENDS crc32c
 #    DEPENDS google-crc32c
-DEPENDS packaging
+    DEPENDS packaging
 #    DEPENDS numcodecs
 #    COMMAND ${CMAKE_COMMAND} -E make_directory pbrAudio
 #    COMMAND ${CMAKE_COMMAND} -E copy

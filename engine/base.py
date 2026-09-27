@@ -158,6 +158,32 @@ class PBRAudioRenderEngine(RenderEngine):
             self.report({'ERROR'}, f"Engine error: Process exited with code {process.exitcode}")
             return False
 
+    def _render_companion_graphics(self, scene, frame_start, frame_end):
+        """
+        Renders the companion graphics animation.
+        This method is called from the main thread.
+        """
+        self.report({'INFO'}, f"Starting companion graphics render with {scene.pbraudio.companion_render_engine}...")
+        
+        original_engine = scene.render.engine
+        try:
+            # Set the graphics engine
+            scene.render.engine = scene.pbraudio.companion_render_engine
+            
+            # Render the animation
+            bpy.ops.render.render(animation=True)
+            
+            self.report({'INFO'}, "Companion graphics render finished.")
+        except Exception as e:
+            self.report({'ERROR'}, f"Companionion render failed: {e}")
+        finally:
+            # Restore the original engine
+            scene.render.engine = original_engine
+            # Invalidate the render UI to reflect the change back
+            for area in bpy.context.screen.areas:
+                if area.type == 'PROPERTIES':
+                    area.tag_redraw()
+
     def _render_thread_func(self, depsgraph, scene, frame_start=None, frame_end=None, frame_current=None):
         """Main render thread function"""
         try:
@@ -221,20 +247,46 @@ class PBRAudioRenderEngine(RenderEngine):
             os.makedirs(output_dir, exist_ok=True)
             
             self.report({'INFO'}, "Starting acoustic rendering...")
-            
-            # Run external engine
-            print(f"engine/base.py: current render frame {frame_current}")
-            engine_success = self._run_external_engine(config_file, output_dir, frame_start, frame_end, frame_current)
-            
-            if engine_success:
-                self.report({'INFO'}, "Acoustic rendering completed successfully!")
+
+            total_frames = frame_end - frame_start + 1
+            for i, frame in enumerate(range(frame_start, frame_end + 1)):
+                if self._cancel_render:
+                    break
+
+                self.report({'INFO''}, f"Processing frame {frame} ({i+1}/{total_frames})")
                 
-                # Step 4: Post-process results if needed
-                self._post_process_results(config_file, scene)
+                # Set the current frame for the whole scene
+                scene.frame_set(frame)
                 
+                # Launch the audio render process for the current frame
+                audio_render_success = self._run_external_engine(config_file, output_dir, frame_start, frame_end, frame)
+
+                if engine_success:
+                    self.report({'INFO'}, "Acoustic rendering completed successfully!")
+
+                    # Step 4: Post-process results if needed
+                    self._post_process_results(config_file, scene)
+
+                elif not audio_render_success:
+                    self.report({'ERROR'}, f"Acoustic rendering failed at frame {frame}")
+                    break # Stop the loop on failure
+
+                # If companion render is enabled, render the graphics for this frame
+                if scene.pbraudio.companion_render:
+                    self.report({'INFO'}, f"Rendering companion graphics for frame {frame}...")
+                    # We temporarily switch the engine to render the single frame
+                    original_engine = scene.render.engine
+                    scene.render.engine = scene.pbraudio.companion_render_engine
+                    bpy.ops.render.render(write_still=True)
+                    scene.render.engine = original_engine # Restore immediately
+
+            if not self._cancel_render:
+                self.report({'INFO'}, "All frames processed. Finalizing audio render...")
+                # The final audio render step (convolving IRs) is triggered by the last frame's audio render process.
+                # We can add a final report here.
             else:
-                self.report({'ERROR'}, "Acoustic rendering failed")
-            
+                self.report({'INFO'}, "Render cancelled by user.")
+
             self._is_rendering = False
             
         except Exception as e:
@@ -242,7 +294,7 @@ class PBRAudioRenderEngine(RenderEngine):
             import traceback
             traceback.print_exc()
             self._is_rendering = False
-    
+            
     def _post_process_results(self, config_file, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
         self.report({'INFO'}, "Post-processing rendered audio")

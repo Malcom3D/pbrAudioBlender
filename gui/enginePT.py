@@ -44,6 +44,38 @@ class PBRAUDIO_PT_device_panel(Panel):
  
 classes.append(PBRAUDIO_PT_device_panel)
 
+class PBRAUDIO_PT_companion_render_panel(Panel):
+    """Panel to enable and configure the companion graphics render"""
+    bl_label = ""
+    bl_idname = "PBRAUDIO_PT_companion_render_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "render"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw_header(self, context):
+        scene = context.scene
+        layout = self.layout
+        layout.prop(scene.pbraudio, "companion_render")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # Enable/disable based on the checkbox in the header
+        layout.enabled = scene.pbraudio.companion_render
+
+        layout layout.prop(scene.pbraudio, "companion_render_engine")
+
+classes.append(PBRAUDIO_PT_companion_render_panel)
+
 class PBRAUDIO_PT_graphical_preview_panel(Panel):
     """Panel to enable pbrAudio graphical preview and settings"""
     bl_label = ""

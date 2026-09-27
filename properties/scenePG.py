@@ -25,6 +25,21 @@ from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty, P
 classes = []
 
 class PBRAudioSceneProperties(PropertyGroup):
+    def list_render_engine(self, context):
+        try:
+            bpy.context.scene.render.engine = ""
+        except Exception as e:
+            # TypeError: bpy_struct: item.attr = val: enum "" not found in ('BLENDER_EEVEE', 'BLENDER_WORKBENCH', 'CYCLES')
+            # Parse the error, split the string and take every other result
+            engine_list = str(e).split("'")[1::2]
+            engine_list.remove('PBRAUDIO')
+            engine_items = []
+            for engine in engine_list:
+                engine_name = engine.lower().split('_')
+                engine_name = engine_name[0].capitalize() + ''.join(i.capitalize() for i in engine_name[1:])
+                engine_items.append((engine, engine_name, ""))
+            retunr engine_items
+
     def set_quality(self, context):
         if 'LOW' in self.audio_quality:
             self.sample_rate = 24000
@@ -144,17 +159,6 @@ class PBRAudioSceneProperties(PropertyGroup):
             if not scene.pbraudio.collision_collection['samples_per_face'] == self.samples_per_face:
                 scene.pbraudio.collision_collection['samples_per_face'] = self.samples_per_face
 
-#    """Scene properties for pbrAudio NodeTree"""
-#    acoustic_shader_type = EnumProperty(
-#        name="AcousticShaderType",
-#        items=[
-#            ('OBJECT', "Object", "Edit Shader Node from Object"),
-#            ('WORLD', "World", "Edit Shader Node from World"),
-#            ('SOUND', "Sound", "Edit Shader Node from Sound"),
-#        ],
-#        default='OBJECT'
-#    )
-
     """Scene properties for pbrAudio"""
     device: EnumProperty(
         name="Device",
@@ -163,6 +167,20 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('GPU', "GPU Compute", "Use GPU Compute device for rendering, configured in the system tab in the user preferences"),
         ],
         default='CPU'
+    )
+
+    """ Companion Render properties """
+    companion_render: BoolProperty(
+        name="Companion Render",
+        description="Render the scene with a standard graphics engine alongside the acoustic render",
+        default=False
+    )
+
+    companion_render_engine: EnumProperty(
+        name="Graphics Engine",
+        description="The graphics engine to use for the companion render",
+        items=list_render_engine
+        default='BLENDER_EEVEE_NEXT'
     )
 
     audio_quality: EnumProperty(

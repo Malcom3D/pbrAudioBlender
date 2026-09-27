@@ -180,7 +180,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Graphics Engine",
         description="The graphics engine to use for the companion render",
         items=list_render_engine,
-        default='BLENDER_EEVEE_NEXT'
+        default=0
     )
 
     audio_quality: EnumProperty(

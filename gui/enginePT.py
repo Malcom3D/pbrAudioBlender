@@ -72,8 +72,7 @@ class PBRAUDIO_PT_companion_render_panel(Panel):
         # Enable/disable based on the checkbox in the header
         layout.enabled = scene.pbraudio.companion_render
 
-        layout layout.prop(scene.pbraudio, "companion_render_engine")
-
+        layout.prop(scene.pbraudio, "companion_render_engine")
 classes.append(PBRAUDIO_PT_companion_render_panel)
 
 class PBRAUDIO_PT_graphical_preview_panel(Panel):

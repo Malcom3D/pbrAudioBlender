@@ -179,7 +179,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     companion_render_engine: EnumProperty(
         name="Graphics Engine",
         description="The graphics engine to use for the companion render",
-        items=list_render_engine
+        items=list_render_engine,
         default='BLENDER_EEVEE_NEXT'
     )
 

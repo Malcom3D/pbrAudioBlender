@@ -38,7 +38,7 @@ class PBRAudioSceneProperties(PropertyGroup):
                 engine_name = engine.lower().split('_')
                 engine_name = engine_name[0].capitalize() + ''.join(i.capitalize() for i in engine_name[1:])
                 engine_items.append((engine, engine_name, ""))
-            retunr engine_items
+            return engine_items
 
     def set_quality(self, context):
         if 'LOW' in self.audio_quality:

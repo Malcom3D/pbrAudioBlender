@@ -253,7 +253,7 @@ class PBRAudioRenderEngine(RenderEngine):
                 if self._cancel_render:
                     break
 
-                self.report({'INFO''}, f"Processing frame {frame} ({i+1}/{total_frames})")
+                self.report({'INFO'}, f"Processing frame {frame} ({i+1}/{total_frames})")
                 
                 # Set the current frame for the whole scene
                 scene.frame_set(frame)

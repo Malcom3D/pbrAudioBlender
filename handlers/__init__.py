@@ -66,54 +66,16 @@ def select_nodetree_handler(scene):
                                                             if nodeTreeName is not None:
                                                                 space.node_tree = bpy.data.node_groups[nodeTreeName]
 
-@persistent
-def companion_render_handler(scene):
-    """
-    This handler is called by Blender after a render is complete.
-    It checks if a companion render is pending and, if so, starts it.
-    """
-    if not hasattr(scene, 'pbraudio') or not scene.pbraudio.is_companion_render_pending:
-        return
-
-    # Reset the flag immediately to prevent re-triggering
-    scene.pbraudio.is_companion_render_pending = False
-
-    print("Companion render handler triggered. Starting companion render...")
-    
-    companion_engine = scene.pbraudio.companion_render_engine
-    
-    # Switch to the companion engine
-    scene.render.engine = companion_engine
-    
-    # Render the animation
-    try:
-        bpy.ops.render.render(animation=True)
-    except Exception as e:
-        print(f"Companion render failed: {e}")
-        import traceback
-        traceback.print_exc()
-    finally:
-        # Switch back to the pbrAudio engine
-        scene.render.engine = 'PBRAUDIO'
-        
-        # Invalidate the UI to reflect the engine change
-        for area in bpy.context.screen.areas:
-            if area.type == 'PROPERTIES':
-                area.tag_redraw()
-
 def register():
     for cls in classes:
         register_class(cls)
 
     # Register handlers
     bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler)
-    bpy.app.handlers.render_complete.append(companion_render_handler)
 
 def unregister():
     if select_nodetree_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(select_nodetree_handler)
-    if companion_render_handler in bpy.app.handlers.render_complete:
-        bpy.app.handlers.render_complete.remove(companion_render_handler)
 
     for cls in reversed(classes):
         unregister_class(cls)

@@ -24,16 +24,20 @@ from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty, P
 
 classes = []
 
+engine_items = []
+
 class PBRAudioSceneProperties(PropertyGroup):
-    def list_render_engine(self, context):
+    def render_engine_items(self, context):
+        if len(engine_items) > 0:
+            return engine_items
         try:
             bpy.context.scene.render.engine = ""
         except Exception as e:
             # TypeError: bpy_struct: item.attr = val: enum "" not found in ('BLENDER_EEVEE', 'BLENDER_WORKBENCH', 'CYCLES')
             # Parse the error, split the string and take every other result
             engine_list = str(e).split("'")[1::2]
-            engine_list.remove('PBRAUDIO')
-            engine_items = []
+            if 'PBRAUDIO' in engine_list:
+                engine_list.remove('PBRAUDIO')
             for engine in engine_list:
                 engine_name = engine.lower().split('_')
                 engine_name = engine_name[0].capitalize() + ''.join(i.capitalize() for i in engine_name[1:])
@@ -179,7 +183,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     companion_render_engine: EnumProperty(
         name="Graphics Engine",
         description="The graphics engine to use for the companion render",
-        items=list_render_engine,
+        items=render_engine_items,
         default=0
     )
 

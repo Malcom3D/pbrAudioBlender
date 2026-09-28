@@ -187,6 +187,14 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=0
     )
 
+    is_companion_render_pending: BoolProperty(
+        name="Is Companion Render Pending",
+        description="Internal flag to trigger the companion render after the acoustic render finishes",
+        default=False,
+        options={'HIDDEN'}  # Hide it from the UI
+    )
+
+    """ Acoustic Render settings """
     audio_quality: EnumProperty(
         name="Audio Quality",
         items=[

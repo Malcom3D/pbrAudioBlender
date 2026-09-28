@@ -20,31 +20,8 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.utils import register_class, unregister_class
 
-#from ..utils import environment_json
-
 classes = []
 
-##from . import playback 
-#
-##for mod in (playback, ):
-##    classes += mod.classes
-#
-## Global to store the the pbraudio handlers reference
-#pbraudio_handler = []
-#
-## handler to set shader in 3D View to SOLID
-##@persistent
-##def material_shader_only_handler(scene):
-##    if scene.render.engine == 'PBRAUDIO':
-##        if not bpy.context.screen == None and hasattr(bpy.context.screen, 'areas'):
-##            for area in bpy.context.screen.areas:
-##                if area.type == 'VIEW_3D':
-##                    space = area.spaces.active
-##                    if space.type == 'VIEW_3D':
-##                        space.shading.type = 'SOLID'
-##
-##pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler))
-#
 @persistent
 def select_nodetree_handler(scene):
     if scene.render.engine == 'PBRAUDIO':
@@ -89,98 +66,54 @@ def select_nodetree_handler(scene):
                                                             if nodeTreeName is not None:
                                                                 space.node_tree = bpy.data.node_groups[nodeTreeName]
 
-##pbraudio_handler.append(bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler))
-#
-#@persistent
-#def update_world_environment_boundaries(scene):
-#    """Update boundary empties when world environment moves"""
-#    for obj in bpy.data.objects:
-#        if hasattr(obj, 'pbraudio') and obj.pbraudio.environment and obj.pbraudio.environment_dynamic_boundaries_update:
-#            # Check if we have boundary empties stored
-#            if "pbraudio_boundary_empties" in obj:
-#                boundary_names = obj["pbraudio_boundary_empties"]
-#                boundary_empties = []
-#                
-#                # Get actual boundary objects
-#                for name in boundary_names:
-#                    boundary_obj = bpy.data.objects.get(name)
-#                    if boundary_obj:
-#                        boundary_empties.append(boundary_obj)
-#                
-#                if boundary_empties:
-#                    # Update boundary positions
-#                    from ..operators.soundOT import PBRAUDIO_OT_add_world_environment
-#                    op = PBRAUDIO_OT_add_world_environment
-#                    
-#                    # Get current radius from object property
-#                    radius = obj.pbraudio.environment_size
-#                    
-#                    # Update positions
-#                    op.update_boundary_positions(obj, boundary_empties, radius)
-#            
-#            # Save environment data to JSON
-#            if hasattr(scene, 'pbraudio') and scene.pbraudio.cache_path:
-#                cache_path = scene.pbraudio.cache_path
-#                if cache_path.startswith('//'):
-#                    cache_path = bpy.path.abspath(cache_path)
-#                environment_json.save_environment_json(obj, cache_path)
-#
-##@persistent
-##def save_environment_on_property_update(scene):
-##    """Save environment JSON when environment properties change"""
-##    for obj in bpy.data.objects:
-##        if hasattr(obj, 'pbraudio') and obj.pbraudio.environment:
-##            # Check if properties have changed
-##            if "pbraudio_last_environment_data" not in obj:
-##                obj["pbraudio_last_environment_data"] = {}
-##            
-##            current_data = {
-##                "file": obj.pbraudio.environment_file,
-##                "channels": obj.pbraudio.environment_channels,
-##                "radius": obj.pbraudio.environment_size,
-##                "location": tuple(obj.location),
-##                "boundary_count": len(obj["pbraudio_boundary_empties"]) if "pbraudio_boundary_empties" in obj else 0
-##            }
-##            
-##            last_data = obj["pbraudio_last_environment_data"]
-##            
-##            # Check if any property has changed
-##            if current_data != last_data:
-##                # Save JSON
-##                if hasattr(scene, 'pbraudio') and scene.pbraudio.cache_path:
-##                    cache_path = scene.pbraudio.cache_path
-##                    if cache_path.startswith('//'):
-##                        cache_path = bpy.path.abspath(cache_path)
-##                    environment_json.save_environment_json(obj, cache_path)
-##                
-##                # Update last data
-##                obj["pbraudio_last__environment_data"] = current_data
-##
+@persistent
+def companion_render_handler(scene):
+    """
+    This handler is called by Blender after a render is complete.
+    It checks if a companion render is pending and, if so, starts it.
+    """
+    if not hasattr(scene, 'pbraudio') or not scene.pbraudio.is_companion_render_pending:
+        return
+
+    # Reset the flag immediately to prevent re-triggering
+    scene.pbraudio.is_companion_render_pending = False
+
+    print("Companion render handler triggered. Starting companion render...")
+    
+    companion_engine = scene.pbraudio.companion_render_engine
+    
+    # Switch to the companion engine
+    scene.render.engine = companion_engine
+    
+    # Render the animation
+    try:
+        bpy.ops.render.render(animation=True)
+    except Exception as e:
+        print(f"Companion render failed: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        # Switch back to the pbrAudio engine
+        scene.render.engine = 'PBRAUDIO'
+        
+        # Invalidate the UI to reflect the engine change
+        for area in bpy.context.screen.areas:
+            if area.type == 'PROPERTIES':
+                area.tag_redraw()
+
 def register():
-#    global pbraudio_handler
     for cls in classes:
         register_class(cls)
 
     # Register handlers
-##    bpy.app.handlers.depsgraph_update_post.append(material_shader_only_handler)
     bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler)
-#    bpy.app.handlers.depsgraph_update_post.append(update_world_environment_boundaries)
-##    bpy.app.handlers.frame_change_post.append(update_world_environment_boundaries)
-##    bpy.app.handlers.depsgraph_update_post.append(save_environment_on_property_update)
-#
+    bpy.app.handlers.render_complete.append(companion_render_handler)
+
 def unregister():
-#    global pbraudio_handler
-    # Remove handlers
-##    if material_shader_only_handler in bpy.app.handlers.depsgraph_update_post:
-##        bpy.app.handlers.depsgraph_update_post.remove(material_shader_only_handler)
     if select_nodetree_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(select_nodetree_handler)
-#    if update_world_environment_boundaries in bpy.app.handlers.depsgraph_update_post:
-#        bpy.app.handlers.depsgraph_update_post.remove(update_world_environment_boundaries)
-##    if update_world_environment_boundaries in bpy.app.handlers.frame_change_post:
-##        bpy.app.handlerslers.frame_change_post.remove(update_world_environment_boundaries)
-##    if save_environment_on_property_update in bpy.app.handlers.depsgraph_update_post:
-##        bpy.app.handlers.depsgraph_update_post.remove(save_environment_on_property_update)
-#
+    if companion_render_handler in bpy.app.handlers.render_complete:
+        bpy.app.handlers.render_complete.remove(companion_render_handler)
+
     for cls in reversed(classes):
         unregister_class(cls)

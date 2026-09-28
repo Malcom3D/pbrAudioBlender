@@ -249,10 +249,7 @@ class PBRAudioRenderEngine(RenderEngine):
                 # If companion render is enabled, after the acoustic render loop is finished, schedule the companion render.
                 if not self._cancel_render and scene.pbraudio.companion_render:
                     self.report({'INFO'}, "Acoustic render finished. Scheduling companion graphics render...")
-                    bpy.app.timers.register(
-                        lambda: self._schedule_companion_render(scene.name, frame_start, frame_end),
-                        first_interval=0.1
-                    )
+                    scene.pbraudio.is_companion_render_pending = True
 
             if not self._cancel_render:
                 self.report({'INFO'}, "All frames processed. Finalizing audio render...")
@@ -269,53 +266,6 @@ class PBRAudioRenderEngine(RenderEngine):
             traceback.print_exc()
             self._is_rendering = False
 
-    def _schedule_companion_render(self, scene_name, frame_start, frame_end):
-        """
-        This function is called by a timer on the main thread.
-        It performs the actual companion graphics render.
-        """
-        scene = bpy.data.scenes.get(scene_name)
-        if not scene:
-            self.report({'ERROR'}, "Companion render failed: Scene not found.")
-            return None # Unregister the timer
-
-        # Ensure the scene's engine is correctly set for the companion render
-        if scene.render.engine != scene.pbraudio.companion_render_engine:
-            scene.render.engine = scene.pbraudio.companion_render_engine
-
-        self.report({'INFO'}, f"Starting companion graphics render with {scene.pbraudio.companion_render_engine}...")
-        
-        # We need to temporarily set the render engine to the companion engine
-        # and then restore it. Since we are on the main thread, this is safe.
-        original_engine = 'PBRAUDIO'
-        
-        try:
-            # Set the frame range for the companion render
-            original_frame_start = scene.frame_start
-            original_frame_end = scene.frame_end
-            scene.frame_start = frame_start
-            scene.frame_end = frame_end
-
-            # Render the animation
-            bpy.ops.render.render(animation=True)
-            
-            self.report({'INFO'}, "Companion graphics render finished.")
-
-        except Exception as e:
-            self.report({'ERROR'}, f"Companion render failed: {e}")
-        finally:
-            # Restore original settings
-            scene.render.engine = original_engine
-            scene.frame_start = original_frame_start
-            scene.frame_end = original_frame_end
-            
-            # Invalidate the render UI to reflect the change back
-            for area in bpy.context.screen.areas:
-                if area.type == 'PROPERTIES':
-                    area.tag_redraw()
-        
-        return None # Returning None unregisters the timer, so it runs only once.
-            
     def _post_process_results(self, config_file, scene):
         """Post-process rendered results (e.g., decode ambisonic files)"""
         self.report({'INFO'}, "Post-processing rendered audio")

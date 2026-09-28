@@ -27,23 +27,6 @@ classes = []
 engine_items = []
 
 class PBRAudioSceneProperties(PropertyGroup):
-    def render_engine_items(self, context):
-        if len(engine_items) > 0:
-            return engine_items
-        try:
-            bpy.context.scene.render.engine = ""
-        except Exception as e:
-            # TypeError: bpy_struct: item.attr = val: enum "" not found in ('BLENDER_EEVEE', 'BLENDER_WORKBENCH', 'CYCLES')
-            # Parse the error, split the string and take every other result
-            engine_list = str(e).split("'")[1::2]
-            if 'PBRAUDIO' in engine_list:
-                engine_list.remove('PBRAUDIO')
-            for engine in engine_list:
-                engine_name = engine.lower().split('_')
-                engine_name = engine_name[0].capitalize() + ''.join(i.capitalize() for i in engine_name[1:])
-                engine_items.append((engine, engine_name, ""))
-            return engine_items
-
     def set_quality(self, context):
         if 'LOW' in self.audio_quality:
             self.sample_rate = 24000
@@ -171,27 +154,6 @@ class PBRAudioSceneProperties(PropertyGroup):
             ('GPU', "GPU Compute", "Use GPU Compute device for rendering, configured in the system tab in the user preferences"),
         ],
         default='CPU'
-    )
-
-    """ Companion Render properties """
-    companion_render: BoolProperty(
-        name="Companion Render",
-        description="Render the scene with a standard graphics engine alongside the acoustic render",
-        default=False
-    )
-
-    companion_render_engine: EnumProperty(
-        name="Graphics Engine",
-        description="The graphics engine to use for the companion render",
-        items=render_engine_items,
-        default=0
-    )
-
-    is_companion_render_pending: BoolProperty(
-        name="Is Companion Render Pending",
-        description="Internal flag to trigger the companion render after the acoustic render finishes",
-        default=False,
-        options={'HIDDEN'}  # Hide it from the UI
     )
 
     """ Acoustic Render settings """

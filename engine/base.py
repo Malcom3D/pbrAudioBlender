@@ -245,19 +245,6 @@ class PBRAudioRenderEngine(RenderEngine):
                     self.report({'ERROR'}, f"Acoustic rendering failed at frame {frame}")
                     break # Stop the loop on failure
 
-                # If companion render is enabled, after the acoustic render loop is finished, schedule the companion render.
-                if not self._cancel_render and scene.pbraudio.companion_render:
-                    self.report({'INFO'}, "Acoustic render finished. Scheduling companion graphics render...")
-                    scene.pbraudio.is_companion_render_pending = True
-                    def invoke_operator():
-                        try:
-                            bpy.ops.scene.pbraudio_companion_render()
-                        except Exception as e:
-                            print(f"Failed to invoke companion render operator: {e}")
-                        return None  # Unregister the timer
-                
-                    bpy.app.timers.register(invoke_operator, first_interval=0.1)
-
             if not self._cancel_render:
                 self.report({'INFO'}, "All frames processed. Finalizing audio render...")
                 # The final audio render step (convolving IRs) is triggered by the last frame's audio render process.

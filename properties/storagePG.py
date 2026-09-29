@@ -29,7 +29,8 @@ class PBRAudioStorageProperties(PropertyGroup):
     def storage_bakend_list(self, context):
         # placeholder for dynamic backend EnumProperty items
         if backend is None:
-            backend = [('BLOSC2','blosc2','Use blosc2 as storage backend'),('ZARR','zarr','Use zarr as storage backend')]
+            backend = [('blosc2','blosc2','Use blosc2 as storage backend'),('zarr','zarr','Use zarr as storage backend')]
+        return backend
 
     backend: EnumProperty(
         name="Backend",

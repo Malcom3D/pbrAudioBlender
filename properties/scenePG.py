@@ -24,8 +24,6 @@ from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty, P
 
 classes = []
 
-engine_items = []
-
 class PBRAudioSceneProperties(PropertyGroup):
     def set_quality(self, context):
         if 'LOW' in self.audio_quality:

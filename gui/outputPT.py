@@ -108,6 +108,41 @@ class PBRAUDIO_PT_frame_range_panel(Panel):
 
 classes.append(PBRAUDIO_PT_frame_range_panel)
 
+class PBRAUDIO_PT_storage_panel(Panel):
+    """Panel for pbrAudio Storage settings"""
+    bl_label = "Storage"
+    bl_idname = "PBRAUDIO_PT_storage_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "output"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'PBRAUDIO'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        layout.prop(scene.pbraudiostorage, "chunk_size_samples")
+        layout.prop(scene.pbraudiostorage, "backend")
+        layout.prop(scene.pbraudiostorage, "root_path")
+        if scene.pbraudiorender.storage.backend == 'blosc2':
+            layout.prop(scene.pbraudiostorage, "blosc2_codec")
+            layout.prop(scene.pbraudiostorage, "blosc2_clevel")
+            layout.prop(scene.pbraudiostorage, "blosc2_filters")
+            layout.prop(scene.pbraudiostorage, "blosc2_cparams_threads")
+            layout.prop(scene.pbraudiostorage, "blosc2_dparams_threads")
+        elif scene.pbraudiorender.storage.backend == 'zarr':
+            layout.prop(scene.pbraudiostorage, "zarr_store_kwargs")
+
+classes.append(PBRAUDIO_PT_storage_panel)
+
+
 class PBRAUDIO_PT_metadata_panel(Panel):
     """Panel for pbrAudio Frame Range settings"""
     bl_label = "Metadata"

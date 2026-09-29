@@ -75,6 +75,7 @@ class RenderExporter:
     def build_config(self):
         """Build complete configuration"""
         self.config["system"] = self.get_system_config()
+        self.config["storage"] = self.get_storage_config()
         self.config["acoustic_domain"] = self.get_domain_config()
         self.config["wave_propagation"] = self.get_wave_propagation_config()
         self.config["interface"] = self.get_interface_config()
@@ -119,6 +120,21 @@ class RenderExporter:
             system['higher_frequency'] = self.scene.pbraudio.sample_rate / 2
 
         return system
+
+    def get_storage_config(self):
+        """Get storage configuration"""
+        storage = {}
+        storage['chunk_size_samples'] = self.scene.pbraudiostorage.chunk_size_samples
+        storage['backend'] = self.scene.pbraudiostorage.backend
+        if self.scene.pbraudiorender.storage.backend == 'blosc2':
+            storage['root_path'] = f"{self.cache_path}/{self.scene.pbraudiostorage.root_path}"
+            storage['blosc2_codec'] = self.scene.pbraudiostorage.blosc2_codec
+            storage['blosc2_clevel'] = self.scene.pbraudiostorage.blosc2_clevel
+            storage['blosc2_filters'] = self.scene.pbraudiostorage.blosc2_filters
+        elif self.scene.pbraudiorender.storage.backend == 'zarr':
+            storage['zarr_store_kwargs'] = self.scene.pbraudiostorage.zarr_store_kwargs
+ 
+        return storage
     
     def get_domain_config(self):
         """Get acoustic domain configuration"""

@@ -64,6 +64,7 @@ class CollisionExporter:
         system["debug"] = True
         self.config = {}
         self.config["system"] = system
+        self.config["storage"] = self.get_storage_config(scene)
 
         if scene.pbraudio.enable_trajectory_postprocess:
             self.config["trajectory_postprocess"] = self.get_trajectory_postprocess(scene)
@@ -82,6 +83,21 @@ class CollisionExporter:
         self.obj_idx = 0
         self.particles = []
         self.particle_idx = 0
+
+    def get_storage_config(self, scene):
+        """Get storage configuration"""
+        storage = {}
+        storage['chunk_size_samples'] = scene.pbraudiostorage.chunk_size_samples
+        storage['backend'] = scene.pbraudiostorage.backend
+        storage['root_path'] = f"{self.export_path}/{scene.pbraudiostorage.root_path}"
+        if scene.pbraudiorender.storage.backend == 'blosc2':
+            storage['blosc2_codec'] = scene.pbraudiostorage.blosc2_codec
+            storage['blosc2_clevel'] = scene.pbraudiostorage.blosc2_clevel
+            storage['blosc2_filters'] = scene.pbraudiostorage.blosc2_filters
+        elif scene.pbraudiorender.storage.backend == 'zarr':
+            storage['zarr_store_kwargs'] = scene.pbraudiostorage.zarr_store_kwargs
+
+        return storage
 
     def get_trajectory_postprocess(self, scene):
         trajectory_postprocess = {}

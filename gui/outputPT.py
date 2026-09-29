@@ -131,13 +131,13 @@ class PBRAUDIO_PT_storage_panel(Panel):
         layout.prop(scene.pbraudiostorage, "chunk_size_samples")
         layout.prop(scene.pbraudiostorage, "backend")
         layout.prop(scene.pbraudiostorage, "root_path")
-        if scene.pbraudiorender.storage.backend == 'blosc2':
+        if scene.pbraudiostorage.backend == 'blosc2':
             layout.prop(scene.pbraudiostorage, "blosc2_codec")
             layout.prop(scene.pbraudiostorage, "blosc2_clevel")
             layout.prop(scene.pbraudiostorage, "blosc2_filters")
             layout.prop(scene.pbraudiostorage, "blosc2_cparams_threads")
             layout.prop(scene.pbraudiostorage, "blosc2_dparams_threads")
-        elif scene.pbraudiorender.storage.backend == 'zarr':
+        elif scene.pbraudiostorage.backend == 'zarr':
             layout.prop(scene.pbraudiostorage, "zarr_store_kwargs")
 
 classes.append(PBRAUDIO_PT_storage_panel)

@@ -22,9 +22,9 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import objectPG, scenePG, worldPG, materialPG, enginePG
+from . import objectPG, scenePG, worldPG, materialPG, enginePG, storagePG
 
-for mod in (objectPG, scenePG, worldPG, materialPG, enginePG):
+for mod in (objectPG, scenePG, worldPG, materialPG, enginePG, storagePG):
     classes += mod.classes
 
 def register():

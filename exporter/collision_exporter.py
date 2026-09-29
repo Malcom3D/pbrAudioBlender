@@ -90,11 +90,11 @@ class CollisionExporter:
         storage['chunk_size_samples'] = scene.pbraudiostorage.chunk_size_samples
         storage['backend'] = scene.pbraudiostorage.backend
         storage['root_path'] = f"{self.export_path}/{scene.pbraudiostorage.root_path}"
-        if scene.pbraudiorender.storage.backend == 'blosc2':
+        if scene.pbraudiostorage.backend == 'blosc2':
             storage['blosc2_codec'] = scene.pbraudiostorage.blosc2_codec
             storage['blosc2_clevel'] = scene.pbraudiostorage.blosc2_clevel
             storage['blosc2_filters'] = scene.pbraudiostorage.blosc2_filters
-        elif scene.pbraudiorender.storage.backend == 'zarr':
+        elif scene.pbraudiostorage.backend == 'zarr':
             storage['zarr_store_kwargs'] = scene.pbraudiostorage.zarr_store_kwargs
 
         return storage

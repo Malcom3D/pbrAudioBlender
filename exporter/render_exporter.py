@@ -126,12 +126,12 @@ class RenderExporter:
         storage = {}
         storage['chunk_size_samples'] = self.scene.pbraudiostorage.chunk_size_samples
         storage['backend'] = self.scene.pbraudiostorage.backend
-        if self.scene.pbraudiorender.storage.backend == 'blosc2':
+        if self.scene.pbraudiostorage.backend == 'blosc2':
             storage['root_path'] = f"{self.cache_path}/{self.scene.pbraudiostorage.root_path}"
             storage['blosc2_codec'] = self.scene.pbraudiostorage.blosc2_codec
             storage['blosc2_clevel'] = self.scene.pbraudiostorage.blosc2_clevel
             storage['blosc2_filters'] = self.scene.pbraudiostorage.blosc2_filters
-        elif self.scene.pbraudiorender.storage.backend == 'zarr':
+        elif self.scene.pbraudiostorage.backend == 'zarr':
             storage['zarr_store_kwargs'] = self.scene.pbraudiostorage.zarr_store_kwargs
  
         return storage

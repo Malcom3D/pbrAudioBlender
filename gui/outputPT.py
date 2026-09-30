@@ -17,7 +17,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.types import Panel
+from bpy.types import Panel, UIList
 from bpy.types import RENDER_MT_framerate_presets
 
 classes = []
@@ -116,6 +116,7 @@ class PBRAUDIO_UL_blosc2_filters(UIList):
         elif self.layout_type in {'GRID'}:
             layout.alignment = 'CENTER'
             layout.label(text="", icon='FILTER')
+classes.append(PBRAUDIO_UL_blosc2_filters)
 
 class PBRAUDIO_PT_storage_panel(Panel):
     """Panel for pbrAudio Storage settings"""

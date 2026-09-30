@@ -44,7 +44,7 @@ class PBRAUDIO_OT_blosc2_filter_remove(Operator):
     def execute(self, context):
         storage_props = context.scene.pbraudiostorage
         index = storage_props.blosc2_filters_index
-        if 0 <= index < len(storageorage_props.blosc2_filters):
+        if 0 <= index < len(storage_props.blosc2_filters):
             storage_props.blosc2_filters.remove(index)
             storage_props.blosc2_filters_index = min(max(0, index - 1), len(storage_props.blosc2_filters) - 1)
         return {'FINISHED'}

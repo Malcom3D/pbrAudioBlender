@@ -108,6 +108,15 @@ class PBRAUDIO_PT_frame_range_panel(Panel):
 
 classes.append(PBRAUDIO_PT_frame_range_panel)
 
+class PBRAUDIO_UL_blosc2_filters(UIList):
+    """UIList for displaying blosc2 filters"""
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            layout.prop(item, "filter_type", text="")
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label(text="", icon='FILTER')
+
 class PBRAUDIO_PT_storage_panel(Panel):
     """Panel for pbrAudio Storage settings"""
     bl_label = "Storage"
@@ -134,9 +143,15 @@ class PBRAUDIO_PT_storage_panel(Panel):
         if scene.pbraudiostorage.backend == 'blosc2':
             layout.prop(scene.pbraudiostorage, "blosc2_codec")
             layout.prop(scene.pbraudiostorage, "blosc2_clevel")
-            layout.prop(scene.pbraudiostorage, "blosc2_filters")
             layout.prop(scene.pbraudiostorage, "blosc2_cparams_threads")
             layout.prop(scene.pbraudiostorage, "blosc2_dparams_threads")
+            layout.label(text="Filters:")
+            row = layout.row()
+            row.template_list("PBRAUDIO_UL_blosc2_filters", "", scene.pbraudiostorage, "blosc2_filters", scene.pbraudiostorage, "blosc2_filters_index", rows=3)
+
+            col = row.column(align=True)
+            col.operator("pbraudio.blosc2_filter_add", icon='ADD', text="")
+            col.operator("pbraudio.blosc2_filter_remove", icon='REMOVE', text="")
         elif scene.pbraudiostorage.backend == 'zarr':
             layout.prop(scene.pbraudiostorage, "zarr_store_kwargs")
 

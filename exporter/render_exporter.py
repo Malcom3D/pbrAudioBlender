@@ -130,7 +130,10 @@ class RenderExporter:
             storage['root_path'] = f"{self.cache_path}/{self.scene.pbraudiostorage.root_path}"
             storage['blosc2_codec'] = self.scene.pbraudiostorage.blosc2_codec
             storage['blosc2_clevel'] = self.scene.pbraudiostorage.blosc2_clevel
-            storage['blosc2_filters'] = self.scene.pbraudiostorage.blosc2_filters
+            # Convert the CollectionProperty to a list of strings
+            storage['blosc2_filters'] = [item.filter_type for item in self.scene.pbraudiostorage.blosc2_filters]
+            storage['blosc2_cparams_threads'] = self.scene.pbraudiostorage.blosc2_cparams_threads
+            storage['blosc2_dparams_threads'] = self.scene.pbraudiostorage.blosc2_dparams_threads
         elif self.scene.pbraudiostorage.backend == 'zarr':
             storage['zarr_store_kwargs'] = self.scene.pbraudiostorage.zarr_store_kwargs
  

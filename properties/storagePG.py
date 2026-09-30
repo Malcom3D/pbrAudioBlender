@@ -25,9 +25,30 @@ classes = []
 
 backend = None
 
+class PBRAudioBlosc2FilterItem(PropertyGroup):
+    """Property group for a single blosc2 filter item"""
+    filter_type: EnumProperty(
+        name="Filter",
+        description="Select a filter for the blosc2 codec",
+        items=[
+            ('NONOFILTER', "NOFILTER", "Use NOFILTER codec for audio storage"),
+            ('SHUFFLE', "SHUFFLE", "Use SHUFFLE codec for audio storage"),
+            ('BITSHUFFLE', "BITSHUFFLE", "Use BITSHUFFLE codec for audio storage"),
+            ('DELTA', "DELTA", "Use DELTA codec for audio storage"),
+            ('TRUNC_PREC', "TRUNC_PREC", "Use TRUNC_PREC codec for audio storage"),
+            ('NDCELL', "NDCELL", "Use NDCELL codec for audio storage"),
+            ('NDMEAN', "NDMEAN", "Use NDMEAN codec for audio storage"),
+            ('BYTEDELTA', "BYTEDELTA", "Use BYTEDELTA codec for audio storage"),
+            ('INT_TRUNC', "INT_TRUNC", "Use INT_TRUNC codec for audio storage"),
+        ],
+        default='NOFILTER'
+    )
+classes.append(PBRAudioBlosc2FilterItem)
+
 class PBRAudioStorageProperties(PropertyGroup):
     def storage_bakend_list(self, context):
         # placeholder for dynamic backend EnumProperty items
+        global backend
         if backend is None:
             backend = [('blosc2','blosc2','Use blosc2 as storage backend'),('zarr','zarr','Use zarr as storage backend')]
         return backend
@@ -55,15 +76,13 @@ class PBRAudioStorageProperties(PropertyGroup):
             ('LZ4', "LZ4", "Use LZ4 codec for audio storage"),
             ('LZ4HC', "LZ4HC", "Use LZ4HC codec for audio storage"),
             ('ZSTD', "ZSTD", "Use ZSTD codec for audio storage"),
-            ('LZ4HC', "LZ4HC", "Use LZ4HC codec for audio storage"),
             ('ZLIB', "ZLIB", "Use ZLIB codec for audio storage"),
-            ('ZSTD', "ZSTD", "Use ZSTD codec for audio storage"),
             ('NDLZ', "NDLZ", "Use NDLZ codec for audio storage"),
             ('ZFP_ACC', "ZFP_ACC", "Use ZFP_ACC codec for audio storage"),
             ('ZFP_PREC', "ZFP_PREC", "Use ZFP_PREC codec for audio storage"),
             ('ZFP_RATE', "ZFP_RATE", "Use ZFP_RATE codec for audio storage"),
             ],
-        default='ZSTD'
+        default='LZ4'
     )
 
     blosc2_clevel: IntProperty(
@@ -88,21 +107,15 @@ class PBRAudioStorageProperties(PropertyGroup):
         min=0
     )
 
-    blosc2_filters: EnumProperty(
-        name="Available filters",
-        description="Codec Type",
-        items=[
-            ('NOFILTER', "NOFILTER", "Use NOFILTER codec for audio storage"),
-            ('SHUFFLE', "SHUFFLE", "Use SHUFFLE codec for audio storage"),
-            ('BITSHUFFLE', "BITSHUFFLE", "Use BITSHUFFLE codec for audio storage"),
-            ('DELTA', "DELTA", "Use DELTA codec for audio storage"),
-            ('TRUNC_PREC', "TRUNC_PREC", "Use TRUNC_PREC codec for audio storage"),
-            ('NDCELL', "NDCELL", "Use NDCELL codec for audio storage"),
-            ('NDMEAN', "NDMEAN", "Use NDMEAN codec for audio storage"),
-            ('BYTEDELTA', "BYTEDELTA", "Use BYTEDELTA codec for audio storage"),
-            ('INT_TRUNC', "INT_TRUNC", "Use INT_TRUNC codec for audio storage"),
-            ],
-        default='NOFILTER'
+    blosc2_filters: CollectionProperty(
+        type=PBRAudioBlosc2FilterItem,
+        name="Filters",
+        description="A list of filters to apply for blosc2 compression"
+    )
+
+    blosc2_filters_index: IntProperty(
+        name="Active Filter Index",
+        default=0
     )
 
     chunk_size_samples: IntProperty(

@@ -149,15 +149,17 @@ class PBRAUDIO_PT_storage_panel(Panel):
             layout.prop(storage, "blosc2_dparams_threads")
             layout.label(text="Filters:")
 
-            if len(storage.blosc2_filters) == 0:
-                storage.blosc2_filters_index = -1
-            elif storage.blosc2_filters_index >= len(storage.blosc2_filters):
-                storage.blosc2_filters_index = len(storage.blosc2_filters) - 1
-            elif storage.blosc2_filters_index < 0:
-                storage.blosc2_filters_index = 0
+            blosc2_filters = scene.pbraudiostorage_blosc2_filters
+            blosc2_filters_index = scene.pbraudiostorage_blosc2_filters_index
+            if len(blosc2_filters) == 0:
+                blosc2_filters_index = -1
+            elif blosc2_filters_index >= len(blosc2_filters):
+                blosc2_filters_index = len(blosc2_filters) - 1
+            elif blosc2_filters_index < 0:
+                blosc2_filters_index = 0
 
             row = layout.row()
-            row.template_list("PBRAUDIO_UL_blosc2_filters", "", scene, "pbraudiostorage_blosc2_filters", scene, "pbraudiostorage_blosc2_filters_index", row=3)
+            row.template_list("PBRAUDIO_UL_blosc2_filters", "", scene, "pbraudiostorage_blosc2_filters", scene, "pbraudiostorage_blosc2_filters_index", rows=3)
 
             col = row.column(align=True)
             col.operator("pbraudiostorage.blosc2_filter_add", icon='ADD', text="")

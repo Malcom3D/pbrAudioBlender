@@ -84,19 +84,21 @@ class CollisionExporter:
         self.particles = []
         self.particle_idx = 0
 
-    def get_storage_config(self, scene):
-        """Get storage configuration"""
+    def get_storage_config(self):
+        """Get storage configuration""" 
         storage = {}
-        storage['chunk_size_samples'] = scene.pbraudiostorage.chunk_size_samples
-        storage['backend'] = scene.pbraudiostorage.backend
-        storage['root_path'] = f"{self.export_path}/{scene.pbraudiostorage.root_path}"
-        if scene.pbraudiostorage.backend == 'blosc2':
-            storage['blosc2_codec'] = scene.pbraudiostorage.blosc2_codec
-            storage['blosc2_clevel'] = scene.pbraudiostorage.blosc2_clevel
-            storage['blosc2_filters'] = scene.pbraudiostorage.blosc2_filters
-        elif scene.pbraudiostorage.backend == 'zarr':
-            storage['zarr_store_kwargs'] = scene.pbraudiostorage.zarr_store_kwargs
-
+        storage['chunk_size_samples'] = self.scene.pbraudiostorage.chunk_size_samples
+        storage['backend'] = self.scene.pbraudiostorage.backend
+        if self.scene.pbraudiostorage.backend == 'blosc2':
+            storage['root_path'] = f"{self.cache_path}/{self.scene.pbraudiostorage.root_path}"
+            storage['blosc2_codec'] = self.scene.pbraudiostorage.blosc2_codec
+            storage['blosc2_clevel'] = self.scene.pbraudiostorage.blosc2_clevel
+            storage['blosc2_filters'] = [item.filter_type for item in self.scene.pbraudiostorage.blosc2_filters]
+            storage['blosc2_cparams_threads'] = self.scene.pbraudiostorage.blosc2_cparams_threads
+            storage['blosc2_dparams_threads'] = self.scene.pbraudiostorage.blosc2_dparams_threads
+        elif self.scene.pbraudiostorage.backend == 'zarr':
+            storage['zarr_store_kwargs'] = self.scene.pbraudiostorage.zarr_store_kwargs
+            
         return storage
 
     def get_trajectory_postprocess(self, scene):

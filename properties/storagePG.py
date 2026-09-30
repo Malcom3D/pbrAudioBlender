@@ -22,7 +22,7 @@ from bpy.types import PropertyGroup, CollectionProperty
 from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty, PointerProperty, BoolProperty
 
 classes = []
-backend = []
+backend = None
 
 class PBRAudioBlosc2FilterItem(PropertyGroup):
     """Property group for a single blosc2 filter item"""

@@ -49,6 +49,11 @@ class PBRAudioBlosc2FilterItem(PropertyGroup):
         description="blosc2 filter type"
     )
 
+    blosc2_filters_index: IntProperty(
+        name="Active Filter Index",
+        default=0
+    )
+
 classes.append(PBRAudioBlosc2FilterItem)
 
 class PBRAudioStorageProperties(PropertyGroup):

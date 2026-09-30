@@ -31,7 +31,7 @@ class PBRAudioBlosc2FilterItem(PropertyGroup):
         name="Filter",
         description="Select a filter for the blosc2 codec",
         items=[
-            ('NONOFILTER', "NOFILTER", "Use NOFILTER codec for audio storage"),
+            ('NOFILTER', "NOFILTER", "Use NOFILTER codec for audio storage"),
             ('SHUFFLE', "SHUFFLE", "Use SHUFFLE codec for audio storage"),
             ('BITSHUFFLE', "BITSHUFFLE", "Use BITSHUFFLE codec for audio storage"),
             ('DELTA', "DELTA", "Use DELTA codec for audio storage"),

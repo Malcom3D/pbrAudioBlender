@@ -17,49 +17,38 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.props import StringProperty
 from bpy.types import Operator
 
 classes = []
 
+
 class PBRAUDIO_OT_blosc2_filter_add(Operator):
     """Add a new blosc2 filter to the list"""
-    bl_idname = "pbraudio.blosc2_filter_add"
+    bl_idname = "pbraudiostorage.blosc2_filter_add"
     bl_label = "Add Blosc2 Filter"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        storage_props = getattr(context.scene, "pbraudiostorage", None)
-        if storage_props is None:
-            self.report({'ERROR'}, "pbrAudio storage properties not available")
-            return {'CANCELLED'}
-        try:
-            storage_props.blosc2_filters.add()
-        except Exception as e:
-            self.report({'ERROR'}, f"Could not add filter item: {e}")
-            return {'CANCELLED'}
-
-        storage_props.blosc2_filters_index = len(storage_props.blosc2_filters) - 1
+        scene = context.scene
+        scene.pbraudiostorage_blosc2_filters.add()
+        scene.pbraudiostorage_blosc2_filters_index = len(scene.pbraudiostorage_blosc2_filters) - 1
         return {'FINISHED'}
+
 classes.append(PBRAUDIO_OT_blosc2_filter_add)
+
 
 class PBRAUDIO_OT_blosc2_filter_remove(Operator):
     """Remove the selected blosc2 filter from the list"""
-    bl_idname = "pbraudio.blosc2_filter_remove"
+    bl_idname = "pbraudiostorage.blosc2_filter_remove"
     bl_label = "Remove Blosc2 Filter"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        storage_props = getattr(context.scene, "pbraudiostorage", None)
-        if storage_props is None:
-            return {'CANCELLED'}
-
-        index = storage_props.blosc2_filters_index
-        if 0 <= index < len(storage_props.blosc2_filters):
-            storage_props.blosc2_filters.remove(index)
-            storage_props.blosc2_filters_index = min(
-                max(0, index - 1),
-                len(storage_props.blosc2_filters) - 1
-            )
+        scene = context.scene
+        index = scene.pbraudiostorage_blosc2_filters_index
+        if 0 <= index < len(scene.pbraudiostorage_blosc2_filters):
+            scene.pbraudiostorage_blosc2_filters.remove(index)
+            scene.pbraudiostorage_blosc2_filters_index = min(max(0, index - 1), len(scene.pbraudiostorage_blosc2_filters) - 1)
         return {'FINISHED'}
+
 classes.append(PBRAUDIO_OT_blosc2_filter_remove)

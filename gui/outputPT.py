@@ -157,16 +157,11 @@ class PBRAUDIO_PT_storage_panel(Panel):
                 storage.blosc2_filters_index = 0
 
             row = layout.row()
-            row.template_list(
-                "PBRAUDIO_UL_blosc2_filters", "",
-                storage, "blosc2_filters",
-                storage, "blosc2_filters_index",
-                rows=3,
-            )
+            row.template_list("PBRAUDIO_UL_blosc2_filters", "", scene, "pbraudiostorage_blosc2_filters", scene, "pbraudiostorage_blosc2_filters_index", row=3)
 
             col = row.column(align=True)
-            col.operator("pbraudio.blosc2_filter_add", icon='ADD', text="")
-            col.operator("pbraudio.blosc2_filter_remove", icon='REMOVE', text="")
+            col.operator("pbraudiostorage.blosc2_filter_add", icon='ADD', text="")
+            col.operator("pbraudiostorage.blosc2_filter_remove", icon='REMOVE', text="")
         elif storage.backend == 'zarr':
             layout.prop(storage, "zarr_store_kwargs")
 

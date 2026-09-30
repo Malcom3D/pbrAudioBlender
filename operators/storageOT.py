@@ -24,16 +24,18 @@ classes = []
 
 class PBRAUDIO_OT_blosc2_filter_add(Operator):
     """Add a new blosc2 filter to the list"""
-    bl_idname = "pbraudio.blosc2_filter_add"
+    bl_idname = "pbraudio.bloscosc2_filter_add"
     bl_label = "Add Blosc2 Filter"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        storage_props = context.scene.pbraudiostorage_filter
+        storage_props = context.scene.pbraudiostorage
         storage_props.blosc2_filters.add()
         storage_props.blosc2_filters_index = len(storage_props.blosc2_filters) - 1
         return {'FINISHED'}
+
 classes.append(PBRAUDIO_OT_blosc2_filter_add)
+
 
 class PBRAUDIO_OT_blosc2_filter_remove(Operator):
     """Remove the selected blosc2 filter from the list"""
@@ -42,10 +44,11 @@ class PBRAUDIO_OT_blosc2_filter_remove(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        storage_props = context.scene.pbraudiostorage_filter
-        index = context.scene.pbraudiostorage_filter_index
+        storage_props = context.scene.pbraudiostorage
+        index = storage_props.blosc2_f_filters_index
         if 0 <= index < len(storage_props.blosc2_filters):
             storage_props.blosc2_filters.remove(index)
             storage_props.blosc2_filters_index = min(max(0, index - 1), len(storage_props.blosc2_filters) - 1)
         return {'FINISHED'}
+
 classes.append(PBRAUDIO_OT_blosc2_filter_remove)

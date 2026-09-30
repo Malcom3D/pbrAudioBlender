@@ -148,7 +148,7 @@ class PBRAUDIO_PT_storage_panel(Panel):
             layout.prop(scene.pbraudiostorage, "blosc2_dparams_threads")
             layout.label(text="Filters:")
             row = layout.row()
-            row.template_list("PBRAUDIO_UL_blosc2_filters", "", scene, "pbraudiostorage_filter", scene, "pbraudiostorage_filter_index", rows=3)
+            row.template_list("PBRAUDIO_UL_blosc2_filters", "", storage, "blosc2_filters", storage, "blosc2_filters_index", rows=3)
 
             col = row.column(align=True)
             col.operator("pbraudio.blosc2_filter_add", icon='ADD', text="")

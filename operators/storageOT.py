@@ -29,13 +29,19 @@ class PBRAUDIO_OT_blosc2_filter_add(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        storage_props = context.scene.pbraudiostorage
-        storage_props.blosc2_filters.add()
+        storage_props = getattr(context.scene, "pbraudiostorage", None)
+        if storage_props is None:
+            self.report({'ERROR'}, "pbrAudio storage properties not available")
+            return {'CANCELLED'}
+        try:
+            storage_props.blosc2_filters.add()
+        except Exception as e:
+            self.report({'ERROR'}, f"Could not add filter item: {e}")
+            return {'CANCELLED'}
+
         storage_props.blosc2_filters_index = len(storage_props.blosc2_filters) - 1
         return {'FINISHED'}
-
 classes.append(PBRAUDIO_OT_blosc2_filter_add)
-
 
 class PBRAUDIO_OT_blosc2_filter_remove(Operator):
     """Remove the selected blosc2 filter from the list"""
@@ -44,11 +50,16 @@ class PBRAUDIO_OT_blosc2_filter_remove(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        storage_props = context.scene.pbraudiostorage
+        storage_props = getattr(context.scene, "pbraudiostorage", None)
+        if storage_props is None:
+            return {'CANCELLED'}
+
         index = storage_props.blosc2_filters_index
         if 0 <= index < len(storage_props.blosc2_filters):
             storage_props.blosc2_filters.remove(index)
-            storage_props.blosc2_filters_index = min(max(0, index - 1), len(storage_props.blosc2_filters) - 1)
+            storage_props.blosc2_filters_index = min(
+                max(0, index - 1),
+                len(storage_props.blosc2_filters) - 1
+            )
         return {'FINISHED'}
-
 classes.append(PBRAUDIO_OT_blosc2_filter_remove)

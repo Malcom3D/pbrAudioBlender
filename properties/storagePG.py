@@ -22,8 +22,13 @@ from bpy.types import PropertyGroup, CollectionProperty
 from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty, PointerProperty, BoolProperty
 
 classes = []
+backend = []
 
-backend = None
+def storage_bakend_list(self, context):
+    # placeholder for dynamic backend EnumProperty items
+    if backend is None:
+        backend = [('blosc2','blosc2','Use blosc2 as storage backend'),('zarr','zarr','Use zarr as storage backend')]
+    return backend
 
 class PBRAudioBlosc2FilterItem(PropertyGroup):
     """Property group for a single blosc2 filter item"""
@@ -47,13 +52,6 @@ class PBRAudioBlosc2FilterItem(PropertyGroup):
 classes.append(PBRAudioBlosc2FilterItem)
 
 class PBRAudioStorageProperties(PropertyGroup):
-    def storage_bakend_list(self, context):
-        # placeholder for dynamic backend EnumProperty items
-        global backend
-        if backend is None:
-            backend = [('blosc2','blosc2','Use blosc2 as storage backend'),('zarr','zarr','Use zarr as storage backend')]
-        return backend
-
     backend: EnumProperty(
         name="Backend",
         description="Backend Type",

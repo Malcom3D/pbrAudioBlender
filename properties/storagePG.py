@@ -46,7 +46,7 @@ class PBRAudioBlosc2FilterItem(PropertyGroup):
 classes.append(PBRAudioBlosc2FilterItem)
 
 class PBRAudioStorageProperties(PropertyGroup):
-    def storage_bakend_list(self, context):
+    def storage_backend_list(self, context):
         # placeholder for dynamic backend EnumProperty items
         global backend
         if backend is None:
@@ -56,7 +56,7 @@ class PBRAudioStorageProperties(PropertyGroup):
     backend: EnumProperty(
         name="Backend",
         description="Backend Type",
-        items=storage_bakend_list,
+        items=storage_backend_list,
         default=0
     )
 

@@ -18,7 +18,7 @@
 
 import bpy
 import math
-from bpy.types import PropertyGroup
+from bpy.types import PropertyGroup, CollectionProperty
 from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty, PointerProperty, BoolProperty
 
 classes = []

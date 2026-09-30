@@ -35,6 +35,8 @@ def register():
     bpy.types.Scene.pbraudio = PointerProperty(type=scenePG.PBRAudioSceneProperties)
     bpy.types.Scene.pbraudiorender = PointerProperty(type=enginePG.PBRAudioEngineProperties)
     bpy.types.Scene.pbraudiostorage = PointerProperty(type=storagePG.PBRAudioStorageProperties)
+    bpy.types.Scene.pbraudiostorage_filter = CollectionProperty(type=storagePG.PBRAudioBlosc2FilterItem)
+    bpy.types.Scene.pbraudiostorage_filter_index = IntProperty(name="Index", default=-1, description="Active filter index")
     bpy.types.Object.pbraudio = PointerProperty(type=objectPG.PBRAudioObjectProperties)
     bpy.types.Object.pbraudio_connected = CollectionProperty(type=objectPG.PBRAudioConnectedObjectList)
     bpy.types.Object.pbraudio_connected_index = IntProperty(name="Index", default=-1, description="Active index in the connected object list")
@@ -51,6 +53,8 @@ def unregister():
     del bpy.types.Object.pbraudio_connected_index
     del bpy.types.Object.pbraudio_connected
     del bpy.types.Object.pbraudio
+    del bpy.types.Scene.pbraudiostorage_filter_index
+    del bpy.types.Scene.pbraudiostorage_filter
     del bpy.types.Scene.pbraudiostorage
     del bpy.types.Scene.pbraudiorender
     del bpy.types.Scene.pbraudio

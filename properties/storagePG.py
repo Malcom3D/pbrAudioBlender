@@ -43,6 +43,12 @@ class PBRAudioBlosc2FilterItem(PropertyGroup):
         ],
         default='NOFILTER'
     )
+
+    blosc2_filters: StringProperty(
+        name="blosc2 Filter",
+        description="blosc2 filter type"
+    )
+
 classes.append(PBRAudioBlosc2FilterItem)
 
 class PBRAudioStorageProperties(PropertyGroup):
@@ -107,16 +113,16 @@ class PBRAudioStorageProperties(PropertyGroup):
         min=0
     )
 
-    blosc2_filters: CollectionProperty(
-        type=PBRAudioBlosc2FilterItem,
-        name="Filters",
-        description="A list of filters to apply for blosc2 compression"
-    )
-
-    blosc2_filters_index: IntProperty(
-        name="Active Filter Index",
-        default=0
-    )
+#    blosc2_filters: CollectionProperty(
+#        type=PBRAudioBlosc2FilterItem,
+#        name="Filters",
+#        description="A list of filters to apply for blosc2 compression"
+#    )
+#
+#    blosc2_filters_index: IntProperty(
+#        name="Active Filter Index",
+#        default=0
+#    )
 
     chunk_size_samples: IntProperty(
         name="Chunk size lenght",

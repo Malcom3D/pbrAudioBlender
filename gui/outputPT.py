@@ -137,15 +137,16 @@ class PBRAUDIO_PT_storage_panel(Panel):
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
+        storage = scene.pbraudiostorage
 
-        layout.prop(scene.pbraudiostorage, "chunk_size_samples")
-        layout.prop(scene.pbraudiostorage, "backend")
-        layout.prop(scene.pbraudiostorage, "root_path")
-        if scene.pbraudiostorage.backend == 'blosc2':
-            layout.prop(scene.pbraudiostorage, "blosc2_codec")
-            layout.prop(scene.pbraudiostorage, "blosc2_clevel")
-            layout.prop(scene.pbraudiostorage, "blosc2_cparams_threads")
-            layout.prop(scene.pbraudiostorage, "blosc2_dparams_threads")
+        layout.prop(storage, "chunk_size_samples")
+        layout.prop(storage, "backend")
+        layout.prop(storage, "root_path")
+        if storage.backend == 'blosc2':
+            layout.prop(storage, "blosc2_codec")
+            layout.prop(storage, "blosc2_clevel")
+            layout.prop(storage, "blosc2_cparams_threads")
+            layout.prop(storage, "blosc2_dparams_threads")
             layout.label(text="Filters:")
             row = layout.row()
             row.template_list("PBRAUDIO_UL_blosc2_filters", "", storage, "blosc2_filters", storage, "blosc2_filters_index", rows=3)
@@ -153,8 +154,8 @@ class PBRAUDIO_PT_storage_panel(Panel):
             col = row.column(align=True)
             col.operator("pbraudio.blosc2_filter_add", icon='ADD', text="")
             col.operator("pbraudio.blosc2_filter_remove", icon='REMOVE', text="")
-        elif scene.pbraudiostorage.backend == 'zarr':
-            layout.prop(scene.pbraudiostorage, "zarr_store_kwargs")
+        elif storage.backend == 'zarr':
+            layout.prop(storage, "zarr_store_kwargs")
 
 classes.append(PBRAUDIO_PT_storage_panel)
 

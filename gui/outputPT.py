@@ -142,7 +142,6 @@ class PBRAUDIO_PT_storage_panel(Panel):
 
 classes.append(PBRAUDIO_PT_storage_panel)
 
-
 class PBRAUDIO_PT_metadata_panel(Panel):
     """Panel for pbrAudio Frame Range settings"""
     bl_label = "Metadata"

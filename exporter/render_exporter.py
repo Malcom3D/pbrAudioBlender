@@ -98,7 +98,7 @@ class RenderExporter:
             "cache_path": self.cache_path,
             "output_path": self.render_path,
             "render_path": self.render_path,
-            "enable_noise_enhancement": self.scene.pbraudio.enable_noise_enhancement
+            "enable_noise_enhancement": self.scene.pbraudio.enable_noise_enhancement,
             "number_of_rays": self.scene.pbraudiorender.number_of_rays,
             "direction_seed": self.scene.pbraudiorender.direction_seed,
             "bands_per_octave": self.scene.pbraudiorender.bands_per_octave,

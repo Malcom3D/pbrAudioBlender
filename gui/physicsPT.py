@@ -59,6 +59,7 @@ class PBRAUDIO_PT_Collision_panel(Panel):
         layout.prop(scene.pbraudio, "samples_per_object", text="Samples per Object", slider=True)
         layout.prop(scene.pbraudio, "modal_modes", text="Modal Modes", slider=True)
         layout.prop(scene.pbraudio, "voxel_size", text="Voxel Size", slider=True)
+        layout.prop(scene.pbraudio, "enable_noise_enhancement", text="Noise Enhancement", slider=True)
 
         # scene fracture value
         fracture_enabled = False

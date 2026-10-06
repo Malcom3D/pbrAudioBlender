@@ -87,7 +87,7 @@ class CollisionExporter:
         self.particles = []
         self.particle_idx = 0
 
-    def get_storage_config(self, schene):
+    def get_storage_config(self, scene):
         """Get storage configuration""" 
         storage = {}
         storage['chunk_size_samples'] = scene.pbraudiostorage.chunk_size_samples

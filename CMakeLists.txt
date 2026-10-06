@@ -915,6 +915,9 @@ if (NOT WIN32)
 #    DEPENDS meshlib
 #    DEPENDS embreex
 #    DEPENDS numpy
+    DEPENDS dill
+    DEPENDS pox
+    DEPENDS klepto
     DEPENDS fast-simplification
 #    DEPENDS pillow
     DEPENDS rtree
@@ -1038,6 +1041,9 @@ if (NOT WIN32)
 #  add_dependencies(blender meshlib)
 #  add_dependencies(blender embreex)
 #  add_dependencies(blender numpy)
+add_dependencies(blender dill)
+add_dependencies(blender pox)
+add_dependencies(blender klepto)
 add_dependencies(blender fast-simplification)
 #  add_dependencies(blender pillow)
 add_dependencies(blender rtree)

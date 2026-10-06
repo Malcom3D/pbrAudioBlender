@@ -48,7 +48,46 @@ include(ExternalProject)
 #    BUILD_COMMAND cmake -E echo "Skipping build step."
 #    INSTALL_COMMAND cmake -E echo "Skipping install step."
 #    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+##)
+ExternalProject_Add(
+    dill
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/81/e1/56027a71e31b02ddc53c7d65b01e68edf64dea2932122fe7746a516f75d5/dill-0.4.1.tar.gz
+    URL_HASH SHA256=423092df4182177d4d8ba8290c8a5b640c66ab35ec7da59ccfa00f6fa3eea5fa
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    pox
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/44/58/4385741dea1d74fe9dfed7ff42975266634ef8000f2c8e96717079c916b1/pox-0.3.7.tar.gz
+    URL_HASH SHA256=0652f6f2103fe6d4ba638beb6fa8d3e8a68fd44bcb63315c614118515bcc3afb
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    klepto
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/d5/15/40e2bafbdd03ad95a88e2d821065a63fd193be1d3685d63a57e8b63d352f/klepto-0.2.8.tar.gz
+    URL_HASH SHA256=0f02cf17ea5963645600d69c50275f9b43d04dbfc1c019eed6c9008d952240b4
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 ExternalProject_Add(
     fast-simplification
     PREFIX "blender"

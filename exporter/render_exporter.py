@@ -85,7 +85,7 @@ class RenderExporter:
     def get_system_config(self):
         """Get system configuration"""
         system = {
-            "collection": self.scene.pbraudio.collision_collection.name_full
+            "collection": self.scene.pbraudio.collision_collection.name_full,
             "physical_core": cpu_count(logical=False),
             "output_format": self.scene.pbraudio.output_format,
             "sample_rate": self.scene.pbraudio.sample_rate,
@@ -94,7 +94,7 @@ class RenderExporter:
             "fps": self.scene.render.fps,
             "fps_base": self.scene.render.fps_base,
             "subframes": 1,
-            "total_frames": 1 + self.scene.frame_end - self.scene.frame_start
+            "total_frames": 1 + self.scene.frame_end - self.scene.frame_start,
             "start_frame": self.scene.frame_start,
             "end_frame": self.scene.frame_end,
             "cache_path": self.cache_path,
@@ -133,7 +133,7 @@ class RenderExporter:
             storage['root_path'] = f"{self.cache_path}/{self.scene.pbraudiostorage.root_path}"
             storage['blosc2_codec'] = self.scene.pbraudiostorage.blosc2_codec
             storage['blosc2_clevel'] = self.scene.pbraudiostorage.blosc2_clevel
-            storage['blosc2_filters'] = [item.filter_type for item in self.scene.pbraudiostorage.blosc2_filters]
+            storage['blosc2_filters'] = [item.filter_type for item in self.scene.pbraudiostorage_blosc2_filters]
             storage['blosc2_cparams_threads'] = self.scene.pbraudiostorage.blosc2_cparams_threads
             storage['blosc2_dparams_threads'] = self.scene.pbraudiostorage.blosc2_dparams_threads
         elif self.scene.pbraudiostorage.backend == 'zarr':

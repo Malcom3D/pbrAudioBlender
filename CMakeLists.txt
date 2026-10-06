@@ -52,8 +52,8 @@ include(ExternalProject)
 ExternalProject_Add(
     dill
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/81/e1/56027a71e31b02ddc53c7d65b01e68edf64dea2932122fe7746a516f75d5/dill-0.4.1.tar.gz
-    URL_HASH SHA256=423092df4182177d4d8ba8290c8a5b640c66ab35ec7da59ccfa00f6fa3eea5fa
+    URL    https://files.pythonhosted.org/packages/1e/77/dc8c558f7593132cf8fefec57c4f60c83b16941c574ac5f619abb3ae7933/dill-0.4.1-py3-none-any.whl
+    URL_HASH SHA256=1e1ce33e978ae97fcfcff5638477032b801c46c7c65cf717f95fbc2248f79a9d
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -65,8 +65,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     pox
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/44/58/4385741dea1d74fe9dfed7ff42975266634ef8000f2c8e96717079c916b1/pox-0.3.7.tar.gz
-    URL_HASH SHA256=0652f6f2103fe6d4ba638beb6fa8d3e8a68fd44bcb63315c614118515bcc3afb
+    URL    https://files.pythonhosted.org/packages/2a/ac/4d5f104edf2aae2fec85567ec1d1969010de8124c5c45514f25e14900b65/pox-0.3.7-py3-none-any.whl
+    URL_HASH SHA256=82a495249d13371314c1a5b5626a115e067ef5215d49530bf5efa37fbc25b56a
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -78,8 +78,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     klepto
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/d5/15/40e2bafbdd03ad95a88e2d821065a63fd193be1d3685d63a57e8b63d352f/klepto-0.2.8.tar.gz
-    URL_HASH SHA256=0f02cf17ea5963645600d69c50275f9b43d04dbfc1c019eed6c9008d952240b4
+    URL    https://files.pythonhosted.org/packages/7a/a1/ffa6a1502090e1e6a3893f2b8d2a8055abaf1f0b3ab7714acefb9e1d7bcd/klepto-0.2.8-py3-none-any.whl
+    URL_HASH SHA256=61ff6c91966f6d114a5181f571f5757bfaab9d0ce20f61b0e73ffcab64167bec
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

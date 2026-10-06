@@ -44,6 +44,7 @@ class CollisionExporter:
         self.export_path = f"{export_path}/{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)
         system = {}
+        system["collection"] = scene.pbraudio.collision_collection.name_full
         system["physical_core"] = cpu_count(logical=False)
         system["sample_rate"] = scene.pbraudio.sample_rate
         system["bit_depth"] = scene.pbraudio.bit_depth.replace('BIT', '')
@@ -51,6 +52,7 @@ class CollisionExporter:
         system["fps"] = scene.render.fps
         system["fps_base"] = scene.render.fps_base
         system["subframes"] = 1
+        system["total_frames"] = 1 + scene.frame_end - scene.frame_start
         system["modal_modes"] = scene.pbraudio.modal_modes
         system["collision_margin"] = scene.pbraudio.collision_margin
         system["samples_per_object"] = scene.pbraudio.samples_per_object

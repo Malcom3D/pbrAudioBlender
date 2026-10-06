@@ -85,6 +85,7 @@ class RenderExporter:
     def get_system_config(self):
         """Get system configuration"""
         system = {
+             "collection" = self.scene.pbraudio.collision_collection.name_full
             "physical_core": cpu_count(logical=False),
             "output_format": self.scene.pbraudio.output_format,
             "sample_rate": self.scene.pbraudio.sample_rate,
@@ -93,6 +94,7 @@ class RenderExporter:
             "fps": self.scene.render.fps,
             "fps_base": self.scene.render.fps_base,
             "subframes": 1,
+            "total_frames": 1 + self.scene.frame_end - self.scene.frame_start
             "start_frame": self.scene.frame_start,
             "end_frame": self.scene.frame_end,
             "cache_path": self.cache_path,

@@ -327,7 +327,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     enable_noise_enhancement: BoolProperty(
         name="Noise Enhancement",
         description="Enable synthesis of noise enhancement",
-        default=False
+        default=True
     )
 
     enable_small_proxy: BoolProperty(

@@ -131,7 +131,6 @@ class PBRAudioStorageProperties(PropertyGroup):
     klepto_archive_kind: EnumProperty(
         name="archive_kind",
         description="Klepto archive kind store parameters",
-        description="Codec Type",
         items=[
             ('file', "file", "Use klepto file storage, faster for many small objects"),
             ('dir', "dir", "Use klepto dir storage, faster for few very large objects"),

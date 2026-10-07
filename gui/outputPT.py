@@ -169,6 +169,34 @@ class PBRAUDIO_PT_storage_panel(Panel):
 
 classes.append(PBRAUDIO_PT_storage_panel)
 
+class PBRAUDIO_PT_klepto_storage_panel(Panel):
+    bl_label = "Klepto EntityStore"
+    bl_idname = "PBRAUDIO_PT_klepto_storage_panel"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "output"
+    bl_parent_id = "PBRAUDIO_PT_storage_panel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        scene = context.scene
+
+        # DC Offset Removal parameters
+        layout.prop(scene.pbraudiostorage, "klepto_path")
+        layout.prop(scene.pbraudiostorage, "klepto_archive_kind")
+        layout.prop(scene.pbraudiostorage, "klepto_cached")
+        layout.prop(scene.pbraudiostorage, "klepto_compress")
+        layout.prop(scene.pbraudiostorage, "klepto_use_numba_packing")
+        if scene.pbraudiostorage.klepto_use_numba_packing:
+            layout.prop(scene.pbraudiostorage, "klepto_numba_min_bytes")
+        layout.prop(scene.pbraudiostorage, "klepto_fsync")
+
+classes.append(PBRAUDIO_PT_klepto_storage_panel)
+
 class PBRAUDIO_PT_metadata_panel(Panel):
     """Panel for pbrAudio Frame Range settings"""
     bl_label = "Metadata"

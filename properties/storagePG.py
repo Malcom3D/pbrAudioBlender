@@ -120,4 +120,48 @@ class PBRAudioStorageProperties(PropertyGroup):
         default=''
     )
 
+    klepto_path: StringProperty(
+        name="Klepto path",
+        description="Root path of EntityStore backed by klepto",
+        subtype='FILE_PATH',
+        default='entity_store',
+        options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
+
+    klepto_archive_kind: EnumProperty(
+        name="archive_kind",
+        description="Klepto archive kind store parameters",
+        description="Codec Type",
+        items=[
+            ('file', "file", "Use klepto file storage, faster for many small objects"),
+            ('dir', "dir", "Use klepto dir storage, faster for few very large objects"),
+            ],
+        default='file'
+    )
+
+    klepto_cached: BoolProperty(
+        name="Klepto Cached",
+        description="Keeps an in-memory mirror of everything (fast reads, high memory)"
+    )
+
+    klepto_compress: BoolProperty(
+        name="Klepto Compress",
+        description="Compress the pickle payloads trading CPU for disk"
+    )
+
+    klepto_use_numba_packing: BoolProperty(
+        name="Klepto Packing",
+        description="Pack float32/float64 array collections"
+    )
+
+    klepto_numba_min_bytes: IntProperty(
+        name="Klepto Packing Min Byte",
+        description="Minimum total bytes of a float array collection before unpacked is faster",
+        default=16
+    )
+
+    klepto_fsync: BoolProperty(
+        name="Klepto Fsync",
+        description="Use fsync per write (crash-safe, slower)"
+    )
+
 classes.append(PBRAudioStorageProperties)

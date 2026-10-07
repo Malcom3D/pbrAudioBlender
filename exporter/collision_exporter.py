@@ -101,8 +101,22 @@ class CollisionExporter:
             storage['blosc2_dparams_threads'] = scene.pbraudiostorage.blosc2_dparams_threads
         elif scene.pbraudiostorage.backend == 'zarr':
             storage['zarr_store_kwargs'] = scene.pbraudiostorage.zarr_store_kwargs
+        storage['klepto_storage'] = self.get_klepto_config(scene)
             
         return storage
+
+    def get_klepto_config(self, scene):
+        """Get klepto storage configuration""" 
+        klepto_storage = {}
+        klepto_storage['root_path'] = scene.pbraudiostorage.klepto_path
+        klepto_storage['archive_kind'] = scene.pbraudiostorage.klepto_archive_kind
+        klepto_storage['cached'] = scene.pbraudiostorage.klepto_cached
+        klepto_storage['compress'] = scene.pbraudiostorage.klepto_compress
+        klepto_storage['use_numba_packing'] = scene.pbraudiostorage.klepto_use_numba_packing
+        klepto_storage['numba_min_bytes'] = 1 << scene.pbraudiostorage.klepto_numba_min_bytes
+        klepto_storage['fsync'] = scene.pbraudiostorage.klepto_fsync
+
+        return klepto_storage
 
     def get_trajectory_postprocess(self, scene):
         trajectory_postprocess = {}

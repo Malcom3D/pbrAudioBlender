@@ -126,6 +126,7 @@ class PBRAudioStorageProperties(PropertyGroup):
         subtype='FILE_PATH',
         default='entity_store',
         options={'PATH_SUPPORTS_BLEND_RELATIVE', 'ANIMATABLE'}
+    )
 
     klepto_archive_kind: EnumProperty(
         name="archive_kind",

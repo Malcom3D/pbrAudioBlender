@@ -135,7 +135,7 @@ class PBRAudioStorageProperties(PropertyGroup):
             ('file', "file", "Use klepto file storage, faster for many small objects"),
             ('dir', "dir", "Use klepto dir storage, faster for few very large objects"),
             ],
-        default='file'
+        default='dir'
     )
 
     klepto_cached: BoolProperty(

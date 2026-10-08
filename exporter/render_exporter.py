@@ -145,7 +145,7 @@ class RenderExporter:
     def get_klepto_config(self, scene):
         """Get klepto storage configuration"""
         klepto_storage = {}
-        klepto_storage['root_path'] = scene.pbraudiostorage.klepto_path
+        klepto_storage['root_path'] = f"{self.cache_path}/{scene.pbraudiostorage.klepto_path}"
         klepto_storage['archive_kind'] = scene.pbraudiostorage.klepto_archive_kind
         klepto_storage['cached'] = scene.pbraudiostorage.klepto_cached
         klepto_storage['compress'] = scene.pbraudiostorage.klepto_compress

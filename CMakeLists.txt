@@ -622,7 +622,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
 ExternalProject_Add(
-    annotated_types
+    annotated-types
     PREFIX "blender"
     URL    https://files.pythonhosted.org/packages/99/91/8acff4f5e50511b911bbccb72b8628a49c68ce14148cd9f6431094859a90/annotated_types-0.8.0-py3-none-any.whl
     URL_HASH SHA256=f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0
@@ -891,7 +891,7 @@ if (NOT WIN32)
     DEPENDS anyio
     DEPENDS pydantic
     DEPENDS pydantic_core
-    DEPENDS httpx
+#    DEPENDS httpx
     DEPENDS blosc2
     DEPENDS pycparser
     DEPENDS numcodecs
@@ -961,7 +961,7 @@ add_dependencies(blender httpcore)
 add_dependencies(blender h2)
 add_dependencies(blender anyio)
 add_dependencies(blender pydantic)
-add_dependencies(blender httpx)
+#add_dependencies(blender httpx)
 add_dependencies(blender blosc2)
 add_dependencies(blender pycparser)
 add_dependencies(blender numcodecs)

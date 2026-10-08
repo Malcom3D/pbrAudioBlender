@@ -883,7 +883,6 @@ if (NOT WIN32)
     DEPENDS certifi
     DEPENDS annotated-types
     DEPENDS typing-inspection
-    DEPENDS annotated_types
     DEPENDS numexpr
     DEPENDS markdown-it-py
     DEPENDS httpcore
@@ -953,7 +952,6 @@ add_dependencies(blender h11)
 add_dependencies(blender certifi)
 add_dependencies(blender annotated-types)
 add_dependencies(blender typing-inspection)
-add_dependencies(blender annotated_types)
 add_dependencies(blender pydantic_core)
 add_dependencies(blender numexpr)
 add_dependencies(blender markdown-it-py)

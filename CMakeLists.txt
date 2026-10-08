@@ -637,8 +637,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     typing-inspection
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.4-py3-none-any.whl0.4.2-py3-none-any.whl
-    URL_HASH SHA256=4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7
+    URL    https://files.pythonhosted.org/packages/67/81/4add07e5172b7ac40d8ed5ff580409a7801a4fe26d529bdd915401dabfbe/typing_inspection-0.4.4-py3-none-any.whl
+    URL_HASH SHA256=65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

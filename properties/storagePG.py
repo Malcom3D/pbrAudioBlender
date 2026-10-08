@@ -140,19 +140,19 @@ class PBRAudioStorageProperties(PropertyGroup):
 
     klepto_cached: BoolProperty(
         name="Klepto Cached",
-        description="Keeps an in-memory mirror of everything (fast reads, high memory)"
+        description="Keeps an in-memory mirror of everything (fast reads, high memory)",
         default=False
     )
 
     klepto_compress: BoolProperty(
         name="Klepto Compress",
-        description="Compress the pickle payloads trading CPU for disk"
+        description="Compress the pickle payloads trading CPU for disk",
         default=False
     )
 
     klepto_use_numba_packing: BoolProperty(
         name="Klepto Packing",
-        description="Pack float32/float64 array collections"
+        description="Pack float32/float64 array collections",
         default=True
     )
 
@@ -164,7 +164,7 @@ class PBRAudioStorageProperties(PropertyGroup):
 
     klepto_fsync: BoolProperty(
         name="Klepto Fsync",
-        description="Use fsync per write (crash-safe, slower)"
+        description="Use fsync per write (crash-safe, slower)",
         default=True
     )
 

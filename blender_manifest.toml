@@ -95,7 +95,7 @@ wheels = [
    "./downloads/mdurl-0.1.2-py3-none-any.whl",
    "./downloads/msgpack-1.2.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/pydantic_core-2.47.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-   "./downloads/blosc2-4.9.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/blosc2-4.14.1-cp311-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/typing_inspection-0.4.2-py3-none-any.whl",
    "./downloads/typing_extensions-4.16.0-py3-none-any.whl",
    "./downloads/anyio-4.14.2-py3-none-any.whl",

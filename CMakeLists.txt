@@ -738,19 +738,19 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-#ExternalProject_Add(
-#    httpx
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl
-#    URL_HASH SHA256=d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    httpx
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl
+    URL_HASH SHA256=d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 ExternalProject_Add(
     numcodecs
     PREFIX "blender"
@@ -890,7 +890,7 @@ if (NOT WIN32)
     DEPENDS anyio
     DEPENDS pydantic
     DEPENDS pydantic_core
-#    DEPENDS httpx
+    DEPENDS httpx
     DEPENDS blosc2
     DEPENDS pycparser
     DEPENDS numcodecs
@@ -959,7 +959,7 @@ add_dependencies(blender httpcore)
 add_dependencies(blender h2)
 add_dependencies(blender anyio)
 add_dependencies(blender pydantic)
-#add_dependencies(blender httpx)
+add_dependencies(blender httpx)
 add_dependencies(blender blosc2)
 add_dependencies(blender pycparser)
 add_dependencies(blender numcodecs)

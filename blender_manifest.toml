@@ -43,6 +43,7 @@ platforms = ["linux-x64"]
 #   "./wheels/jsmin-3.0.1-py3-none-any.whl",
 # ]
 wheels = [
+   "./downloads/httpx-0.28.1-py3-none-any.whl",
    "./downloads/urllib3-2.8.0-py3-none-any.whl",
    "./downloads/jinja2-3.1.6-py3-none-any.whl",
    "./downloads/google_crc32c-1.9.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",

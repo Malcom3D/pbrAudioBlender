@@ -54,7 +54,6 @@ wheels = [
    "./downloads/distributed-2025.9.1-py3-none-any.whl",
    "./downloads/dill-0.4.1-py3-none-any.whl",
    "./downloads/sortedcontainers-2.4.0-py2.py3-none-any.whl",
-   "./downloads/typing_inspection-0.4.4-py3-none-any.whl0.4.2-py3-none-any.whl",
    "./downloads/resampy-0.4.3-py3-none-any.whl",
    "./downloads/psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/zict-3.0.0-py2.py3-none-any.whl",

@@ -44,6 +44,7 @@ platforms = ["linux-x64"]
 # ]
 wheels = [
    "./downloads/hyperframe-6.1.0-py3-none-any.whl",
+   "./downloads/scipy-1.17.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/soundfile-0.14.0-py2.py3-none-manylinux_2_28_x86_64.whl",
    "./downloads/annotated_types-0.8.0-py3-none-any.whl",

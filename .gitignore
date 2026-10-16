@@ -4,3 +4,4 @@
 /downloads/*
 /build
 build.sh
+gen_changelog.py

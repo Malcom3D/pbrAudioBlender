@@ -59,13 +59,13 @@ class RenderExporter:
     
     def setup_paths(self):
         """Setup export directories"""
-        cache_path = self.scene.pbraudio.cache_path
-        if cache_path.startswith('//'):
-            cache_path = bpy.path.abspath(cache_path)
+        self.cache_path = self.scene.pbraudio.cache_path
+        if self.cache_path.startswith('//'):
+            self.cache_path = bpy.path.abspath(self.cache_path)
         
-        os.makedirs(cache_path, exist_ok=True)
-        self.cache_path = os.path.join(cache_path, "AcousticDomain")
         os.makedirs(self.cache_path, exist_ok=True)
+        self.root_path = os.path.join(self.cache_path, "AcousticDomain")
+        os.makedirs(self.root_path, exist_ok=True)
         """Setup render output directories"""
         self.render_path = self.scene.pbraudio.output_path
         if self.render_path.startswith('//'):
@@ -97,7 +97,7 @@ class RenderExporter:
             "total_frames": 1 + self.scene.frame_end - self.scene.frame_start,
             "start_frame": self.scene.frame_start,
             "end_frame": self.scene.frame_end,
-            "cache_path": self.cache_path,
+            "cache_path": self.root_path,
             "output_path": self.render_path,
             "render_path": self.render_path,
             "enable_noise_enhancement": self.scene.pbraudio.enable_noise_enhancement,
@@ -109,7 +109,7 @@ class RenderExporter:
 
         # Ambisonic render path
         if not self.scene.pbraudio.output_format == 'AMBISONIC':
-            system["render_path"] = f"{self.cache_path}/AmbisonicOutput"
+            system["render_path"] = f"{self.root_path}/AmbisonicOutput"
         if self.scene.pbraudio.output_format == 'SURROUND':
             system["surround_format"] = self.scene.pbraudio.surround_format
             system["enable_vog"] = self.scene.pbraudio.enable_vog
@@ -145,7 +145,7 @@ class RenderExporter:
     def get_klepto_config(self, scene):
         """Get klepto storage configuration"""
         klepto_storage = {}
-        klepto_storage['root_path'] = f"{self.cache_path}/{scene.pbraudiostorage.klepto_path}"
+        klepto_storage['root_path'] = f"{self.root_path}/{scene.pbraudiostorage.klepto_path}"
         klepto_storage['archive_kind'] = scene.pbraudiostorage.klepto_archive_kind
         klepto_storage['cached'] = scene.pbraudiostorage.klepto_cached
         klepto_storage['compress'] = scene.pbraudiostorage.klepto_compress
@@ -753,8 +753,8 @@ class RenderExporter:
         name = obj.name_full.replace('.', '_')
         
         # Create directories
-        pose_dir = os.path.join(self.cache_path, "data", "pose")
-        obj_dir = os.path.join(self.cache_path, "data", name)
+        pose_dir = os.path.join(self.root_path, "data", "pose")
+        obj_dir = os.path.join(self.root_path, "data", name)
         os.makedirs(pose_dir, exist_ok=True)
         os.makedirs(obj_dir, exist_ok=True)
         
@@ -980,8 +980,8 @@ class RenderExporter:
         obj_config = {
             "idx": self.obj_idx,
             "name": name,
-            "obj_path": os.path.join(self.cache_path, "data", name),
-            "pose_path": os.path.join(self.cache_path, "data", "pose"),
+            "obj_path": os.path.join(self.root_path, "data", name),
+            "pose_path": os.path.join(self.root_path, "data", "pose"),
             "static": is_static,
             "stochastic_variation": obj.pbraudio.stochastic_variation,
             "ground": obj.pbraudio.ground,
@@ -1020,7 +1020,7 @@ class RenderExporter:
         name = empty.name_full.replace('.', '_')
         
         # Create pose directory
-        pose_dir = os.path.join(self.cache_path, "data", "pose")
+        pose_dir = os.path.join(self.root_path, "data", "pose")
         os.makedirs(pose_dir, exist_ok=True)
         
         # Export pose data
@@ -1100,7 +1100,7 @@ class RenderExporter:
         config = {
             "name": name,
             "static": is_static,
-            "pose_path": os.path.join(self.cache_path, "data", "pose")
+            "pose_path": os.path.join(self.root_path, "data", "pose")
         }
         
         if empty.pbraudio.source:
@@ -1213,7 +1213,7 @@ class RenderExporter:
 
     def save_config(self):
         """Save configuration to JSON file"""
-        config_file = os.path.join(self.cache_path, "config.json")
+        config_file = os.path.join(self.root_path, "config.json")
         
         # Convert numpy arrays to lists for JSON serialization
         def convert_for_json(obj):

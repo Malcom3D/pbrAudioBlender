@@ -37,11 +37,11 @@ class CollisionExporter:
         self.decimals = decimals
         self.scale_factor = 1.0  # Blender units to meters
         collision_collection = scene.pbraudio.collision_collection.name_full
-        export_path = f"{scene.pbraudio.cache_path}"
-        if export_path.startswith('//'):
-            export_path = f"{bpy.path.abspath(export_path)}"
-        os.makedirs(export_path, exist_ok=True)
-        self.export_path = f"{export_path}/{scene.pbraudio.collision_collection.name_full}"
+        cache_path = f"{scene.pbraudio.cache_path}"
+        if cache_path.startswith('//'):
+            cache_path = f"{bpy.path.abspath(cache_path)}"
+        os.makedirs(cache_path, exist_ok=True)
+        self.export_path = f"{cache_path}/{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)
         system = {}
         system["collection"] = scene.pbraudio.collision_collection.name_full

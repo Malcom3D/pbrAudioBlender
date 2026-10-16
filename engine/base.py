@@ -26,7 +26,7 @@ from mathutils import Matrix, Vector
 
 from pbrAudioCommon import EntityManager
 from pbrAudioRay.core.acoustic_engine import AcousticEngine
-from postProcess import AmbisonicDecoder
+from pbrAudioSignals import AmbisonicDecoder
 
 from ..exporter.render_exporter import RenderExporter
 from ..utils import frd_io, environment_json

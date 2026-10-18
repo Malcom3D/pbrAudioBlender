@@ -11,6 +11,19 @@ set(EXTERNAL_DOWNLOAD_DIR "${CMAKE_SOURCE_DIR}/downloads" CACHE PATH "Directory 
 
 include(ExternalProject)
 ExternalProject_Add(
+    minihost
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/3b/6d/0fcb6a658102cb84f937dff51f97c0e3bd2a12878aed55fe3ddfafe8b97a/minihost-0.11.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=8334c1f3d9af36c8045e9193be89f23b919678414132bd2436f0157992c456c2
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
     dill
     PREFIX "blender"
     URL    https://files.pythonhosted.org/packages/1e/77/dc8c558f7593132cf8fefec57c4f60c83b16941c574ac5f619abb3ae7933/dill-0.4.1-py3-none-any.whl
@@ -833,6 +846,7 @@ ExternalProject_Add(
 # Make a .zip-file which can be installed into Blender
 if (NOT WIN32)
   add_custom_target (blender 
+    DEPENDS minihost
     DEPENDS dill
     DEPENDS pox
     DEPENDS klepto
@@ -899,6 +913,7 @@ if (NOT WIN32)
     DEPENDS google_crc32c
 )
 
+add_dependencies(blender minihost)
 add_dependencies(blender dill)
 add_dependencies(blender pox)
 add_dependencies(blender klepto)

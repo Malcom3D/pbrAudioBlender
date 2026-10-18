@@ -624,8 +624,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     certifi
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl
-    URL_HASH SHA256=62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775
+    URL    https://files.pythonhosted.org/packages/08/ba/95dd616042484f7c83a06974388b37b837732740ee70bc5dc715b5fcd55a/certifi-2026.10.18-py3-none-any.whl
+    URL_HASH SHA256=73191c47aaa79da394e8fee2dbc2ec827432cab56311122c9e47abf79e390f62
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

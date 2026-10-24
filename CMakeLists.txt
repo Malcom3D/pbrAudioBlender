@@ -882,8 +882,8 @@ if (NOT WIN32)
     DEPENDS soundfile
     DEPENDS cffi
     DEPENDS rich
-#    DEPENDS zarrs
-#    DEPENDS zarr
+    DEPENDS zarrs
+    DEPENDS zarr
     DEPENDS typing-extensions
     DEPENDS threadpoolctl
     DEPENDS pygments
@@ -949,8 +949,8 @@ add_dependencies(blender llvmlite)
 add_dependencies(blender soundfile)
 add_dependencies(blender cffi)
 add_dependencies(blender rich)
-#  add_dependencies(blender zarrs)
-#  add_dependencies(blender zarr)
+add_dependencies(blender zarrs)
+add_dependencies(blender zarr)
 add_dependencies(blender yaml)
 add_dependencies(blender packaging)
 add_dependencies(blender google_crc32c)

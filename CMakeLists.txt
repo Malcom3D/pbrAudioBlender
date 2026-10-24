@@ -465,32 +465,32 @@ ExternalProject_Add(
     INSTALL_COMMAND cmake -E echo "Skipping install step."
     CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
 )
-#ExternalProject_Add(
-#    zarrs
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/c5/fa/471e2511b0c77419ac2228ce72770e94e994ab99c6b9275cb3de1dcead2d/zarrs-0.2.3-cp311-abi3-manylinux_2_28_x86_64.whl
-#    URL_HASH SHA256=ab4074056f01f3292c89cd769e8c0db92c0df076e3d36665eec7fc557a62a2ed
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
-#ExternalProject_Add(
-#    zarr
-#    PREFIX "blender"
-#    URL    https://files.pythonhosted.org/packages/de/7c/ba8ca8cbe9dbef8e83a95fc208fed8e6686c98b4719aaa0aa7f3d31fe390/zarr-3.1.6-py3-none-any.whl
-#    URL_HASH SHA256=b5a82c5079d1c3d4ee8f06746fa3b9a98a7d804300fa3f4be154362a33e1207e
-#    BUILD_ALWAYS OFF
-#    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
-#    DOWNLOAD_NO_EXTRACT ON
-#    DOWNLOAD_NO_PROGRESS ON
-#    BUILD_COMMAND cmake -E echo "Skipping build step."
-#    INSTALL_COMMAND cmake -E echo "Skipping install step."
-#    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
-#)
+ExternalProject_Add(
+    zarrs
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/c5/fa/471e2511b0c77419ac2228ce72770e94e994ab99c6b9275cb3de1dcead2d/zarrs-0.2.3-cp311-abi3-manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=ab4074056f01f3292c89cd769e8c0db92c0df076e3d36665eec7fc557a62a2ed
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
+    zarr
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/de/7c/ba8ca8cbe9dbef8e83a95fc208fed8e6686c98b4719aaa0aa7f3d31fe390/zarr-3.1.6-py3-none-any.whl
+    URL_HASH SHA256=b5a82c5079d1c3d4ee8f06746fa3b9a98a7d804300fa3f4be154362a33e1207e
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
 ExternalProject_Add(
     typing-extensions
     PREFIX "blender"

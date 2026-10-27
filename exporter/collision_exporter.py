@@ -37,11 +37,11 @@ class CollisionExporter:
         self.decimals = decimals
         self.scale_factor = 1.0  # Blender units to meters
         collision_collection = scene.pbraudio.collision_collection.name_full
-        cache_path = f"{scene.pbraudio.cache_path}"
-        if cache_path.startswith('//'):
-            cache_path = f"{bpy.path.abspath(cache_path)}"
-        os.makedirs(cache_path, exist_ok=True)
-        self.export_path = f"{cache_path}/{scene.pbraudio.collision_collection.name_full}"
+        self.cache_path = f"{scene.pbraudio.cache_path}"
+        if self.cache_path.startswith('//'):
+            self.cache_path = f"{bpy.path.abspath(self.cache_path)}"
+        os.makedirs(self.cache_path, exist_ok=True)
+        self.export_path = f"{self.cache_path}/{scene.pbraudio.collision_collection.name_full}"
         os.makedirs(self.export_path, exist_ok=True)
         system = {}
         system["collection"] = scene.pbraudio.collision_collection.name_full
@@ -93,7 +93,7 @@ class CollisionExporter:
         storage['chunk_size_samples'] = scene.pbraudiostorage.chunk_size_samples
         storage['backend'] = scene.pbraudiostorage.backend
         if scene.pbraudiostorage.backend == 'blosc2':
-            storage['root_path'] = f"{self.export_path}/{scene.pbraudiostorage.root_path}"
+            storage['root_path'] = f"{self.cache_path}/{self.scene.pbraudiostorage.root_path}"
             storage['blosc2_codec'] = scene.pbraudiostorage.blosc2_codec
             storage['blosc2_clevel'] = scene.pbraudiostorage.blosc2_clevel
             storage['blosc2_filters'] = [item.filter_type for item in scene.pbraudiostorage_blosc2_filters]

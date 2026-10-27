@@ -98,8 +98,8 @@ class PBRAudioSceneProperties(PropertyGroup):
                 if not scene.pbraudio.enable_small_proxy == self.collision_collection['small_proxy']:
                     scene.pbraudio.enable_small_proxy = self.collision_collection['small_proxy']
                     scene.pbraudio.proxy_size_threshold = self.collision_collection['proxy_size_threshold']
-                if not scene.pbraudio.enable_proxy_synth == self.collision_collection['enable_proxy_synth']:
-                    scene.pbraudio.enable_proxy_synth = self.collision_collection['enable_proxy_synth']
+                    if not scene.pbraudio.enable_proxy_synth == self.collision_collection['enable_proxy_synth']:
+                        scene.pbraudio.enable_proxy_synth = self.collision_collection['enable_proxy_synth']
             else:
                 self.collision_collection['is_valid'] = True
                 self.collision_collection['physics'] = False

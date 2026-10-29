@@ -86,7 +86,7 @@ wheels = [
    "./downloads/msgpack-1.2.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/numexpr-2.14.2-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/ndindex-1.10.1-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
-   "./downloads/pydantic-2.13.5-py3-none-any.whl",
+   "./downloads/pydantic-2.14.2-py3-none-any.whl",
    "./downloads/donfig-0.8.1.post1-py3-none-any.whl",
    "./downloads/click-8.5.0-py3-none-any.whl",
    "./downloads/h11-0.16.0-py3-none-any.whl",
@@ -107,7 +107,7 @@ wheels = [
    "./downloads/zarr-3.1.6-py3-none-any.whl",
    "./downloads/zarrs-0.2.3-cp311-abi3-manylinux_2_28_x86_64.whl",
    "./downloads/minihost-0.11.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
-   "./wheels/pbraudiorender-202610181350.post1.dev55-py3-none-any.whl",
+   "./wheels/pbraudiorender-202610181350.post1.dev56-py3-none-any.whl",
    "./wheels/embreex-4.4.0-cp311-cp311-linux_x86_64.whl",
 ]
 

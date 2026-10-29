@@ -99,7 +99,7 @@ wheels = [
    "./downloads/blosc2-4.14.1-cp311-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/pycparser-3.0-py3-none-any.whl",
    "./downloads/numcodecs-0.16.5-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
-   "./downloads/numba-0.68.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+   "./downloads/numba-0.68.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/httpcore-1.0.9-py3-none-any.whl",
    "./downloads/partd-1.4.2-py3-none-any.whl",
    "./downloads/fsspec-2026.9.0-py3-none-any.whl",
@@ -107,7 +107,7 @@ wheels = [
    "./downloads/zarr-3.1.6-py3-none-any.whl",
    "./downloads/zarrs-0.2.3-cp311-abi3-manylinux_2_28_x86_64.whl",
    "./downloads/minihost-0.11.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
-   "./wheels/pbraudiorender-202610181350.post1.dev48-py3-none-any.whl",
+   "./wheels/pbraudiorender-202610181350.post1.dev49-py3-none-any.whl",
    "./wheels/embreex-4.4.0-cp311-cp311-linux_x86_64.whl",
 ]
 

@@ -403,8 +403,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     numba
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/33/dc/ba4eaf844972bf9647314079f3a4cad79f63614b388b667103a2e7f521df/numba-0.68.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=68f92839637a2aaca8ae124c3abf91f648d2fade50953ea8e81ec604ac05a771
+    URL    https://files.pythonhosted.org/packages/cc/0c/7cfda35338753113a01e8ba5b9e7736c5c66e6af3e548b5cdb16ffb75f6a/numba-0.68.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=58fe7a3810261cf13797d8aa94c018cfe91e1e8adf634df60eb60ef834f9367b
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

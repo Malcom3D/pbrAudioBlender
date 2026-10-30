@@ -93,7 +93,7 @@ class CollisionExporter:
         storage['chunk_size_samples'] = scene.pbraudiostorage.chunk_size_samples
         storage['backend'] = scene.pbraudiostorage.backend
         if scene.pbraudiostorage.backend == 'blosc2':
-            storage['root_path'] = f"{self.cache_path}/{self.scene.pbraudiostorage.root_path}"
+            storage['root_path'] = f"{self.cache_path}/{scene.pbraudiostorage.root_path}"
             storage['blosc2_codec'] = scene.pbraudiostorage.blosc2_codec
             storage['blosc2_clevel'] = scene.pbraudiostorage.blosc2_clevel
             storage['blosc2_filters'] = [item.filter_type for item in scene.pbraudiostorage_blosc2_filters]

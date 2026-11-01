@@ -642,25 +642,25 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=True
     )
 
-    postprocess_dynamic_denoise_enabled: BoolProperty(
+    synth_postprocess_dynamic_denoise_enabled: BoolProperty(
         name="Dynamic Denoise",
         description="Enable PostProcess Dynamic Denoise",
         default=False
     ) 
 
-    postprocess_noise_gate_threshold_db: FloatProperty(
+    synth_postprocess_noise_gate_threshold_db: FloatProperty(
         name="Noise Gate Threshold",
         description="PostProcess Noise Gate Threshold in dB",
         default=-60.0
     )
 
-    postprocess_noise_floor_estimate_db: FloatProperty(
+    synth_postprocess_noise_floor_estimate_db: FloatProperty(
         name="Noise Floor",
         description="PostProcess Estimated Noise Floor in dB",
         default=-80.0
     )
 
-    postprocess_spectral_reduction_strength: FloatProperty(
+    synth_postprocess_spectral_reduction_strength: FloatProperty(
         name="Spectral Reduction strength",
         description="PostProcess Spectral Reduction strength (0-1)",
         default=0.7,
@@ -668,77 +668,77 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=1
     )
 
-    postprocess_temporal_smoothing_window: IntProperty(
+    synth_postprocess_temporal_smoothing_window: IntProperty(
         name="Window size",
         description="PostProcess Temporal Smoothing Window size for temporal smoothing in samples",
         default=5
     )
     
     # Dynamic reference weighting
-    postprocess_force_reference_weight: FloatProperty(
+    synth_postprocess_force_reference_weight: FloatProperty(
         name="Reduction strength",
         description="PostProcess Force Reference Weighting",
         default=0.3
     )
 
-    postprocess_min_force_threshold: FloatProperty( 
+    synth_postprocess_min_force_threshold: FloatProperty( 
         name="Minimum Force",
         description="PostProcess Minimum Force Threshold",
         default=1e-6
     )
     
     # Smoothing parameters
-    postprocess_smoothing_enabled: BoolProperty(
+    synth_postprocess_smoothing_enabled: BoolProperty(
         name="Smoothing",
         description="Enable PostProcess Dynamic Smoothing",
         default=False
     )
 
-    postprocess_smoothing_window_ms: FloatProperty(  
+    synth_postprocess_smoothing_window_ms: FloatProperty(  
         name="Smoothing Window",
         description="PostProcess Smoothing Window in milliseconds",
         default=2.0
     )
 
-    postprocess_adaptive_smoothing: BoolProperty(
+    synth_postprocess_adaptive_smoothing: BoolProperty(
         name="Adaptive Smoothing",
         description="Enable PostProcess Dynamic Adaptive Smoothing",
         default=False
     )
     
     # Phase alignment
-    postprocess_phase_align_enabled: BoolProperty(    
+    synth_postprocess_phase_align_enabled: BoolProperty(    
         name="Phase Align",
         description="Enable PostProcess Dynamic Phase Alignment",
         default=False
     )
 
-    postprocess_crossfade_samples: IntProperty(
+    synth_postprocess_crossfade_samples: IntProperty(
         name="Crossfade Length",
         description="PostProcess Crossfade Length in samples",
         default=5
     )
     
     # Audio-Force drived dynamic Amplification
-    postprocess_amplification_enabled: BoolProperty(
+    synth_postprocess_amplification_enabled: BoolProperty(
         name="Dynamic Amplification",
         description="Enable PostProcess Audio-Force drived dynamic Amplification",
         default=True
     )
 
-    postprocess_target_rms: FloatProperty(
+    synth_postprocess_target_rms: FloatProperty(
         name="Target RMS",
         description="PostProcess Target RMS Dynamic Amplification Level in dB",
         default=0.15
     )
 
-    postprocess_max_gain_db: FloatProperty(
+    synth_postprocess_max_gain_db: FloatProperty(
         name="Maximum Gain",
         description="PostProcess Maximum Dynamic Amplification Gain in dB",
         default=24.0
     )
 
-    postprocess_dynamic_range_compression: FloatProperty(
+    synth_postprocess_dynamic_range_compression: FloatProperty(
         name="DRC Compression",
         description="PostProcess Dynamic Range Compression",
         default=0.5,
@@ -747,13 +747,13 @@ class PBRAudioSceneProperties(PropertyGroup):
     )
     
     # Blending
-    postprocess_blend_enabled: BoolProperty(
+    synth_postprocess_blend_enabled: BoolProperty(
         name="Tracks Blend",
         description="Enable PostProcess Dynamic Tracks Blending",
         default=False
     )
 
-    postprocess_dry_wet_mix: FloatProperty(
+    synth_postprocess_dry_wet_mix: FloatProperty(
         name="Dry/Wet Level",
         description="PostProcess Dry/Wet Mix Level",
         default=0.85,
@@ -761,7 +761,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         max=1
     )
 
-    postprocess_normalize_output: BoolProperty(
+    synth_postprocess_normalize_output: BoolProperty(
         name="Normalize output",
         description="Normalize PostProcessed Output",
         default=False

@@ -437,7 +437,7 @@ class PBRAUDIO_PT_synthpostprocess_dynamic_amplify_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.prop(scene.pbraudio, "postprocess_amplification_enabled")
+        layout.prop(scene.pbraudio, "synth_postprocess_amplification_enabled")
     
     def draw(self, context):
         layout = self.layout
@@ -445,10 +445,10 @@ class PBRAUDIO_PT_synthpostprocess_dynamic_amplify_panel(Panel):
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
-        layout.enabled = scene.pbraudio.postprocess_amplification_enabled and not scene.pbraudio.cache_status
-        layout.prop(scene.pbraudio, "postprocess_target_rms", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_max_gain_db", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_dynamic_range_compression", slider=True)
+        layout.enabled = scene.pbraudio.synth_postprocess_amplification_enabled and not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "synth_postprocess_target_rms", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_max_gain_db", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_dynamic_range_compression", slider=True)
 
 classes.append(PBRAUDIO_PT_synthpostprocess_dynamic_amplify_panel)
 
@@ -464,7 +464,7 @@ class PBRAUDIO_PT_synthpostprocess_dynamic_denoise_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.prop(scene.pbraudio, "postprocess_dynamic_denoise_enabled")
+        layout.prop(scene.pbraudio, "synth_postprocess_dynamic_denoise_enabled")
     
     def draw(self, context):
         layout = self.layout
@@ -472,13 +472,13 @@ class PBRAUDIO_PT_synthpostprocess_dynamic_denoise_panel(Panel):
         layout.use_property_decorate = False  # No animation.
         
         scene = context.scene
-        layout.enabled = scene.pbraudio.postprocess_dynamic_denoise_enabled and not scene.pbraudio.cache_status
-        layout.prop(scene.pbraudio, "postprocess_noise_gate_threshold_db", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_noise_floor_estimate_db", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_spectral_reduction_strength", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_temporal_smoothing_window", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_force_reference_weight", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_min_force_threshold", slider=True)
+        layout.enabled = scene.pbraudio.synth_postprocess_dynamic_denoise_enabled and not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "synth_postprocess_noise_gate_threshold_db", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_noise_floor_estimate_db", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_spectral_reduction_strength", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_temporal_smoothing_window", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_force_reference_weight", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_min_force_threshold", slider=True)
 
 classes.append(PBRAUDIO_PT_synthpostprocess_dynamic_denoise_panel)
 
@@ -494,7 +494,7 @@ class PBRAUDIO_PT_synthpostprocess_smoothing_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.prop(scene.pbraudio, "postprocess_smoothing_enabled")
+        layout.prop(scene.pbraudio, "synth_postprocess_smoothing_enabled")
 
     def draw(self, context):
         layout = self.layout
@@ -502,11 +502,11 @@ class PBRAUDIO_PT_synthpostprocess_smoothing_panel(Panel):
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
-        layout.enabled = scene.pbraudio.postprocess_smoothing_enabled and not scene.pbraudio.cache_status
-        layout.prop(scene.pbraudio, "postprocess_smoothing_window_ms", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_adaptive_smoothing", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_phase_align_enabled", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_crossfade_samples", slider=True)
+        layout.enabled = scene.pbraudio.synth_postprocess_smoothing_enabled and not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "synth_postprocess_smoothing_window_ms", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_adaptive_smoothing", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_phase_align_enabled", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_crossfade_samples", slider=True)
 
 classes.append(PBRAUDIO_PT_synthpostprocess_smoothing_panel)
 
@@ -522,7 +522,7 @@ class PBRAUDIO_PT_synthpostprocess_blend_panel(Panel):
     def draw_header(self, context):
         scene = context.scene
         layout = self.layout
-        layout.prop(scene.pbraudio, "postprocess_blend_enabled")
+        layout.prop(scene.pbraudio, "synth_postprocess_blend_enabled")
 
     def draw(self, context):
         layout = self.layout
@@ -530,9 +530,9 @@ class PBRAUDIO_PT_synthpostprocess_blend_panel(Panel):
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
-        layout.enabled = scene.pbraudio.postprocess_blend_enabled and not scene.pbraudio.cache_status
-        layout.prop(scene.pbraudio, "postprocess_dry_wet_mix", slider=True)
-        layout.prop(scene.pbraudio, "postprocess_normalize_output", slider=True)
+        layout.enabled = scene.pbraudio.synth_postprocess_blend_enabled and not scene.pbraudio.cache_status
+        layout.prop(scene.pbraudio, "synth_postprocess_dry_wet_mix", slider=True)
+        layout.prop(scene.pbraudio, "synth_postprocess_normalize_output", slider=True)
 
 classes.append(PBRAUDIO_PT_synthpostprocess_blend_panel)
 

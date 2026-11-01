@@ -78,8 +78,8 @@ class PBRAudioSceneProperties(PropertyGroup):
 
         # Include scene animation range
         hash_input.append(scene.pbraudio.modal_modes)
-        hash_input.append(scene.pbraudio.enable_forces_denoiser)
-        hash_input.append(scene.pbraudio.enable_postprocess)
+        hash_input.append(scene.pbraudio.enable_audio_forces_postprocess)
+        hash_input.append(scene.pbraudio.enable_synth_postprocess)
 
         # Create hash
         hash_str = json.dumps(hash_input, sort_keys=True)
@@ -492,7 +492,7 @@ class PBRAudioSceneProperties(PropertyGroup):
 
     """Scene properties for pbrAudio AudioForcesDenoiser"""
 
-    enable_forces_denoiser: BoolProperty(
+    enable_audio_forces_postprocess: BoolProperty(
         name="AudioForces Denoiser",
         default=False
     )
@@ -637,7 +637,7 @@ class PBRAudioSceneProperties(PropertyGroup):
 
     """Configuration for pbrAudio post-processing parameters."""
 
-    enable_postprocess: BoolProperty(
+    enable_synth_postprocess: BoolProperty(
         name="PostProcessing",
         default=True
     )

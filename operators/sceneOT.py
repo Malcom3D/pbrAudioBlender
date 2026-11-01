@@ -407,8 +407,8 @@ class PBRAUDIO_OT_physics(Operator):
 
         # Include scene animation range
         hash_input.append(scene.pbraudio.modal_modes)
-        hash_input.append(scene.pbraudio.enable_forces_denoiser)
-        hash_input.append(scene.pbraudio.enable_postprocess)
+        hash_input.append(scene.pbraudio.enable_audio_forces_postprocess)
+        hash_input.append(scene.pbraudio.enable_synth_postprocess)
 
         # Create hash
         hash_str = json.dumps(hash_input, sort_keys=True)

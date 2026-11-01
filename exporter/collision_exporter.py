@@ -61,8 +61,8 @@ class CollisionExporter:
         system["cache_path"] = self.export_path
         system["enable_proxy_synth"] = scene.pbraudio.enable_proxy_synth
         system["enable_noise_enhancement"] = scene.pbraudio.enable_noise_enhancement
-        system["enable_denoiser"] = scene.pbraudio.enable_forces_denoiser
-        system["enable_postprocess"] = scene.pbraudio.enable_postprocess
+        system["enable_audio_forces_postprocess"] = scene.pbraudio.enable_audio_forces_postprocess
+        system["enable_synth_postprocess"] = scene.pbraudio.enable_synth_postprocess
         system["enable_trajectory_postprocess"] = scene.pbraudio.enable_trajectory_postprocess
         system["debug"] = True
         self.config = {}
@@ -78,8 +78,8 @@ class CollisionExporter:
 #        if scene.pbraudio.enable_proxy_synth:
 #            self.config["enable_proxy_synth"] = self.get_proxy_synth(scene)
 
-        if scene.pbraudio.enable_postprocess:
-            self.config["postprocess"] = self.get_postprocess(scene)
+        if scene.pbraudio.enable_synth_postprocess:
+            self.config["postprocess"] = self.get_synth_postprocess(scene)
 
         self.objects = []
         self.not_valid = []
@@ -128,54 +128,54 @@ class CollisionExporter:
         trajectory_postprocess['max_angular_velocity'] = scene.pbraudio.max_angular_velocity
         return trajectory_postprocess
 
-    def get_postprocess(self, scene):
+    def get_synth_postprocess(self, scene):
         postprocess = {}
-        postprocess['dynamic_denoise_enabled'] = scene.pbraudio.postprocess_dynamic_denoise_enabled
-        postprocess['noise_gate_threshold_db'] = scene.pbraudio.postprocess_noise_gate_threshold_db
-        postprocess['noise_floor_estimate_db'] = scene.pbraudio.postprocess_noise_floor_estimate_db
-        postprocess['spectral_reduction_strength'] = scene.pbraudio.postprocess_spectral_reduction_strength
-        postprocess['temporal_smoothing_window'] = scene.pbraudio.postprocess_temporal_smoothing_window
-        postprocess['force_reference_weight'] = scene.pbraudio.postprocess_force_reference_weight
-        postprocess['min_force_threshold'] = scene.pbraudio.postprocess_min_force_threshold
-        postprocess['smoothing_enabled'] = scene.pbraudio.postprocess_smoothing_enabled
-        postprocess['smoothing_window_ms'] = scene.pbraudio.postprocess_smoothing_window_ms
-        postprocess['adaptive_smoothing'] = scene.pbraudio.postprocess_adaptive_smoothing
-        postprocess['phase_align_enabled'] = scene.pbraudio.postprocess_phase_align_enabled
-        postprocess['crossfade_samples'] = scene.pbraudio.postprocess_crossfade_samples
-        postprocess['target_rms'] = scene.pbraudio.postprocess_target_rms
-        postprocess['max_gain_db'] = scene.pbraudio.postprocess_max_gain_db
-        postprocess['dynamic_range_compression'] = scene.pbraudio.postprocess_dynamic_range_compression
-        postprocess['blend_enabled'] = scene.pbraudio.postprocess_blend_enabled
-        postprocess['dry_wet_mix'] = scene.pbraudio.postprocess_dry_wet_mix
-        postprocess['normalize_output'] = scene.pbraudio.postprocess_normalize_output
+        postprocess['dynamic_denoise_enabled'] = scene.pbraudio.synth_postprocess_dynamic_denoise_enabled
+        postprocess['noise_gate_threshold_db'] = scene.pbraudio.synth_postprocess_noise_gate_threshold_db
+        postprocess['noise_floor_estimate_db'] = scene.pbraudio.synth_postprocess_noise_floor_estimate_db
+        postprocess['spectral_reduction_strength'] = scene.pbraudio.synth_postprocess_spectral_reduction_strength
+        postprocess['temporal_smoothing_window'] = scene.pbraudio.synth_postprocess_temporal_smoothing_window
+        postprocess['force_reference_weight'] = scene.pbraudio.synth_postprocess_force_reference_weight
+        postprocess['min_force_threshold'] = scene.pbraudio.synth_postprocess_min_force_threshold
+        postprocess['smoothing_enabled'] = scene.pbraudio.synth_postprocess_smoothing_enabled
+        postprocess['smoothing_window_ms'] = scene.pbraudio.synth_postprocess_smoothing_window_ms
+        postprocess['adaptive_smoothing'] = scene.pbraudio.synth_postprocess_adaptive_smoothing
+        postprocess['phase_align_enabled'] = scene.pbraudio.synth_postprocess_phase_align_enabled
+        postprocess['crossfade_samples'] = scene.pbraudio.synth_postprocess_crossfade_samples
+        postprocess['target_rms'] = scene.pbraudio.synth_postprocess_target_rms
+        postprocess['max_gain_db'] = scene.pbraudio.synth_postprocess_max_gain_db
+        postprocess['dynamic_range_compression'] = scene.pbraudio.synth_postprocess_dynamic_range_compression
+        postprocess['blend_enabled'] = scene.pbraudio.synth_postprocess_blend_enabled
+        postprocess['dry_wet_mix'] = scene.pbraudio.synth_postprocess_dry_wet_mix
+        postprocess['normalize_output'] = scene.pbraudio.synth_postprocess_normalize_output
         return postprocess
 
-    def get_denoiser(self, scene):
-        denoiser = {}
-        denoiser['enable_dc_blocker'] = scene.pbraudio.enable_dc_blocker
-        denoiser['dc_blocker_alpha'] = scene.pbraudio.dc_blocker_alpha
-        denoiser['enable_noise_gate'] = scene.pbraudio.enable_noise_gate
-        denoiser['gate_threshold_db'] = scene.pbraudio.gate_threshold_db
-        denoiser['gate_attack_ms'] = scene.pbraudio.gate_attack_ms
-        denoiser['gate_release_ms'] = scene.pbraudio.gate_release_ms
-        denoiser['gate_hold_ms'] = scene.pbraudio.gate_hold_ms
-        denoiser['enable_temporal_smoothing'] = scene.pbraudio.enable_temporal_smoothing
-        denoiser['temporal_smoothing_window'] = scene.pbraudio.temporal_smoothing_window
-        denoiser['enable_spectral_noise_reduction'] = scene.pbraudio.enable_spectral_noise_reduction
-        denoiser['spectral_fft_size'] = scene.pbraudio.spectral_fft_size
-        denoiser['spectral_hop_size'] = scene.pbraudio.spectral_hop_size
-        denoiser['spectral_noise_floor_db'] = scene.pbraudio.spectral_noise_floor_db
-        denoiser['spectral_reduction_strength'] = scene.pbraudio.spectral_reduction_strength
-        denoiser['spectral_smoothing'] = scene.pbraudio.spectral_smoothing
-        denoiser['enable_envelope_shaping'] = scene.pbraudio.enable_envelope_shaping
-        denoiser['envelope_attack_ms'] = scene.pbraudio.envelope_attack_ms
-        denoiser['envelope_release_ms'] = scene.pbraudio.envelope_release_ms
-        denoiser['envelope_smoothing'] = scene.pbraudio.envelope_smoothing
-        denoiser['enable_gaussian_adaptive_smoothing'] = scene.pbraudio.enable_gaussian_adaptive_smoothing
-        denoiser['gaussian_sigma_min'] = scene.pbraudio.gaussian_sigma_min
-        denoiser['gaussian_sigma_max'] = scene.pbraudio.gaussian_sigma_max
-        denoiser['gaussian_force_threshold'] = scene.pbraudio.gaussian_force_threshold
-        return denoiser
+    def get_audio_forces_postprocess(self, scene):
+        postprocess = {}
+        postprocess['enable_dc_blocker'] = scene.pbraudio.enable_dc_blocker
+        postprocess['dc_blocker_alpha'] = scene.pbraudio.dc_blocker_alpha
+        postprocess['enable_noise_gate'] = scene.pbraudio.enable_noise_gate
+        postprocess['gate_threshold_db'] = scene.pbraudio.gate_threshold_db
+        postprocess['gate_attack_ms'] = scene.pbraudio.gate_attack_ms
+        postprocess['gate_release_ms'] = scene.pbraudio.gate_release_ms
+        postprocess['gate_hold_ms'] = scene.pbraudio.gate_hold_ms
+        postprocess['enable_temporal_smoothing'] = scene.pbraudio.enable_temporal_smoothing
+        postprocess['temporal_smoothing_window'] = scene.pbraudio.temporal_smoothing_window
+        postprocess['enable_spectral_noise_reduction'] = scene.pbraudio.enable_spectral_noise_reduction
+        postprocess['spectral_fft_size'] = scene.pbraudio.spectral_fft_size
+        postprocess['spectral_hop_size'] = scene.pbraudio.spectral_hop_size
+        postprocess['spectral_noise_floor_db'] = scene.pbraudio.spectral_noise_floor_db
+        postprocess['spectral_reduction_strength'] = scene.pbraudio.spectral_reduction_strength
+        postprocess['spectral_smoothing'] = scene.pbraudio.spectral_smoothing
+        postprocess['enable_envelope_shaping'] = scene.pbraudio.enable_envelope_shaping
+        postprocess['envelope_attack_ms'] = scene.pbraudio.envelope_attack_ms
+        postprocess['envelope_release_ms'] = scene.pbraudio.envelope_release_ms
+        postprocess['envelope_smoothing'] = scene.pbraudio.envelope_smoothing
+        postprocess['enable_gaussian_adaptive_smoothing'] = scene.pbraudio.enable_gaussian_adaptive_smoothing
+        postprocess['gaussian_sigma_min'] = scene.pbraudio.gaussian_sigma_min
+        postprocess['gaussian_sigma_max'] = scene.pbraudio.gaussian_sigma_max
+        postprocess['gaussian_force_threshold'] = scene.pbraudio.gaussian_force_threshold
+        return postprocess
 
     def get_from_previous(self, node):
         scene = bpy.context.scene

@@ -741,8 +741,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     anyio
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/12/b8/4bd346e22b28902df4d651910f5242c28d84e4a5c2435ca5c3f797ed7e2e/anyio-4.15.1-py3-none-any.whl
-    URL_HASH SHA256=6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101
+    URL    https://files.pythonhosted.org/packages/a9/16/7757fb84c819accc7d7e9af5291b261e4abb8627ee040f99e7d35ef2457a/anyio-4.16.0-py3-none-any.whl
+    URL_HASH SHA256=c66ae634e0b8228396b801741beb3294326d4b6102f7bba4041c0dfb58c29026
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

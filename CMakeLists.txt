@@ -11,6 +11,19 @@ set(EXTERNAL_DOWNLOAD_DIR "${CMAKE_SOURCE_DIR}/downloads" CACHE PATH "Directory 
 
 include(ExternalProject)
 ExternalProject_Add(
+    sounddevice
+    PREFIX "blender"
+    URL    https://files.pythonhosted.org/packages/72/1f/62eef605172bddc1017508469a12f75bc7c4194ece35c734f822795f53b1/sounddevice-0.5.6-py3-none-any.whl
+    URL_HASH SHA256=de099612311ad81e55d31ccbd83f43ea6bf4d87b48f9b6ea55a1fbcde0eee4e0
+    BUILD_ALWAYS OFF
+    DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
+    DOWNLOAD_NO_EXTRACT ON
+    DOWNLOAD_NO_PROGRESS ON
+    BUILD_COMMAND cmake -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step."
+)
+ExternalProject_Add(
     minihost
     PREFIX "blender"
     URL    https://files.pythonhosted.org/packages/3b/6d/0fcb6a658102cb84f937dff51f97c0e3bd2a12878aed55fe3ddfafe8b97a/minihost-0.11.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
@@ -846,6 +859,7 @@ ExternalProject_Add(
 # Make a .zip-file which can be installed into Blender
 if (NOT WIN32)
   add_custom_target (blender 
+    DEPENDS sounddevice
     DEPENDS minihost
     DEPENDS dill
     DEPENDS pox
@@ -913,6 +927,7 @@ if (NOT WIN32)
     DEPENDS google_crc32c
 )
 
+add_dependencies(blender sounddevice)
 add_dependencies(blender minihost)
 add_dependencies(blender dill)
 add_dependencies(blender pox)

@@ -141,13 +141,13 @@ class PBRAudioStorageProperties(PropertyGroup):
     klepto_cached: BoolProperty(
         name="Klepto Cached",
         description="Keeps an in-memory mirror of everything (fast reads, high memory)",
-        default=False
+        default=True
     )
 
     klepto_compress: BoolProperty(
         name="Klepto Compress",
         description="Compress the pickle payloads trading CPU for disk",
-        default=False
+        default=True
     )
 
     klepto_use_numba_packing: BoolProperty(

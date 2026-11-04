@@ -767,4 +767,12 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=False
     )
 
+    """Configuration for pbrAudio 3D viewport widget"""
+
+    preview_playing: BoolProperty(
+        name="Preview Playing",
+        description="Whether the acoustic preview is currently playing",
+        default=False,
+    )
+
 classes.append(PBRAudioSceneProperties)

@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "pbrAudio"
-version = "0.2.6"
+version = "0.3.0"
 name = "pbrAudio Render"
 tagline = "Physically Based Render and Synthesis Audio Suite"
 maintainer = "Malcom3D <malcom3d.gpl@gmail.com>"

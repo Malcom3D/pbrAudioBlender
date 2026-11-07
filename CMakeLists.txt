@@ -676,8 +676,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     pydantic_core
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/f0/14/7122b78e9915e7dd50f9dcec6041a4e32874907b41b9e0880db2f1c7ae1a/pydantic_core-2.50.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-    URL_HASH SHA256=ac223ea031905319a64d0df116979ae438b42d6265862a3d63c9f9808c2905a7
+    URL    https://files.pythonhosted.org/packages/56/51/cbb7a1bc0196ff94d3478d265eed7449f811759988eb760d41f4edd0893b/pydantic_core-2.50.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+    URL_HASH SHA256=0574866e05f6adeecc520d87e87dd06210c0a51706341f6ef8421572f5a64444
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

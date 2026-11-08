@@ -80,11 +80,10 @@ def _get_supported_objects():
 
 
 def _is_playing():
-    scene = bpy.context.scene
-    if not hasattr(scene, "pbraudio"):
+    scene = getattr(bpy.context, "scene", None)
+    if scene is None or not hasattr(scene, "pbraudio"):
         return False
     return bool(getattr(scene.pbraudio, "preview_playing", False))
-
 
 def _engine_is_pbraudio():
     scene = getattr(bpy.context, "scene", None)
@@ -204,6 +203,7 @@ class PBRAUDIO_OT_toggle_viewport_panel(bpy.types.Operator):
     """Toggle the pbrAudio 3D viewport overlay panel"""
     bl_idname = "pbraudio.toggle_viewport_panel"
     bl_label = "Toggle pbrAudio Viewport Panel"
+    bl_description = "Toggle the pbrAudio play/stop overlay in the 3D viewport"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -292,7 +292,8 @@ class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
 classes = [
     PBRAUDIO_OT_playback_toggle,
     PBRAUDIO_OT_widget_modal,
-    PBRAUDIO_OT_toggle_viewport_panel
+    PBRAUDIO_OT_toggle_viewport_panel,
+    TOPBAR_MT_pbraudio
 ]
 
 
@@ -308,29 +309,47 @@ def _on_engine_change(scene, depsgraph=None):
     except Exception:
         pass
 
-# ----------------------------------------------------------------------------
-# Topbar menu button to enable/disable viewport panel
-# ----------------------------------------------------------------------------
+# ------------------------------------------------------------------
+# Topbar menu: "pbrAudio"
+# ------------------------------------------------------------------
 
-def draw_topbar_toggle(self, context):
-    # Only show when pbrAudio is the active engine
-    if context.scene.render.engine != 'PBRAUDIO':
-        return
+class TOPBAR_MT_pbraudio(bpy.types.Menu):
+    """pbrAudio topbar menu"""
+    bl_idname = "TOPBAR_MT_pbraudio"
+    bl_label = "pbrAudio"
 
-    layout = self.layout
-    row = layout.row(align=True)
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
 
-    is_on = getattr(context.scene.pbraudio, "show_viewport_panel", True)
-    icon = 'CHECKBOX_HLT' if is_on else 'CHECKBOX_DEHLT'
-    text = "" if context.preferences.view.show_developer_ui else "pbrAudio Panel"
+        # Only show detailed items when pbrAudio is the active engine
+        is_pbraudio = scene.render.engine == 'PBRAUDIO'
 
-    op = row.operator(
-        "pbraudio.toggle_viewport_panel",
-        text=text,
-        icon=icon,
-        depress=is_on,
-    )
-    op.bl_description = "Toggle the pbrAudio play/stop overlay in the 3D viewport"
+        # --- Viewport Panel toggle ---
+        if is_pbraudio:
+            is_on = getattr(scene.pbraudio, "show_viewport_panel", True)
+            icon = 'CHECKBOX_HLT' if is_on else 'CHECKBOX_DEHLT'
+            layout.operator("pbraudio.toggle_viewport_panel", text="Show Viewport Panel", icon=icon, depress=is_on)
+        else:
+            col = layout.column()
+            col.enabled = False
+            col.label(text="Enable pbrAudio engine", icon='INFO')
+
+        layout.separator()
+
+#        # --- Render / Preview shortcuts ---
+#        col = layout.column()
+#        col.enabled = is_pbraudio
+#
+#        if scene.pbraudio.enable_acoustic_preview:
+#            col.operator("render.pbraudio_preview_toggle", text="Audio Preview", icon='SOUND)
+#
+#        col.operator("render.render", text="Render Audio", icon='RENDER_STILL')
+#        col.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION').animation = True
+
+def draw_topbar_menu(self, context):
+    """Add the pbrAudio menu to the topbar editor menus."""
+    self.layout.menu("TOPBAR_MT_pbraudio", icon='SOUND')
 
 # ----------------------------------------------------------------------------
 # Watchdog timer: ensures exactly one modal is running whenever a VIEW_3D
@@ -388,7 +407,8 @@ def register():
     if _watch_timer is None:
         _watch_timer = bpy.app.timers.register(_watchdog, first_interval=0.5, persistent=True)
 
-    bpy.types.TOPBAR_MT_editor_menus.append(draw_topbar_toggle)
+    # Add the topbar menu
+    bpy.types.TOPBAR_MT_editor_menus.append(draw_topbar_menu)
 
 def unregister():
     global _draw_handle, _watch_timer, _modal_running
@@ -396,7 +416,7 @@ def unregister():
     _modal_running = False
 
     try:
-        bpy.types.TOPBAR_MT_editor_menus.remove(draw_topbar_toggle)
+        bpy.types.TOPBAR_MT_editor_menus.remove(draw_topbar_menu)
     except (ValueError, AttributeError):
         pass
 

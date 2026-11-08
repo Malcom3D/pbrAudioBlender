@@ -43,6 +43,12 @@ _draw_handle = None
 # Helpers
 # ----------------------------------------------------------------------------
 
+def _panel_enabled():
+    scene = getattr(bpy.context, "scene", None)
+    if scene is None or not hasattr(scene, "pbraudio"):
+        return False
+    return bool(getattr(scene.pbraudio, "show_viewport_panel", True))
+
 def _get_distance_scale(world_pos, rv3d):
     view_loc = rv3d.view_matrix.inverted().translation
     distance = max((world_pos - view_loc).length, 1e-3)
@@ -91,6 +97,8 @@ def _engine_is_pbraudio():
 
 def draw_callback_px():
     if not _engine_is_pbraudio():
+        return
+    if not _panel_enabled():
         return
 
     ctx = bpy.context
@@ -192,6 +200,28 @@ class PBRAUDIO_OT_playback_toggle(bpy.types.Operator):
         self.report({'INFO'}, f"Toggled playback for {obj.name}")
         return {'FINISHED'}
 
+class PBRAUDIO_OT_toggle_viewport_panel(bpy.types.Operator):
+    """Toggle the pbrAudio 3D viewport overlay panel"""
+    bl_idname = "pbraudio.toggle_viewport_panel"
+    bl_label = "Toggle pbrAudio Viewport Panel"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        scene = context.scene
+        if not hasattr(scene, "pbraudio"):
+            return {'CANCELLED'}
+
+        # Flip the property; its update callback triggers redraw
+        scene.pbraudio.show_viewport_panel = not scene.pbraudio.show_viewport_panel
+
+        # Immediately stop the modal if we just disabled it
+        global _modal_running
+        if not scene.pbraudio.show_viewport_panel:
+            _modal_running = False
+
+        state = "enabled" if scene.pbraudio.show_viewport_panel else "disabled"
+        self.report({'INFO'}, f"pbrAudio viewport panel {state}")
+        return {'FINISHED'}
 
 class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
     """Consumes hover/click events over the 3D-viewport widget."""
@@ -211,6 +241,9 @@ class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
         if not _engine_is_pbraudio():
             _modal_running = False
             return {'FINFINISHED'}
+        if not _panel_enabled():
+            _modal_running = False
+            return {'FINISHED'}
 
         # Context area may have changed (user switched area type). Veto out.
         if context.area is None or context.area.type != 'VIEW_3D':
@@ -259,6 +292,7 @@ class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
 classes = [
     PBRAUDIO_OT_playback_toggle,
     PBRAUDIO_OT_widget_modal,
+    PBRAUDIO_OT_toggle_viewport_panel
 ]
 
 
@@ -274,6 +308,29 @@ def _on_engine_change(scene, depsgraph=None):
     except Exception:
         pass
 
+# ----------------------------------------------------------------------------
+# Topbar menu button to enable/disable viewport panel
+# ----------------------------------------------------------------------------
+
+def draw_topbar_toggle(self, context):
+    # Only show when pbrAudio is the active engine
+    if context.scene.render.engine != 'PBRAUDIO':
+        return
+
+    layout = self.layout
+    row = layout.row(align=True)
+
+    is_on = getattr(context.scene.pbraudio, "show_viewport_panel", True)
+    icon = 'CHECKBOX_HLT' if is_on else 'CHECKBOX_DEHLT'
+    text = "" if context.preferences.view.show_developer_ui else "pbrAudio Panel"
+
+    op = row.operator(
+        "pbraudio.toggle_viewport_panel",
+        text=text,
+        icon=icon,
+        depress=is_on,
+    )
+    op.bl_description = "Toggle the pbrAudio play/stop overlay in the 3D viewport"
 
 # ----------------------------------------------------------------------------
 # Watchdog timer: ensures exactly one modal is running whenever a VIEW_3D
@@ -295,6 +352,8 @@ def _watchdog(_dummy=None):
 
         if not _engine_is_pbraudio():
             return 1.0
+        if not _panel_enabled():
+            return 1.0
 
         if not _modal_running:
             try:
@@ -305,7 +364,6 @@ def _watchdog(_dummy=None):
         pass
 
     return 1.0  # seconds — re-check
-
 
 # ----------------------------------------------------------------------------
 # Register / Unregister
@@ -319,9 +377,7 @@ def register():
 
     # Attach the draw handler *always* — regardless of the modal state.
     if _draw_handle is None:
-        _draw_handle = bpy.types.SpaceView3D.draw_handler_add(
-            draw_callback_px, (), 'WINDOW', 'POST_PIXEL'
-        )
+        _draw_handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, (), 'WINDOW', 'POST_PIXEL')
         _handles.append(_draw_handle)
 
     # Hook engine-change so we can redraw immediately when the user switches.
@@ -330,14 +386,19 @@ def register():
 
     # Persistent watchdog timer (fires every 1s, cheap)
     if _watch_timer is None:
-        _watch_timer = bpy.app.timers.register(_watchdog, first_interval=0.5,
-                                               persistent=True)
+        _watch_timer = bpy.app.timers.register(_watchdog, first_interval=0.5, persistent=True)
 
+    bpy.types.TOPBAR_MT_editor_menus.append(draw_topbar_toggle)
 
 def unregister():
     global _draw_handle, _watch_timer, _modal_running
 
     _modal_running = False
+
+    try:
+        bpy.types.TOPBAR_MT_editor_menus.remove(draw_topbar_toggle)
+    except (ValueError, AttributeError):
+        pass
 
     if _watch_timer is not None:
         try:

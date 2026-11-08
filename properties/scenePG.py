@@ -144,6 +144,14 @@ class PBRAudioSceneProperties(PropertyGroup):
             if not scene.pbraudio.collision_collection['samples_per_face'] == self.samples_per_face:
                 scene.pbraudio.collision_collection['samples_per_face'] = self.samples_per_face
 
+    def _update_viewport_panel(self, context):
+        try:
+            for area in context.screen.areas if context.screen else ():
+                if area.type == 'VIEW_3D':
+                    area.tag_redraw()
+        except Exception:
+            pass
+
     """Scene properties for pbrAudio"""
     device: EnumProperty(
         name="Device",
@@ -773,6 +781,13 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Preview Playing",
         description="Whether the acoustic preview is currently playing",
         default=False,
+    )
+
+    show_viewport_panel: BoolProperty(
+        name="Show pbrAudio Viewport Panel",
+        description="Toggle the pbrAudio play/stop overlay in the 3D viewport",
+        default=True,
+        update=_update_viewport_panel,
     )
 
 classes.append(PBRAudioSceneProperties)

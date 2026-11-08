@@ -288,15 +288,6 @@ class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-
-classes = [
-    PBRAUDIO_OT_playback_toggle,
-    PBRAUDIO_OT_widget_modal,
-    PBRAUDIO_OT_toggle_viewport_panel,
-    TOPBAR_MT_pbraudio
-]
-
-
 # ----------------------------------------------------------------------------
 # Engine-change handler: force a redraw when user toggles engines
 # ----------------------------------------------------------------------------
@@ -387,6 +378,13 @@ def _watchdog(_dummy=None):
 # ----------------------------------------------------------------------------
 # Register / Unregister
 # ----------------------------------------------------------------------------
+
+classes = [
+    PBRAUDIO_OT_playback_toggle,
+    PBRAUDIO_OT_widget_modal,
+    PBRAUDIO_OT_toggle_viewport_panel,
+    TOPBAR_MT_pbraudio
+]
 
 def register():
     global _draw_handle, _watch_timer

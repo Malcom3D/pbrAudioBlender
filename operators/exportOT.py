@@ -31,7 +31,7 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
     """Export collision data using CollisionExporter"""
     bl_idname = "export.pbraudio_collision_data"
     bl_label = "Export Collision Data"
-    bl_description = "Export collision data for sound synthesis using CollisionExporter"
+    bl_description = "Export collision data for pbrAudio sound synthesis"
     bl_options = {'REGISTER', 'UNDO'}
     
     # ExportHelper properties
@@ -42,20 +42,20 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         maxlen=255,
     )
     
-    # Export options
-    start_frame: IntProperty(
-        name="Start Frame",
-        description="First frame to export",
-        default=1,
-        min=0,
-    )
+#    # Export options
+#    start_frame: IntProperty(
+#        name="Start Frame",
+#        description="First frame to export",
+#        default=1,
+#        min=0,
+#    )
     
-    end_frame: IntProperty(
-        name="End Frame",
-        description="Last frame to export",
-        default=250,
-        min=0,
-    )
+#    end_frame: IntProperty(
+#        name="End Frame",
+#        description="Last frame to export",
+#        default=250,
+#        min=0,
+#    )
     
     def draw(self, context):
         layout = self.layout
@@ -67,8 +67,8 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         box.label(text="Export Options", icon='EXPORT')
         
         col = box.column(align=True)
-        col.prop(self, "start_frame")
-        col.prop(self, "end_frame")
+#        col.prop(self, "start_frame")
+#        col.prop(self, "end_frame")
         
         # Show warning if no collection selected
         scene = context.scene
@@ -88,8 +88,10 @@ class PBRAUDIO_OT_export_collision_data(Operator, ExportHelper):
         # Get export parameters
         decimals = 18
         
-        start_frame = self.start_frame
-        end_frame = self.end_frame
+#        start_frame = self.start_frame
+#        end_frame = self.end_frame
+        start_frame = scene.frame_start
+        end_frame = scene.frame_end
         
         try:
             # Create exporter

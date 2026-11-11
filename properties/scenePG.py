@@ -786,7 +786,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     show_viewport_panel: BoolProperty(
         name="Show pbrAudio Viewport Panel",
         description="Toggle the pbrAudio play/stop overlay in the 3D viewport",
-        default=True,
+        default=False,
         update=_update_viewport_panel,
     )
 

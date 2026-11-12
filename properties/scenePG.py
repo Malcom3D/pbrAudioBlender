@@ -780,6 +780,7 @@ class PBRAudioSceneProperties(PropertyGroup):
     preview_playing: BoolProperty(
         name="Preview Playing",
         description="Whether the acoustic preview is currently playing",
+        options={'SKIP_SAVE'},
         default=False,
     )
 
@@ -787,6 +788,7 @@ class PBRAudioSceneProperties(PropertyGroup):
         name="Show pbrAudio Viewport Panel",
         description="Toggle the pbrAudio play/stop overlay in the 3D viewport",
         default=False,
+        options={'SKIP_SAVE'},
         update=_update_viewport_panel,
     )
 

@@ -19,42 +19,39 @@
 import bpy
 import blf
 import gpu
-import math
 from gpu_extras.batch import batch_for_shader
 from bpy_extras import view3d_utils
 
+from .browser_widget import BrowserWidget
+from .playback_widget import PlaybackWidget
+
 _handles = []
-_button_rects = []          # {region, x, y, w, h, hover, owner}
-_watch_timer = None         # persistent timer that (re)starts the modal
+_watch_timer = None
 _modal_running = False
 
-MIN_SCALE = 0.5
-MAX_SCALE = 2.5
-REF_DISTANCE = 5.0
-BASE_BUTTON_W = 120
-BASE_BUTTON_H = 32
-BASE_FONT_SIZE = 16
-BASE_OFFSET_Y = 40
+BROWSER: BrowserWidget | None = None
+PLAYBACK: PlaybackWidget | None = None
+
+# panel anchor (region pixels)
+PANEL_MARGIN    = 16
+PANEL_WIDTH     = 520
+PANEL_ROW_H     = 28
+PANEL_GAP       = 6
 
 _draw_handle = None
 
+# ---------------------------------------------------------------------
+# helpers
+# ---------------------------------------------------------------------
+def _engine_is_pbraudio() -> bool:
+    scene = getattr(bpy.context, "scene", None)
+    return scene is not None and scene.render.engine == 'PBRAUDIO'
 
-# ----------------------------------------------------------------------------
-# Helpers
-# ----------------------------------------------------------------------------
-
-def _panel_enabled():
+def _panel_enabled() -> bool:
     scene = getattr(bpy.context, "scene", None)
     if scene is None or not hasattr(scene, "pbraudio"):
         return False
     return bool(getattr(scene.pbraudio, "show_viewport_panel", True))
-
-def _get_distance_scale(world_pos, rv3d):
-    view_loc = rv3d.view_matrix.inverted().translation
-    distance = max((world_pos - view_loc).length, 1e-3)
-    raw = math.log(REF_DISTANCE + 1.0) / math.log(distance + 1.0)
-    return max(MIN_SCALE, min(MAX_SCALE, raw))
-
 
 def _get_view3d_region(context):
     region = context.region
@@ -63,168 +60,77 @@ def _get_view3d_region(context):
         return region, rv3d
     return None, None
 
+def _ensure_widgets():
+    """Lazy-create widget instances and share them across all viewports."""
+    global BROWSER, PLAYBACK
+    scene = bpy.context.scene
 
-def _get_supported_objects():
-    ctx = bpy.context
-    if not ctx.selected_objects:
-        return []
-    return [
-        o for o in ctx.selected_objects
-        if hasattr(o, "pbraudio")
-        and (o.pbraudio.source
-             or o.pbraudio.output
-             or o.pbraudio.environment
-             or o.type == 'CAMERA'
-             or o.type == 'MESH')
-    ]
+    if BROWSER is None:
+        def _provider():
+            bs = scene.get("_pbraudio_browser")
+            if bs is not None:
+                return bs
+            try:
+                from ...operators.playbackOT import _get_storage_engine
+            except Exception:
+                return None
+            storage = _get_storage_engine(bpy.context)
+            if storage is None:
+                return None
+            from pbrAudioDAW import BrowserState
+            bs = BrowserState(storage)
+            scene["_pbraudio_browser"] = bs
+            return bs
 
+        def _on_path(cwd):
+            scene["_pbraudio_browser_cwd"] = list(cwd)
+            for area in bpy.context.screen.areas if bpy.context.screen else ():
+                if area.type == 'VIEW_3D':
+                    area.tag_redraw()
 
-def _is_playing():
-    scene = getattr(bpy.context, "scene", None)
-    if scene is None or not hasattr(scene, "pbraudio"):
-        return False
-    return bool(getattr(scene.pbraudio, "preview_playing", False))
+        BROWSER = BrowserWidget(browser_state_provider=_provider, on_path_change=_on_path)
 
-def _engine_is_pbraudio():
-    scene = getattr(bpy.context, "scene", None)
-    return scene is not None and scene.render.engine == 'PBRAUDIO'
+    if PLAYBACK is None:
+        def _spec():
+            try:
+                from ...operators.playbackOT import _spec_from_browser_selection
+            except Exception:
+                return None
+            return _spec_from_browser_selection(bpy.context)
+        PLAYBACK = PlaybackWidget(spec_provider=_spec)
 
-
-# ----------------------------------------------------------------------------
-# Draw handler (POST_PIXEL on SpaceView3D)
-# ----------------------------------------------------------------------------
-
+# ---------------------------------------------------------------------
+# draw
+# ---------------------------------------------------------------------
 def draw_callback_px():
-    if not _engine_is_pbraudio():
-        return
-    if not _panel_enabled():
+    if not _engine_is_pbraudio() or not _panel_enabled():
         return
 
     ctx = bpy.context
     region, rv3d = _get_view3d_region(ctx)
-    if region is None:
-        return
-    if not region.width or not region.height:
+    if region is None or not region.width or not region.height:
         return
 
-    # Reset rects for *this* region only
-    _button_rects[:] = [r for r in _button_rects if r["region"] is not region]
-
-    objects = _get_supported_objects()
-    if not objects:
+    _ensure_widgets()
+    if BROWSER is None or PLAYBACK is None:
         return
 
-    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
-    gpu.state.blend_set('ALPHA')
+    # Anchor top-left
+    x0 = PANEL_MARGIN
+    y_top = region.height - PANEL_MARGIN - PANEL_ROW_H
 
-    font_id = 0
-    blf.color(font_id, 1, 1, 1, 1)
+    # Browser row
+    BROWSER.draw(ctx, region, rv3d, x0, y_top, PANEL_WIDTH, PANEL_ROW_H)
 
-    for ob in objects:
-        world_pos = ob.matrix_world.translation
-        co_2d = view3d_utils.location_3d_to_region_2d(region, rv3d, world_pos)
-        if co_2d is None:
-            continue
+    # Play/stop row (narrower, right-aligned to browser width)
+    y_play = y_top - PANEL_ROW_H - PANEL_GAP
+    PLAYBACK.draw(ctx, region, rv3d, x0, y_play, 120, PANEL_ROW_H)
 
-        scale = _get_distance_scale(world_pos, rv3d)
-        btn_w = BASE_BUTTON_W * scale
-        btn_h = BASE_BUTTON_H * scale
-        offset_y = BASE_OFFSET_Y * scale
-        font_size = int(max(8, round(BASE_FONT_SIZE * scale)))
-
-        x = co_2d.x - btn_w / 2
-        y = co_2d.y + offset_y
-
-        hover = any(
-            r["region"] is region and r["owner"] == ob.name and r.get("hover")
-            for r in _button_rects
-        )
-
-        bg = (0.15, 0.15, 0.15, 0.85) if not hover else (0.25, 0.35, 0.55, 0.95)
-
-        batch = batch_for_shader(
-            shader, 'TRI_FAN',
-            {"pos": [(x, y), (x + btn_w, y),
-                     (x + btn_w, y + btn_h), (x, y + btn_h)]},
-        )
-        shader.uniform_float("color", bg)
-        batch.draw(shader)
-
-        blf.size(font_id, font_size)
-        text = "■  Stop" if _is_playing() else "▶  Play"
-        tw, th = blf.dimensions(font_id, text)
-        blf.position(font_id, x + (btn_w - tw) / 2, y + (btn_h - th) / 2, 0)
-        blf.draw(font_id, text)
-
-        _button_rects.append({
-            "region": region,
-            "x": x, "y": y, "w": btn_w, "h": btn_h,
-            "hover": hover,
-            "owner": ob.name,
-        })
-
-    gpu.state.blend_set('NONE')
-
-
-# ----------------------------------------------------------------------------
-# Operators
-# ----------------------------------------------------------------------------
-
-class PBRAUDIO_OT_playback_toggle(bpy.types.Operator):
-    bl_idname = "pbraudio.playback_toggle"
-    bl_label = "Toggle pbrAudio Playback"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    object_name: bpy.props.StringProperty(name="Object Name", default="")
-
-    def execute(self, context):
-        obj = context.scene.objects.get(self.object_name)
-        if not obj:
-            self.report({'WARNING'}, "Object no longer exists")
-            return {'CANCELLED'}
-
-        # TODO: call into pbrAudio acoustic preview / player here.
-        try:
-            scene = context.scene
-            if hasattr(scene, "pbraudio"):
-                scene.pbraudio.preview_playing = not getattr(scene.pbraudio, "preview_playing", False)
-        except Exception as e:
-            self.report({'ERROR'}, f"Playback toggle failed: {e}")
-            return {'CANCELLED'}
-
-        for area in context.screen.areas:
-            if area.type == 'VIEW_3D':
-                area.tag_redraw()
-
-        self.report({'INFO'}, f"Toggled playback for {obj.name}")
-        return {'FINISHED'}
-
-class PBRAUDIO_OT_toggle_viewport_panel(bpy.types.Operator):
-    """Toggle the pbrAudio 3D viewport overlay panel"""
-    bl_idname = "pbraudio.toggle_viewport_panel"
-    bl_label = "Toggle pbrAudio Viewport Panel"
-    bl_description = "Toggle the pbrAudio play/stop overlay in the 3D viewport"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        scene = context.scene
-        if not hasattr(scene, "pbraudio"):
-            return {'CANCELLED'}
-
-        # Flip the property; its update callback triggers redraw
-        scene.pbraudio.show_viewport_panel = not scene.pbraudio.show_viewport_panel
-
-        # Immediately stop the modal if we just disabled it
-        global _modal_running
-        if not scene.pbraudio.show_viewport_panel:
-            _modal_running = False
-
-        state = "enabled" if scene.pbraudio.show_viewport_panel else "disabled"
-        self.report({'INFO'}, f"pbrAudio viewport panel {state}")
-        return {'FINISHED'}
-
+# ---------------------------------------------------------------------
+# modal
+# ---------------------------------------------------------------------
 class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
-    """Consumes hover/click events over the 3D-viewport widget."""
+    """Consumes hover/click/wheel events over the 3D-viewport widgets."""
     bl_idname = "pbraudio.viewport_widget_modal"
     bl_label = "pbrAudio Viewport Widget Modal"
     bl_options = {'INTERNAL'}
@@ -236,16 +142,9 @@ class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
     def modal(self, context, event):
         global _modal_running
 
-        # If engine no longer pbrAudio, stop cleanly so the timer can restart
-        # us later when the user comes back.
-        if not _engine_is_pbraudio():
-            _modal_running = False
-            return {'FINFINISHED'}
-        if not _panel_enabled():
+        if not _engine_is_pbraudio() or not _panel_enabled():
             _modal_running = False
             return {'FINISHED'}
-
-        # Context area may have changed (user switched area type). Veto out.
         if context.area is None or context.area.type != 'VIEW_3D':
             _modal_running = False
             return {'FINISHED'}
@@ -254,31 +153,15 @@ class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
         if region is None or region.type != 'WINDOW':
             return {'PASS_THROUGH'}
 
-        if event.type == 'MOUSEMOVE':
-            mx, my = event.mouse_region_x, event.mouse_region_y
-            changed = False
-            for r in _button_rects:
-                if r["region"] is not region:
-                    continue
-                inside = (r["x"] <= mx <= r["x"] + r["w"]
-                          and r["y"] <= my <= r["y"] + r["h"])
-                if inside != r["hover"]:
-                    r["hover"] = inside
-                    changed = True
-            if changed:
-                region.tag_redraw()
+        _ensure_widgets()
+        if BROWSER is None or PLAYBACK is None:
             return {'PASS_THROUGH'}
 
-        if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
-            mx, my = event.mouse_region_x, event.mouse_region_y
-            for r in _button_rects:
-                if r["region"] is not region:
-                    continue
-                if (r["x"] <= mx <= r["x"] + r["w"]
-                        and r["y"] <= my <= r["y"] + r["h"]):
-                    bpy.ops.pbraudio.playback_toggle('INVOKE_DEFAULT',
-                                                     object_name=r["owner"])
-                    return {'CONSUMED'}
+        # Give the topmost (playback) widget first pass so it wins on overlap
+        if PLAYBACK.on_event(context, region, event):
+            return {'CONSUMED'}
+        if BROWSER.on_event(context, region, event):
+            return {'CONSUMED'}
 
         return {'PASS_THROUGH'}
 
@@ -288,35 +171,38 @@ class PBRAUDIO_OT_widget_modal(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-# ----------------------------------------------------------------------------
-# Engine-change handler: force a redraw when user toggles engines
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# topbar toggle (unchanged)) + watchdog + register/unregister
+# ---------------------------------------------------------------------
+class PBRAUDIO_OT_toggle_viewport_panel(bpy.types.Operator):
+    """Toggle the pbrAudio widget overlay in the 3D viewport"""
+    bl_idname = "pbraudio.toggle_viewport_panel"
+    bl_label = "Toggle pbrAudio Viewport Panel"
+    bl_options = {'REGISTER', 'UNDO'}
 
-def _on_engine_change(scene, depsgraph=None):
-    try:
-        for area in bpy.context.screen.areas if bpy.context.screen else ():
-            if area.type == 'VIEW_3D':
-                area.tag_redraw()
-    except Exception:
-        pass
+    def execute(self, context):
+        scene = context.scene
+        if not hasattr(scene, "pbraudio"):
+            return {'CANCELLED'}
+        scene.pbraudio.show_viewport_panel = not scene.pbraudio.show_viewport_panel
 
-# ------------------------------------------------------------------
-# Topbar menu: "pbrAudio"
-# ------------------------------------------------------------------
+        global _modal_running
+        if not scene.pbraudio.show_viewport_panel:
+            _modal_running = False
+
+        state = "enabled" if scene.pbraudio.show_viewport_panel else "disabled"
+        self.report({'INFO'}, f"pbrAudio viewport panel {state}")
+        return {'FINISHED'}
 
 class TOPBAR_MT_pbraudio(bpy.types.Menu):
-    """pbrAudio topbar menu"""
     bl_idname = "TOPBAR_MT_pbraudio"
     bl_label = "pbrAudio"
 
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-
-        # Only show detailed items when pbrAudio is the active engine
         is_pbraudio = scene.render.engine == 'PBRAUDIO'
 
-        # --- Viewport Panel toggle ---
         if is_pbraudio:
             is_on = getattr(scene.pbraudio, "show_viewport_panel", True)
             icon = 'CHECKBOX_HLT' if is_on else 'CHECKBOX_DEHLT'
@@ -326,45 +212,27 @@ class TOPBAR_MT_pbraudio(bpy.types.Menu):
             col.enabled = False
             col.label(text="Enable pbrAudio engine", icon='INFO')
 
-        layout.separator()
-
-#        # --- Render / Preview shortcuts ---
-#        col = layout.column()
-#        col.enabled = is_pbraudio
-#
-#        if scene.pbraudio.enable_acoustic_preview:
-#            col.operator("render.pbraudio_preview_toggle", text="Audio Preview", icon='SOUND)
-#
-#        col.operator("render.render", text="Render Audio", icon='RENDER_STILL')
-#        col.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION').animation = True
-
 def draw_topbar_menu(self, context):
-    """Add the pbrAudio menu to the topbar editor menus."""
     self.layout.menu("TOPBAR_MT_pbraudio", icon='SOUND')
 
-# ----------------------------------------------------------------------------
-# Watchdog timer: ensures exactly one modal is running whenever a VIEW_3D
-# exists and the engine is PBRAUDIO.
-# ----------------------------------------------------------------------------
+def _on_engine_change(scene, depsgraph=None):
+    try:
+        for area in bpy.context.screen.areas if bpy.context.screen else ():
+            if area.type == 'VIEW_3D':
+                area.tag_redraw()
+    except Exception:
+        pass
 
 def _watchdog(_dummy=None):
     global _modal_running
-
     try:
-        ctx = bpy.context
-        screen = getattr(ctx, "screen", None)
+        screen = getattr(bpy.context, "screen", None)
         if screen is None:
             return 1.0
-
-        has_view3d = any(a.type == 'VIEW_3D' for a in screen.areas)
-        if not has_view3d:
+        if not any(a.type == 'VIEW_3D' for a in screen.areas):
             return 1.0
-
-        if not _engine_is_pbraudio():
+        if not _engine_is_pbraudio() or not _panel_enabled():
             return 1.0
-        if not _panel_enabled():
-            return 1.0
-
         if not _modal_running:
             try:
                 bpy.ops.pbraudio.viewport_widget_modal('INVOKE_DEFAULT')
@@ -372,40 +240,29 @@ def _watchdog(_dummy=None):
                 pass
     except Exception:
         pass
-
-    return 1.0  # seconds — re-check
-
-# ----------------------------------------------------------------------------
-# Register / Unregister
-# ----------------------------------------------------------------------------
+    return 1.0
 
 classes = [
-    PBRAUDIO_OT_playback_toggle,
-    PBRAUDIO_OT_widget_modal,
     PBRAUDIO_OT_toggle_viewport_panel,
-    TOPBAR_MT_pbraudio
+    PBRAUDIO_OT_widget_modal,
+    TOPBAR_MT_pbraudio,
 ]
 
 def register():
     global _draw_handle, _watch_timer
-
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    # Attach the draw handler *always* — regardless of the modal state.
     if _draw_handle is None:
         _draw_handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, (), 'WINDOW', 'POST_PIXEL')
         _handles.append(_draw_handle)
 
-    # Hook engine-change so we can redraw immediately when the user switches.
     if _on_engine_change not in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.append(_on_engine_change)
 
-    # Persistent watchdog timer (fires every 1s, cheap)
     if _watch_timer is None:
         _watch_timer = bpy.app.timers.register(_watchdog, first_interval=0.5, persistent=True)
 
-    # Add the topbar menu
     bpy.types.TOPBAR_MT_editor_menus.append(draw_topbar_menu)
 
 def unregister():
@@ -431,13 +288,12 @@ def unregister():
 
     if _draw_handle is not None:
         try:
-            bpy.types.SpaceView3D.draw_handler_remove(_draw_handle, 'WINDOW')
+            bpy.types.SpaceView3D.draw_handler_remove(_draw_handle, 'WINDOWOW')
         except Exception:
             pass
         _draw_handle = None
 
     _handles.clear()
-    _button_rects.clear()
 
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)

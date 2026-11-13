@@ -37,7 +37,7 @@ class ViewportWidget:
     def state(self, region) -> Dict[str, Any]:
         rk = region.as_pointer()
         st = self._region_state.get(rk)
-        if st is None None:
+        if st is None:
             st = {}
             self._region_state[rk] = st
         return st

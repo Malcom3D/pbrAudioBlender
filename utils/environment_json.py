@@ -19,7 +19,7 @@
 import os
 import json
 import uuid
-#import bpy
+import bpy
 from mathutils import Vector
 
 def generate_environment_id():

@@ -16,7 +16,7 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-#import bpy
+import bpy
 import math
 import mathutils
 from bpy.types import Operator

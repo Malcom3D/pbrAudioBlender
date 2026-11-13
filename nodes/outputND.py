@@ -16,7 +16,7 @@
 # along with pbrAudio.  If not, see <https://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-#import bpy
+import bpy
 from bpy.types import Node
 from bpy.props import StringProperty, PointerProperty, FloatProperty
 

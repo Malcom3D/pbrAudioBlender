@@ -27,7 +27,7 @@ import numpy as np
 from bpy.types import Operator
 from bpy.props import StringProperty, IntProperty
 
-from ...gui.core.spatial_player import SpatialPlayer
+from ..gui.core.spatial_player import SpatialPlayer
 
 classes = []
 

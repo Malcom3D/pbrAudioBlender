@@ -143,8 +143,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     trimesh
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/8f/f6/fb68b8c08f864ecee8f7f7ee2f1203ed5cba2335215de69e4f621eb47db5/trimesh-5.1.1-py3-none-any.whl
-    URL_HASH SHA256=c5be85a3e31e9ff749f9b0aecc204e37a2cf7cca4e92cd066bb5f3d3c1127765
+    URL    https://files.pythonhosted.org/packages/e6/97/a6efa2926335bab3f85cf990a5b5f48abd989719b4015df0e3209675adf7/trimesh-5.2.1-py3-none-any.whl
+    URL_HASH SHA256=ba4b5dbdf030bbffbb6337d9c67595435a8d1f224f23eb6500e9662f42a3c5df
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -715,8 +715,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     markdown-it-py
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl
-    URL_HASH SHA256=9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a
+    URL    https://files.pythonhosted.org/packages/c9/31/5f0ac2f1a1c67423c995c731a11cd4ad05d081a2be969d74f868bdb9cc70/markdown_it_py-4.3.0-py3-none-any.whl
+    URL_HASH SHA256=7aa1511a46c39138de78d9eba92ce47e63124d8003fc98b3a351909e04239efa
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -806,8 +806,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     blosc2
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/ac/ed/26058d46a34c3afc95dbf46c47d4310274fff92e81388ba42f536c450d35/blosc2-4.14.1-cp311-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=d5e65efe80740651c3b39a9fd98478f073c57bed51f7eebe1fdfe248dc259e37
+    URL    https://files.pythonhosted.org/packages/e7/40/893d469e066307bab2f9e3f990e4e8b01578dbf04a150f3ee7b779ddff03/blosc2-4.15.0-cp311-abi3-manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=3ba9b428253747243716e90c5a63aa630860694a85f85ab5f7cd2eb7d5a7060d
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

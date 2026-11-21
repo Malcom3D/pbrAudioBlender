@@ -5,3 +5,5 @@
 /build
 build.sh
 gen_changelog.py
+*.swp
+*.swo

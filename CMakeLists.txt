@@ -676,8 +676,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     pydantic_core
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/56/51/cbb7a1bc0196ff94d3478d265eed7449f811759988eb760d41f4edd0893b/pydantic_core-2.50.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
-    URL_HASH SHA256=0574866e05f6adeecc520d87e87dd06210c0a51706341f6ef8421572f5a64444
+    URL    https://files.pythonhosted.org/packages/bd/77/9520ca4c8f9bac81c2c4124389a8413c9d0e97e054b1d0c854b71e104297/pydantic_core-2.50.5-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+    URL_HASH SHA256=488319076ec92908b91fc6265ce761f1d78748f69f85518564fd16bf333e1b70
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -689,8 +689,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     pydantic
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/97/01/c71a71258b58659c72504e5fd65b451f6e36e34dc931d0b237ded213c814/pydantic-2.14.2-py3-none-any.whl
-    URL_HASH SHA256=7efbf7507b937931cd32a5755acb00ea1cf5ccb1d4e8067a5850d5069e382118
+    URL    https://files.pythonhosted.org/packages/8a/8c/824a686c4ba815ddb0722f9e66272088bccd4e1ae1d2f7015375e4a4fc7f/pydantic-2.14.4-py3-none-any.whl
+    URL_HASH SHA256=653a2ad9f6d8858529c77c72717d0ea991d6c6837fe683246b2f4b2bbfc3fadc
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -819,8 +819,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     yaml
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/71/60/917329f640924b18ff085ab889a11c763e0b573da888e8404ff486657602/pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=b8bb0864c5a28024fac8a632c443c87c5aa6f215c0b126c449ae1a150412f31d
+    URL    https://files.pythonhosted.org/packages/9d/3e/c1c307b6c03e4ea7d86f166f14920ead07aecc35e88d873814d12aa2da66/pyyaml-6.0.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=622aa875fa6533f25fedcffe23079357d65a690d462200afed5d8e9d0e01ebee
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

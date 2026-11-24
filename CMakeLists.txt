@@ -143,8 +143,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     trimesh
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/e6/97/a6efa2926335bab3f85cf990a5b5f48abd989719b4015df0e3209675adf7/trimesh-5.2.1-py3-none-any.whl
-    URL_HASH SHA256=ba4b5dbdf030bbffbb6337d9c67595435a8d1f224f23eb6500e9662f42a3c5df
+    URL    https://files.pythonhosted.org/packages/65/6a/b762dba087a749a45db73b0dde30c00661f9181dbe3ca4cba1cab28fcdae/trimesh-5.2.2-py3-none-any.whl
+    URL_HASH SHA256=579ab2cf8e4eef32d15b2915843f16dac87c8142530c833309c28c3e54dee7c9
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -403,8 +403,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     dask
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/f8/3a/4fc99e788bcfa1b3b3f21abf57da45898d807d007e7f6fd1c7300904eb70/dask-2026.8.0-py3-none-any.whl
-    URL_HASH SHA256=ccc0c83a189b0398602435189771d28dad7b5773b6089bb8dce14ae732dd782c
+    URL    https://files.pythonhosted.org/packages/b4/a1/49cd0780d5a1adffc29d0062eafcc2447156a2d64d49634f201ef19e7497/dask-2026.11.0-py3-none-any.whl
+    URL_HASH SHA256=3d826d9448c6834ccd1e0a9c932caa249e5a138aee254db791a0153c0a357f6d
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON
@@ -806,8 +806,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     blosc2
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/e7/40/893d469e066307bab2f9e3f990e4e8b01578dbf04a150f3ee7b779ddff03/blosc2-4.15.0-cp311-abi3-manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=3ba9b428253747243716e90c5a63aa630860694a85f85ab5f7cd2eb7d5a7060d
+    URL    https://files.pythonhosted.org/packages/73/0b/6f7e2f1bf5df83752a4317c09b818c5e71895b9cd1432e584aadf1576f76/blosc2-4.16.1-cp311-abi3-manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=1034f595b1dd8177a8c1a4bd17d68e0b32ded852e2d6ab3c17df054f436cdb1b
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

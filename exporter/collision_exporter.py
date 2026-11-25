@@ -92,7 +92,7 @@ class CollisionExporter:
         """Get proxy synth status enable/disable""" 
         proxy_synth = False
         for obj in collision_collection.all_objects.values():
-            if obj.pbraudio.proxy_type in [0,1,2]:
+            if int(obj.pbraudio.proxy_type) in [0,1,2]:
                 proxy_synth = True
         return proxy_synth
 

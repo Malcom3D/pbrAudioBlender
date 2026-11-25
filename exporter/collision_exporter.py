@@ -60,7 +60,7 @@ class CollisionExporter:
         system["samples_per_face"] = scene.pbraudio.samples_per_face
         system["cache_path"] = self.export_path
 #        system["enable_proxy_synth"] = scene.pbraudio.enable_proxy_synth
-        system["enable_proxy_synth"] = self.proxy_synth_status
+        system["enable_proxy_synth"] = self.proxy_synth_status(collision_collection)
         system["enable_noise_enhancement"] = scene.pbraudio.enable_noise_enhancement
         system["enable_audio_forces_postprocess"] = scene.pbraudio.enable_audio_forces_postprocess
         system["enable_synth_postprocess"] = scene.pbraudio.enable_synth_postprocess

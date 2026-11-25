@@ -126,36 +126,36 @@ class PBRAUDIO_PT_hi_res_face2face_panel(Panel):
 
 classes.append(PBRAUDIO_PT_hi_res_face2face_panel)
 
-class PBRAUDIO_PT_small_mesh_proxy_panel(Panel):
-    bl_label = ""
-    bl_idname = "PBRAUDIO_PT_small_mesh_proxy_panel"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "physics"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.scene.render.engine == 'PBRAUDIO'
-
-    def draw_header(self, context):
-        scene = context.scene
-        layout = self.layout
-        layout.prop(scene.pbraudio, "enable_small_proxy")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        scene = context.scene
-
-        # Small Mesh Proxy parameters
-        layout.enabled = scene.pbraudio.enable_small_proxy
-        layout.prop(scene.pbraudio, "proxy_size_threshold", slider=True)
-        layout.prop(scene.pbraudio, "enable_proxy_synth")
-
-classes.append(PBRAUDIO_PT_small_mesh_proxy_panel)
+#class PBRAUDIO_PT_small_mesh_proxy_panel(Panel):
+#    bl_label = ""
+#    bl_idname = "PBRAUDIO_PT_small_mesh_proxy_panel"
+#    bl_space_type = 'PROPERTIES'
+#    bl_region_type = 'WINDOW'
+#    bl_context = "physics"
+#    bl_options = {'DEFAULT_CLOSED'}
+#
+#    @classmethod
+#    def poll(cls, context):
+#        return context.scene.render.engine == 'PBRAUDIO'
+#
+#    def draw_header(self, context):
+#        scene = context.scene
+#        layout = self.layout
+#        layout.prop(scene.pbraudio, "enable_small_proxy")
+#
+#    def draw(self, context):
+#        layout = self.layout
+#        layout.use_property_split = True
+#        layout.use_property_decorate = False  # No animation.
+#
+#        scene = context.scene
+#
+#        # Small Mesh Proxy parameters
+#        layout.enabled = scene.pbraudio.enable_small_proxy
+#        layout.prop(scene.pbraudio, "proxy_size_threshold", slider=True)
+#        layout.prop(scene.pbraudio, "enable_proxy_synth")
+#
+#classes.append(PBRAUDIO_PT_small_mesh_proxy_panel)
 
 class PBRAUDIO_PT_trajectory_correction_panel(Panel):
     bl_label = ""

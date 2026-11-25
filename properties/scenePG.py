@@ -95,11 +95,11 @@ class PBRAudioSceneProperties(PropertyGroup):
                 if not scene.pbraudio.hi_res_face2face == self.collision_collection['hi_res_face2face']:
                     scene.pbraudio.hi_res_face2face = self.collision_collection['hi_res_face2face']
                     scene.pbraudio.samples_per_face = self.collision_collection['samples_per_face']
-                if not scene.pbraudio.enable_small_proxy == self.collision_collection['small_proxy']:
-                    scene.pbraudio.enable_small_proxy = self.collision_collection['small_proxy']
-                    scene.pbraudio.proxy_size_threshold = self.collision_collection['proxy_size_threshold']
-                    if not scene.pbraudio.enable_proxy_synth == self.collision_collection['enable_proxy_synth']:
-                        scene.pbraudio.enable_proxy_synth = self.collision_collection['enable_proxy_synth']
+#                if not scene.pbraudio.enable_small_proxy == self.collision_collection['small_proxy']:
+#                    scene.pbraudio.enable_small_proxy = self.collision_collection['small_proxy']
+#                    scene.pbraudio.proxy_size_threshold = self.collision_collection['proxy_size_threshold']
+#                    if not scene.pbraudio.enable_proxy_synth == self.collision_collection['enable_proxy_synth']:
+#                        scene.pbraudio.enable_proxy_synth = self.collision_collection['enable_proxy_synth']
             else:
                 self.collision_collection['is_valid'] = True
                 self.collision_collection['physics'] = False
@@ -108,29 +108,29 @@ class PBRAudioSceneProperties(PropertyGroup):
                 self.collision_collection['fracture'] = False
                 self.collision_collection['hi_res_face2face'] = False
                 self.collision_collection['samples_per_face'] = 1000
-                self.collision_collection['small_proxy'] = False
-                self.collision_collection['proxy_size_threshold'] = 0.5
-                self.collision_collection['enable_proxy_synth'] = False
+#                self.collision_collection['small_proxy'] = False
+#                self.collision_collection['proxy_size_threshold'] = 0.5
+#                self.collision_collection['enable_proxy_synth'] = False
                 self.collision_collection['cache_hash'] = cache_hash
                 self.collision_collection['cache_path'] = f"{scene.pbraudio.cache_path}/{self.collision_collection.name_full}"
 
-    def update_small_proxy(self, context):
-        scene = context.scene
-        if scene.pbraudio.collision_collection is not None:
-            if not scene.pbraudio.collision_collection['small_proxy'] == self.enable_small_proxy:
-                scene.pbraudio.collision_collection['small_proxy'] = self.enable_small_proxy
+#    def update_small_proxy(self, context):
+#        scene = context.scene
+#        if scene.pbraudio.collision_collection is not None:
+#            if not scene.pbraudio.collision_collection['small_proxy'] == self.enable_small_proxy:
+#                scene.pbraudio.collision_collection['small_proxy'] = self.enable_small_proxy
 
-    def update_proxy_synth(self, context):
-        scene = context.scene
-        if scene.pbraudio.collision_collection is not None:
-            if not scene.pbraudio.collision_collection['enable_proxy_synth'] == self.enable_proxy_synth:
-                scene.pbraudio.collision_collection['enable_proxy_synth'] = self.enable_proxy_synth
+#    def update_proxy_synth(self, context):
+#        scene = context.scene
+#        if scene.pbraudio.collision_collection is not None:
+#            if not scene.pbraudio.collision_collection['enable_proxy_synth'] == self.enable_proxy_synth:
+#                scene.pbraudio.collision_collection['enable_proxy_synth'] = self.enable_proxy_synth
 
-    def update_proxy_size(self, context):
-        scene = context.scene
-        if scene.pbraudio.collision_collection is not None:
-            if not scene.pbraudio.collision_collection['proxy_size_threshold'] == self.proxy_size_threshold:
-                scene.pbraudio.collision_collection['proxy_size_threshold'] = self.proxy_size_threshold
+#    def update_proxy_size(self, context):
+#        scene = context.scene
+#        if scene.pbraudio.collision_collection is not None:
+#            if not scene.pbraudio.collision_collection['proxy_size_threshold'] == self.proxy_size_threshold:
+#                scene.pbraudio.collision_collection['proxy_size_threshold'] = self.proxy_size_threshold
 
     def update_hi_res(self, context):
         scene = context.scene
@@ -338,28 +338,28 @@ class PBRAudioSceneProperties(PropertyGroup):
         default=True
     )
 
-    enable_small_proxy: BoolProperty(
-        name="Small Mesh Proxy",
-        description="Enable small mesh proxying",
-        default=False,
-        update=update_small_proxy
-    )
+#    enable_small_proxy: BoolProperty(
+#        name="Small Mesh Proxy",
+#        description="Enable small mesh proxying",
+#        default=False,
+#        update=update_small_proxy
+#    )
 
-    proxy_size_threshold: FloatProperty(
-        name="Size Threshold",
-        description="Max mesh size threshold for proxed mesh in meter",
-        default=0.01,
-        min=0,
-        soft_max=1,
-        update=update_proxy_size
-    )
+#    proxy_size_threshold: FloatProperty(
+#        name="Size Threshold",
+#        description="Max mesh size threshold for proxed mesh in meter",
+#        default=0.01,
+#        min=0,
+#        soft_max=1,
+#        update=update_proxy_size
+#    )
 
-    enable_proxy_synth: BoolProperty(
-        name="ProxySynth",
-        description="Enable small mesh proxy synthesizer",
-        default=False,
-        update=update_proxy_synth
-    )
+#    enable_proxy_synth: BoolProperty(
+#        name="ProxySynth",
+#        description="Enable small mesh proxy synthesizer",
+#        default=False,
+#        update=update_proxy_synth
+#    )
 
     hi_res_face2face: BoolProperty(
         name="HiRes collision detection",

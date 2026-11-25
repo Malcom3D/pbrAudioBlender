@@ -194,6 +194,9 @@ class PBRAudioObjectProperties(PropertyGroup):
     proxy_type: EnumProperty(
         name="Proxy Type",
         items=[
+            ('0', "ProxySynth LowRes", "Low resolution ProxySynth proxy: pyramid"),
+            ('1', "ProxySynth MidRes", "Midium resolution ProxySynth proxy: octahedron"),
+            ('2', "ProxySynth HiRes", "High resolution ProxySynth proxy: hexahedron"),
             ('3', "LowRes", "Low resolution proxy: icosahedron"),
             ('4', "MidRes", "Midium resolution proxy: icosahedron with 1 subdivision"),
             ('5', "HiRes", "High resolution proxy: icosahedron with 2 subdivision"),

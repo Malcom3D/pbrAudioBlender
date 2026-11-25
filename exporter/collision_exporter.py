@@ -59,7 +59,8 @@ class CollisionExporter:
         system["hi_res_face2face"] = scene.pbraudio.hi_res_face2face
         system["samples_per_face"] = scene.pbraudio.samples_per_face
         system["cache_path"] = self.export_path
-        system["enable_proxy_synth"] = scene.pbraudio.enable_proxy_synth
+#        system["enable_proxy_synth"] = scene.pbraudio.enable_proxy_synth
+        system["enable_proxy_synth"] = self.proxy_synth_status
         system["enable_noise_enhancement"] = scene.pbraudio.enable_noise_enhancement
         system["enable_audio_forces_postprocess"] = scene.pbraudio.enable_audio_forces_postprocess
         system["enable_synth_postprocess"] = scene.pbraudio.enable_synth_postprocess
@@ -86,6 +87,14 @@ class CollisionExporter:
         self.obj_idx = 0
         self.particles = []
         self.particle_idx = 0
+
+    def proxy_synth_status(self, collision_collection):
+        """Get proxy synth status enable/disable""" 
+        proxy_synth = False
+        for obj in collision_collection.all_objects.values():
+            if obj.proxy_type in [0,1,2]:
+                proxy_synth = True
+        return proxy_synth
 
     def get_storage_config(self, scene):
         """Get storage configuration""" 
@@ -500,11 +509,11 @@ class CollisionExporter:
                 frame_data['normals'] = frame_result['normals']
                 frame_data['faces'] = frame_result['faces']
 
-                # Determine if an object should be replaced with an ellipsoidal proxy
-                if frame == start_frame and obj.pbraudio.proxy and scene.pbraudio.enable_small_proxy:
-                    proxy_type_replace = self._should_replace_with_proxy(scene, frame_data['vertices'])
-                    if proxy_type_replace is not False:
-                        object["proxy_type"] = proxy_type_replace
+#                # Determine if an object should be replaced with an ellipsoidal proxy
+#                if frame == start_frame and obj.pbraudio.proxy and scene.pbraudio.enable_small_proxy:
+#                    proxy_type_replace = self._should_replace_with_proxy(scene, frame_data['vertices'])
+#                    if proxy_type_replace is not False:
+#                        object["proxy_type"] = proxy_type_replace
 
                 # Save to npz
                 output_file = os.path.join(self.export_path, f"data/{name}/{name}_{frame:05d}.npz")
@@ -522,11 +531,11 @@ class CollisionExporter:
             frame_data[f'normals'] = frame_result['normals']
             frame_data[f'faces'] = frame_result['faces']
 
-            # Determine if an object should be replaced with an ellipsoidal proxy
-            if obj.pbraudio.proxy and scene.pbraudio.enable_small_proxy:
-                proxy_type_replace = self._should_replace_with_proxy(scene, frame_data['vertices'])
-                if proxy_type_replace is not False:
-                    object["proxy_type"] = proxy_type_replace
+#            # Determine if an object should be replaced with an ellipsoidal proxy
+#            if obj.pbraudio.proxy and scene.pbraudio.enable_small_proxy:
+#                proxy_type_replace = self._should_replace_with_proxy(scene, frame_data['vertices'])
+#                if proxy_type_replace is not False:
+#                    object["proxy_type"] = proxy_type_replace
 
             # Save to npz
             output_file = os.path.join(self.export_path, f"data/{name}/{name}.npz")

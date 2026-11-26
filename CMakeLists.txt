@@ -806,8 +806,8 @@ ExternalProject_Add(
 ExternalProject_Add(
     blosc2
     PREFIX "blender"
-    URL    https://files.pythonhosted.org/packages/73/0b/6f7e2f1bf5df83752a4317c09b818c5e71895b9cd1432e584aadf1576f76/blosc2-4.16.1-cp311-abi3-manylinux_2_28_x86_64.whl
-    URL_HASH SHA256=1034f595b1dd8177a8c1a4bd17d68e0b32ded852e2d6ab3c17df054f436cdb1b
+    URL    https://files.pythonhosted.org/packages/fa/ad/367a7f1d8b094568ec41747f48efcb4a58811e9ed254560ae95947e21e09/blosc2-4.17.0-cp311-abi3-manylinux_2_28_x86_64.whl
+    URL_HASH SHA256=c777f8303afbb4645a07c7c40d12436d8b7f79340b9ed5b8da7df43ef48be747
     BUILD_ALWAYS OFF
     DOWNLOAD_DIR "${EXTERNAL_DOWNLOAD_DIR}"
     DOWNLOAD_NO_EXTRACT ON

@@ -96,7 +96,7 @@ wheels = [
    "./downloads/zipp-4.1.1-py3-none-any.whl",
    "./downloads/idna-3.20-py3-none-any.whl",
    "./downloads/typing_inspection-0.4.4-py3-none-any.whl",
-   "./downloads/blosc2-4.16.1-cp311-abi3-manylinux_2_28_x86_64.whl",
+   "./downloads/blosc2-4.17.0-cp311-abi3-manylinux_2_28_x86_64.whl",
    "./downloads/pycparser-3.0-py3-none-any.whl",
    "./downloads/numcodecs-0.16.5-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/numba-0.68.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
@@ -108,7 +108,7 @@ wheels = [
    "./downloads/zarrs-0.2.3-cp311-abi3-manylinux_2_28_x86_64.whl",
    "./downloads/minihost-0.11.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
    "./downloads/sounddevice-0.5.6-py3-none-any.whl",
-   "./wheels/pbraudiorender-0.3.0.post1.dev143-py3-none-any.whl",
+   "./wheels/pbraudiorender-0.3.0.post1.dev144-py3-none-any.whl",
    "./wheels/embreex-4.4.0-cp311-cp311-linux_x86_64.whl",
 ]
 

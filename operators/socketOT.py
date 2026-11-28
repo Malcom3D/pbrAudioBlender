@@ -19,7 +19,7 @@
 import bpy
 from bpy.types import Operator
 
-from ..utils.socket_server import SocketServerManager
+from ..utils.pbrAudioDAW_link import pbrAudioDAWlink
 
 classes = []
 
@@ -33,10 +33,10 @@ class PBRAUDIO_OT_toggle_socket_server(Operator):
 
     def execute(self, context):
         props = context.scene.pbraudio_socket
-        status = SocketServerManager.get_status()
+        status = pbrAudioDAWlink.get_status()
 
         if status == 'DISABLED':
-            success, msg = SocketServerManager.start(props.host, props.port)
+            success, msg = pbrAudioDAWlink.start(props.host, props.port)
             if success:
                 props.enabled = True
                 self.report({'INFO'}, msg)
@@ -45,7 +45,7 @@ class PBRAUDIO_OT_toggle_socket_server(Operator):
                 self.report({'ERROR'}, msg)
                 return {'CANCELLED'}
         else:
-            SocketServerManager.stop()
+            pbrAudioDAWlink.stop()
             props.enabled = False
             self.report({'INFO'}, "pbrAudioDAW link stopped")
 
@@ -63,7 +63,7 @@ classes.append(PBRAUDIO_OT_toggle_socket_server)
 #    bl_description = "Send a test message to the connected client"
 #
 #    def execute(self, context):
-#        ok = SocketServerManager.send("Hello from Blender")
+#        ok = pbrAudioDAWlink.send("Hello from Blender")
 #        if ok:
 #            self.report({'INFO'}, "Message sent")
 #        else:

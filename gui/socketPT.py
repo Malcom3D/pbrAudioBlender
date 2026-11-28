@@ -19,7 +19,7 @@
 import bpy
 from bpy.types import Panel
 
-from ..utils.socket_server import SocketServerManager
+from ..utils.pbrAudioDAW_link import pbrAudioDAWlink
 
 classes = []
 
@@ -38,7 +38,7 @@ class PBRAUDIO_PT_socket_server_panel(Panel):
     def draw(self, context):
         layout = self.layout
         props = context.scene.pbraudio_socket
-        status = SocketServerManager.get_status()
+        status = pbrAudioDAWlink.get_status()
 
         # --- Toggle button --- 
         row = layout.row()
@@ -56,7 +56,7 @@ class PBRAUDIO_PT_socket_server_panel(Panel):
         elif status == 'WAITING':
             row.label(text="Status: Trying to connect...", icon='TIME')
         elif status == 'CONNECTED':
-            row.label(text=f"Status: Connected to ({SocketServerManager.get_pbraudiodaw_address()})", icon='LINKED')
+            row.label(text=f"Status: Connected to ({pbrAudioDAWlink.get_pbraudiodaw_address()})", icon='LINKED')
 
 #        # --- Send test button (enabled only if client connected) ---
 #        row = layout.row()

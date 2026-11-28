@@ -22,12 +22,9 @@ import time
 import bpy
 
 
-class SocketServerManager:
+class pbrAudioDAWlink:
     """
-    Manages a client connection to the pbrAudioDAW socket server.
-
-    NOTE: Despite the class name (kept for backwards-compatibility), this is now
-    a *client* — it connects out to an external pbrAudioDAW TUI or GUI instance.
+    Manages a client connection to the pbrAudioDAW TUI or GUI socket server.
     """
 
     _instance = None
@@ -198,9 +195,27 @@ class SocketServerManager:
 
     @classmethod
     def _handle_message(cls, message):
-        """Process an incoming message."""
-        # Todo: add viewport playback/sync
-        pass
+        """Process an incoming message from the pbrAudioDAW."""
+        text = message.strip()
+        if not text:
+            return
+        try:
+            if text == "animation_play":
+                bpy.ops.screen.animation_play()
+            elif text == "animation_stop":
+                bpy.ops.screen.animation_cancel(restore_frame=False)
+            elif text.startswith("frame"):
+                _, _, arg = text.partition(" ")
+                try:
+                    frame = int(arg.strip())
+                except (TypeError, ValueError):
+                    return
+                scene = bpy.context.scene
+                scene.frame_set(frame)
+                # Force a viewport update on the next tick.
+                cls._tag_redraw()
+        except Exception as e:
+            print(f"[pbrAudio Socket] handle message failed: {e}")
 
     # ------------------------------------------------------------------ #
     # UI helpers

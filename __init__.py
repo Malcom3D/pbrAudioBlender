@@ -54,7 +54,7 @@ if 'warning' in bl_info:
     version_string = version_string + f'-{bl_info["warning"]}'
 
 from . import engine, nodetrees, sockets, nodes, properties, operators, handlers, gui, utils
-from .utils.socket_server import SocketServerManager
+from ..utils.pbrAudioDAW_link import pbrAudioDAWlink
 
 def register():
     print("Register", __package__)
@@ -69,7 +69,7 @@ def register():
 
 def unregister():
     print("UnRegister", __package__)
-    SocketServerManager.stop()
+    pbrAudioDAWlink.stop()
     gui.unregister()
     handlers.unregister()
     operators.unregister()

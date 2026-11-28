@@ -68,12 +68,12 @@ def select_nodetree_handler(scene):
 
 @persistent
 def socket_object_selection_handler(scene):
-    from ..utils.socket_server import SocketServerManager
-    if SocketServerManager.get_status() != 'CONNECTED':
+    from ..utils.pbrAudioDAW_link import pbrAudioDAWlink
+    if pbrAudioDAWlink.get_status() != 'CONNECTED':
         return
     obj = bpy.context.view_layer.objects.active
     if obj is not None:
-        SocketServerManager.send(f"Select object: {obj.name}")
+        pbrAudioDAWlink.send(f"Select object: {obj.name}")
 
 def register():
     for cls in classes:

@@ -54,7 +54,7 @@ class PBRAUDIO_PT_socket_server_panel(Panel):
         if status == 'DISABLED':
             row.label(text="Status: Disabled", icon='CANCEL')
         elif status == 'WAITING':
-            row.label(text="Status: Waiting for client...", icon='TIME')
+            row.label(text="Status: Trying to connect...", icon='TIME')
         elif status == 'CONNECTED':
             row.label(text=f"Status: Connected to ({SocketServerManager.get_pbraudiodaw_address()})", icon='LINKED')
 

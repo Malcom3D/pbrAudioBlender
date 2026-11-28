@@ -201,3 +201,17 @@ class SocketServerManager:
         """Process an incoming message."""
         # Todo: add viewport playback/sync
         pass
+
+    # ------------------------------------------------------------------ #
+    # UI helpers
+    # ------------------------------------------------------------------ #
+    @classmethod
+    def _tag_redraw(cls):
+        """Trigger a redraw so the panel updates its status label."""
+        try:
+            for window in bpy.context.window_manager.windows:
+                for area in window.screen.areas:
+                    if area.type in {'VIEW_3D'}:
+                        area.tag_redraw()
+        except Exception:
+            pass

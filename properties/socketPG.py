@@ -26,26 +26,26 @@ class PBRAudioSocketProperties(PropertyGroup):
     """Socket server properties for pbrAudio"""
     
     enabled: BoolProperty(
-        name="Enable Server",
-        description="Enable or disable the socket server",
+        name="Enable Link",
+        description="Enable or disable the pbrAudioDAW link",
         default=False,
     )
     
     show_advanced: BoolProperty(
         name="Advanced Options",
-        description="Show advanced socket options",
+        description="Show advanced link options",
         default=False,
     )
     
     host: StringProperty(
         name="Host",
-        description="Host IP to bind (use 'localhost' or '0.0.0.0' for all interfaces)",
+        description="Host IP of pbrAudioDAW",
         default="localhost",
     )
     
     port: IntProperty(
         name="Port",
-        description="Port number to listen on",
+        description="Port number of pbrAudio",
         default=55555,
         min=1024,
         max=65535,

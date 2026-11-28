@@ -25,11 +25,11 @@ classes = []
 
 class PBRAUDIO_PT_socket_server_panel(Panel):
     """Panel for pbrAudio socket server"""
-    bl_label = "Socket Server"
+    bl_label = "pbrAudioDAW link"
     bl_idname = "PBRAUDIO_PT_socket_server_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "pbrAudio"
+    bl_category = "pbrAudioDAW"
 
     @classmethod
     def poll(cls, context):
@@ -40,6 +40,14 @@ class PBRAUDIO_PT_socket_server_panel(Panel):
         props = context.scene.pbraudio_socket
         status = SocketServerManager.get_status()
 
+        # --- Toggle button --- 
+        row = layout.row()
+        row.scale_y = 1.5
+        if status == 'DISABLED': 
+            row.operator("pbraudio.toggle_socket_server", text="Enable")
+        else:
+            row.operator("pbraudio.toggle_socket_server", text="Disable")
+
         # --- Status label ---
         status_box = layout.box()
         row = status_box.row()
@@ -48,29 +56,19 @@ class PBRAUDIO_PT_socket_server_panel(Panel):
         elif status == 'WAITING':
             row.label(text="Status: Waiting for client...", icon='TIME')
         elif status == 'CONNECTED':
-            row.label(text=f"Status: Client connected ({SocketServerManager.get_client_address()})", icon='LINKED')
+            row.label(text=f"Status: Connected to ({SocketServerManager.get_pbraudiodaw_address()})", icon='LINKED')
 
-        # --- Toggle button ---
-        row = layout.row()
-        row.scale_y = 1.5
-        if status == 'DISABLED':
-            row.operator("pbraudio.toggle_socket_server", text="Enable Server", icon='PLAY')
-        else:
-            row.operator("pbraudio.toggle_socket_server", text="Disable Server", icon='PAUSE')
-
-        # --- Send test button (enabled only if client connected) ---
-        row = layout.row()
-        sub = row.row()
-        sub.enabled = (status == 'CONNECTED')
-        sub.operator("pbraudio.send_socket_message", text="Send Test Message", icon='SORTALPHA')
-
-        layout.separator()
+#        # --- Send test button (enabled only if client connected) ---
+#        row = layout.row()
+#        sub = row.row()
+#        sub.enabled = (status == 'CONNECTED')
+#        sub.operator("pbraudio.send_socket_message", text="Send Test Message", icon='SORTALPHA')
+#
+#        layout.separator()
 
         # --- Advanced options ---
         row = layout.row()
-        row.prop(props, "show_advanced",
-                 icon='TRIA_DOWN' if props.show_advanced else 'TRIA_RIGHT',
-                 icon_only=True, emboss=False)
+        row.prop(props, "show_advanced", icon='TRIA_DOWN' if props.show_advanced else 'TRIA_RIGHT', icon_only=True, emboss=False)
         row.label(text="Advanced Options")
 
         if props.show_advanced:

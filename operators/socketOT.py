@@ -47,7 +47,7 @@ class PBRAUDIO_OT_toggle_socket_server(Operator):
         else:
             SocketServerManager.stop()
             props.enabled = False
-            self.report({'INFO'}, "Socket server stopped")
+            self.report({'INFO'}, "pbrAudioDAW link stopped")
 
         # Force redraw so panel updates
         for area in context.screen.areas:
@@ -56,19 +56,18 @@ class PBRAUDIO_OT_toggle_socket_server(Operator):
 
 classes.append(PBRAUDIO_OT_toggle_socket_server)
 
-
-class PBRAUDIO_OT_send_socket_message(Operator):
-    """Send a message to the connected client"""
-    bl_idname = "pbraudio.send_socket_message"
-    bl_label = "Send Message"
-    bl_description = "Send a test message to the connected client"
-
-    def execute(self, context):
-        ok = SocketServerManager.send("Hello from Blender")
-        if ok:
-            self.report({'INFO'}, "Message sent")
-        else:
-            self.report({'WARNING'}, "No client connected")
-        return {'FINISHED'}
-
-classes.append(PBRAUDIO_OT_send_socket_message)
+#class PBRAUDIO_OT_send_socket_message(Operator):
+#    """Send a message to the connected client"""
+#    bl_idname = "pbraudio.send_socket_message"
+#    bl_label = "Send Message"
+#    bl_description = "Send a test message to the connected client"
+#
+#    def execute(self, context):
+#        ok = SocketServerManager.send("Hello from Blender")
+#        if ok:
+#            self.report({'INFO'}, "Message sent")
+#        else:
+#            self.report({'WARNING'}, "No client connected")
+#        return {'FINISHED'}
+#
+#classes.append(PBRAUDIO_OT_send_socket_message)

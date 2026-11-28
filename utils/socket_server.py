@@ -18,164 +18,186 @@
 
 import socket
 import threading
+import time
 import bpy
 
+
 class SocketServerManager:
-    """Manages the socket server lifecycle for pbrAudio"""
-    
+    """
+    Manages a client connection to the pbrAudioDAW socket server.
+
+    NOTE: Despite the class name (kept for backwards-compatibility), this is now
+    a *client* — it connects out to an external pbrAudioDAW TUI or GUI instance.
+    """
+
     _instance = None
-    _server_socket = None
     _client_socket = None
+    _server_address = None
     _client_address = None
-    _server_thread = None
+    _recv_thread = None
     _running = False
-    _status = 'DISABLED'  # DISABLED, WAITING, CONNECTED
-    
+    _connected = False
+    _status = 'DISABLED'            # DISABLED, WAITING, CONNECTED
+
+    # Connection / reconnection tuning
+    _CONNECT_TIMEOUT = 5.0
+    _RECV_TIMEOUT = 0.5
+    _RECONNECT_DELAY = 2.0
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
-    
+
+    # ------------------------------------------------------------------ #
+    # Status helpers
+    # ------------------------------------------------------------------ #
     @classmethod
     def get_status(cls):
         return cls._status
-    
+
     @classmethod
     def get_client_address(cls):
+        """Address the OS assigned to our client socket once connected."""
         if cls._client_address is not None:
             return f"{cls._client_address[0]}:{cls._client_address[1]}"
         return ""
-    
+
+    @classmethod
+    def get_pbraudiodaw_address(cls):
+        """Address of the pbrAudioDAW server we are (or will be) connected to."""
+        if cls._server_address is not None:
+            return f"{cls._server_address[0]}:{cls._server_address[1]}"
+        return ""
+
+    # ------------------------------------------------------------------ #
+    # Lifecycle
+    # ------------------------------------------------------------------ #
     @classmethod
     def start(cls, host, port):
-        """Start the socket server"""
+        """Start the client (attempt to connect to the pbrAudioDAW server)."""
         if cls._running:
-            return False, "Server already running"
-        
-        try:
-            cls._server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            cls._server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            cls._server_socket.bind((host, port))
-            cls._server_socket.listen(1)
-            cls._running = True
-            cls._status = 'WAITING'
-            
-            cls._server_thread = threading.Thread(target=cls._accept_loop, daemon=True)
-            cls._server_thread.start()
-            return True, f"Server listening on {host}:{port}"
-        except Exception as e:
-            cls._running = False
-            cls._status = 'DISABLED'
-            cls._server_socket = None
-            return False, f"Failed to start server: {e}"
-    
+            return False, "Client already running"
+
+        cls._server_address = (host, port)
+        cls._running = True
+        cls._connected = False
+        cls._status = 'WAITING'
+
+        # Kick off background thread that connects (and reconnects).
+        cls._recv_thread = threading.Thread(target=cls._connect_and_receive_loop, daemon=True)
+        cls._recv_thread.start()
+
+        return True, f"Connecting to {host}:{port}"
+
     @classmethod
     def stop(cls):
-        """Stop the socket server"""
+        """Stop the client and tear down any active connection."""
         cls._running = False
+        cls._connected = False
         cls._status = 'DISABLED'
-        
-        # Close client
+
         if cls._client_socket is not None:
+            try:
+                cls._client_socket.shutdown(socket.SHUT_RDWR)
+            except Exception:
+                pass
             try:
                 cls._client_socket.close()
             except Exception:
                 pass
             cls._client_socket = None
-            cls._client_address = None
-        
-        # Close server
-        if cls._server_socket is not None:
-            try:
-                cls._server_socket.close()
-            except Exception:
-                pass
-            cls._server_socket = None
-        
-        cls._server_thread = None
+
+        cls._client_address = None
+        cls._recv_thread = None
         cls._tag_redraw()
-    
+
+    # ------------------------------------------------------------------ #
+    # Background worker
+    # ------------------------------------------------------------------ #
     @classmethod
-    def _accept_loop(cls):
-        """Background thread that accepts client connections and receives messages"""
+    def _connect_and_receive_loop(cls):
+        """Connect to the server (with retries) and then receive messages."""
         while cls._running:
-            try:
-                cls._server_socket.settimeout(0.5)
+            # --- connect phase ---
+            if not cls._connected:
+                cls._status = 'WAITING'
+                cls._tag_redraw()
                 try:
-                    client_socket, client_address = cls._server_socket.accept()
-                except socket.timeout:
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(cls._CONNECT_TIMEOUT)
+                    sock.connect(cls._server_address)
+
+                    cls._client_socket = sock
+                    cls._client_socket.settimeout(cls._RECV_TIMEOUT)
+                    # Address of the *remote* peer (per your sample code)
+                    cls._client_address = sock.getpeername()
+
+                    cls._connected = True
+                    cls._status = 'CONNECTED'
+                    cls._tag_redraw()
+                    print(f"[pbrAudio Socket] Connected to {cls._server_address} "
+                          f"from {cls._client_address}")
+                except Exception as e:
+                    cls._status = 'WAITING'
+                    cls._tag_redraw()
+                    print(f"[pbrAudio Socket] Connect failed: {e}. "
+                          f"Retrying in {cls._RECONNECT_DELAY}s...")
+                    cls._client_socket = None
+                    # sleep in small slices so stop() is responsive
+                    deadline = time.time() + cls._RECONNECT_DELAY
+                    while cls._running and time.time() < deadline:
+                        time.sleep(0.1)
                     continue
-                
-                # If a client is already connected, close the previous one
+
+            # --- receive phase ---
+            try:
+                data = cls._client_socket.recv(4096)
+                if not data:
+                    # Peer closed
+                    raise ConnectionError("Peer closed the connection.")
+                message = data.decode(errors='replace')
+                print(f"[pbrAudio Socket] Received: {message}")
+                cls._handle_message(message)
+            except socket.timeout:
+                continue
+            except Exception as e:
+                print(f"[pbrAudio Socket] Receive error: {e}")
+                # tear down and loop → reconnect
                 if cls._client_socket is not None:
                     try:
                         cls._client_socket.close()
                     except Exception:
                         pass
-                
-                cls._client_socket = client_socket
-                cls._client_address = client_address
-                cls._status = 'CONNECTED'
-                cls._tag_redraw()
-                print(f"[pbrAudio Socket] Client connected from {client_address}")
-                
-                # Receive loop
-                cls._client_socket.settimeout(0.5)
-                while cls._running:
-                    try:
-                        data = cls._client_socket.recv(4096)
-                        if not data:
-                            break
-                        message = data.decode(errors='replace')
-                        print(f"[pbrAudio Socket] Received: {message}")
-                        cls._handle_message(message)
-                    except socket.timeout:
-                        continue
-                    except Exception as e:
-                        print(f"[pbrAudio Socket] Receive error: {e}")
-                        break
-                
-                # Client disconnected
-                try:
-                    cls._client_socket.close()
-                except Exception:
-                    pass
                 cls._client_socket = None
                 cls._client_address = None
+                cls._connected = False
                 cls._status = 'WAITING' if cls._running else 'DISABLED'
                 cls._tag_redraw()
-                print("[pbrAudio Socket] Client disconnected")
-                
-            except Exception as e:
-                if cls._running:
-                    print(f"[pbrAudio Socket] Accept error: {e}")
-                break
-    
+
+        # thread exit
+        cls._status = 'DISABLED'
+        cls._connected = False
+        cls._tag_redraw()
+
+    # ------------------------------------------------------------------ #
+    # Messaging
+    # ------------------------------------------------------------------ #
     @classmethod
     def send(cls, message):
-        """Send a message to the connected client"""
-        if cls._client_socket is None:
+        """Send a message to the connected server."""
+        if cls._client_socket is None or not cls._connected:
             return False
         try:
+            print(f"[pbrAudio Socket] Send: {message}")
             cls._client_socket.sendall(message.encode())
             return True
         except Exception as e:
             print(f"[pbrAudio Socket] Send error: {e}")
             return False
-    
+
     @classmethod
     def _handle_message(cls, message):
-        """Process an incoming message """
-        # Placeholder: could parse commands from client like playback
+        """Process an incoming message."""
+        # Todo: add viewport playback/sync
         pass
-    
-    @classmethod
-    def _tag_redraw(cls):
-        """Trigger a redraw so the panel updates status"""
-        try:
-            for window in bpy.context.window_manager.windows:
-                for area in window.screen.areas:
-                    if area.type in {'VIEW_3D'}:
-                        area.tag_redraw()
-        except Exception:
-            pass

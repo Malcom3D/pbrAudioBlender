@@ -90,7 +90,7 @@ class SocketServerManager:
                 cls._server_socket.close()
             except Exception:
                 pass
-            cls._server_socket = = None
+            cls._server_socket = None
         
         cls._server_thread = None
         cls._tag_redraw()

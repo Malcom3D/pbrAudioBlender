@@ -17,62 +17,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
-from bpy.types import Panel, Operator
+from bpy.types import Panel
 
 from ..utils.socket_server import SocketServerManager
 
 classes = []
-
-
-class PBRAUDIO_OT_toggle_socket_server(Operator):
-    """Toggle the socket server on/off"""
-    bl_idname = "pbraudio.toggle_socket_server"
-    bl_label = "Toggle Socket Server"
-    bl_description = "Start or stop the pbrAudio socket server"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        props = context.scene.pbraudio_socket
-        status = SocketServerManager.get_status()
-
-        if status == 'DISABLED':
-            success, msg = SocketServerManager.start(props.host, props.port)
-            if success:
-                props.enabled = True
-                self.report({'INFO'}, msg)
-            else:
-                props.enabled = False
-                self.report({'ERROR'}, msg)
-                return {'CANCELLED'}
-        else:
-            SocketServerManager.stop()
-            props.enabled = False
-            self.report({'INFO'}, "Socket server stopped")
-
-        # Force redraw so panel updates
-        for area in context.screen.areas:
-            area.tag_redraw()
-        return {'FINISHED'}
-
-classes.append(PBRAUDIO_OT_toggle_socket_server)
-
-
-class PBRAUDIO_OT_send_socket_message(Operator):
-    """Send a message to the connected client"""
-    bl_idname = "pbraudio.send_socket_message"
-    bl_label = "Send Message"
-    bl_description = "Send a test message to the connected client"
-
-    def execute(self, context):
-        ok = SocketServerManager.send("Hello from Blender")
-        if ok:
-            self.report({'INFO'}, "Message sent")
-        else:
-            self.report({'WARNING'}, "No client connected")
-        return {'FINISHED'}
-
-classes.append(PBRAUDIO_OT_send_socket_message)
-
 
 class PBRAUDIO_PT_socket_server_panel(Panel):
     """Panel for pbrAudio socket server"""

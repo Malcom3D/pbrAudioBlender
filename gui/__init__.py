@@ -23,7 +23,6 @@ from bpy.utils import register_class, unregister_class
 classes = []
 
 from . import enginePT, materialPT, worldPT, dataPT, outputPT, physicsPT, view3d_menu, nodetree_switch, exporterUI
-from .widgets import viewport_panel
 
 for mod in (enginePT, materialPT, worldPT, dataPT, outputPT, physicsPT, view3d_menu, exporterUI):
     classes += mod.classes
@@ -38,24 +37,19 @@ def register():
     # Add collision exporter to File > Export menu
     bpy.types.TOPBAR_MT_file_export.append(exporterUI.menu_func_export)
 
-    # Add menu to 3D Viewport Add menu
+    # Add pbrAudio menu to 3D Viewport menubar
     bpy.types.VIEW3D_MT_add.append(view3d_menu.menu_func)
 
     # Add acoustic shader type menu to nodetree menu
     nodetree_switch.register()
 
-    # Add viewport widgets panel
-    viewport_panel.register()
-
 def unregister():
     """Unregister all classes and properties"""
-    # Remove viewport widgets panel
-    viewport_panel.unregister()
 
     # Remove acoustic shader type menu to nodetree menu
     nodetree_switch.unregister()
 
-    # Remove menu from 3D Viewport Add menu
+    # Remove pbrAudio menu from 3D Viewport menubar
     bpy.types.VIEW3D_MT_add.remove(view3d_menu.menu_func)
     for cls in reversed(classes):
         unregister_class(cls)

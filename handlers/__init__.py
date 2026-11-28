@@ -66,14 +66,26 @@ def select_nodetree_handler(scene):
                                                             if nodeTreeName is not None:
                                                                 space.node_tree = bpy.data.node_groups[nodeTreeName]
 
+@persistent
+def socket_object_selection_handler(scene):
+    from ..utils.socket_server import SocketServerManager
+    if SocketServerManager.get_status() != 'CONNECTED':
+        return
+    obj = bpy.context.view_layer.objects.active
+    if obj is not None:
+        SocketServerManager.send(f"Select object: {obj.name}")
+
 def register():
     for cls in classes:
         register_class(cls)
 
     # Register handlers
     bpy.app.handlers.depsgraph_update_post.append(select_nodetree_handler)
+    bpy.app.handlers.depsgraph_update_post.append(socket_object_selection_handler)
 
 def unregister():
+    if socket_object_selection_handler in bpy.app.handlers.depsgraph_update_post:
+        bpy.app.handlers.depsgraph_update_post.remove(socket_object_selection_handler)
     if select_nodetree_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(select_nodetree_handler)
 

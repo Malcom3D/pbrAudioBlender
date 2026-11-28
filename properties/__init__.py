@@ -22,9 +22,9 @@ from bpy.utils import register_class, unregister_class
 
 classes = []
 
-from . import objectPG, scenePG, worldPG, materialPG, enginePG, storagePG
+from . import objectPG, scenePG, worldPG, materialPG, enginePG, storagePG, socketPG
 
-for mod in (objectPG, scenePG, worldPG, materialPG, enginePG, storagePG):
+for mod in (objectPG, scenePG, worldPG, materialPG, enginePG, storagePG, socketPG):
     classes += mod.classes
 
 def register():
@@ -37,6 +37,7 @@ def register():
     bpy.types.Scene.pbraudiostorage = PointerProperty(type=storagePG.PBRAudioStorageProperties)
     bpy.types.Scene.pbraudiostorage_blosc2_filters = CollectionProperty(type=storagePG.PBRAudioBlosc2FilterItem)
     bpy.types.Scene.pbraudiostorage_blosc2_filters_index = IntProperty(name="Index", default=-1, description="Active index in the blosc2 filter list")
+    bpy.types.Scene.pbraudio_socket = PointerProperty(type=socketPG.PBRAudioSocketProperties)
     bpy.types.Object.pbraudio = PointerProperty(type=objectPG.PBRAudioObjectProperties)
     bpy.types.Object.pbraudio_connected = CollectionProperty(type=objectPG.PBRAudioConnectedObjectList)
     bpy.types.Object.pbraudio_connected_index = IntProperty(name="Index", default=-1, description="Active index in the connected object list")
@@ -53,6 +54,7 @@ def unregister():
     del bpy.types.Object.pbraudio_connected_index
     del bpy.types.Object.pbraudio_connected
     del bpy.types.Object.pbraudio
+    del bpy.types.Scene.pbraudio_socket
     del bpy.types.Scene.pbraudiostorage_blosc2_filters_index
     del bpy.types.Scene.pbraudiostorage_blosc2_filters
     del bpy.types.Scene.pbraudiostorage

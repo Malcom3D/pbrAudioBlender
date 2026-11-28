@@ -54,7 +54,7 @@ if 'warning' in bl_info:
     version_string = version_string + f'-{bl_info["warning"]}'
 
 from . import engine, nodetrees, sockets, nodes, properties, operators, handlers, gui, utils
-from ..utils.pbrAudioDAW_link import pbrAudioDAWlink
+from .utils.pbrAudioDAW_link import pbrAudioDAWlink
 
 def register():
     print("Register", __package__)
